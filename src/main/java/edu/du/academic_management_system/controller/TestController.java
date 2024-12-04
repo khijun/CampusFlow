@@ -12,9 +12,4 @@ public class TestController {
         return "index";
     }
 
-
-    @GetMapping("/basic")
-    public  String basic(){
-        return "basic";
-    }
 }
