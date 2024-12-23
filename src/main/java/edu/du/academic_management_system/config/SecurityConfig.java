@@ -1,11 +1,12 @@
 package edu.du.academic_management_system.config;
 
 
+import edu.du.academic_management_system.entity.Member;
+import edu.du.academic_management_system.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,37 +24,60 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 //@EnableWebSecurity(debug = true)
 @Log4j2
+@RequiredArgsConstructor
 public class SecurityConfig{
-//    @Bean
-//    PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return username ->{
-//            log.info("사용자: " + username);
-//            return toUserDetails(memberService.findByUsername(username));
-//        };
-//    }
+    private final MemberService memberService;
 
-//    public UserDetails toUserDetails(Member member){
-//        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        authorities.add(new SimpleGrantedAuthority(member.getRole()));
-//        return User.builder()
-//                .username(member.getUsername())
-//                .password(member.getPassword())
-//                .authorities(authorities)
-//                .build();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username ->{
+            log.info("사용자: " + username);
+            return toUserDetails(memberService.findByMemberId(Long.parseLong(username)));
+        };
+    }
+
+    public UserDetails toUserDetails(Member member){
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(member.getRole()));
+        System.out.println("현재 유저의 권한: " + member.getRole());
+        return User.builder()
+                .username(member.getId().toString())
+                .password(member.getPassword())
+                .authorities(authorities)
+                .build();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
+//                .antMatchers("/login").permitAll() // 로그인 페이지 허용
+//                .anyRequest().authenticated() // 그 외 요청은 인증 필요
+//                .and()
+//                .formLogin() // 폼 로그인 활성화
+//                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
+//                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
+//                .permitAll()
+//                .and()
+//                .logout()
+//                .logoutUrl("/logout")
+//                .logoutSuccessUrl("/login?logout")
+//                .permitAll();
+
         http
                 .authorizeRequests()
-                .antMatchers("/js/**", "/css/**").permitAll()
-                .antMatchers("/**").permitAll();
-        http.csrf().disable();
+                .anyRequest().permitAll() // 모든 요청을 허용
+                .and()
+                .csrf().disable(); // CSRF 보호를 비활성화
+
         return http.build();
     }
 }
