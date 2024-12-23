@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# test 폴더를 전체 제외
+/test/
