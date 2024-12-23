@@ -5,6 +5,8 @@ import edu.du.academic_management_system.entity.Staff;
 import edu.du.academic_management_system.repository.CommonCodeRepository;
 import edu.du.academic_management_system.repository.StaffRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +17,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StaffService {
-    
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private final StaffRepository staffRepository;
     private final CommonCodeRepository commonCodeRepository;
 
@@ -28,7 +32,7 @@ public class StaffService {
         List<Staff> dummyStaffs = List.of(
             Staff.builder()
                 .name("김직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff1@du.ac.kr")
                 .tel("01056781001")
                 .address("서울시 중구")
@@ -44,7 +48,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("이직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff2@du.ac.kr")
                 .tel("01056781002")
                 .address("서울시 종로구")
@@ -60,7 +64,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("박직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff3@du.ac.kr")
                 .tel("01056781003")
                 .address("서울시 용산구")
@@ -76,7 +80,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("정직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff4@du.ac.kr")
                 .tel("01056781004")
                 .address("서울시 성동구")
@@ -92,7 +96,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("최직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff5@du.ac.kr")
                 .tel("01056781005")
                 .address("서울시 광진구")
@@ -108,7 +112,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("강직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff6@du.ac.kr")
                 .tel("01056781006")
                 .address("서울시 동대문구")
@@ -124,7 +128,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("윤직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff7@du.ac.kr")
                 .tel("01056781007")
                 .address("서울시 중랑구")
@@ -140,7 +144,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("한직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff8@du.ac.kr")
                 .tel("01056781008")
                 .address("서울시 성북구")
@@ -156,7 +160,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("임직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff9@du.ac.kr")
                 .tel("01056781009")
                 .address("서울시 강북구")
@@ -172,7 +176,7 @@ public class StaffService {
 
             Staff.builder()
                 .name("오직원")
-                .password("staff1234")
+                .password(passwordEncoder.encode("staff1234"))
                 .email("staff10@du.ac.kr")
                 .tel("01056781010")
                 .address("서울시 도봉구")

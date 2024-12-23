@@ -26,7 +26,7 @@ public abstract class Member {
     @Column(name = "member_id")
     private Long id;
     
-    @Column(length = 50)
+    @Column(length = 100)
     private String password;
     
     @Column(length = 20)

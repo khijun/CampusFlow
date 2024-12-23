@@ -5,6 +5,8 @@ import edu.du.academic_management_system.entity.Professor;
 import edu.du.academic_management_system.repository.CommonCodeRepository;
 import edu.du.academic_management_system.repository.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProfessorService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     private final ProfessorRepository professorRepository;
     private final CommonCodeRepository commonCodeRepository;
@@ -28,7 +33,7 @@ public class ProfessorService {
         List<Professor> dummyProfessors = List.of(
             Professor.builder()
                 .name("김교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof1@du.ac.kr")
                 .tel("01012341001")
                 .address("서울시 서대문구")
@@ -44,7 +49,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("이교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof2@du.ac.kr")
                 .tel("01012341002")
                 .address("서울시 마포구")
@@ -60,7 +65,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("박교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof3@du.ac.kr")
                 .tel("01012341003")
                 .address("서울시 강남구")
@@ -76,7 +81,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("정교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof4@du.ac.kr")
                 .tel("01012341004")
                 .address("서울시 송파구")
@@ -92,7 +97,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("최교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof5@du.ac.kr")
                 .tel("01012341005")
                 .address("서울시 용산구")
@@ -108,7 +113,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("강교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof6@du.ac.kr")
                 .tel("01012341006")
                 .address("서울시 강서구")
@@ -124,7 +129,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("윤교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof7@du.ac.kr")
                 .tel("01012341007")
                 .address("서울시 영등포구")
@@ -140,7 +145,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("한교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof8@du.ac.kr")
                 .tel("01012341008")
                 .address("서울시 동작구")
@@ -156,7 +161,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("임교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof9@du.ac.kr")
                 .tel("01012341009")
                 .address("서울시 관악구")
@@ -172,7 +177,7 @@ public class ProfessorService {
 
             Professor.builder()
                 .name("오교수")
-                .password("prof1234")
+                .password(passwordEncoder.encode("prof1234"))
                 .email("prof10@du.ac.kr")
                 .tel("01012341010")
                 .address("서울시 성북구")
