@@ -63,7 +63,7 @@ public class SecurityConfig{
 //                .anyRequest().authenticated() // 그 외 요청은 인증 필요
 //                .and()
 //                .formLogin() // 폼 로그인 활성화
-//                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
+////                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
 //                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
 //                .permitAll()
 //                .and()
