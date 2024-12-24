@@ -11,5 +11,5 @@ public enum InquiryStatus {
     @Code(name = "처리중", description =  "처리중 상태")
     IN_PROGRESS,
     @Code(name = "완료", description = "완료 상태")
-    COMPLETED       // 완료
+    COMPLETED;
 }

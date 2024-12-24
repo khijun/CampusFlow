@@ -19,11 +19,13 @@ public class Inquiry {
     @Column(name = "inquiry_id")
     private Long inquiryId;
 
-    @Column(name = "inquiry_id2", nullable = false)
-    private Long inquiryId2;
+    @ManyToOne
+    @JoinColumn(name = "inquiry_id2", nullable = false)
+    private Inquiry inquiryId2;
 
+    @ManyToOne
     @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    private Member memberId;
 
     @Column(name = "subject", length = 100)
     private String subject;
@@ -31,9 +33,9 @@ public class Inquiry {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "ENUM('PENDING', 'IN_PROGRESS', 'COMPLETED')")
-    private InquiryStatus status;
+    @ManyToOne
+    @JoinColumn(name = "inquiry_status")
+    private CommonCode inquiryStatus;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -48,6 +50,5 @@ public class Inquiry {
     @OneToMany(mappedBy = "responseTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Inquiry> responses; // 이 문의에 대한 답변 목록
 
-    @Column(name = "response_created_at") // 답변 작성 시간
-    private LocalDateTime responseCreatedAt; // 답변 작성 시간
+
 }

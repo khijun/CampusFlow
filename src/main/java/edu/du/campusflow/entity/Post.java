@@ -27,7 +27,7 @@ public class Post {
     private Student student; // 작성한 학생 엔티티
 
     @ManyToOne(fetch = FetchType.LAZY) // 자기 참조 관계
-    @JoinColumn(name = "post_id2") // 외래 키 설정
+    @JoinColumn(name = "related_post_id") // 외래 키 설정
     private Post relatedPost; // 관련 게시물 엔티티 (댓글)
 
     @Column(name = "title", length = 100)
@@ -43,5 +43,16 @@ public class Post {
     private LocalDateTime updatedAt; // 업데이트 날짜
 
     @OneToMany(mappedBy = "relatedPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<Post> comments; // 댓글 목록
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
