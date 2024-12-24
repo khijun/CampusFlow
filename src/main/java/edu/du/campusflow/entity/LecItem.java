@@ -10,6 +10,7 @@ import javax.persistence.*;
 public class LecItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id", nullable = false)
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 

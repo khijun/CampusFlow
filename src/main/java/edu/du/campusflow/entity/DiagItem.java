@@ -10,6 +10,7 @@ import javax.persistence.*;
 public class DiagItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment 사용
     @Column(name = "answer_id", nullable = false)
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 

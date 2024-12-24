@@ -10,6 +10,7 @@ import javax.persistence.*;
 public class DiagFeedback {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment 사용
     @Column(name = "feedback_id", nullable = false)
     private Long feedbackId; // feedback_id, BIGINT -> Long으로 매핑
 
