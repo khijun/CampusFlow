@@ -1,7 +1,6 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.entity.UploadedFile;
-import edu.du.campusflow.entity.FileId;
 import edu.du.campusflow.repository.UploadedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class UploadedFileService {
             
             // 프로필 이미지
             dummyFiles.add(UploadedFile.builder()
-                    .fileId(new FileId((long)i, 1L))
+                    .id((long)i)
                     .fileUuid(UUID.randomUUID().toString())
                     .fileName(prefix + "_profile.jpg")
                     .fileType("image/jpeg")
