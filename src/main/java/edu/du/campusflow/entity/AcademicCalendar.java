@@ -30,6 +30,6 @@ public class AcademicCalendar {
     @Column(name = "end_date")
     private LocalDateTime endDate; // 종료 날짜
 
-    @Column(name = "Field2", columnDefinition = "TEXT")
-    private String field2; // 추가 필드
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description; // 추가 필드
 }
