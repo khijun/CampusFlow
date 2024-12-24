@@ -2,6 +2,8 @@ package edu.du.campusflow;
 
 import edu.du.campusflow.entity.Student;
 import edu.du.campusflow.entity.UploadedFile;
+import edu.du.campusflow.enums.AcademicStatus;
+import edu.du.campusflow.enums.DeptStatus;
 import edu.du.campusflow.enums.Gender;
 import edu.du.campusflow.repository.UploadedFileRepository;
 import edu.du.campusflow.service.*;
@@ -70,5 +72,8 @@ public class hijunTest {
         @Test
         void commonCodeServiceTest() throws NoSuchFieldException {
             commonCodeService.insertCodeFromEnum(Gender.class);
+            commonCodeService.insertCodeFromEnum(DeptStatus.class);
+            commonCodeService.insertCodeFromEnum(AcademicStatus.class);
+            commonCodeService.insertCodeFromEnum(DeptStatus.class);
         }
     }
