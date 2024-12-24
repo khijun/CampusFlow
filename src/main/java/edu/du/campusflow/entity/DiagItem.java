@@ -9,8 +9,8 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "lec_items") // 테이블 이름을 명시
-public class LecItem {
+@Table(name = "diag_items") // 테이블 이름을 명시
+public class DiagItem {
 
     @Id
     @Column(name = "answer_id", nullable = false)
