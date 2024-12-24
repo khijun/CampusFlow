@@ -1,4 +1,4 @@
 package edu.du.campusflow.entity;
 
-public class Evaluation {
+public class diag_questions {
 }
