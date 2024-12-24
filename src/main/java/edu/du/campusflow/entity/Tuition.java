@@ -20,13 +20,14 @@ public class Tuition {
     @Column(name = "tuition_id")
     private Long id;
 
+    /**Depart**/
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @Column(name = "dept_id", nullable = false)
 //    private Depart deptId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tui_year", nullable = false)
-    private TermInfo tuiYear;
+    @Id
+    @Column(name = "tui_year")
+    private Year tuiYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester")

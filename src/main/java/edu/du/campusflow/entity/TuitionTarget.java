@@ -28,7 +28,7 @@ public class TuitionTarget{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tui_year", nullable = false)
-    private TermInfo tuiYear;
+    private Tuition tuiYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester")
