@@ -27,10 +27,6 @@ public class TuitionTarget{
     private Tuition tuitionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tui_year", nullable = false)
-    private Tuition tuiYear;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester")
     private CommonCode semester;
 
