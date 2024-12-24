@@ -4,6 +4,7 @@ import edu.du.campusflow.entity.Student;
 import edu.du.campusflow.entity.UploadedFile;
 import edu.du.campusflow.enums.Gender;
 import edu.du.campusflow.enums.RegStatus;
+import edu.du.campusflow.enums.Semester;
 import edu.du.campusflow.repository.UploadedFileRepository;
 import edu.du.campusflow.service.*;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,6 @@ public class DongTest {
 
         @Test
         void commonCodeServiceTest() throws NoSuchFieldException {
-            commonCodeService.insertCodeFromEnum(RegStatus.class);
+            commonCodeService.insertCodeFromEnum(Semester.class);
         }
     }
