@@ -18,12 +18,12 @@ public class Tuition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tuition_id")
-    private Long id;
+    private Long TuitionId;
 
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @Column(name = "dept_id", nullable = false)
-//    private Depart deptId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dept_id", nullable = false)
+    private Dept deptId;
 
 
     @Column(name = "tui_year")

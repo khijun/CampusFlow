@@ -20,7 +20,7 @@ public class TuitionTarget{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "target_id")
-    private Long id;
+    private Long targetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tuition_id", nullable = false)
