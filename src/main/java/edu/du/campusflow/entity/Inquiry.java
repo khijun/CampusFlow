@@ -20,8 +20,8 @@ public class Inquiry {
     private Long inquiryId;
 
     @ManyToOne
-    @JoinColumn(name = "inquiry_id2", nullable = false)
-    private Inquiry inquiryId2;
+    @JoinColumn(name = "related_inquiry_id", nullable = false)
+    private Inquiry relatedInquiry;
 
     @ManyToOne
     @Column(name = "member_id", nullable = false)
