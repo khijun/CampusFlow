@@ -13,8 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "uploaded_file")
 public class UploadedFile {
-    @EmbeddedId
-    private FileId fileId;  // 복합키로 FileId 클래스를 사용
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dept_id")
+    private Long id;  // 복합키로 FileId 클래스를 사용
 
     @Column(name = "file_uuid")
     private String fileUuid;
