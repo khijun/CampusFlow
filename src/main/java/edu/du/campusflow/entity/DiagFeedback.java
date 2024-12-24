@@ -2,10 +2,7 @@ package edu.du.campusflow.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -16,8 +13,9 @@ public class DiagFeedback {
     @Column(name = "feedback_id", nullable = false)
     private Long feedbackId; // feedback_id, BIGINT -> Long으로 매핑
 
-    @Column(name = "ofregistration_id", nullable = false)
-    private Long ofregistrationId; // ofregistration_id, BIGINT -> Long으로 매핑
+//    @ManyToOne
+//    @JoinColumn(name = "ofregistration_id", nullable = false)
+//    private OfRegistration ofRegistration; // ofregistration_id 외래키
 
     @Column(name = "fd_content")
     private String fdContent; // fd_content, VARCHAR(200) -> String으로 매핑

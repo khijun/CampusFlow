@@ -2,10 +2,7 @@ package edu.du.campusflow.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -16,11 +13,13 @@ public class LecItem {
     @Column(name = "answer_id", nullable = false)
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 
-    @Column(name = "ofregistration_id", nullable = false)
-    private Long ofregistrationId; // ofregistration_id, BIGINT -> Long으로 매핑
+//    @ManyToOne
+//    @JoinColumn(name = "ofregistration_id", nullable = false)
+//    private OfRegistration ofRegistration; // 외래 키: ofregistration_id
 
-    @Column(name = "question_id", nullable = false)
-    private Long questionId; // question_id, BIGINT -> Long으로 매핑
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false)
+    private LecQuestion lecQuestion; // 외래 키: question_id
 
     @Column(name = "score")
     private Integer score; // score, INT -> Integer로 매핑
