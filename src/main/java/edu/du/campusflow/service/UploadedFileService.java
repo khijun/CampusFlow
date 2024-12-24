@@ -35,7 +35,7 @@ public class UploadedFileService {
             
             // 프로필 이미지
             dummyFiles.add(UploadedFile.builder()
-                    .fileId(new FileId((long)i, 1L))
+                    .id((long)i)
                     .fileUuid(UUID.randomUUID().toString())
                     .fileName(prefix + "_profile.jpg")
                     .fileType("image/jpeg")
