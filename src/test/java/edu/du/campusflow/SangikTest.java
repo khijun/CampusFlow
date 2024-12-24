@@ -2,13 +2,9 @@ package edu.du.campusflow;
 
 import edu.du.campusflow.entity.Student;
 import edu.du.campusflow.entity.UploadedFile;
-import edu.du.campusflow.enums.AcademicStatus;
-import edu.du.campusflow.enums.CurriculumStatus;
-import edu.du.campusflow.enums.DeptStatus;
-import edu.du.campusflow.enums.Gender;
+import edu.du.campusflow.enums.*;
 import edu.du.campusflow.repository.UploadedFileRepository;
 import edu.du.campusflow.service.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,5 +73,6 @@ public class SangikTest {
       commonCodeService.insertCodeFromEnum(DeptStatus.class);
       commonCodeService.insertCodeFromEnum(AcademicStatus.class);
       commonCodeService.insertCodeFromEnum(CurriculumStatus.class);
+      commonCodeService.insertCodeFromEnum(CompletionState.class);
    }
 }
