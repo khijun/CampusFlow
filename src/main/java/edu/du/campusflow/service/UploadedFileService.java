@@ -1,7 +1,6 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.entity.UploadedFile;
-import edu.du.campusflow.entity.FileId;
 import edu.du.campusflow.repository.UploadedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,3 +1,5 @@
+package edu.du.campusflow.entity;
+
 import lombok.Data;
 
 import javax.persistence.Entity;
