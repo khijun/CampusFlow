@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -30,5 +31,8 @@ public class Dept {
     @JoinColumn(name = "dept_status", referencedColumnName = "code_id")
     private CommonCode deptStatus;
 
+    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Curriculum> curriculums;
 }
 
