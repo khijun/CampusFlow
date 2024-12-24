@@ -20,12 +20,12 @@ public class Tuition {
     @Column(name = "tuition_id")
     private Long id;
 
-    /**Depart**/
+
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @Column(name = "dept_id", nullable = false)
 //    private Depart deptId;
 
-    @Id
+
     @Column(name = "tui_year")
     private Year tuiYear;
 
