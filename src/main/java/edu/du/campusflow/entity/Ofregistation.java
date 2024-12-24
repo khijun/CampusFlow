@@ -1,5 +1,6 @@
 package edu.du.campusflow.entity;
 
+import edu.du.campusflow.enums.RegStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "Ofregistration", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"lecture_id", "student_id"})
+    @UniqueConstraint(columnNames = {"lecture_id", "student_id", "reg_status"})
 })
 public class Ofregistation {
 
@@ -29,16 +30,11 @@ public class Ofregistation {
     @Column(name = "reg_date")
     private LocalDate regDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "reg_status")
-    private RegStatus regStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reg_status")
+    private CommonCode regStatus;
 
     @Column(name = "retake")
     private Boolean retake;
 
-    public enum RegStatus {
-        REQUESTED,  // 신청
-        APPROVED,   // 승인
-        REJECTED    // 거절
-    }
 }
