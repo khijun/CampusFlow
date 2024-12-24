@@ -74,6 +74,5 @@ public class hijunTest {
             commonCodeService.insertCodeFromEnum(Gender.class);
             commonCodeService.insertCodeFromEnum(DeptStatus.class);
             commonCodeService.insertCodeFromEnum(AcademicStatus.class);
-            commonCodeService.insertCodeFromEnum(DeptStatus.class);
         }
     }
