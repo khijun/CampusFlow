@@ -4,6 +4,7 @@ import edu.du.campusflow.enums.InquiryStatus;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -40,11 +41,13 @@ public class Inquiry {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "response_content", columnDefinition = "TEXT")
-    private String responseContent; // 답변 내용
+    @ManyToOne(fetch = FetchType.LAZY) // 자기 참조 관계
+    @JoinColumn(name = "response_to_id") // 답변이 참조하는 문의 ID
+    private Inquiry responseTo; // 이 문의에 대한 답변
 
-    @Column(name = "response_created_at")
+    @OneToMany(mappedBy = "responseTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Inquiry> responses; // 이 문의에 대한 답변 목록
+
+    @Column(name = "response_created_at") // 답변 작성 시간
     private LocalDateTime responseCreatedAt; // 답변 작성 시간
-
-
 }
