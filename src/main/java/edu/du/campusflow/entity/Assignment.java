@@ -27,7 +27,7 @@ public class Assignment { //과제 정보 데이터를 저장하는 엔티티
 
     @ManyToOne
     @JoinColumn(name = "file_id")
-    private UploadedFile uploadedFile; //파일 아이디
+    private FileInfo fileInfo; //파일 아이디
 
     @Column(name = "assignment_name", length = 20)
     private String assignmentName; //과제 제목

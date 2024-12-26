@@ -31,7 +31,7 @@ public class Submission { //학생이 제출한 과제 데이터를 저장하는
 
     @ManyToOne
     @JoinColumn(name = "file_id")
-    private UploadedFile uploadedFile; //파일 아이디
+    private FileInfo fileInfo; //파일 아이디
 
     @Column(name = "submission_date")
     private LocalDateTime submissionDate;  //과제 제출일
