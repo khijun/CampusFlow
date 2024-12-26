@@ -3,7 +3,7 @@ package edu.du.campusflow.enums;
 import edu.du.campusflow.annotation.Code;
 
 @Code(name = "성적 비율", description = "성적항목별 비율을 나타냄")
-public enum GradeRatio {
+public enum GradeRatio{
 
     @Code(name = "중간고사 비율", description = "중간고사 성적 비율")
     MIDTERM, //중간 성적 비율
