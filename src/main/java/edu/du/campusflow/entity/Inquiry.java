@@ -42,7 +42,7 @@ public class Inquiry {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 자기 참조 관계
+    @OneToOne
     @JoinColumn(name = "response_to_id") // 답변이 참조하는 문의 ID
     private Inquiry responseTo; // 이 문의에 대한 답변
 

@@ -35,7 +35,7 @@ public class InquiryService {
 
         // CommonCode를 생성하고 ENUM을 문자열로 변환하여 설정
         CommonCode commonCode = new CommonCode();
-        commonCode.setCodeValue(InquiryStatus.PENDING.getValue()); // ENUM을 문자열로 변환하여 사용
+        commonCode.setCodeValue(InquiryStatus.PENDING.name()); // ENUM을 문자열로 변환하여 사용
         inquiry.setInquiryStatus(commonCode); // inquiryStatus에 설정
 
         return inquiryRepository.save(inquiry);
