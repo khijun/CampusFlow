@@ -12,32 +12,32 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "course")
-public class Course {
+@Table(name = "curriculumSubject")
+public class CurriculumSubject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_record_id")
-    private Long courseRecordId; // 기본키 이름
+    @Column(name = "curriculum_subject_id")
+    private Long curriculumSubjectId; // 기본키 이름
 
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;  // Curriculum 엔티티 참조
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private SubjectInfo course; //SubjectInfo 엔티티 참조
+    @JoinColumn(name = "subject_id")
+    private Subject subject; //SubjectInfo 엔티티 참조
 
     @ManyToOne
-    @JoinColumn(name = "prereq_course_id")
-    private SubjectInfo prerequisiteCourse; //선 수강 과목
+    @JoinColumn(name = "prereq_subject_id")
+    private Subject prereqSubject; //선 수강 과목
 
     @ManyToOne
     @JoinColumn(name = "semester", referencedColumnName = "code_id")
     private CommonCode semester;  //학기
 
     @ManyToOne
-    @JoinColumn(name = "course_type", referencedColumnName = "code_id")
-    private CommonCode courseType; //이수 구분
+    @JoinColumn(name = "subject_type", referencedColumnName = "code_id")
+    private CommonCode subjectType; //이수 구분
 
 }
