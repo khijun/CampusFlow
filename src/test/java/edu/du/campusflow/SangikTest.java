@@ -1,7 +1,6 @@
 package edu.du.campusflow;
 
 import edu.du.campusflow.enums.*;
-import edu.du.campusflow.repository.UploadedFileRepository;
 import edu.du.campusflow.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,6 @@ public class SangikTest {
 
    @Autowired
    private StaffService staffService;
-
-   @Autowired
-   private UploadedFileService uploadedFileService;
-   @Autowired
-   private UploadedFileRepository uploadedFileRepository;
    @Autowired
    private MemberService memberService;
 
