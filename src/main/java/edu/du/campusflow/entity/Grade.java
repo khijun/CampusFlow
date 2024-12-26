@@ -24,7 +24,7 @@ public class Grade {
 
     @ManyToOne
     @JoinColumn(name = "grade_type",referencedColumnName = "code_id")
-    private CommonCode grade_type;
+    private CommonCode gradeType;
 
     private int score;
 }
