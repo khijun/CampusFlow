@@ -18,15 +18,11 @@ public class LectureTime { //강의 시간 정보를 저장하는 엔티티
 
     @Id
     @Column(name = "lecture_time_id")
-    private Long lecturePeriod; //강의 교시
+    private Long lectureTimeId; //강의 교시
 
     @ManyToOne
     @JoinColumn(name = "lecture_week_id")
     private LectureWeek lectureWeek; // 강의 주차 아이디
-
-    @ManyToOne
-    @JoinColumn(name = "lecture_id")
-    private Lecture lecture; //강의 아이디
 
     @ManyToOne
     @JoinColumn(name = "facility_id")

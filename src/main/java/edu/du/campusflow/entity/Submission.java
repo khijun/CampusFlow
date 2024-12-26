@@ -29,13 +29,13 @@ public class Submission { //학생이 제출한 과제 데이터를 저장하는
     @JoinColumn(name = "assignment_id")
     private Assignment assignment; //과제 아이디
 
-    @ManyToOne
-    @JoinColumn(name = "file_id")
-    private FileInfo fileInfo; //파일 아이디
-
     @Column(name = "submission_date")
     private LocalDateTime submissionDate;  //과제 제출일
 
     @Column(name = "assignment_score")
     private Integer assignmentScore; //과제 점수
+
+    @ManyToOne
+    @JoinColumn(name = "file_id")
+    private FileInfo fileInfo; //파일 아이디
 }
