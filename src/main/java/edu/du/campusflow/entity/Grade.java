@@ -23,8 +23,8 @@ public class Grade {
 //    private Completion completion;              // 이수 테이블 생성 시 주석 풀기
 
     @ManyToOne
-    @JoinColumn(name = "grade_status",referencedColumnName = "code_id")
-    private CommonCode grade_status;
+    @JoinColumn(name = "grade_type",referencedColumnName = "code_id")
+    private CommonCode grade_type;
 
     private int score;
 }

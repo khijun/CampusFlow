@@ -22,11 +22,13 @@ public class FamilyInfo {
     @JoinColumn(name = "student_id")
     private Student student;             //학번
 
-    private String family_relation;      //가족 관계
+    @ManyToOne
+    @JoinColumn(name = "family_relation",referencedColumnName = "code_id")
+    private CommonCode familyRelation;      //가족 관계
 
     private String name;                 // 가족 이름
 
-    private LocalDateTime birth_date;      // 생년월일
+    private LocalDateTime birthDate;      // 생년월일
 
     private String contact;               //전화번호
 

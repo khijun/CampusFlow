@@ -25,13 +25,13 @@ public class ChangeHistory {
 
     @ManyToOne
     @JoinColumn(name = "before_code",referencedColumnName = "code_id")
-    private CommonCode before_code;            // 변경 전 코드
+    private CommonCode beforeCode;            // 변경 전 코드
 
     @ManyToOne
     @JoinColumn(name = "after_code",referencedColumnName = "code_id")
-    private CommonCode after_code;            // 변경 후 코드
+    private CommonCode afterCode;            // 변경 후 코드
 
-    private LocalDateTime approval_date;        //승인 일자
+    private LocalDateTime approvalDate;        //승인 일자
 
     private int grade;         //학년
 }

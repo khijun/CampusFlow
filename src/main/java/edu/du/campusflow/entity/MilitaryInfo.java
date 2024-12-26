@@ -15,7 +15,6 @@ import javax.persistence.*;
 public class MilitaryInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -25,10 +24,10 @@ public class MilitaryInfo {
 
     @ManyToOne
     @JoinColumn(name = "discharge_type", referencedColumnName = "code_id")
-    private CommonCode discharge_type;           // 전역 구분 코드
+    private CommonCode dischargeType;           // 전역 구분 코드
 
-    private String final_rank;                   // 최종 군 계급
+    private String finalRank;                   // 최종 군 계급
 
-    private String service_number;               //군번
+    private String serviceNumber;               //군번
 
 }
