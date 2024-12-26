@@ -34,7 +34,7 @@ public class FileInfo {
     private String filePath;
 
     @Column(name = "file_size")
-    private String fileSize;
+    private double fileSize;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

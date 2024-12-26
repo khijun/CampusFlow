@@ -1,6 +1,7 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.define.FileDefine;
+import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.repository.FileInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 public class FileUploadService {
 
     private final FileInfoRepository uploadedFileRepository;
+    private final AuthService authService;
 
     // 파일 확장자에 따른 파일 경로를 얻는 메서드
     public String getPathByExtension(String extension) {
@@ -50,12 +52,21 @@ public class FileUploadService {
         for (MultipartFile file : files) {
             if (file.isEmpty()) continue;
             try {
-                String name = file.getOriginalFilename();
-                String path = getPathByExtension(file.getOriginalFilename());
-                String type = getFileExtension(file.getOriginalFilename());
                 String uuid = String.valueOf(System.nanoTime());
+                String realName = file.getOriginalFilename();
+                String type = getFileExtension(file.getOriginalFilename());
+                String path = getPathByExtension(file.getOriginalFilename());
                 double fileSize = file.getSize();
                 LocalDateTime createAt = LocalDateTime.now();
+                FileInfo fileInfo = FileInfo.builder()
+                        .member(authService.getCurrentMember())
+                        .fileUuid(uuid)
+                        .fileName(realName)
+                        .fileType(type)
+                        .filePath(path)
+                        .fileSize(fileSize)
+                        .createdAt(createAt)
+                        .build();
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);
             }
