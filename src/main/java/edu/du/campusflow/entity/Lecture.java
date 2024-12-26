@@ -14,7 +14,6 @@ import javax.persistence.*;
 @ToString
 @Table(name = "lecture")
 public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lecture_id")
@@ -25,8 +24,8 @@ public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
     private Professor professor; //교수 아이디
 
     @ManyToOne
-    @JoinColumn(name = "course_record_id")
-    private CurriculumSubject course; // 강의에 대한 교과목 기록 (course 테이블의 기록 아이디만 참조)
+    @JoinColumn(name = "curriculum_subject_id")
+    private CurriculumSubject curriculumSubject; // 강의에 대한 교과목 기록 (교육과정교과목 테이블의 기록 아이디만 참조)
 
     @ManyToOne
     @JoinColumn(name = "file_id")
