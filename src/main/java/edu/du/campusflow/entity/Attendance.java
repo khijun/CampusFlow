@@ -10,25 +10,30 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "completion")
-public class Completion {
+@Table(name = "attendance")
+public class Attendance {
 
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   @Column(name = "completion_id")
-   private Long completionId;
+   @Column(name = "attendance_id")
+   private Long attendanceId;
 
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "ofregistration_id", nullable = false) // 외래 키 매핑
    private Ofregistration ofRegistration;
 
-   @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "completion_state", referencedColumnName = "code_id")
-   private CommonCode completionState; // 공통 코드와 연관 (이수 상태)
+   @Column(name = "lecture_period")
+   private Long lecturePeriod;
+
+   @Column(name = "attendance_date")
+   private LocalDateTime attendanceDate;
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "finalGradeStatus", referencedColumnName = "code_id")
-   private CommonCode finalGradeStatus; // 공통 코드와 연관 (최종 등급)
+   @JoinColumn(name = "attendance_status", referencedColumnName = "code_id")
+   private CommonCode attendanceStatus; // 공통 코드 (출석 상태)
+
+   @Column(name = "remarks", length = 200)
+   private String remarks;
 
    @Column(name = "created_at")
    private LocalDateTime createdAt;

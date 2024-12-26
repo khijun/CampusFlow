@@ -31,5 +31,6 @@ public class SangikTest {
       commonCodeService.insertCodeFromEnum(CurriculumStatus.class);
       commonCodeService.insertCodeFromEnum(CompletionStatus.class);
       commonCodeService.insertCodeFromEnum(FinalGradeStatus.class);
+      commonCodeService.insertCodeFromEnum(AttendanceStatus.class);
    }
 }
