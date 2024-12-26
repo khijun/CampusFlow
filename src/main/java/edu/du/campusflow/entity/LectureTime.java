@@ -32,8 +32,9 @@ public class LectureTime { //강의 시간 정보를 저장하는 엔티티
     @JoinColumn(name = "facility_id")
     private Facility facility; //강의실 아이디
 
-    @Column(name = "lecture_day", length = 10)
-    private String lectureDay; //강의 요일
+    @ManyToOne
+    @JoinColumn(name = "lecture_day", referencedColumnName = "code_id")
+    private CommonCode lectureDay; //강의 요일
 
     @Column(name = "start_time")
     private LocalTime startTime; //시작 시간
