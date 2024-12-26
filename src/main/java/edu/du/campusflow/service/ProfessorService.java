@@ -1,8 +1,11 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.entity.CommonCode;
+import edu.du.campusflow.entity.Dept;
 import edu.du.campusflow.entity.Professor;
 import edu.du.campusflow.repository.CommonCodeRepository;
+import edu.du.campusflow.repository.DeptRepository;
+import edu.du.campusflow.repository.FileInfoRepository;
 import edu.du.campusflow.repository.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +26,24 @@ public class ProfessorService {
     
     private final ProfessorRepository professorRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final FileInfoRepository fileInfoRepository;
+    private final DeptRepository deptRepository;
 
     @Transactional
     public void createDummyProfessors() {
         // 기존에 저장된 성별 코드 가져오기
         CommonCode maleGender = commonCodeRepository.findByCodeValue("MALE");
         CommonCode femaleGender = commonCodeRepository.findByCodeValue("FEMALE");
+        Dept computer = deptRepository.findById(1L).orElse(null);
+        Dept mechanical = deptRepository.findById(2L).orElse(null);
+        Dept electrical = deptRepository.findById(3L).orElse(null);
+        Dept civil = deptRepository.findById(4L).orElse(null);
+        Dept chemical = deptRepository.findById(5L).orElse(null);
+        Dept business = deptRepository.findById(6L).orElse(null);
+        Dept economics = deptRepository.findById(7L).orElse(null);
+        Dept psychology = deptRepository.findById(8L).orElse(null);
+        Dept english = deptRepository.findById(9L).orElse(null);
+
 
         List<Professor> dummyProfessors = List.of(
             Professor.builder()
@@ -38,13 +53,13 @@ public class ProfessorService {
                 .tel("01012341001")
                 .address("서울시 서대문구")
                 .birthDate(LocalDate.of(1970, 3, 15))
-                .deptId(1L)
+                .dept(deptRepository.findById(1L).orElse(null))
                 .hireDate(LocalDate.of(2010, 3, 1))
                 .isActive(true)
                 .gender(maleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(11L)
+                .file(fileInfoRepository.findById(11L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -54,13 +69,13 @@ public class ProfessorService {
                 .tel("01012341002")
                 .address("서울시 마포구")
                 .birthDate(LocalDate.of(1975, 5, 20))
-                .deptId(1L)
+                .dept(deptRepository.findById(1L).orElse(null))
                 .hireDate(LocalDate.of(2012, 3, 1))
                 .isActive(true)
                 .gender(femaleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(12L)
+                .file(fileInfoRepository.findById(12L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -70,13 +85,13 @@ public class ProfessorService {
                 .tel("01012341003")
                 .address("서울시 강남구")
                 .birthDate(LocalDate.of(1968, 8, 10))
-                .deptId(2L)
+                .dept(deptRepository.findById(2L).orElse(null))
                 .hireDate(LocalDate.of(2008, 9, 1))
                 .isActive(true)
                 .gender(maleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(13L)
+                .file(fileInfoRepository.findById(13L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -86,13 +101,13 @@ public class ProfessorService {
                 .tel("01012341004")
                 .address("서울시 송파구")
                 .birthDate(LocalDate.of(1972, 11, 25))
-                .deptId(2L)
+                .dept(deptRepository.findById(2L).orElse(null))
                 .hireDate(LocalDate.of(2011, 3, 1))
                 .isActive(true)
                 .gender(femaleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(14L)
+                .file(fileInfoRepository.findById(14L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -102,13 +117,13 @@ public class ProfessorService {
                 .tel("01012341005")
                 .address("서울시 용산구")
                 .birthDate(LocalDate.of(1965, 4, 5))
-                .deptId(3L)
+                .dept(deptRepository.findById(3L).orElse(null))
                 .hireDate(LocalDate.of(2005, 3, 1))
                 .isActive(true)
                 .gender(maleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(15L)
+                .file(fileInfoRepository.findById(15L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -118,13 +133,13 @@ public class ProfessorService {
                 .tel("01012341006")
                 .address("서울시 강서구")
                 .birthDate(LocalDate.of(1973, 7, 15))
-                .deptId(3L)
+                .dept(deptRepository.findById(3L).orElse(null))
                 .hireDate(LocalDate.of(2013, 9, 1))
                 .isActive(true)
                 .gender(femaleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(16L)
+                .file(fileInfoRepository.findById(16L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -134,13 +149,13 @@ public class ProfessorService {
                 .tel("01012341007")
                 .address("서울시 영등포구")
                 .birthDate(LocalDate.of(1969, 9, 20))
-                .deptId(4L)
+                .dept(deptRepository.findById(4L).orElse(null))
                 .hireDate(LocalDate.of(2009, 3, 1))
                 .isActive(true)
                 .gender(maleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(17L)
+                .file(fileInfoRepository.findById(17L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -150,13 +165,13 @@ public class ProfessorService {
                 .tel("01012341008")
                 .address("서울시 동작구")
                 .birthDate(LocalDate.of(1971, 12, 3))
-                .deptId(4L)
+                .dept(deptRepository.findById(4L).orElse(null))
                 .hireDate(LocalDate.of(2010, 9, 1))
                 .isActive(true)
                 .gender(femaleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(18L)
+                .file(fileInfoRepository.findById(18L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -166,13 +181,13 @@ public class ProfessorService {
                 .tel("01012341009")
                 .address("서울시 관악구")
                 .birthDate(LocalDate.of(1967, 2, 28))
-                .deptId(5L)
+                .dept(deptRepository.findById(5L).orElse(null))
                 .hireDate(LocalDate.of(2007, 3, 1))
                 .isActive(true)
                 .gender(maleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(19L)
+                .file(fileInfoRepository.findById(19L).orElse(null))
                 .build(),
 
             Professor.builder()
@@ -182,13 +197,13 @@ public class ProfessorService {
                 .tel("01012341010")
                 .address("서울시 성북구")
                 .birthDate(LocalDate.of(1974, 6, 15))
-                .deptId(5L)
+                .dept(deptRepository.findById(5L).orElse(null))
                 .hireDate(LocalDate.of(2014, 3, 1))
                 .isActive(true)
                 .gender(femaleGender)
                 .createAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
-                .imageFileId(20L)
+                .file(fileInfoRepository.findById(20L).orElse(null))
                 .build()
         );
 

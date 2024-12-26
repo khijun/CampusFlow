@@ -56,8 +56,8 @@ public class StudentService {
         Student student = getStudentById(id);
 
         // 필요한 필드 업데이트
-        if (studentDetails.getDeptId() != null) {
-            student.setDeptId(studentDetails.getDeptId());
+        if (studentDetails.getDept() != null) {
+            student.setDept(studentDetails.getDept());
         }
         if (studentDetails.getGrade() != null) {
             student.setGrade(studentDetails.getGrade());
@@ -68,8 +68,8 @@ public class StudentService {
         if (studentDetails.getGraduationDate() != null) {
             student.setGraduationDate(studentDetails.getGraduationDate());
         }
-        if (studentDetails.getAcademicStatusCode() != null) {
-            student.setAcademicStatusCode(studentDetails.getAcademicStatusCode());
+        if (studentDetails.getAcademicStatus() != null) {
+            student.setAcademicStatus(studentDetails.getAcademicStatus());
         }
 
         return studentRepository.save(student);

@@ -1,11 +1,11 @@
 package edu.du.campusflow;
 
 import edu.du.campusflow.entity.Student;
-import edu.du.campusflow.entity.UploadedFile;
+import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.enums.AcademicStatus;
 import edu.du.campusflow.enums.DeptStatus;
 import edu.du.campusflow.enums.Gender;
-import edu.du.campusflow.repository.UploadedFileRepository;
+import edu.du.campusflow.repository.FileInfoRepository;
 import edu.du.campusflow.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class hijunTest {
         @Autowired
         private UploadedFileService uploadedFileService;
         @Autowired
-        private UploadedFileRepository uploadedFileRepository;
+        private FileInfoRepository uploadedFileRepository;
         @Autowired
         private MemberService memberService;
 
@@ -58,7 +58,7 @@ public class hijunTest {
 
             // 데이터 확인
             List<Student> students = studentService.getAllStudents();
-            List<UploadedFile> files = uploadedFileRepository.findAll();
+            List<FileInfo> files = uploadedFileRepository.findAll();
 
             System.out.println("생성된 학생 수: " + students.size());
             System.out.println("생성된 파일 수: " + files.size());
