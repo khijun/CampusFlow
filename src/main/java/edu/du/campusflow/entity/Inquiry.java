@@ -1,10 +1,9 @@
 package edu.du.campusflow.entity;
 
-import edu.du.campusflow.enums.InquiryStatus;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Data
 @Entity

@@ -69,9 +69,5 @@ public class InquiryService {
         return null;
     }
 
-//    // 특정 문의의 답변 목록 조회
-//    public List<Inquiry> getResponses(Long inquiryId) {
-//        Inquiry existingInquiry = getInquiryById(inquiryId);
-//        return existingInquiry != null ? existingInquiry.getResponses(): new ArrayList<Inquiry>();
-//    }
+
 }
