@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<nav th:fragment="headerFragment" class="header-nav">
+  <link href="css/header.css" rel="stylesheet">
+  <ul class="haeder-list">
+    <span th:text="${userName}">대 두 인</span>
+    <span th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
+    <a href="#" th:href="@{/logout}">로그아웃</a>
+  </ul>
+</nav>
+</html>

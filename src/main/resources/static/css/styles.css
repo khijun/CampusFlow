@@ -1,0 +1,146 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --background-color: #ecf0f1;
+    --text-color: #34495e;
+    --sidebar-width: 400px; /* 사이드바 너비 1.5배로 키움 (350px * 1.5) */
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    height: 100%;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.container {
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--secondary-color);
+    padding: 20px; /* 사이드바 내부 여백 1.5배로 키움 (60px * 1.5) */
+    transition: all 0.3s ease;
+    font-size: 27px; /* 기본 글자 크기 1.5배로 키움 (18px * 1.5) */
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 70px; /* 헤더 하단 여백 1.5배로 키움 (60px * 1.5) */
+}
+
+.sidebar-header h2 {
+    font-size: 42px; /* 제목 크기 1.5배로 키움 (28px * 1.5) */
+    color: white;
+    margin: 0;
+}
+
+.sidebar a {
+    display: block;
+    font-size: 30px; /* 링크 글자 크기 1.5배로 키움 (20px * 1.5) */
+    color: white;
+    padding: 24px; /* 링크 패딩 1.5배로 키움 (16px * 1.5) */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 3px;
+    margin-bottom: 15px; /* 링크 간격 1.5배로 키움 (14px * 1.5) */
+}
+
+.sidebar a:hover {
+    background-color: var(--primary-color);
+    transform: translateX(10px);
+}
+
+.sidebar a i {
+    margin-right: 22px; /* 아이콘 간격 1.5배로 키움 (15px * 1.5) */
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.header {
+    background-color: white;
+    color: var(--text-color);
+    padding: 45px; /* 상단 여백 1.5배로 키움 (30px * 1.5) */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 54px; /* 제목 크기 1.5배로 키움 (36px * 1.5) */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info img {
+    width: 90px; /* 프로필 이미지 크기 1.5배로 키움 (60px * 1.5) */
+    height: 90px;
+    border-radius: 50%;
+    margin-right: 30px; /* 이미지 간격 1.5배로 키움 (20px * 1.5) */
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 75px; /* 본문 여백 1.5배로 키움 (50px * 1.5) */
+    overflow: auto;
+}
+
+.main-content iframe {
+    width: 100%;
+    height: calc(100vh - 300px); /* iframe 높이 1.5배로 키움 (200px * 1.5) */
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    background-color: white;
+    color: var(--text-color);
+    text-align: center;
+    padding: 23px; /* 푸터 패딩 1.5배로 키움 (15px * 1.5) */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -var(--sidebar-width);
+        height: 100%;
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .toggle-sidebar {
+        display: block;
+    }
+}
+
+.toggle-sidebar {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 36px; /* 사이드바 토글 아이콘 크기 1.5배로 키움 (24px * 1.5) */
+    cursor: pointer;
+}

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.annotation.processing.Completion;
 import javax.persistence.*;
 
 @Entity
@@ -17,9 +18,9 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "completion_id")
-    private Completion completion;
+//    @ManyToOne
+//    @JoinColumn(name = "completion_id")
+//    private Completion completion;              // 이수 테이블 생성 시 주석 풀기
 
     @ManyToOne
     @JoinColumn(name = "grade_status",referencedColumnName = "code_id")

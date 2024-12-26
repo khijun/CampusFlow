@@ -1,0 +1,65 @@
+/* Header 스타일 */
+.header-nav {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽으로 정렬 */
+    align-items: center;
+    padding: 10px 20px;
+    color: black;
+}
+
+/* 헤더 리스트 스타일 */
+.header-list {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* 사용자 이름과 남은 시간 텍스트 */
+.header-list span {
+    margin-right: 15px;
+    font-size: 18px; /* 글자 크기 키움 */
+    font-weight: 400;
+    color: black; /* 글자 색상 변경 */
+}
+
+/* 로그아웃 링크 스타일 */
+.header-list a {
+    margin-left: 20px;
+    font-size: 18px; /* 글자 크기 키움 */
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    background-color: #007bff;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* 로그아웃 링크 호버 스타일 */
+.header-list a:hover {
+    background-color: #0056b3;
+}
+
+/* 모바일에서의 스타일 조정 */
+@media (max-width: 768px) {
+    .header-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-list {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-list span {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .header-list a {
+        margin-left: 0;
+        margin-bottom: 10px;
+    }
+}
