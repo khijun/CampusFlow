@@ -6,7 +6,7 @@ import edu.du.campusflow.enums.AcademicStatus;
 
 import edu.du.campusflow.enums.DeptStatus;
 import edu.du.campusflow.enums.Gender;
-import edu.du.campusflow.enums.InquiryStatus;
+
 import edu.du.campusflow.repository.UploadedFileRepository;
 import edu.du.campusflow.service.*;
 import org.junit.jupiter.api.Test;
