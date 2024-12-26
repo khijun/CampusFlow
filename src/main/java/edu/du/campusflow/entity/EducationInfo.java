@@ -12,15 +12,15 @@ public class EducationInfo {
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private Student student;
+    private Student student;               //학번
 
-    private String school_name;
+    private String school_name;              //학교명
 
-    private LocalDateTime enrollment_date;
+    private LocalDateTime enrollment_date;         //입학 날짜
 
-    private LocalDateTime graduation_date;
+    private LocalDateTime graduation_date;           //졸업 날짜
 
     @ManyToOne
     @JoinColumn(name = "graduation_status", referencedColumnName = "code_id")
-    private CommonCode status;
+    private CommonCode status;               // 졸업 여부 코드
 }

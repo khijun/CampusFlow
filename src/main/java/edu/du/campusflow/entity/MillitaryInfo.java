@@ -14,7 +14,7 @@ public class MillitaryInfo {
 
     @ManyToOne
     @JoinColumn(name = "discharge_type", referencedColumnName = "code_id")
-    private CommonCode discharge_type;           // 전역 구분
+    private CommonCode discharge_type;           // 전역 구분 코드
 
     private String final_rank;                   // 최종 군 계급
 
