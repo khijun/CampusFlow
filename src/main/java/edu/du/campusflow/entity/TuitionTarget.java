@@ -33,9 +33,6 @@ public class TuitionTarget{
     @Column(name = "paid_amount")
     private Long paidAmount;
 
-    @Column(name = "paid_status")
-    private Boolean paidStatus;
-
     @Column(name = "paid_date")
     private LocalDateTime paidDate;
 }
