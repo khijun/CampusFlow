@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UploadedFileService {
+public class FileUploadService {
     
     private final FileInfoRepository uploadedFileRepository;
 
