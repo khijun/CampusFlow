@@ -18,23 +18,20 @@ public class Submission { //학생이 제출한 과제 데이터를 저장하는
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "submission_id", nullable = false)
+    @Column(name = "submission_id")
     private Long submissionId; //과제 제출 아이디
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private Student student; //학번
 
     @ManyToOne
-    @JoinColumn(name = "assignment_id", nullable = false)
+    @JoinColumn(name = "assignment_id")
     private Assignment assignment; //과제 아이디
 
     @ManyToOne
-    @JoinColumn(name = "file_id", nullable = false)
+    @JoinColumn(name = "file_id")
     private UploadedFile uploadedFile; //파일 아이디
-
-//    @Column(name = "submitted_file", length = 100)
-//    private String submittedFile; //제출 파일명
 
     @Column(name = "submission_date")
     private LocalDateTime submissionDate;  //과제 제출일

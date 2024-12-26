@@ -17,19 +17,19 @@ public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "lecture_id", nullable = false)
+    @Column(name = "lecture_id")
     private Long lectureId; //강의 아이디
 
     @ManyToOne
-    @JoinColumn(name = "professor_id", nullable = false)
+    @JoinColumn(name = "professor_id")
     private Professor professor; //교수 아이디
 
     @ManyToOne
-    @JoinColumn(name = "course_record_id", nullable = false)
+    @JoinColumn(name = "course_record_id")
     private Course course; // 강의에 대한 교과목 기록 (course 테이블의 기록 아이디만 참조)
 
     @ManyToOne
-    @JoinColumn(name = "file_id", nullable = false)
+    @JoinColumn(name = "file_id")
     private UploadedFile uploadedFile; //강의계획서 파일 아이디
 
     @Column(name = "lecture_name", length = 20)
@@ -44,9 +44,6 @@ public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
     @ManyToOne
     @JoinColumn(name = "semester", referencedColumnName = "code_id")
     private CommonCode semester; // 학기 정보
-
-    @Column(name = "year")
-    private Integer year; //연도
 
     @ManyToOne
     @JoinColumn(name = "lecture_status", referencedColumnName = "code_id")

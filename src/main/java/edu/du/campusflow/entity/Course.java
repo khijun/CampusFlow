@@ -21,19 +21,16 @@ public class Course {
     private Long courseRecordId; // 기본키 이름
 
     @ManyToOne
-    @JoinColumn(name = "curriculum_id", nullable = false)
+    @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;  // Curriculum 엔티티 참조
 
     @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private SbjtInfo course; //SbjtInfo 엔티티 참조
+    @JoinColumn(name = "course_id")
+    private SubjectInfo course; //SubjectInfo 엔티티 참조
 
     @ManyToOne
-    @JoinColumn(name = "course_id2")
-    private SbjtInfo course2; //선 수강 과목
-
-    @Column(name = "target_year")
-    private Integer targetYear;
+    @JoinColumn(name = "prereq_course_id")
+    private SubjectInfo prerequisiteCourse; //선 수강 과목
 
     @ManyToOne
     @JoinColumn(name = "semester", referencedColumnName = "code_id")

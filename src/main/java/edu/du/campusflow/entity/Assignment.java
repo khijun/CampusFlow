@@ -18,15 +18,15 @@ public class Assignment { //과제 정보 데이터를 저장하는 엔티티
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "assignment_id", nullable = false)
+    @Column(name = "assignment_id")
     private Long assignmentId; //과제 아이디
 
     @ManyToOne
-    @JoinColumn(name = "lecture_id", nullable = false)
+    @JoinColumn(name = "lecture_id")
     private Lecture lecture; //강의 아이디
 
     @ManyToOne
-    @JoinColumn(name = "file_id", nullable = false)
+    @JoinColumn(name = "file_id")
     private UploadedFile uploadedFile; //파일 아이디
 
     @Column(name = "assignment_name", length = 20)
@@ -38,7 +38,5 @@ public class Assignment { //과제 정보 데이터를 저장하는 엔티티
     @Column(name = "due_date")
     private LocalDateTime dueDate; //과제 마감 기한
 
-//    @Column(name = "assignment_file")
-//    private String assignmentFile; //과제 파일명
 
 }

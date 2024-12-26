@@ -23,11 +23,13 @@ public class Facility { //강의실 데이터를 저장하는 엔티티
     @Column(name = "facility_name", length = 20)
     private String facilityName; // 강의실 이름
 
-    @Column(name = "building", length = 20)
-    private String building; //건물명
+    @ManyToOne
+    @JoinColumn(name = "building", referencedColumnName = "code_id")
+    private CommonCode building; //건물명
 
-    @Column(name = "floor", length = 20)
-    private String floor; //층수
+    @ManyToOne
+    @JoinColumn(name = "floor", referencedColumnName = "code_id")
+    private CommonCode floor; //층수
 
     @Column(name = "capacity")
     private Integer capacity; //수용인원

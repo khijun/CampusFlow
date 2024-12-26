@@ -21,15 +21,15 @@ public class LectureTime { //강의 시간 정보를 저장하는 엔티티
     private Long lecturePeriod; //강의 교시
 
     @ManyToOne
-    @JoinColumn(name = "lecture_week_id", nullable = false)
+    @JoinColumn(name = "lecture_week_id")
     private LectureWeek lectureWeek; // 강의 주차 아이디
 
     @ManyToOne
-    @JoinColumn(name = "lecture_id", nullable = false)
+    @JoinColumn(name = "lecture_id")
     private Lecture lecture; //강의 아이디
 
     @ManyToOne
-    @JoinColumn(name = "facility_id", nullable = false)
+    @JoinColumn(name = "facility_id")
     private Facility facility; //강의실 아이디
 
     @Column(name = "lecture_day", length = 10)
@@ -40,4 +40,9 @@ public class LectureTime { //강의 시간 정보를 저장하는 엔티티
 
     @Column(name = "end_time")
     private LocalTime endTime; //종료 시간
+
+    @ManyToOne
+    @JoinColumn(name = "class_status", referencedColumnName = "code_id")
+    private CommonCode classStatus;  // 수업 상태
+
 }
