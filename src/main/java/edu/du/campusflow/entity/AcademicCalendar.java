@@ -18,7 +18,7 @@ public class AcademicCalendar {
     private Long calendarId;
 
     @ManyToOne(fetch = FetchType.LAZY) // Staff와의 Many-to-One 관계
-    @JoinColumn(name = "staff_id", nullable = false) // 외래 키 설정
+    @JoinColumn(name = "staff_id") // 외래 키 설정
     private Staff staff; // 교직원 엔티티
 
     @Column(name = "title", length = 100)
@@ -31,5 +31,5 @@ public class AcademicCalendar {
     private LocalDateTime endDate; // 종료 날짜
 
     @Column(name = "description", columnDefinition = "TEXT")
-    private String description; // 추가 필드
+    private String description; //학사 일정 설명
 }

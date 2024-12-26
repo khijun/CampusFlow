@@ -19,11 +19,11 @@ public class Post {
     private Long postId;
 
     @ManyToOne(fetch = FetchType.LAZY) // Department와의 Many-to-One 관계
-    @JoinColumn(name = "dept_id", nullable = false) // 외래 키 설정
+    @JoinColumn(name = "dept_id") // 외래 키 설정
     private Dept department; // 학과 엔티티
 
     @ManyToOne(fetch = FetchType.LAZY) // Student와의 Many-to-One 관계
-    @JoinColumn(name = "student_id", nullable = false) // 외래 키 설정
+    @JoinColumn(name = "student_id") // 외래 키 설정
     private Student student; // 작성한 학생 엔티티
 
     @ManyToOne(fetch = FetchType.LAZY) // 자기 참조 관계
@@ -46,13 +46,5 @@ public class Post {
     @ToString.Exclude
     private List<Post> comments; // 댓글 목록
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

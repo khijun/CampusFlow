@@ -9,6 +9,4 @@ import java.util.List;
 @Repository
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
-    // 특정 문의에 대한 답변을 찾기 위한 메서드
-    List<Inquiry> findByResponseTo(Inquiry responseTo);
 }

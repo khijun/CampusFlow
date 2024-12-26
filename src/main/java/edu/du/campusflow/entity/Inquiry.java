@@ -20,11 +20,11 @@ public class Inquiry {
     private Long inquiryId;
 
     @ManyToOne
-    @JoinColumn(name = "related_inquiry_id", nullable = false)
+    @JoinColumn(name = "related_inquiry_id")
     private Inquiry relatedInquiry;
 
     @ManyToOne
-    @Column(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member memberId;
 
     @Column(name = "subject", length = 100)
@@ -34,7 +34,7 @@ public class Inquiry {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "inquiry_status")
+    @JoinColumn(name = "inquiry_status",referencedColumnName = "code_id")
     private CommonCode inquiryStatus;
 
     @Column(name = "created_at")
@@ -47,8 +47,7 @@ public class Inquiry {
     @JoinColumn(name = "response_to_id") // 답변이 참조하는 문의 ID
     private Inquiry responseTo; // 이 문의에 대한 답변
 
-    @OneToMany(mappedBy = "responseTo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Inquiry> responses; // 이 문의에 대한 답변 목록
+
 
 
 }

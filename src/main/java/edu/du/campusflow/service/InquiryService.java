@@ -1,11 +1,14 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Inquiry;
 import edu.du.campusflow.enums.InquiryStatus;
+import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.InquiryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,6 +16,8 @@ import java.util.List;
 public class InquiryService {
     @Autowired
     private InquiryRepository inquiryRepository;
+    @Autowired
+    private CommonCodeRepository commonCodeRepository;
 
     // 모든 문의 조회
     public List<Inquiry> getAllInquiries() {
@@ -27,7 +32,12 @@ public class InquiryService {
     // 문의 생성
     public Inquiry createInquiry(Inquiry inquiry) {
         inquiry.setCreatedAt(LocalDateTime.now());
-        inquiry.setStatus(InquiryStatus.PENDING); // 기본 상태 설정
+
+        // CommonCode를 생성하고 ENUM을 문자열로 변환하여 설정
+        CommonCode commonCode = new CommonCode();
+        commonCode.setCodeValue(InquiryStatus.PENDING.getValue()); // ENUM을 문자열로 변환하여 사용
+        inquiry.setInquiryStatus(commonCode); // inquiryStatus에 설정
+
         return inquiryRepository.save(inquiry);
     }
 
@@ -59,9 +69,9 @@ public class InquiryService {
         return null;
     }
 
-    // 특정 문의의 답변 목록 조회
-    public List<Inquiry> getResponses(Long inquiryId) {
-        Inquiry existingInquiry = getInquiryById(inquiryId);
-        return existingInquiry != null ? existingInquiry.getResponses() : null;
-    }
+//    // 특정 문의의 답변 목록 조회
+//    public List<Inquiry> getResponses(Long inquiryId) {
+//        Inquiry existingInquiry = getInquiryById(inquiryId);
+//        return existingInquiry != null ? existingInquiry.getResponses(): new ArrayList<Inquiry>();
+//    }
 }
