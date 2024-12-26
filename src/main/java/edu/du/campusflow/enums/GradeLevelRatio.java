@@ -6,17 +6,17 @@ import edu.du.campusflow.annotation.Code;
 public enum GradeLevelRatio{
 
     @Code(name = "A등급", description = "A등급 인원 비율")
-    A, //A등급
+    A_RATIO, //A등급 비율
 
     @Code(name = "B등급", description = "B등급 인원 비율")
-    B, //B등급
+    B_RATIO, //B등급 비율
 
     @Code(name = "C등급", description = "C등급 인원 비율")
-    C, //C등급
+    C_RATIO, //C등급 비율
 
     @Code(name = "D등급", description = "D등급 인원 비율")
-    D, //D등급
+    D_RATIO, //D등급 비율
 
     @Code(name = "F등급", description = "F등급 인원 비율")
-    F; //F등급
+    F_RATIO; //F등급 비율
 }
