@@ -2,6 +2,8 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.define.FileDefine;
 import edu.du.campusflow.repository.UploadedFileRepository;
+import edu.du.campusflow.entity.FileInfo;
+import edu.du.campusflow.repository.FileInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +14,9 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class UploadedFileService {
-    
-    private final UploadedFileRepository uploadedFileRepository;
+public class FileUploadService {
+
+    private final FileInfoRepository uploadedFileRepository;
 
     // 파일 확장자에 따른 파일 경로를 얻는 메서드
     public String getPathByExtension(String extension) {
@@ -46,10 +48,10 @@ public class UploadedFileService {
     }
 
     @Transactional
-    public void saveFile(MultipartFile[] files){
-        for(MultipartFile file : files){
+    public void saveFile(MultipartFile[] files) {
+        for (MultipartFile file : files) {
             if (file.isEmpty()) continue;
-            try{
+            try {
                 String name = file.getOriginalFilename();
                 String path = getPathByExtension(file.getOriginalFilename());
                 String type = getFileExtension(file.getOriginalFilename());
@@ -62,7 +64,7 @@ public class UploadedFileService {
         }
     }
     @Transactional
-    public void saveFile(MultipartFile file){
+    public void saveFile(MultipartFile file) {
         saveFile(new MultipartFile[]{file});
     }
 
@@ -79,4 +81,4 @@ public class UploadedFileService {
             System.out.println("Directory already exists: " + path);
         }
     }
-}
+} 

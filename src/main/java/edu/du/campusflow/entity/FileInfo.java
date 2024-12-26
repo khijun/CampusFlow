@@ -11,12 +11,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "uploaded_file")
-public class UploadedFile {
+@Table(name = "file_info")
+public class FileInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dept_id")
+    @Column(name = "file_id")
     private Long id;  // 복합키로 FileId 클래스를 사용
+
+    @ManyToOne
+    private Member member;
 
     @Column(name = "file_uuid")
     private String fileUuid;
