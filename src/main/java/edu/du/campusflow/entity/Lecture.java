@@ -30,7 +30,7 @@ public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
 
     @ManyToOne
     @JoinColumn(name = "file_id")
-    private UploadedFile uploadedFile; //강의계획서 파일 아이디
+    private FileInfo fileInfo; //강의계획서 파일 아이디
 
     @Column(name = "lecture_name", length = 20)
     private String lectureName; //강의명
