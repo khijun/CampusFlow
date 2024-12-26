@@ -1,20 +1,31 @@
 package edu.du.campusflow;
 
-import edu.du.campusflow.enums.AcademicStatus;
-import edu.du.campusflow.enums.CurriculumStatus;
-import edu.du.campusflow.enums.DeptStatus;
-import edu.du.campusflow.enums.Gender;
-import edu.du.campusflow.service.CommonCodeService;
+import edu.du.campusflow.enums.Semester;
+import edu.du.campusflow.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @SpringBootTest
-public class hijunTest {
+public class DongTest {
 
     @Autowired
     private CommonCodeService commonCodeService;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private ProfessorService professorService;
+
+    @Autowired
+    private StaffService staffService;
+
+    @Autowired
+    private MemberService memberService;
 
     @Test
     @Transactional
@@ -29,9 +40,6 @@ public class hijunTest {
 
     @Test
     void commonCodeServiceTest() throws NoSuchFieldException {
-        commonCodeService.insertCodeFromEnum(Gender.class);
-        commonCodeService.insertCodeFromEnum(DeptStatus.class);
-        commonCodeService.insertCodeFromEnum(AcademicStatus.class);
-        commonCodeService.insertCodeFromEnum(CurriculumStatus.class);
+        commonCodeService.insertCodeFromEnum(Semester.class);
     }
 }
