@@ -21,8 +21,8 @@ public class SubjectRatio {
     private Long subjectRatioId; //비율 아이디
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private SubjectInfo course; //subjectInfo 엔티티 참조
+    @JoinColumn(name = "subject_id")
+    private Subject subject; //subject 엔티티 참조
 
     @ManyToOne
     @JoinColumn(name = "ratio_type", referencedColumnName = "code_id")

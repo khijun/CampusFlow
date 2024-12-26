@@ -26,7 +26,7 @@ public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
 
     @ManyToOne
     @JoinColumn(name = "course_record_id")
-    private Course course; // 강의에 대한 교과목 기록 (course 테이블의 기록 아이디만 참조)
+    private CurriculumSubject course; // 강의에 대한 교과목 기록 (course 테이블의 기록 아이디만 참조)
 
     @ManyToOne
     @JoinColumn(name = "file_id")

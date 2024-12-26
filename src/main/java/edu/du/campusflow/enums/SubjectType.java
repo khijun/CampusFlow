@@ -3,7 +3,7 @@ package edu.du.campusflow.enums;
 import edu.du.campusflow.annotation.Code;
 
 @Code(name = "이수 구분" , description = "과목의 이수 구분 타입을 나타냄")
-public enum CourseType {
+public enum SubjectType {
 
     @Code(name = "전공 필수", description = "전공자는 필수로 들어야 하는 과목")
     MAJOR_REQUIRED,  //전공 필수
