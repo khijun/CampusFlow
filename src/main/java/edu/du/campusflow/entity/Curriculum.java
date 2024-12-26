@@ -31,7 +31,7 @@ public class Curriculum {
    private Integer curriculumYear;
 
    @Column(name = "applicable_grade")
-   private Integer applicableGrade; // 적용 학년
+   private Integer applicableGrade; // 적용 학년 추가
 
    @Column(name = "created_at")
    private LocalDateTime createdAt;
