@@ -22,8 +22,9 @@ public class Attendance {
    @JoinColumn(name = "ofregistration_id", nullable = false) // 외래 키 매핑
    private Ofregistration ofRegistration;
 
-   @Column(name = "lecture_period")
-   private Long lecturePeriod;
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "lecture_time_id", nullable = false) // 강의 시간 정보 외래 키
+   private LectureTime lectureTime;
 
    @Column(name = "attendance_date")
    private LocalDateTime attendanceDate;
