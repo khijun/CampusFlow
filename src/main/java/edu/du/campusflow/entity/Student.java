@@ -18,8 +18,8 @@ import java.time.LocalDate;
 @DiscriminatorValue("STUDENT")
 public class Student extends Member {
 
-    @ManyToOne
-    private Dept dept;
+    @Column
+    private Long deptId;
 
     private LocalDate admissionDate;
 
@@ -28,6 +28,6 @@ public class Student extends Member {
     private Integer grade;
 
    @ManyToOne
-   @JoinColumn(name = "academic_status")
-   private CommonCode academicStatus;
+   @JoinColumn(name = "academic_status_code")
+   private CommonCode academicStatusCode;
 }

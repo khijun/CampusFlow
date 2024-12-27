@@ -54,8 +54,7 @@ public abstract class Member {
     @JoinColumn(name = "gender_code_id")
     private CommonCode gender;
 
-    @ManyToOne
-    private FileInfo file;
+    private Long imageFileId;
 
     public String getRole(){
         return this.getClass().getSimpleName().toUpperCase();

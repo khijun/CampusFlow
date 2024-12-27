@@ -6,7 +6,6 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 
 @Entity
@@ -18,8 +17,8 @@ import java.time.LocalDate;
 @DiscriminatorValue("PROFESSOR")
 public class Professor extends Member {
 
-    @ManyToOne
-    private Dept dept;
+    @Column
+    private Long deptId;
 
     private LocalDate hireDate;
 
