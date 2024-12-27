@@ -17,9 +17,9 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "completion_id")
-//    private Completion completion;              // 이수 테이블 생성 시 주석 풀기
+    @ManyToOne
+    @JoinColumn(name = "completion_id")
+    private Completion completion;              // 이수 테이블 생성 시 주석 풀기
 
     @ManyToOne
     @JoinColumn(name = "grade_type",referencedColumnName = "code_id")
