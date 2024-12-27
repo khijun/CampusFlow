@@ -1,0 +1,41 @@
+.sidebar-menu {
+   list-style: none;
+   padding: 0; /* 기본 패딩 제거 */
+   margin: 0; /* 기본 마진 제거 */
+}
+
+.menu-item {
+   display: flex;
+   align-items: center;
+   padding: 0; /* 위아래 간격 제거 */
+   color: white;
+   text-decoration: none;
+   cursor: pointer;
+}
+
+.menu-item:hover {
+   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.submenu {
+   list-style: none;
+   padding-left: 10px; /* 하위 항목 들여쓰기 */
+   margin: 0;
+   display: none; /* 기본적으로 숨김 */
+}
+
+.submenu li {
+   padding: 0; /* 하위 항목 간격 제거 */
+   margin: 0;
+}
+
+.submenu li a {
+   color: #ddd;
+   text-decoration: none;
+   padding: 3px;
+   margin: 3px;
+}
+
+.submenu li a:hover {
+   color: white;
+}

@@ -1,0 +1,22 @@
+.main-content {
+   margin-left: 220px;
+   padding: 20px;
+   flex-grow: 1;
+   height: calc(100vh - 150px);
+   overflow-y: auto;
+   overflow-x: hidden;
+}
+
+.main-content iframe {
+   width: calc(100% - 60px);
+   height: calc(100% - 30px);
+   margin-left: 45px;
+   border: none;
+}
+
+.footer {
+   background-color: white;
+   text-align: center;
+   padding: 10px;
+   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
