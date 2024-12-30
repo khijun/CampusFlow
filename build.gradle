@@ -51,6 +51,8 @@ dependencies {
     // html 에서 권한을 확인하는 sec 태그 사용을 위함
     implementation 'org.springframework.security:spring-security-taglibs:5.7.11'  // 버전은 사용 중인 Spring Security 버전에 맞추세요
 
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
 }
 
 tasks.named('test') {
