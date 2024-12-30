@@ -22,16 +22,16 @@ public class DiagFeedbackService {
     /**
      * 특정 수강신청에 대한 진단평가 답변들 조회
      */
-    public List<DiagItem> getDiagItems(Long ofregistrationId) {
-        return diagItemRepository.findByOfRegistration_Id(ofregistrationId);
-    }
+//    public List<DiagItem> getDiagItems(Long ofregistrationId) {
+//        return diagItemRepository.findByOfRegistration_Id(ofregistrationId);
+//    }
 
     /**
      * 특정 수강신청에 대한 피드백 조회
      */
-    public DiagFeedback getFeedbackByOfregistrationId(Long ofregistrationId) {
-        return diagFeedbackRepository.findByOfRegistration_Id(ofregistrationId);
-    }
+//    public DiagFeedback getFeedbackByOfregistrationId(Long ofregistrationId) {
+//        return diagFeedbackRepository.findByOfRegistration_Id(ofregistrationId);
+//    }
 
     /**
      * 피드백 저장 (신규 작성 또는 수정)

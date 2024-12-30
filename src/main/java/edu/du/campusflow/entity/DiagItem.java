@@ -14,9 +14,9 @@ public class DiagItem {
     @Column(name = "answer_id", nullable = false)
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 
-    @ManyToOne
-    @JoinColumn(name = "ofregistration_id", nullable = false)
-    private OfRegistration ofRegistration; // 외래 키: ofregistration_id
+//    @ManyToOne
+//    @JoinColumn(name = "ofregistration_id", nullable = false)
+//    private OfRegistration ofRegistration; // 외래 키: ofregistration_id
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
