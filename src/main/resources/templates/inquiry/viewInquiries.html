@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>문의 목록</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1>문의 목록</h1>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>제목</th>
+      <th>내용</th>
+      <th>작성일</th>
+      <th>처리상태</th>
+      <th>상세보기</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inquiry : ${inquiries}">
+      <td th:text="${inquiry.subject}"></td>
+      <td th:text="${inquiry.content}"></td>
+      <td th:text="${#dates.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+      <td th:text="${inquiry.inquiryStatus}"></td> <!-- 상태 표시 -->
+      <td>
+        <a th:href="@{/inquiry/{id}(id=${inquiry.inquiryId})}" class="btn btn-info">상세보기</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

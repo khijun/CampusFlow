@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>게시물 상세</title>
+</head>
+<body>
+<h1 th:text="${post.title}"></h1>
+<p th:text="${post.content}"></p>
+<p>작성일: <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+<a href="/posts/view">목록으로 돌아가기</a>
+<a th:href="@{/posts/edit/{id}(id=${post.postId})}">수정</a>
+</body>
+</html>

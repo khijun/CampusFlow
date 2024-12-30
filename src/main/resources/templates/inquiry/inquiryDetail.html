@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>문의 상세</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1 th:text="${inquiry.subject}">문의 제목</h1>
+  <p th:text="${inquiry.content}">문의 내용</p>
+  <p>작성일: <span th:text="${#dates.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+
+  <h2>답변 추가</h2>
+  <form th:action="@{/inquiry/{id}/response(id=${inquiry.inquiryId})}" method="post">
+    <div class="form-group">
+      <label for="content">답변 내용</label>
+      <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">답변 추가</button>
+  </form>
+
+  <h2>답변 목록</h2>
+  <div th:if="${inquiry.responseTo}">
+    <h3>답변</h3>
+    <p th:text="${inquiry.responseTo.content}"></p>
+    <p>작성일: <span th:text="${#dates.format(inquiry.responseTo.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+  </div>
+</div>
+</body>
+</html>

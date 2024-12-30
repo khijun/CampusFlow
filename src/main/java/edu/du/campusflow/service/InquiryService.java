@@ -16,8 +16,7 @@ import java.util.List;
 public class InquiryService {
     @Autowired
     private InquiryRepository inquiryRepository;
-    @Autowired
-    private CommonCodeRepository commonCodeRepository;
+
 
     // 모든 문의 조회
     public List<Inquiry> getAllInquiries() {
@@ -36,22 +35,24 @@ public class InquiryService {
         // CommonCode를 생성하고 ENUM을 문자열로 변환하여 설정
         CommonCode commonCode = new CommonCode();
         commonCode.setCodeValue(InquiryStatus.PENDING.name()); // ENUM을 문자열로 변환하여 사용
+        commonCode.setCodeName("대기"); // 상태 이름 설정
+        commonCode.setCodeDescription("대기 상태"); // 상태 설명 설정
         inquiry.setInquiryStatus(commonCode); // inquiryStatus에 설정
 
         return inquiryRepository.save(inquiry);
     }
 
-    // 문의 업데이트
-    public Inquiry updateInquiry(Long inquiryId, Inquiry inquiry) {
-        Inquiry existingInquiry = getInquiryById(inquiryId);
-        if (existingInquiry != null) {
-            existingInquiry.setSubject(inquiry.getSubject());
-            existingInquiry.setContent(inquiry.getContent());
-            existingInquiry.setUpdatedAt(LocalDateTime.now());
-            return inquiryRepository.save(existingInquiry);
-        }
-        return null;
-    }
+//    // 문의 업데이트
+//    public Inquiry updateInquiry(Long inquiryId, Inquiry inquiry) {
+//        Inquiry existingInquiry = getInquiryById(inquiryId);
+//        if (existingInquiry != null) {
+//            existingInquiry.setSubject(inquiry.getSubject());
+//            existingInquiry.setContent(inquiry.getContent());
+//            existingInquiry.setUpdatedAt(LocalDateTime.now());
+//            return inquiryRepository.save(existingInquiry);
+//        }
+//        return null;
+//    }
 
     // 문의 삭제
     public void deleteInquiry(Long inquiryId) {

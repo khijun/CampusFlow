@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">공지사항</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th style="width: 10%;">순번</th> <!-- 1의 비율 -->
+            <th style="width: 60%;">제목</th> <!-- 6의 비율 -->
+            <th style="width: 30%;">작성일</th> <!-- 3의 비율 -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="notice, iterStat : ${notices}">
+            <td th:text="${iterStat.index + 1}"></td> <!-- 순번 표시 -->
+            <td th:text="${notice.subject}"></td>
+            <td th:text="${#dates.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

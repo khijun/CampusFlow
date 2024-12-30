@@ -14,27 +14,36 @@ public class NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
+    // 모든 공지 조회
     public List<Notice> getAllNotices() {
         return noticeRepository.findAll();
     }
-    public Notice getNotticeById(Long noticeId){
+
+    // 특정 공지 조회
+    public Notice getNoticeById(Long noticeId) {
         return noticeRepository.findById(noticeId).orElse(null);
     }
-    public Notice createNotice(Notice notice){
-        notice.setCreatedAt(LocalDateTime.now());
+
+    // 공지 생성
+    public Notice createNotice(Notice notice) {
+        notice.setCreatedAt(LocalDateTime.now()); // 생성 날짜 설정
         return noticeRepository.save(notice);
     }
-    public Notice updateNotice(Long noticeId,Notice notice){
-        Notice existingNotice = getNotticeById(noticeId);
-        if(existingNotice != null){
+
+    // 공지 업데이트
+    public Notice updateNotice(Long noticeId, Notice notice) {
+        Notice existingNotice = getNoticeById(noticeId);
+        if (existingNotice != null) {
             existingNotice.setSubject(notice.getSubject());
             existingNotice.setContent(notice.getContent());
-            existingNotice.setCreatedAt(LocalDateTime.now());
+            existingNotice.setUpdatedAt(LocalDateTime.now()); // 업데이트 날짜 설정
             return noticeRepository.save(existingNotice);
         }
         return null;
     }
-    public void deleteNotice(Long noticeId){
+
+    // 공지 삭제
+    public void deleteNotice(Long noticeId) {
         noticeRepository.deleteById(noticeId);
     }
 }
