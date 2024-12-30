@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-@Table(name = "department")
+@Table(name = "dept")
 public class Dept {
 
     @Id
@@ -30,5 +31,8 @@ public class Dept {
     @JoinColumn(name = "dept_status", referencedColumnName = "code_id")
     private CommonCode deptStatus;
 
+    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Curriculum> curriculums;
 }
 
