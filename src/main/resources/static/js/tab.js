@@ -89,3 +89,14 @@ function toggleSubmenu(event, submenuId) {
       submenu.style.display = "block";
    }
 }
+
+//아이프레임 로드
+function loadIframe(url) {
+   const iframe = document.querySelector('iframe[name="contentFrame"]');
+   if (iframe) {
+      iframe.src = url;
+   }
+}
+
+console.log('main-content:', document.querySelector('.main-content').offsetHeight);
+console.log('iframe:', document.querySelector('iframe').offsetHeight);

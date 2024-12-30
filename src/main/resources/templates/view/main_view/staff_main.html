@@ -71,9 +71,18 @@
             <li>
                 <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'curriculumManagement')"><i class="fas fa-book"></i> 교육과정</a>
                 <ul id="curriculumManagement" class="submenu">
-                    <li><a href="#">교육과정 데이터 등록/수정</a></li>
-                    <li><a href="#">연도별 교육과정 업데이트</a></li>
-                    <li><a href="#">교육과정 변경 이력 조회 및 반영</a></li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/register')">교육과정 등록</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/update')">교육과정 수정</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/approval')">교육과정 승인</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/history')">교육과정 개편 이력</a>
+                    </li>
                 </ul>
             </li>
             <li>
@@ -113,8 +122,8 @@
         <div class="tab-container">
             <ul id="tabs">
                 <!-- 기본 탭 -->
-                <li class="tab-item active" onclick="switchTab('dashboard.html')">
-                    대시보드
+                <li class="tab-item active" onclick="loadIframe('/iframe/curriculum/register')">
+                    교육과정 등록
                     <button class="close-tab" onclick="closeTab(this)">×</button>
                 </li>
             </ul>
@@ -122,8 +131,11 @@
         </div>
 
         <!-- Iframe for Content -->
-        <iframe src="dashboard.html" th:src="@{/dashboard}" name="contentFrame"></iframe>
+        <div class="iframe-container">
+            <iframe name="contentFrame" ></iframe>
+        </div>
     </div>
+
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 </body>

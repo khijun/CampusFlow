@@ -2,16 +2,18 @@
    margin-left: 220px;
    padding: 20px;
    flex-grow: 1;
-   height: calc(100vh - 150px);
-   overflow-y: auto;
-   overflow-x: hidden;
+   height: auto; /* 높이 자동 조정 */
+   min-height: calc(100vh - 150px); /* 최소 높이 설정 */
+   box-sizing: border-box; /* 패딩과 테두리를 너비 계산에 포함 */
+   overflow: hidden; /* 스크롤바 제거 */
 }
 
 .main-content iframe {
-   width: calc(100% - 60px);
-   height: calc(100% - 30px);
-   margin-left: 45px;
+   width: 100%;
+   height: 100%;
+   margin: 0; /* 여백 제거 */
    border: none;
+   overflow: hidden;
 }
 
 .footer {

@@ -20,7 +20,8 @@
 .submenu {
    list-style: none;
    padding-left: 10px; /* 하위 항목 들여쓰기 */
-   margin: 0;
+   /*margin: 0;*/
+   margin-top: -10px;
    display: none; /* 기본적으로 숨김 */
 }
 

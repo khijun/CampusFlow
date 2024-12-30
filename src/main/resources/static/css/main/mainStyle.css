@@ -1,11 +1,11 @@
 /* 고정형 설정 */
 .container {
-   width: 1920px; /* 고정된 전체 레이아웃 너비 */
+   width: auto; /* 고정된 전체 레이아웃 너비 */
    margin: 0 auto; /* 화면 중앙 정렬 */
 }
 
 .header-nav, .nav-list, .sidebar, .main-content {
-   max-width: 2000px; /* 고정된 너비 */
+   /*max-width: 2000px; !* 고정된 너비 *!*/
 }
 
 .nav-list {
@@ -15,5 +15,5 @@
 
 .main-content iframe {
    max-width: 100%; /* iframe의 크기 제한 */
-   overflow: hidden; /* 스크롤 방지 */
+   /*overflow: hidden; !* 스크롤 방지 *!*/
 }

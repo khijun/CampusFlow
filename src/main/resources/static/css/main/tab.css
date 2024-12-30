@@ -3,15 +3,16 @@
    display: flex;
    align-items: center;
    justify-content: space-between;
-   background-color: white;
-   padding: 5px 10px;
+   background-color: whitesmoke;
+   padding: 7px 10px; /* 좌우 패딩 조정 */
    color: black;
-   margin-left: 45px; /* main-content와 동일한 왼쪽 여백 */
-   /*margin-bottom: -10px;*/
+   margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
    margin-top: -10px;
-   width: calc(100% - 80px); /* main-content의 너비와 동일하게 설정 */
+   width: calc(100% - 60px); /* main-content와 동일한 너비 */
    border: 1px solid #ddd; /* 확인용 테두리 */
    border-radius: 2px;
+   box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
+   overflow: hidden; /* 탭이 너무 길어질 경우 스크롤 방지 */
 }
 
 #tabs {
@@ -31,6 +32,7 @@
    display: flex;
    align-items: center;
    gap: 5px;
+   white-space: nowrap; /* 탭 텍스트 줄바꿈 방지 */
 }
 
 .tab-item.active {
