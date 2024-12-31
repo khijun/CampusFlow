@@ -6,6 +6,7 @@ import edu.du.campusflow.entity.Student;
 import edu.du.campusflow.repository.ChangeRequestRepository;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +14,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ChangeRequestService {
 
-    @Autowired
-    private ChangeRequestRepository changeRequestRepository;
 
-    @Autowired
-    private CommonCodeRepository commonCodeRepository;
+    private final ChangeRequestRepository changeRequestRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
+
+    private final CommonCodeRepository commonCodeRepository;
+
+
+    private final StudentRepository studentRepository;
 
     // 신청 처리
     public ChangeRequest submitChangeRequest(Long studentId, Long beforeCodeId, Long afterCodeId, Long academicStatusId, Long applicationStatusId) {
@@ -90,7 +92,7 @@ public class ChangeRequestService {
                 .orElseThrow(() -> new RuntimeException("신청서가 존재하지 않습니다."));
 
         // 신청 상태를 대기중으로 변경
-        CommonCode waitingStatus = commonCodeRepository.findByCodeId(2L)  // 2L은 '대기중' 상태 코드 ID
+        CommonCode waitingStatus = commonCodeRepository.findByCodeId(14L)  // 2L은 '대기중' 상태 코드 ID
                 .orElseThrow(() -> new RuntimeException("대기중 상태 코드가 존재하지 않습니다."));
 
         request.setApplicationStatus(waitingStatus);
@@ -106,7 +108,7 @@ public class ChangeRequestService {
                 .orElseThrow(() -> new RuntimeException("신청서가 존재하지 않습니다."));
 
         // 신청 상태를 신청중으로 변경
-        CommonCode applicationStatus = commonCodeRepository.findByCodeId(3L)  // 3L은 '신청중' 상태 코드 ID
+        CommonCode applicationStatus = commonCodeRepository.findByCodeId(15L)  // 3L은 '신청중' 상태 코드 ID
                 .orElseThrow(() -> new RuntimeException("신청중 상태 코드가 존재하지 않습니다."));
 
         request.setApplicationStatus(applicationStatus);

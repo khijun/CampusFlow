@@ -6,6 +6,7 @@ import edu.du.campusflow.entity.Student;
 import edu.du.campusflow.repository.ChangeHistoryRepository;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +15,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ChangeHistoryService {
 
-    @Autowired
-    private ChangeHistoryRepository changeHistoryRepository;
 
-    @Autowired
-    private CommonCodeRepository commonCodeRepository;
+    private final ChangeHistoryRepository changeHistoryRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
+
+    private final CommonCodeRepository commonCodeRepository;
+
+
+    private final StudentRepository studentRepository;
 
     // 이력 기록 처리
     public ChangeHistory recordChangeHistory(Long studentId, Long beforeCodeId, Long afterCodeId) {
