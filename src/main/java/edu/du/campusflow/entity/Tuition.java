@@ -36,6 +36,7 @@ public class Tuition {
     @Column(name = "amount")
     private Long amount;
 
-    @Column(name = "payment_status", nullable = false, columnDefinition = "BOOLEAN COMMENT '납부 여부 (true: 납부, false: 미납)'")
-    private boolean paymentStatus;
+    //납부여부
+//    @Column(name = "payment_status", nullable = false, columnDefinition = "BOOLEAN COMMENT '납부 여부 (true: 납부, false: 미납)'")
+//    private boolean paymentStatus;
 }
