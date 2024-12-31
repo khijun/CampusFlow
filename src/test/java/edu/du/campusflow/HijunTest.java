@@ -55,6 +55,7 @@ public class HijunTest {
 //        commonCodeService.insertCodeFromEnum(SubjectType.class);
     }
 
+
     @Test
     public void dbtest() {
             commonCodeRepository.findAll().forEach(System.out::println);
