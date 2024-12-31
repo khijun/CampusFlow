@@ -3,7 +3,7 @@ package edu.du.campusflow.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-
+// asd
 @Data
 @Entity
 @Table(name = "lec_items") // 강의평가 답변
