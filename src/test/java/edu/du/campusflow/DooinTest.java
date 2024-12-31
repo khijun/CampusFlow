@@ -26,6 +26,8 @@ public class DooinTest {
                 System.out.println(q.getQuestionId() + ": " + q.getQuestionName())
         );
 
+
+
         // 2. 검증
         assertFalse(lecQuestions.isEmpty(), "강의평가 문항이 없습니다!");
     }
