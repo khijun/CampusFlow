@@ -17,9 +17,9 @@ public class DiagItemService {
     /**
      * 특정 수강신청의 진단평가 답변들 조회
      */
-//    public List<DiagItem> getDiagItemsByOfRegistrationId(Long ofregistrationId) {
-//        return diagItemRepository.findByOfRegistration_Id(ofregistrationId);
-//    } // ofregistration_id
+    public List<DiagItem> getDiagItemsByOfRegistrationId(Long ofregistrationId) {
+        return diagItemRepository.findByOfRegistration_Id(ofregistrationId);
+    } // ofregistration_id
 
     /**
      * 특정 문항에 대한 답변들 조회
@@ -31,20 +31,20 @@ public class DiagItemService {
     /**
      * 진단평가 제출 여부 확인
      */
-//    public boolean isAlreadySubmitted(Long ofregistrationId) {
-//        return diagItemRepository.existsByOfRegistration_Id(ofregistrationId);
-//    }
+    public boolean isAlreadySubmitted(Long ofregistrationId) {
+        return diagItemRepository.existsByOfRegistration_Id(ofregistrationId);
+    }
 
     /**
      * 진단평가 답변들 최초 제출
      * 이미 제출된 경우 예외 발생
      */
 
-//    @Transactional
-//    public List<DiagItem> submitDiagItems(List<DiagItem> diagItems, Long ofregistrationId) {
-//        if (isAlreadySubmitted(ofregistrationId)) {
-//            throw new IllegalStateException("이미 제출된 진단평가입니다.");
-//        }
-//        return diagItemRepository.saveAll(diagItems);
-//    }
+    @Transactional
+    public List<DiagItem> submitDiagItems(List<DiagItem> diagItems, Long ofregistrationId) {
+        if (isAlreadySubmitted(ofregistrationId)) {
+            throw new IllegalStateException("이미 제출된 진단평가입니다.");
+        }
+        return diagItemRepository.saveAll(diagItems);
+    }
 }

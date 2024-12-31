@@ -1,6 +1,7 @@
 package edu.du.campusflow;
 
 import edu.du.campusflow.enums.*;
+import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.service.CommonCodeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,11 @@ public class HijunTest {
 
     @Autowired
     private CommonCodeService commonCodeService;
+    @Autowired
+    private CommonCodeRepository commonCodeRepository;
 
 
-
-        @Test
+    @Test
         @Transactional
         void createDummyData() {
 
@@ -53,5 +55,10 @@ public class HijunTest {
         commonCodeService.insertCodeFromEnum(RegStatus.class);
         commonCodeService.insertCodeFromEnum(Semester.class);
         commonCodeService.insertCodeFromEnum(SubjectType.class);
+    }
+
+    @Test
+    public void dbtest(){
+            commonCodeRepository.findAll().stream().forEach(System.out::println);
     }
 }
