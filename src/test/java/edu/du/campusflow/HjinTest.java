@@ -1,34 +1,23 @@
 package edu.du.campusflow;
 
 import edu.du.campusflow.entity.*;
-import edu.du.campusflow.enums.AcademicStatus;
 import edu.du.campusflow.repository.ChangeHistoryRepository;
 import edu.du.campusflow.repository.ChangeRequestRepository;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.StudentRepository;
-import edu.du.campusflow.service.ChangeService;
-import edu.du.campusflow.service.CommonCodeService;
-import org.junit.jupiter.api.BeforeEach;
+import edu.du.campusflow.service.ChangeRequestService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import javax.transaction.Transactional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.List;
 
 @SpringBootTest
+@Transactional
 public class HjinTest {
 
-    @Autowired
-    private CommonCodeService commonCodeService;
-
-    @Autowired
-    private ChangeService changeService;
 
     @Autowired
     private ChangeRequestRepository changeRequestRepository;
@@ -36,18 +25,28 @@ public class HjinTest {
     @Autowired
     private ChangeHistoryRepository changeHistoryRepository;
 
-    private Student student;
-    private ChangeRequest changeRequest;
-    @Autowired
-    private StudentRepository studentRepository;
     @Autowired
     private CommonCodeRepository commonCodeRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+    private Student student;
+    private CommonCode beforeCode;
+    private CommonCode afterCode;
+    private CommonCode academicStatus;
+    private CommonCode applicationStatus;
+    @Autowired
+    private ChangeRequestService changeRequestService;
+
 
     @Test
-    void inputCommonCode() throws NoSuchFieldException{
-        commonCodeService.insertCodeFromEnum(AcademicStatus.class);
+    void academic(){
+        List<Student> student1 = studentRepository.findAll();
+        System.out.println(student1);
     }
+
+
 
 
 }
