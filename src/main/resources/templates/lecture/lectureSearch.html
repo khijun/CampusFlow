@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8">
+<head>
+  <title>강의 검색</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>강의 검색</h1>
+  <form id="searchForm">
+    <div class="form-group">
+      <label for="deptName">학과명</label>
+      <input type="text" class="form-control" id="deptName" name="deptName" placeholder="학과명을 입력하세요">
+    </div>
+    <div class="form-group">
+      <label for="lectureName">강의명</label>
+      <input type="text" class="form-control" id="lectureName" name="lectureName" placeholder="강의명을 입력하세요">
+    </div>
+    <div class="form-group">
+      <label>학기</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="semester" id="semester1" value="1학기">
+        <label class="form-check-label" for="semester1">1학기</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="semester" id="semester2" value="2학기">
+        <label class="form-check-label" for="semester2">2학기</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>이수구분</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="subjectType" id="subjectType1" value="전공 필수">
+        <label class="form-check-label" for="subjectType1">전공 필수</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="subjectType" id="subjectType2" value="전공 선택">
+        <label class="form-check-label" for="subjectType2">전공 선택</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="subjectType" id="subjectType3" value="교양 필수">
+        <label class="form-check-label" for="subjectType3">교양 필수</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="subjectType" id="subjectType4" value="교양 선택">
+        <label class="form-check-label" for="subjectType4">교양 선택</label>
+      </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">검색</button>
+  </form>
+
+
+  <h2 class="mt-4">검색 결과</h2>
+  <table class="table" id="resultTable">
+    <thead>
+    <tr>
+      <th>강의명</th>
+      <th>교수명</th>
+      <th>학기</th>
+      <th>정원</th>
+      <th>학점</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 검색 결과가 여기에 동적으로 추가됩니다. -->
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#searchForm').on('submit', function(event) {
+      event.preventDefault(); // 기본 폼 제출 방지
+      const formData = $(this).serialize(); // 폼 데이터 직렬화
+
+      $.ajax({
+        url: '/api/lectures/search',
+        type: 'GET',
+        data: formData,
+        success: function(data) {
+          const tbody = $('#resultTable tbody');
+          tbody.empty(); // 이전 결과 삭제
+          $('#noResults').hide(); // 결과 없음 메시지 숨기기
+
+          if (data.length === 0) {
+            $('#noResults').show(); // 검색 결과가 없으면 메시지 표시
+            alert('검색 결과가 없습니다.'); // alert 추가
+          } else {
+            // 검색 결과를 테이블에 추가
+            data.forEach(function(lecture) {
+              tbody.append(`
+                <tr>
+                  <td>${lecture.lectureName}</td>
+                  <td>${lecture.professor.name}</td>
+                  <td>${lecture.semester.codeValue}</td>
+                  <td>${lecture.maxStudents}</td>
+                  <td>${lecture.curriculumSubject.subject.subjectCredits}</td>
+                </tr>
+              `);
+            });
+          }
+        },
+        error: function() {
+          alert('검색 중 오류가 발생했습니다.');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
