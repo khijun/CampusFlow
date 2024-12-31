@@ -18,9 +18,9 @@ public class Notice {
     @Column(name = "notice_id")
     private Long noticeId;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Staff와의 Many-to-One 관계
-    @JoinColumn(name = "staff_id") // 외래 키 설정
-    private Staff staff; // 공지 작성한 교직원 엔티티
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;; // 공지 작성한 교직원 엔티티
 
     @Column(name = "subject", length = 100)
     private String subject; // 제목

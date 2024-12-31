@@ -19,11 +19,11 @@ public class Attendance {
    private Long attendanceId;
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "ofregistration_id", nullable = false) // 외래 키 매핑
+   @JoinColumn(name = "ofregistration_id") // 외래 키 매핑
    private Ofregistration ofRegistration;
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "lecture_time_id", nullable = false) // 강의 시간 정보 외래 키
+   @JoinColumn(name = "lecture_time_id") // 강의 시간 정보 외래 키
    private LectureTime lectureTime;
 
    @Column(name = "attendance_date")
