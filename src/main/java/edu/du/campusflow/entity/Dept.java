@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-@Table(name = "department")
+@Table(name = "dept")
 public class Dept {
 
     @Id

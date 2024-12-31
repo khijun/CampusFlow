@@ -14,7 +14,26 @@
   <div id='calendar'></div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- 일정 모달 -->
+<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="eventModalLabel">일정</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5 id="modalTitle"></h5>
+        <p id="modalDate"></p>
+        <p id="modalDescription"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src='https://unpkg.com/@fullcalendar/core@5.10.1/main.min.js'></script>
@@ -25,9 +44,49 @@
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
-      events: /*[[${events}]]*/, // 서버에서 전달된 이벤트 데이터
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,agendaWeek,agendaDay'
+      },
+      events: [], // 초기 이벤트 목록
+      dateClick: function(info) {
+        // 클릭한 날짜에 있는 일정 필터링
+        var clickedDate = info.dateStr;
+        var eventsOnDate = calendar.getEvents().filter(event => {
+          return event.startStr.startsWith(clickedDate); // 날짜가 같은 이벤트 필터링
+        });
+
+        // 모달에 일정 추가
+        if (eventsOnDate.length > 0) {
+          var event = eventsOnDate[0]; // 첫 번째 이벤트만 표시
+          $('#modalTitle').text(event.title);
+          $('#modalDate').text(event.start.toISOString().split('T')[0] + (event.end ? ' ~ ' + event.end.toISOString().split('T')[0] : ''));
+          $('#modalDescription').text(event.extendedProps.description || '설명이 없습니다.'); // 설명 표시
+        } else {
+          $('#modalTitle').text('일정이 없습니다.');
+          $('#modalDate').text('');
+          $('#modalDescription').text('');
+        }
+
+        // 모달 표시
+        $('#eventModal').modal('show');
+      }
     });
-    calendar.render();
+
+    // 서버에서 이벤트 데이터 가져오기
+    $.ajax({
+      url: '/api/events', // 서버의 API 엔드포인트
+      method: 'GET',
+      success: function(data) {
+        // 서버에서 받은 데이터로 이벤트 추가
+        calendar.addEventSource(data);
+        calendar.render(); // 캘린더 렌더링
+      },
+      error: function(error) {
+        console.error('일정 데이터를 가져오는 데 실패했습니다.', error);
+      }
+    });
   });
 </script>
 </body>

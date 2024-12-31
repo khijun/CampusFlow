@@ -46,4 +46,22 @@ public class PostService {
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
     }
+    // 게시물 찾기
+    public Post findById(Long id) {
+        return postRepository.findById(id).orElse(null);
+    }
+
+    // 댓글 추가
+    public void addComment(Long postId, String content) {
+        Post post = findById(postId);
+        if (post != null) {
+            Post comment = Post.builder()
+                    .content(content)
+                    .createdAt(LocalDateTime.now())
+                    .relatedPost(post) // 댓글의 관련 게시물 설정
+                    .build();
+            post.getComments().add(comment); // 댓글 목록에 추가
+            postRepository.save(post); // 게시물 저장 (댓글도 함께 저장됨)
+        }
+    }
 }

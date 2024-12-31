@@ -19,10 +19,6 @@ public class Inquiry {
     private Long inquiryId;
 
     @ManyToOne
-    @JoinColumn(name = "related_inquiry_id")
-    private Inquiry relatedInquiry;
-
-    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member memberId;
 
@@ -43,8 +39,11 @@ public class Inquiry {
     private LocalDateTime updatedAt;
 
     @OneToOne
-    @JoinColumn(name = "response_to_id") // 답변이 참조하는 문의 ID
-    private Inquiry responseTo; // 이 문의에 대한 답변
+    @JoinColumn(name = "related_inquiry_id")
+    private Inquiry relatedInquiry;        // 이 문의가 답변하는 원본 문의
+
+    @OneToOne(mappedBy = "relatedInquiry")
+    private Inquiry response;              // 이 문의에 대한 답변
 
 
 

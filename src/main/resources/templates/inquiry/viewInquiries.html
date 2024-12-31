@@ -12,21 +12,19 @@
     <thead>
     <tr>
       <th>제목</th>
-      <th>내용</th>
+      <th>작성자 이름</th> <!-- 내용 대신 작성자 이름으로 변경 -->
       <th>작성일</th>
       <th>처리상태</th>
-      <th>상세보기</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="inquiry : ${inquiries}">
-      <td th:text="${inquiry.subject}"></td>
-      <td th:text="${inquiry.content}"></td>
+      <td>
+        <a th:href="@{/inquiry/{id}(id=${inquiry.inquiryId})}" th:text="${inquiry.subject}" class="text-decoration-none"></a>
+      </td>
+      <td th:text="${inquiry.authorName}"></td> <!-- 작성자 이름 표시 -->
       <td th:text="${#dates.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
       <td th:text="${inquiry.inquiryStatus}"></td> <!-- 상태 표시 -->
-      <td>
-        <a th:href="@{/inquiry/{id}(id=${inquiry.inquiryId})}" class="btn btn-info">상세보기</a>
-      </td>
     </tr>
     </tbody>
   </table>

@@ -63,7 +63,7 @@ public class InquiryService {
     public Inquiry addResponse(Long inquiryId, Inquiry response) {
         Inquiry existingInquiry = getInquiryById(inquiryId);
         if (existingInquiry != null) {
-            response.setResponseTo(existingInquiry);
+            response.setRelatedInquiry(existingInquiry);
             response.setCreatedAt(LocalDateTime.now());
             return inquiryRepository.save(response);
         }

@@ -22,8 +22,8 @@ public class Submission { //학생이 제출한 과제 데이터를 저장하는
     private Long submissionId; //과제 제출 아이디
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student; //학번
+    @JoinColumn(name = "ofregistration_id")
+    private Ofregistration ofregistration; //수강신청 아이디
 
     @ManyToOne
     @JoinColumn(name = "assignment_id")

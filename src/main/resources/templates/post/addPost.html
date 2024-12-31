@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
   <title>게시물 추가</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<h1>게시물 추가</h1>
-<form action="#" th:action="@{/posts}" th:object="${post}" method="post">
-  <label for="title">제목:</label>
-  <input type="text" id="title" th:field="*{title}" required /><br/>
+<div class="container mt-5">
+  <h1>게시물 추가</h1>
+  <form th:action="@{/posts}" th:object="${post}" method="post">
+    <div class="form-group">
+      <label for="title">제목:</label>
+      <input type="text" id="title" th:field="*{title}" class="form-control" required />
+    </div>
 
-  <label for="content">내용:</label>
-  <textarea id="content" th:field="*{content}" required></textarea><br/>
+    <div class="form-group">
+      <label for="content">내용:</label>
+      <textarea id="content" th:field="*{content}" class="form-control" rows="5" required></textarea>
+    </div>
 
-  <button type="submit">추가</button>
-</form>
-<a href="/posts/view">목록으로 돌아가기</a>
+    <button type="submit" class="btn btn-primary">추가</button>
+    <a href="/posts/view" class="btn btn-secondary">목록으로 돌아가기</a>
+  </form>
+</div>
 </body>
 </html>

@@ -1,13 +1,93 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
   <title>게시물 상세</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-<h1 th:text="${post.title}"></h1>
-<p th:text="${post.content}"></p>
-<p>작성일: <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
-<a href="/posts/view">목록으로 돌아가기</a>
-<a th:href="@{/posts/edit/{id}(id=${post.postId})}">수정</a>
+<div class="container mt-5">
+  <h1 th:text="${post.title}"></h1>
+  <p th:text="${post.content}"></p>
+  <p>작성일: <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+  <a href="/posts/view">목록으로 돌아가기</a>
+  <a th:href="@{/posts/edit/{id}(id=${post.postId})}" class="btn btn-warning">수정</a>
+
+  <!-- 게시글 삭제 버튼 추가 -->
+  <form th:action="@{/posts/delete/{id}(id=${post.postId})}" method="post" style="display:inline;">
+    <button type="submit" class="btn btn-danger">삭제</button>
+  </form>
+
+  <h2>댓글 추가</h2>
+  <div class="input-group mb-3">
+    <textarea class="form-control" id="commentContent" name="content" rows="1" required></textarea>
+    <div class="input-group-append">
+      <button id="addCommentButton" class="btn btn-primary" type="button">댓글 추가</button>
+    </div>
+  </div>
+
+  <h2>댓글 목록</h2>
+  <div th:if="${post.comments.size() > 0}">
+    <ul class="list-group">
+      <li class="list-group-item" th:each="comment : ${post.comments}">
+        <p th:text="${comment.content}"></p>
+        <p>작성일: <span th:text="${#dates.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+        <div>
+          <button class="btn btn-secondary btn-sm"
+                  th:attr="onclick='editComment(' + ${comment.id} + ', \'' + ${comment.content} + '\')'">수정</button>
+          <form th:action="@{/posts/{postId}/comments/delete/{commentId}(postId=${post.postId}, commentId=${comment.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+          </form>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div th:if="${post.comments.size() == 0}">
+    <p>댓글이 없습니다.</p>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // 댓글 추가 버튼 클릭 시
+    $('#addCommentButton').click(function() {
+      addComment();
+    });
+
+    // 엔터 키를 눌렀을 때 댓글 추가
+    $('#commentContent').keypress(function(event) {
+      if (event.which === 13) { // Enter 키
+        event.preventDefault(); // 기본 동작 방지
+        addComment();
+      }
+    });
+
+    function addComment() {
+      var content = $('#commentContent').val();
+      if (content) {
+        // AJAX 요청으로 댓글 추가
+        $.post('/posts/' + /* 게시물 ID */ + '/comments', { content: content }, function() {
+          location.reload(); // 댓글 추가 후 페이지 새로고침
+        });
+      }
+    }
+  });
+
+  function editComment(commentId, currentContent) {
+    var newContent = prompt("댓글 수정", currentContent);
+    if (newContent !== null) {
+      // AJAX 요청으로 댓글 수정
+      $.ajax({
+        url: '/posts/' + /* 게시물 ID */ + '/comments/' + commentId,
+        type: 'PUT',
+        data: { content: newContent },
+        success: function() {
+          location.reload(); // 수정 후 페이지 새로고침
+        }
+      });
+    }
+  }
+</script>
 </body>
 </html>

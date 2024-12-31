@@ -63,4 +63,10 @@ public class PostController {
         postService.deletePost(id); // 게시물 삭제
         return "redirect:/posts/view"; // 게시물 삭제 후 목록 페이지로 리다이렉트
     }
+    // 댓글 추가
+    @PostMapping("/{id}/comments")
+    public String addComment(@PathVariable Long id, @RequestParam String content) {
+        postService.addComment(id, content); // 댓글 추가 서비스 호출
+        return "redirect:/posts/" + id; // 댓글 추가 후 게시물 상세 페이지로 리다이렉트
+    }
 }

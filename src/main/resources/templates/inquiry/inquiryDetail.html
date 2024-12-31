@@ -26,6 +26,15 @@
     <p th:text="${inquiry.responseTo.content}"></p>
     <p>작성일: <span th:text="${#dates.format(inquiry.responseTo.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
   </div>
+
+  <h2>상태</h2>
+  <p th:text="${inquiry.inquiryStatus}">상태</p>
+
+  <div th:if="${inquiry.inquiryStatus == 'PROCESSING'}">
+    <form th:action="@{/inquiry/{id}/complete(id=${inquiry.inquiryId})}" method="post">
+      <button type="submit" class="btn btn-success">완료로 변경</button>
+    </form>
+  </div>
 </div>
 </body>
 </html>

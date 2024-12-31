@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
   <title>게시물 목록</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<h1>게시물 목록</h1>
-<a href="/posts/add">게시물 추가</a>
-<table>
-  <thead>
-  <tr>
-    <th>제목</th>
-    <th>작성일</th>
-    <th>작업</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="post : ${posts}">
-    <td><a th:href="@{/posts/{id}(id=${post.postId})}" th:text="${post.title}"></a></td>
-    <td th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-    <td>
-      <a th:href="@{/posts/edit/{id}(id=${post.postId})}">수정</a>
-      <form th:action="@{/posts/delete/{id}(id=${post.postId})}" method="post" style="display:inline;">
-        <button type="submit">삭제</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<div class="container mt-5">
+  <h1>게시물 목록</h1>
+  <a href="/posts/add" class="btn btn-primary mb-3">게시물 추가</a>
+
+  <div th:each="department, iterStat : ${departments}">
+    <h2 th:text="${department.name}">학과 이름</h2> <!-- 학과 이름 표시 -->
+    <table class="table">
+      <thead>
+      <tr>
+        <th>번호</th> <!-- 목록 번호 -->
+        <th>제목</th>
+        <th>작성일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="post, iterStat : ${department.posts}">
+        <td th:text="${iterStat.index + 1}"></td> <!-- 목록 번호 -->
+        <td>
+          <a th:href="@{/posts/{id}(id=${post.postId})}" th:text="${post.title}"></a>
+        </td>
+        <td th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>
