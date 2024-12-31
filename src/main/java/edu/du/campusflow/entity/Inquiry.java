@@ -20,7 +20,7 @@ public class Inquiry {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member memberId;
+    private Member member;
 
     @Column(name = "subject", length = 100)
     private String subject;
