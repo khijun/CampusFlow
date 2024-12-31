@@ -11,7 +11,7 @@ public class DiagQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id", nullable = false)
+    @Column(name = "question_id")
     private Long questionId; // question_id, BIGINT -> Long으로 매핑
 
     @Column(name = "question_name")

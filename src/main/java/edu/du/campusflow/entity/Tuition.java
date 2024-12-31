@@ -1,6 +1,5 @@
 package edu.du.campusflow.entity;
 
-import edu.du.campusflow.enums.Semester;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,7 +21,7 @@ public class Tuition {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dept_id", nullable = false)
+    @JoinColumn(name = "dept_id")
     private Dept deptId;
 
 
@@ -36,5 +35,7 @@ public class Tuition {
     @Column(name = "amount")
     private Long amount;
 
-
+    //납부여부
+    @Column(name = "payment_status")
+    private boolean paymentStatus;
 } 
