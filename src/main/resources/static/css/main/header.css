@@ -1,0 +1,76 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --background-color: #ecf0f1;
+    --text-color: #34495e;
+    --sidebar-width: 200px;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    height: 100%;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 40px;
+    justify-content: space-between;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-logo img {
+    margin-top: 10px;
+    margin-left: -30px;
+    height: 90px;
+    width: auto;
+}
+
+.header-title {
+    margin-left: -20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--primary-color);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.header-title small {
+    font-size: 14px;
+    color: var(--text-color);
+    font-weight: 200;
+}
+
+.header-list {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    gap: 15px;
+}
+
+.header-list a {
+    font-size: 16px;
+    color: white;
+    text-decoration: none;
+    background-color: var(--primary-color);
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+.header-list a:hover {
+    background-color: #0056b3;
+}
