@@ -19,6 +19,7 @@ public class FileInfo {
     private Long id;  // 복합키로 FileId 클래스를 사용
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(name = "file_uuid")
