@@ -1,12 +1,18 @@
 package edu.du.campusflow;
 
+import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.enums.*;
 import edu.du.campusflow.repository.CommonCodeRepository;
+import edu.du.campusflow.repository.FileInfoRepository;
 import edu.du.campusflow.service.CommonCodeService;
+import edu.du.campusflow.utils.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 
 @SpringBootTest
@@ -16,6 +22,8 @@ public class HijunTest {
     private CommonCodeService commonCodeService;
     @Autowired
     private CommonCodeRepository commonCodeRepository;
+    @Autowired
+    private FileInfoRepository fileInfoRepository;
 
 
     @Test
@@ -63,4 +71,10 @@ public class HijunTest {
             commonCodeRepository.findAll().forEach(System.out::println);
     }
 
+    @Test
+    public void fileTest(){
+        System.out.println(FileUtils.getFileName("뚱이.jpg"));
+        fileInfoRepository.findByFileTypeIn(Collections.singletonList("jpg")).forEach(System.out::println);
+        System.out.println(Arrays.toString(fileInfoRepository.findAll().stream().map(FileInfo::getId).toArray()));
+    }
 }

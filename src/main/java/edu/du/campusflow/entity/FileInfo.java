@@ -3,8 +3,6 @@ package edu.du.campusflow.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 @Data
@@ -44,12 +42,4 @@ public class FileInfo {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public String getSaveName(){
-        return this.fileUuid + "." + this.fileType;
-    }
-
-    public Path getSavePath(){
-        return Paths.get(this.getFilePath(), this.getSaveName());
-    }
 }

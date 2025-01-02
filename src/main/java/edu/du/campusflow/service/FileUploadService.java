@@ -4,6 +4,7 @@ import edu.du.campusflow.define.FileDefine;
 import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.exception.EmptyFileException;
 import edu.du.campusflow.repository.FileInfoRepository;
+import edu.du.campusflow.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,27 +43,13 @@ public class FileUploadService {
         }
     }
 
-    // 파일 확장자 추출 메서드
-    private String getFileExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return ""; // 확장자가 없는 경우
-        }
-        return filename.substring(filename.lastIndexOf(".") + 1);
-    }
-
-    @Transactional
-    public void saveFile(MultipartFile[] files) {
-        for (MultipartFile file : files) {
-
-        }
-    }
     @Transactional
     public void saveFile(MultipartFile file){
         if (file.isEmpty()) throw new EmptyFileException("저장할 파일이 비어있습니다");
         try {
             String uuid = String.valueOf(System.nanoTime()); // 파일이 저장될 이름 생성
-            String realName = file.getOriginalFilename(); // 파일의 실제 명을 db에 저장하기 위해 만든 변수
-            String type = getFileExtension(file.getOriginalFilename());
+            String realName = FileUtils.getFileName(file.getOriginalFilename());
+            String type = FileUtils.getFileExtension(file.getOriginalFilename());
             String path = getPathByExtension(type);
             createDirectoryIfNotExists(path);
             double fileSize = file.getSize(); // 파일의 크기
@@ -78,11 +65,11 @@ public class FileUploadService {
                     .createdAt(createAt)
                     .build();
 
-            Path savePath = Paths.get(path, fileInfo.getSaveName()); // 파일의 저장 위치
+            Path savePath = Paths.get(path, FileUtils.getSaveName(fileInfo)); // 파일의 저장 위치
             try{
                 file.transferTo(savePath);
             } catch (IOException e) {
-                throw new RuntimeException("파일 저장에 실패함.");
+                throw new Exception("파일 저장에 실패함.");
             }
             fileInfoRepository.save(fileInfo);
         } catch (Exception e) {

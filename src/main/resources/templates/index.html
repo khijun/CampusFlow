@@ -8,7 +8,7 @@
 <body>
 임시 메인 페이지입니다.
 <!-- 파일 업로드 폼 -->
-<form action="/test/files" method="POST" enctype="multipart/form-data">
+<form action="/file" method="POST" enctype="multipart/form-data">
     <!-- 파일 선택 필드 -->
     <label for="file">파일 선택:</label>
     <input type="file" id="file" name="file" required><br><br>
@@ -16,5 +16,9 @@
     <!-- 제출 버튼 -->
     <button type="submit">업로드</button>
 </form>
+<div th:each="fileId : ${fileIds}">
+    <p>test</p>
+    <img th:src="@{/file/{fileId}(fileId=${fileId})}"/>
+</div>
 </body>
 </html>
