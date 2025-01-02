@@ -19,8 +19,8 @@ public class ChangeHistory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;            //학번
+    @JoinColumn(name = "member_id")
+    private Member member;          //학번
 
 
     @ManyToOne

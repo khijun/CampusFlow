@@ -15,12 +15,12 @@ import javax.persistence.*;
 public class MilitaryInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "student_id")
-    @MapsId
-    private Student student;                     //학번
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;                    //학번
 
     @ManyToOne
     @JoinColumn(name = "discharge_type", referencedColumnName = "code_id")
