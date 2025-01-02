@@ -27,8 +27,8 @@ public class Completion {
    private CommonCode completionState; // 공통 코드와 연관 (이수 상태)
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "finalGradeStatus", referencedColumnName = "code_id")
-   private CommonCode finalGradeStatus; // 공통 코드와 연관 (최종 등급)
+   @JoinColumn(name = "final_grade", referencedColumnName = "code_id")
+   private CommonCode finalGrade; // 공통 코드와 연관 (최종 등급)
 
    @Column(name = "created_at")
    private LocalDateTime createdAt;
