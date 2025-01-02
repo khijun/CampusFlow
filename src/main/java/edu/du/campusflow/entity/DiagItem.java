@@ -11,15 +11,15 @@ public class DiagItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment 사용
-    @Column(name = "answer_id", nullable = false)
+    @Column(name = "answer_id")
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 
     @ManyToOne
-    @JoinColumn(name = "ofregistration_id", nullable = false)
+    @JoinColumn(name = "ofregistration_id")
     private Ofregistration ofRegistration; // 외래 키: ofregistration_id
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "question_id")
     private DiagQuestion diagQuestion; // 외래 키: question_id
 
     @Column(name = "score")

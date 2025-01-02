@@ -30,8 +30,8 @@ public class Curriculum {
    @Column(name = "curriculum_year")
    private Integer curriculumYear;
 
-   @Column(name = "applicable_grade")
-   private Integer applicableGrade; // 적용 학년 추가
+   @Column(name = "grade_capacity")
+   private Integer gradeCapacity;
 
    @Column(name = "created_at")
    private LocalDateTime createdAt;
@@ -42,4 +42,10 @@ public class Curriculum {
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "curriculum_status", referencedColumnName = "code_id")
    private CommonCode curriculumStatus;
+
+   @ManyToOne
+   @JoinColumn(name = "grade")
+   private CommonCode grade;
+
+
 }

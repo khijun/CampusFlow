@@ -1,64 +1,79 @@
 package edu.du.campusflow.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
-@Entity
 @Data
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
+@Builder
 @ToString
+@Entity
 @Table(name = "member")
-public abstract class Member {
-    
+public class Member {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    private Long id;
-    
-    @Column(length = 100)
-    private String password;
-    
-    @Column(length = 20)
-    private String name;
-    
-    @Column(length = 11)
-    private String tel;
-    
-    @Column(length = 200)
-    private String address;
-    
-    private LocalDate birthDate;
-    
-    @Column(columnDefinition = "BOOLEAN")
-    private Boolean isActive;
-    
-    private LocalDateTime createAt;
-    
-    private LocalDateTime updateAt;
-    
-    @Column(length = 100)
-    private String email;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender_code_id")
-    private CommonCode gender;
+    private Long memberId;
+    // 자동으로 상승하는 값이 아님.
 
     @ManyToOne
-    private FileInfo file;
+    @JoinColumn(name = "dept_id")
+    private Dept dept; // Dept 테이블과 연관
 
-    public String getRole(){
-        return this.getClass().getSimpleName().toUpperCase();
-    }
+    @Column(name = "password")
+    private String password;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "tel")
+    private String tel;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "birth_date")
+    private Date birthDate;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
+
+    @Column(name = "update_at")
+    private LocalDateTime updateAt;
+
+    @Column(name = "email")
+    private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "file_id")
+    private FileInfo fileInfo;
+
+    @ManyToOne
+    @JoinColumn(name = "gender")
+    private CommonCode gender; // CommonCode 테이블과 연관
+
+    @ManyToOne
+    @JoinColumn(name = "academic_status")
+    private CommonCode academicStatus; // CommonCode 테이블과 연관
+
+    @ManyToOne
+    @JoinColumn(name = "grade")
+    private CommonCode grade; // CommonCode 테이블과 연관
+
+    @ManyToOne
+    @JoinColumn(name = "member_type")
+    private CommonCode memberType; // CommonCode 테이블과 연관
+
+    @Column(name = "start_date")
+    private Date startDate; // 입학, 임용 날짜
+
+    @Column(name = "end_date")
+    private Date endDate; // 졸업, 퇴직 날짜
 }

@@ -20,8 +20,8 @@ public class Lecture { //강의에 관한 데이터를 저장하는 엔티티
     private Long lectureId; //강의 아이디
 
     @ManyToOne
-    @JoinColumn(name = "professor_id")
-    private Professor professor; //교수 아이디
+    @JoinColumn(name = "member_id")
+    private Member member; //교수 아이디
 
     @ManyToOne
     @JoinColumn(name = "curriculum_subject_id")

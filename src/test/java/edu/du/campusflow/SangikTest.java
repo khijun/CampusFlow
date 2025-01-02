@@ -1,8 +1,7 @@
 package edu.du.campusflow;
 
-import edu.du.campusflow.enums.*;
-import edu.du.campusflow.service.*;
-import org.junit.jupiter.api.Test;
+import edu.du.campusflow.service.CommonCodeService;
+import edu.du.campusflow.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -13,24 +12,6 @@ public class SangikTest {
    private CommonCodeService commonCodeService;
 
    @Autowired
-   private StudentService studentService;
-
-   @Autowired
-   private ProfessorService professorService;
-
-   @Autowired
-   private StaffService staffService;
-   @Autowired
    private MemberService memberService;
 
-   @Test
-   void commonCodeServiceTest() throws NoSuchFieldException {
-      commonCodeService.insertCodeFromEnum(Gender.class);
-      commonCodeService.insertCodeFromEnum(DeptStatus.class);
-      commonCodeService.insertCodeFromEnum(AcademicStatus.class);
-      commonCodeService.insertCodeFromEnum(CurriculumStatus.class);
-      commonCodeService.insertCodeFromEnum(CompletionStatus.class);
-      commonCodeService.insertCodeFromEnum(FinalGradeStatus.class);
-      commonCodeService.insertCodeFromEnum(AttendanceStatus.class);
-   }
 }
