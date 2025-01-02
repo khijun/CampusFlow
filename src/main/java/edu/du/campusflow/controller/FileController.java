@@ -25,8 +25,8 @@ public class FileController {
     }
 
     @PostMapping
-    public String addFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> addFile(@RequestParam("file") MultipartFile file) {
         fileUploadService.saveFile(file);
-        return "redirect:/index";
+        return ResponseEntity.ok().body("파일 업로드 성공");
     }
 }
