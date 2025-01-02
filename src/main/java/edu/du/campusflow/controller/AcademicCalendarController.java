@@ -32,6 +32,6 @@ public class AcademicCalendarController {
     @GetMapping("/academic-calendar/view")
     public String viewAcademicCalendars(Model model) {
         model.addAttribute("academicCalendars", academicCalendarService.getAllAcademicCalendars()); // 모든 학사 일정을 모델에 추가
-        return "calendar/viewAcademicCalendars"; // 학사 일정 목록 페이지로 이동
+        return "calendar/view_event"; // 학사 일정 목록 페이지로 이동
     }
 }

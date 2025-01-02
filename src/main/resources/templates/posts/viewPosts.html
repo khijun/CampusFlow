@@ -10,23 +10,25 @@
   <h1>게시물 목록</h1>
   <a href="/posts/add" class="btn btn-primary mb-3">게시물 추가</a>
 
-  <div th:each="department, iterStat : ${departments}">
-    <h2 th:text="${department.name}">학과 이름</h2> <!-- 학과 이름 표시 -->
+  <div th:each="dept, iterStat : ${departments}">
+    <h2 th:text="${dept.deptName}">학과 이름</h2> <!-- 학과 이름 표시 -->
     <table class="table">
       <thead>
       <tr>
         <th>번호</th> <!-- 목록 번호 -->
         <th>제목</th>
         <th>작성일</th>
+        <th>작성자</th> <!-- 작성자 열 추가 -->
       </tr>
       </thead>
       <tbody>
-      <tr th:each="post, iterStat : ${department.posts}">
-        <td th:text="${iterStat.index + 1}"></td> <!-- 목록 번호 -->
+      <tr th:each="post : ${postsByDepartment[dept.deptId]}">
+        <td th:text="${post.postId}"></td>
         <td>
           <a th:href="@{/posts/{id}(id=${post.postId})}" th:text="${post.title}"></a>
         </td>
-        <td th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="'익명'"></td>
       </tr>
       </tbody>
     </table>

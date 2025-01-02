@@ -19,9 +19,14 @@ public class PostService {
         return postRepository.findAll();
     }
 
+
     // 특정 게시물 조회
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElse(null);
+    }
+    //학과별 게시물 조회?
+    public List<Post> getPostsByDepartment(Long deptId) {
+        return postRepository.findByDept_DeptId(deptId); // deptId로 게시물 조회
     }
 
     // 게시물 생성

@@ -42,17 +42,7 @@ public class InquiryService {
         return inquiryRepository.save(inquiry);
     }
 
-//    // 문의 업데이트
-//    public Inquiry updateInquiry(Long inquiryId, Inquiry inquiry) {
-//        Inquiry existingInquiry = getInquiryById(inquiryId);
-//        if (existingInquiry != null) {
-//            existingInquiry.setSubject(inquiry.getSubject());
-//            existingInquiry.setContent(inquiry.getContent());
-//            existingInquiry.setUpdatedAt(LocalDateTime.now());
-//            return inquiryRepository.save(existingInquiry);
-//        }
-//        return null;
-//    }
+
 
     // 문의 삭제
     public void deleteInquiry(Long inquiryId) {

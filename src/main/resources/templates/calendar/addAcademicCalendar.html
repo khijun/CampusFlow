@@ -90,6 +90,16 @@
                 $('#eventModal').modal('show');
             },
             events: [], // 여기에 기존 이벤트를 추가할 수 있습니다.
+            dayRender: function(date, cell) {
+                // 토요일과 일요일에 배경색 적용
+                if (date.day() === 6) { // 토요일
+                    cell.css("background-color", "rgba(0, 123, 255, 0.5)"); // 파란색, 50% 투명도
+                    cell.css("color", "white"); // 텍스트 색상
+                } else if (date.day() === 0) { // 일요일
+                    cell.css("background-color", "rgba(220, 53, 69, 0.5)"); // 빨간색, 50% 투명도
+                    cell.css("color", "white"); // 텍스트 색상
+                }
+            }
         });
 
         $('#eventForm').on('submit', function(e) {
