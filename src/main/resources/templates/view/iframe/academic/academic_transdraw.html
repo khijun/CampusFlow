@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전과/자퇴 신청</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+    <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <!-- 전과/자퇴 신청 폼 -->
+    <div class="search-container">
+        <h2>전과/자퇴 신청</h2>
+        <div class="input-group">
+            <label for="studentId">학생 ID</label>
+            <input type="text" id="studentId" name="studentId" placeholder="학생 ID를 입력하세요">
+        </div>
+        <div class="input-group">
+            <label for="requestType">신청 종류</label>
+            <select id="requestType" name="requestType">
+                <option value="transferred">전과</option>
+                <option value="withdrawn">자퇴</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="reason">신청 사유</label>
+            <textarea id="reason" name="reason" placeholder="신청 사유를 입력하세요" rows="4"></textarea>
+        </div>
+        <button type="button" onclick="submitTransferWithdraw()">신청하기</button>
+    </div>
+
+    <!-- 신청 결과 표시 영역 -->
+    <div id="resultContainer" style="display: none;">
+        <h2>신청 결과</h2>
+        <p id="resultMessage"></p>
+    </div>
+</div>
+
+<script>
+    // 전과/자퇴 신청 처리
+    function submitTransferWithdraw() {
+        const studentId = document.getElementById('studentId').value;
+        const requestType = document.getElementById('requestType').value;
+        const reason = document.getElementById('reason').value;
+
+        if (!reason) {
+            alert('신청 사유를 입력해주세요.');
+            return;
+        }
+
+        // 서버로 신청 정보 전송 (예시: fetch API 사용)
+        fetch('/api/transferWithdraw', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                studentId: studentId,
+                requestType: requestType,
+                reason: reason,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 신청 결과에 따라 처리
+                const resultContainer = document.getElementById('resultContainer');
+                const resultMessage = document.getElementById('resultMessage');
+
+                if (data.success) {
+                    resultMessage.textContent = requestType === 'transferred' ? '전과 신청이 완료되었습니다.' : '자퇴 신청이 완료되었습니다.';
+                } else {
+                    resultMessage.textContent = '신청 실패. 다시 시도해주세요.';
+                }
+
+                resultContainer.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('신청 중 오류가 발생했습니다.');
+            });
+    }
+</script>
+
+</body>
+</html>

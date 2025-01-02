@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>학적 조회</title>
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+   <!-- 학적 조회 폼 -->
+   <div class="search-container">
+      <div class="input-group">
+         <label for="studentId">학생 ID</label>
+         <input type="text" id="studentId" name="studentId" placeholder="학생 ID를 입력하세요">
+      </div>
+      <div class="input-group">
+         <label for="year">학년도</label>
+         <select id="year" name="year">
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="grade">편성학년</label>
+         <select id="grade" name="grade">
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
+            <option value="4">4학년</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="deptName">편성 학과</label>
+         <input type="text" id="deptName" name="deptName" placeholder="예: 컴퓨터공학과">
+      </div>
+      <div class="input-group">
+         <label for="status">학적 상태</label>
+         <select id="status" name="status">
+            <option value="active">재학</option>
+            <option value="suspended">휴학</option>
+            <option value="graduated">졸업</option>
+            <option value="leave">자퇴</option>
+         </select>
+      </div>
+      <button type="button" onclick="searchAcademicStatus()">검색</button>
+   </div>
+
+   <!-- 검색 결과 표시 영역 -->
+   <div class="result-container" id="resultContainer" style="display:none;">
+      <h2>학적 조회 결과</h2>
+      <table>
+         <thead>
+         <tr>
+            <th>학년도</th>
+            <th>학과</th>
+            <th>학적 상태</th>
+            <th>학년</th>
+            <th>과목 코드</th>
+            <th>이수 구분</th>
+         </tr>
+         </thead>
+         <tbody id="resultTableBody">
+         <!-- 검색 결과가 여기에 추가됨 -->
+         </tbody>
+      </table>
+   </div>
+</div>
+
+<script>
+   function searchAcademicStatus() {
+      const studentId = document.getElementById('studentId').value;
+      const year = document.getElementById('year').value;
+      const grade = document.getElementById('grade').value;
+      const deptName = document.getElementById('deptName').value;
+      const status = document.getElementById('status').value;
+
+      // 여기에서 AJAX 요청을 통해 서버에 학적 정보를 요청할 수 있음 (임시로 더미 데이터 사용)
+
+      // 더미 데이터
+      const resultData = [
+         {
+            studentId: studentId,
+            year: year,
+            deptName: deptName,
+            status: status,
+            grade: grade,
+            subjectCode: "SUB123",
+            category: "전공 필수"
+         },
+         {
+            studentId: studentId,
+            year: year,
+            deptName: deptName,
+            status: status,
+            grade: grade,
+            subjectCode: "SUB124",
+            category: "교양 선택"
+         }
+      ];
+
+      // 결과 테이블에 데이터 추가
+      const resultTableBody = document.getElementById('resultTableBody');
+      resultTableBody.innerHTML = ''; // 이전 결과 삭제
+
+      resultData.forEach(item => {
+         const row = document.createElement('tr');
+         row.innerHTML = `
+            <td>${item.year}</td>
+            <td>${item.deptName}</td>
+            <td>${item.status}</td>
+            <td>${item.grade}학년</td>
+            <td>${item.subjectCode}</td>
+            <td>${item.category}</td>
+         `;
+         resultTableBody.appendChild(row);
+      });
+
+      // 검색 결과 보여주기
+      document.getElementById('resultContainer').style.display = 'block';
+   }
+</script>
+
+</body>
+</html>
