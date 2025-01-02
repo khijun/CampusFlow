@@ -33,6 +33,4 @@ public class Tuition {
     @Column(name = "amount")
     private Long amount;
 
-    @Column(name = "payment_status")
-    private boolean paymentStatus;
 } 
