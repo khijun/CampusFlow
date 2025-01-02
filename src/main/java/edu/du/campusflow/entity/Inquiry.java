@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "inquiry")
 public class Inquiry {
-// ㅁㄴㅇㄹ
+// ㅁㄴㅇㄹㅁㄴㅇㄹ
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_id")
