@@ -17,9 +17,9 @@ public class AcademicCalendar {
     @Column(name = "calendar_id")
     private Long calendarId;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Staff와의 Many-to-One 관계
-    @JoinColumn(name = "staff_id") // 외래 키 설정
-    private Staff staff; // 교직원 엔티티
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id") // 외래 키 설정
+    private Member member; // 교직원 엔티티
 
     @Column(name = "title", length = 100)
     private String title; // 제목

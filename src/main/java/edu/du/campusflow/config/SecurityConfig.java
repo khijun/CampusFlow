@@ -45,10 +45,10 @@ public class SecurityConfig{
 
     public UserDetails toUserDetails(Member member){
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getRole()));
-        System.out.println("현재 유저의 권한: " + member.getRole());
+        authorities.add(new SimpleGrantedAuthority(member.getMemberType().toString().toUpperCase()));
+        System.out.println("현재 유저의 권한: " + member.getMemberType().toString());
         return User.builder()
-                .username(member.getId().toString())
+                .username(member.getMemberId().toString())
                 .password(member.getPassword())
                 .authorities(authorities)
                 .build();
