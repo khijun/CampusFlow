@@ -46,7 +46,7 @@ public class FileInfo {
     private LocalDateTime updatedAt;
 
     public String getSaveName(){
-        return this.fileName + "." + this.fileType;
+        return this.fileUuid + "." + this.fileType;
     }
 
     public Path getSavePath(){
