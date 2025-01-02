@@ -19,11 +19,9 @@ public class Tuition {
     @Column(name = "tuition_id")
     private Long TuitionId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dept_id")
     private Dept deptId;
-
 
     @Column(name = "tui_year")
     private Year tuiYear;
@@ -35,7 +33,6 @@ public class Tuition {
     @Column(name = "amount")
     private Long amount;
 
-    //납부여부
     @Column(name = "payment_status")
     private boolean paymentStatus;
 } 
