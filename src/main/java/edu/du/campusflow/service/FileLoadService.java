@@ -1,13 +1,16 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.define.FileDefine;
 import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.repository.FileInfoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 @RequiredArgsConstructor
 public class FileLoadService {
 
@@ -27,12 +30,9 @@ public class FileLoadService {
         return getSavePaths(fileInfoList);
     }
 
-//    public List<Path> getAllImageSavePaths() {
-//        List<FileInfo> fileInfoList = fileInfoRepository.findAll();
-//    }
+    public List<Path> getAllImageSavePaths() {
+        List<FileInfo> fileInfoList = fileInfoRepository.findByFileTypeIn(FileDefine.IMAGE_TYPES);
+        return getSavePaths(fileInfoList);
+    }
 
-//    public MultipartFile getFile(Long fileId) {
-//        FileInfo fileInfo = fileInfoRepository.findById(fileId).orElseThrow();
-//        Path path = Paths.get(fileInfo.getFilePath(), fileInfo.getFileUuid() + "." + fileInfo.getFileType());
-//    }
 }

@@ -28,12 +28,11 @@ public class FileUploadService {
             return FileDefine.OTHER_PATH;
         }
 
+        for(String type : FileDefine.IMAGE_TYPES) {
+            if(type.equalsIgnoreCase(extension)) return FileDefine.IMAGE_PATH;
+        }
+
         switch (extension.toLowerCase()) {
-            case "jpg":
-            case "jpeg":
-            case "png":
-            case "gif":
-                return FileDefine.IMAGE_PATH;
 
             case "pdf":
                 return FileDefine.PDF_PATH;

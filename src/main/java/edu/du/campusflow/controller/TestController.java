@@ -1,8 +1,7 @@
 package edu.du.campusflow.controller;
 
-import edu.du.campusflow.service.AuthService;
+import edu.du.campusflow.service.FileLoadService;
 import edu.du.campusflow.service.FileUploadService;
-import edu.du.campusflow.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 public class TestController {
-    private final AuthService authService;
-    private final MemberService memberService;
+    private final FileLoadService fileLoadService;
     private final FileUploadService fileUploadService;
 
     @GetMapping
@@ -28,6 +26,7 @@ public class TestController {
     @PostMapping("/files")
     public String fileUpload(@RequestParam("file") MultipartFile file, Model model) {
         fileUploadService.saveFile(file);
+        model.addAttribute("files", fileLoadService.getAllImageSavePaths());
         return "redirect:/test";
     }
 
