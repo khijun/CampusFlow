@@ -61,13 +61,14 @@ public class FileUploadService {
     public void saveFile(MultipartFile file){
         if (file.isEmpty()) throw new EmptyFileException("저장할 파일이 비어있습니다");
         try {
-            String uuid = String.valueOf(System.nanoTime());
-            String realName = file.getOriginalFilename();
+            String uuid = String.valueOf(System.nanoTime()); // 파일이 저장될 이름 생성
+            String realName = file.getOriginalFilename(); // 파일의 실제 명을 db에 저장하기 위해 만든 변수
             String type = getFileExtension(file.getOriginalFilename());
-            String path = getPathByExtension(file.getOriginalFilename()); // 파일을 저장할 폴더 위치
+            String path = getPathByExtension(type);
             createDirectoryIfNotExists(path);
-            double fileSize = file.getSize();
-            LocalDateTime createAt = LocalDateTime.now();
+            double fileSize = file.getSize(); // 파일의 크기
+            LocalDateTime createAt = LocalDateTime.now(); // 파일의 저장 날짜
+
             FileInfo fileInfo = FileInfo.builder()
                     .member(authService.getCurrentMember())
                     .fileUuid(uuid)
@@ -77,7 +78,8 @@ public class FileUploadService {
                     .fileSize(fileSize)
                     .createdAt(createAt)
                     .build();
-            Path savePath = Paths.get(path, uuid);
+
+            Path savePath = Paths.get(path, fileInfo.getSaveName()); // 파일의 저장 위치
             try{
                 file.transferTo(savePath);
             } catch (IOException e) {
@@ -89,6 +91,7 @@ public class FileUploadService {
         }
     }
 
+    // 입력한 경로에 폴더가 없을 시 폴더를 만드는 메서드
     private static void createDirectoryIfNotExists(String path) {
         File directory = new File(path);
         if (!directory.exists()) {

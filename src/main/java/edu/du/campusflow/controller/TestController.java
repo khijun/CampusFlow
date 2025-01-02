@@ -22,8 +22,6 @@ public class TestController {
 
     @GetMapping
     public String index(Model model) {
-        Long memberId = authService.getCurrentMemberId();
-        model.addAttribute("member", memberService.findByMemberId(memberId));
         return "index";
     }
 
