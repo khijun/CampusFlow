@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface ChangeHistoryRepository extends JpaRepository<ChangeHistory,Long> {
 
-    List<ChangeHistory> findByMember(Member member);
+    List<ChangeHistory> findByMember(Member memberId);
 }

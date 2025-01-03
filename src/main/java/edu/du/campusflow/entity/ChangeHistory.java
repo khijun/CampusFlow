@@ -31,5 +31,7 @@ public class ChangeHistory {
 
     private LocalDateTime approvalDate;        //승인 일자
 
-    private int grade;         //학년
+    @ManyToOne
+    @JoinColumn(name = "grade")
+    private CommonCode grade;         //학년
 }

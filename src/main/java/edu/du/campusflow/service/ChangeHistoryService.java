@@ -19,7 +19,7 @@ public class ChangeHistoryService {
     private final MemberRepository memberRepository;
 
 
-    public void saveChangeHistory(Member member, CommonCode beforeCode, CommonCode afterCode, int grade) {
+    public void saveChangeHistory(Member member, CommonCode beforeCode, CommonCode afterCode, CommonCode grade) {
         ChangeHistory changeHistory = ChangeHistory.builder()
                 .member(member)
                 .beforeCode(beforeCode)

@@ -18,7 +18,7 @@ public class ChangeRequestService {
     private final ChangeHistoryRepository changeHistoryRepository;  // ChangeHistory 테이블을 조회하고 저장할 리포지토리
 
     // 변동 신청 처리
-    public void requestChange(Long memberId, Long beforeCodeId, Long afterCodeId, int grade) {
+    public void requestChange(Long memberId, Long beforeCodeId, Long afterCodeId, CommonCode grade) {
         // 1. 학생 정보를 가져오기
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("학생 정보 없음"));
 

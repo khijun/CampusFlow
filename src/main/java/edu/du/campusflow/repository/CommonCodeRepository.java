@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface CommonCodeRepository extends JpaRepository<CommonCode, Long> {
-
+    CommonCode findByCodeId(Long id);
 }

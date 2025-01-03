@@ -2,6 +2,7 @@ package edu.du.campusflow;
 
 import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.*;
+import edu.du.campusflow.service.ChangeHistoryService;
 import edu.du.campusflow.service.ChangeRequestService;
 import edu.du.campusflow.service.InfoService;
 import org.junit.jupiter.api.Test;
@@ -43,19 +44,15 @@ public class HjinTest {
     private InfoService infoService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private ChangeHistoryService changeHistoryService;
 
     @Test
     void Test_add(){
 
-        EducationInfo educationInfo = infoService.add_educationInfo(
-                EducationInfo.builder()
-                        .member(memberRepository.findByMemberId(202103001L))
-                        .schoolName("혁진고등학교")
-                        .enrollmentDate(LocalDateTime.now())
-                        .graduationDate(LocalDateTime.now())
-                        .graduationStatus(commonCodeRepository.findById(3L))
-                        .build()
-        )
+        changeHistoryService.getChangeHistoryByMember(memberId);
+
+
     }
 
 
