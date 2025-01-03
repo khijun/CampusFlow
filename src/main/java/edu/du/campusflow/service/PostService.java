@@ -26,7 +26,7 @@ public class PostService {
     }
     //학과별 게시물 조회?
     public List<Post> getPostsByDepartment(Long deptId) {
-        return postRepository.findByDept_DeptId(deptId); // deptId로 게시물 조회
+        return postRepository.findByDept_DeptIdAndRelatedPostIsNull(deptId); // deptId로 게시물 조회
     }
 
     // 게시물 생성

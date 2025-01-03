@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findByDept_DeptId(Long deptId);
+    List<Post> findByDept_DeptIdAndRelatedPostIsNull(Long deptId);
     // 추가적인 쿼리 메서드가 필요하면 여기에 정의할 수 있습니다.
 }

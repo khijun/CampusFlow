@@ -56,11 +56,11 @@
       <ul class="list-group">
         <li class="list-group-item" th:each="comment : ${post.comments}">
           <p th:text="${comment.content}"></p>
-          <p>작성일: <span th:text="${#dates.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+          <p>작성일: <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
           <div>
             <button class="btn btn-secondary btn-sm"
-                    th:attr="onclick='editComment(' + ${comment.id} + ', \'' + ${comment.content} + '\')'">수정</button>
-            <form th:action="@{/posts/{postId}/comments/delete/{commentId}(postId=${post.postId}, commentId=${comment.id})}" method="post" style="display:inline;">
+                    th:attr="onclick='editComment(' + ${comment.postId} + ', \'' + ${comment.content} + '\')'">수정</button>
+            <form th:action="@{/posts/{postId}/comments/delete/{commentId}(postId=${post.postId}, commentId=${comment.postId})}" method="post" style="display:inline;">
               <button type="submit" class="btn btn-danger btn-sm">삭제</button>
             </form>
           </div>

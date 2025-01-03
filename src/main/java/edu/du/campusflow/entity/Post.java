@@ -46,5 +46,6 @@ public class Post {
     @ToString.Exclude
     private List<Post> comments; // 댓글 목록
 
-
+//    @Column(name="is_comment")
+//    private boolean isComment;
 }

@@ -41,35 +41,43 @@
 
 <script>
   $(document).ready(function() {
-    // 예시 이벤트 데이터 (서버에서 가져온 데이터로 대체 가능)
-    var events = [
-      { title: '일정 1', start: '2023-10-01', end: '2023-10-01', description: '설명 1' },
-      { title: '일정 2', start: '2023-10-05', end: '2023-10-07', description: '설명 2' },
-      { title: '일정 3', start: '2023-10-09', end: '2023-10-09', description: '설명 3' }
-    ];
-
-    $('#calendar').fullCalendar({
-      header: {
-        left: 'prev,next today',
-        center: 'title',
+    // AJAX 요청으로 데이터 가져오기
+    $.ajax({
+      url: '/api/academic-calendar',
+      type: 'GET',
+      success: function(data) {
+        $('#calendar').fullCalendar({
+          header: {
+            left: 'prev,next today',
+            center: 'title',
+          },
+          events: data.map(event => ({
+            title: event.title,
+            start: event.startDate, // 데이터베이스에서 가져온 시작 날짜
+            end: event.endDate, // 데이터베이스에서 가져온 종료 날짜
+            description: event.description // 데이터베이스에서 가져온 설명
+          })),
+          eventClick: function(event) {
+            // 모달에 일정 정보 표시
+            $('#modalTitle').text(event.title);
+            $('#modalDate').text(event.start.format('YYYY-MM-DD') + (event.end ? ' ~ ' + event.end.format('YYYY-MM-DD') : ''));
+            $('#modalDescription').text(event.description);
+            $('#eventModal').modal('show'); // 모달 표시
+          },
+          dayRender: function(date, cell) {
+            // 토요일과 일요일에 배경색 적용
+            if (date.day() === 6) { // 토요일
+              cell.css("background-color", "rgba(0, 123, 255, 0.5)"); // 파란색, 50% 투명도
+              cell.css("color", "blue"); // 텍스트 색상
+            } else if (date.day() === 0) { // 일요일
+              cell.css("background-color", "rgba(220, 53, 69, 0.5)"); // 빨간색, 50% 투명도
+              cell.css("color", "red"); // 텍스트 색상
+            }
+          }
+        });
       },
-      events: events, // 초기 이벤트 목록
-      eventClick: function(event) {
-        // 모달에 일정 정보 표시
-        $('#modalTitle').text(event.title);
-        $('#modalDate').text(event.start.format('YYYY-MM-DD') + (event.end ? ' ~ ' + event.end.format('YYYY-MM-DD') : ''));
-        $('#modalDescription').text(event.description);
-        $('#eventModal').modal('show'); // 모달 표시
-      },
-      dayRender: function(date, cell) {
-        // 토요일과 일요일에 배경색 적용
-        if (date.day() === 6) { // 토요일
-          cell.css("background-color", "rgba(0, 123, 255, 0.5)"); // 파란색, 50% 투명도
-          cell.css("color", "blue"); // 텍스트 색상
-        } else if (date.day() === 0) { // 일요일
-          cell.css("background-color", "rgba(220, 53, 69, 0.5)"); // 빨간색, 50% 투명도
-          cell.css("color", "red"); // 텍스트 색상
-        }
+      error: function(xhr, status, error) {
+        console.error('데이터를 가져오는 데 실패했습니다:', error);
       }
     });
   });
