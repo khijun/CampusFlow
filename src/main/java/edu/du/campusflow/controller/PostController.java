@@ -65,7 +65,7 @@ public class PostController {
             return "redirect:/posts/view"; // 게시물 목록 페이지로 리다이렉트
         }
         model.addAttribute("post", post); // 모델에 게시물 추가
-        return "posts/viewPosts"; // 게시물 상세 페이지로 이동
+        return "posts/postDetail"; // 게시물 상세 페이지로 이동
     }
     // 게시물 수정 페이지
     @GetMapping("/edit/{id}")
