@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "lec_questions") // 테이블 이름을 명시
+@Table(name = "lec_questions") // 강의평가 문항
 public class LecQuestion {
 
     @Id

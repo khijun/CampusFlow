@@ -73,6 +73,9 @@ public class SecurityConfig{
 //                .permitAll();
 
         http
+                .headers()
+                .frameOptions().sameOrigin() // X-Frame-Options 설정
+                .and()
                 .authorizeRequests()
                 .anyRequest().permitAll() // 모든 요청을 허용
                 .and()

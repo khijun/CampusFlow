@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 public class TestController {
-    private final AuthService authService;
-    private final MemberService memberService;
-
-    @GetMapping
-    public String index(Model model) {
-        Long memberId = authService.getCurrentMemberId();
-        model.addAttribute("member", memberService.findByMemberId(memberId));
-        return "index";
-    }
+//    private final AuthService authService;
+//    private final MemberService memberService;
+//
+//    @GetMapping
+//    public String index(Model model) {
+//        Long memberId = authService.getCurrentMemberId();
+//        model.addAttribute("member", memberService.findByMemberId(memberId));
+//        return "index";
+//    }
 
 }

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "diag_items") // 테이블 이름을 명시
+@Table(name = "diag_items") // 강의평가 답변
 public class DiagItem {
 
     @Id

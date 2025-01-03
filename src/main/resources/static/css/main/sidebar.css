@@ -1,0 +1,39 @@
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--secondary-color);
+    padding: 20px;
+    /*padding-bottom: 100px; !* 하단에 여유 공간 추가 *!*/
+    height: calc(100vh - 60px); /* 화면 높이에서 헤더 높이를 제외한 높이 */
+    position: fixed;
+    top: 70px; /* nav-list 상단에 맞춤 */
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+}
+
+.sidebar-header h2 {
+    font-size: 24px;
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.sidebar a:hover {
+    background-color: var(--primary-color);
+}
+
+.sidebar::after {
+    content: "";
+    display: block;
+    height: 100px; /* 여유 공간 추가 */
+}

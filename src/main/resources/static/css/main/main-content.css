@@ -1,0 +1,183 @@
+.main-content {
+   margin-left: 220px;
+   padding: 20px;
+   flex-grow: 1;
+   height: auto; /* 높이 자동 조정 */
+   min-height: calc(100vh - 150px); /* 최소 높이 설정 */
+   box-sizing: border-box; /* 패딩과 테두리를 너비 계산에 포함 */
+   overflow: hidden; /* 스크롤바 제거 */
+}
+
+.main-content iframe {
+   width: 100%;
+   height: 100%;
+   margin: 0; /* 여백 제거 */
+   border: none;
+   overflow: hidden;
+}
+
+.footer {
+   background-color: white;
+   text-align: center;
+   padding: 10px;
+   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/*.container {*/
+/*   max-width: 1200px;*/
+/*   margin: 0 auto;*/
+/*   padding: 20px;*/
+/*   font-family: 'Noto Sans KR', sans-serif;*/
+/*}*/
+
+/*.evaluation-form {*/
+/*   background-color: #fff;*/
+/*   border-radius: 8px;*/
+/*   padding: 20px;*/
+/*   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*h2 {*/
+/*   color: #333;*/
+/*   margin-bottom: 30px;*/
+/*   font-size: 24px;*/
+/*   border-bottom: 2px solid #3498db;*/
+/*   padding-bottom: 10px;*/
+/*}*/
+
+/*!* 검색 영역 스타일 *!*/
+/*.search-container {*/
+/*   display: flex;*/
+/*   gap: 20px;*/
+/*   margin-bottom: 30px;*/
+/*   padding: 15px;*/
+/*   background-color: #f8f9fa;*/
+/*   border-radius: 6px;*/
+/*   align-items: center;*/
+/*}*/
+
+/*.input-group {*/
+/*   display: flex;*/
+/*   align-items: center;*/
+/*   gap: 10px;*/
+/*}*/
+
+/*.input-group label {*/
+/*   font-weight: 500;*/
+/*   color: #555;*/
+/*}*/
+
+/*select {*/
+/*   padding: 8px 12px;*/
+/*   border: 1px solid #ddd;*/
+/*   border-radius: 4px;*/
+/*   font-size: 14px;*/
+/*}*/
+
+/*button {*/
+/*   background-color: #3498db;*/
+/*   color: white;*/
+/*   border: none;*/
+/*   padding: 8px 20px;*/
+/*   border-radius: 4px;*/
+/*   cursor: pointer;*/
+/*   transition: background-color 0.3s;*/
+/*}*/
+
+/*button:hover {*/
+/*   background-color: #2980b9;*/
+/*}*/
+
+/*!* 결과 영역 스타일 *!*/
+/*.result-container {*/
+/*   margin-top: 20px;*/
+/*}*/
+
+/*.question-item {*/
+/*   background-color: #fff;*/
+/*   padding: 20px;*/
+/*   margin-bottom: 20px;*/
+/*   border-radius: 6px;*/
+/*   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*.question-item p {*/
+/*   font-size: 16px;*/
+/*   font-weight: 500;*/
+/*   color: #333;*/
+/*   margin-bottom: 15px;*/
+/*}*/
+
+/*.score-summary {*/
+/*   margin-top: 15px;*/
+/*}*/
+
+/*.average-score {*/
+/*   font-size: 15px;*/
+/*   color: #2c3e50;*/
+/*   margin-bottom: 15px;*/
+/*   padding: 8px;*/
+/*   background-color: #f8f9fa;*/
+/*   border-radius: 4px;*/
+/*}*/
+
+/*.score-distribution {*/
+/*   display: flex;*/
+/*   flex-direction: column;*/
+/*   gap: 8px;*/
+/*}*/
+
+/*.score-bar {*/
+/*   display: flex;*/
+/*   align-items: center;*/
+/*   gap: 10px;*/
+/*}*/
+
+/*.bar-label {*/
+/*   width: 40px;*/
+/*   font-size: 14px;*/
+/*   color: #666;*/
+/*}*/
+
+/*.bar {*/
+/*   height: 20px;*/
+/*   background-color: #3498db;*/
+/*   border-radius: 10px;*/
+/*   transition: width 0.3s ease;*/
+/*}*/
+
+/*.bar-value {*/
+/*   min-width: 50px;*/
+/*   font-size: 14px;*/
+/*   color: #666;*/
+/*}*/
+
+/*!* 문항 없을 때 메시지 스타일 *!*/
+/*.no-questions {*/
+/*   text-align: center;*/
+/*   padding: 40px;*/
+/*   color: #666;*/
+/*   background-color: #f8f9fa;*/
+/*   border-radius: 6px;*/
+/*   margin-top: 20px;*/
+/*}*/
+
+/*!* 반응형 디자인 *!*/
+/*@media (max-width: 768px) {*/
+/*   .search-container {*/
+/*      flex-direction: column;*/
+/*      gap: 10px;*/
+/*   }*/
+
+/*   .input-group {*/
+/*      width: 100%;*/
+/*   }*/
+
+/*   select {*/
+/*      width: 100%;*/
+/*   }*/
+
+/*   button {*/
+/*      width: 100%;*/
+/*   }*/
+/*}*/
