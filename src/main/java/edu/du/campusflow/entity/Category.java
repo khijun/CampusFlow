@@ -21,6 +21,7 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @ToString.Exclude
     private Category parent;
 
     @Column(name = "category_name", length = 50)
