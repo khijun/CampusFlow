@@ -1,5 +1,6 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.LectureDTO;
 import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ public class LectureController {
     LectureService lectureService;
 
     @GetMapping("/api/lectures/search")
-    public ResponseEntity<List<Lecture>> searchLectures(
+    public ResponseEntity<List<LectureDTO>> searchLectures(
             @RequestParam(required = false) String deptName,
             @RequestParam(required = false) String semester,
             @RequestParam(required = false) String subjectType,
             @RequestParam(required = false) String lectureName) {
 
-        List<Lecture> lectures = lectureService.searchLectures(semester, subjectType, lectureName, deptName);
+        List<LectureDTO> lectures = lectureService.searchLectures(semester, subjectType, lectureName, deptName);
         return ResponseEntity.ok(lectures);
     }
 }
