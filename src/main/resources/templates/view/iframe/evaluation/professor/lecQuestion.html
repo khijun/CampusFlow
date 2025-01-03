@@ -2,93 +2,112 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>강의평가 결과</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/main/main-content.css}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
+    .container {
+      min-height: 100%;
+      width: 100%;
+    }
+
+    .question-item {
+      margin-bottom: 40px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+
+    .chart-container {
+      width: 100%;
+      max-width: 800px;
+      height: 300px;  /* 차트 높이 지정 */
+      margin: 20px auto;
+    }
+
+    .average-score {
+      font-size: 1.2em;
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    h3 {
+      color: #444;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="evaluation-form">
-    <h2>강의평가 결과</h2>
+<h2>강의평가 결과</h2>
 
-    <!-- 검색 조건 -->
-    <div class="search-container">
-      <div class="input-group">
-        <label for="year">학년도</label>
-        <select id="year" name="year">
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="semester">학기</label>
-        <select id="semester" name="semester">
-          <option value="1">1학기</option>
-          <option value="2">2학기</option>
-        </select>
-      </div>
-      <button onclick="searchEvaluation()" type="button">검색</button>
-    </div>
+<div th:if="${#lists.isEmpty(results)}">
+  <p>아직 제출된 강의평가가 없습니다.</p>
+</div>
 
-    <!-- 강의평가 결과 -->
-    <div th:with="results=${@lecQuestionService.getEvaluationResults(param.ofregistrationId)}">
-      <div class="result-container" th:if="${not #lists.isEmpty(results)}">
-        <div class="question-item" th:each="result : ${results}">
-          <p th:text="${result.questionId + '. ' + result.questionName}"></p>
-          <div class="score-summary">
-            <div class="average-score">
-              평균 점수: <span th:text="${result.averageScore ?: '미평가'}">0.0</span>
-            </div>
-            <div class="score-distribution">
-              <div class="score-bar">
-                <div class="bar-label">5점</div>
-                <div class="bar" th:style="'width:' + ${result.score5Percent ?: 0} + '%'"></div>
-                <div class="bar-value" th:text="${result.score5Count ?: 0} + '명'"></div>
-              </div>
-              <div class="score-bar">
-                <div class="bar-label">4점</div>
-                <div class="bar" th:style="'width:' + ${result.score4Percent ?: 0} + '%'"></div>
-                <div class="bar-value" th:text="${result.score4Count ?: 0} + '명'"></div>
-              </div>
-              <div class="score-bar">
-                <div class="bar-label">3점</div>
-                <div class="bar" th:style="'width:' + ${result.score3Percent ?: 0} + '%'"></div>
-                <div class="bar-value" th:text="${result.score3Count ?: 0} + '명'"></div>
-              </div>
-              <div class="score-bar">
-                <div class="bar-label">2점</div>
-                <div class="bar" th:style="'width:' + ${result.score2Percent ?: 0} + '%'"></div>
-                <div class="bar-value" th:text="${result.score2Count ?: 0} + '명'"></div>
-              </div>
-              <div class="score-bar">
-                <div class="bar-label">1점</div>
-                <div class="bar" th:style="'width:' + ${result.score1Percent ?: 0} + '%'"></div>
-                <div class="bar-value" th:text="${result.score1Count ?: 0} + '명'"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+<div th:if="${not #lists.isEmpty(results)}">
+  <div class="question-item" th:each="result : ${results}">
+    <h3 th:text="${result.questionId + '. ' + result.questionName}"></h3>
+
+    <div class="score-summary">
+      <div class="average-score">
+        평균 점수: <span th:text="${#numbers.formatDecimal(result.averageScore, 1, 1)}">0.0</span>
       </div>
 
-      <!-- 문항이 없을 경우 메시지 -->
-      <div class="no-questions" th:if="${#lists.isEmpty(results)}">
-        <p>등록된 강의평가 문항이 없습니다.</p>
+      <div class="chart-container">
+        <canvas th:id="'chart-' + ${result.questionId}"></canvas>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  function searchEvaluation() {
-    const year = document.getElementById('year').value;
-    const semester = document.getElementById('semester').value;
-    // 검색 로직 구현
-    console.log('검색:', year, semester);
-  }
-</script>
+<script th:inline="javascript">
+  const results = /*[[${results}]]*/ [];
 
+  results.forEach(result => {
+    const ctx = document.getElementById('chart-' + result.questionId);
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['1점', '2점', '3점', '4점', '5점'],
+        datasets: [{
+          label: '응답 수',
+          data: [
+            result.score1Count,
+            result.score2Count,
+            result.score3Count,
+            result.score4Count,
+            result.score5Count
+          ],
+          backgroundColor: 'rgba(54, 162, 235, 0.5)'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
 </body>
 </html>
