@@ -30,7 +30,20 @@ public class LecEvaluationController {
         List<LecQuestionDTO> evaluationResults = lecQuestionService.getEvaluationResults(ofregistrationId);
         model.addAttribute("results", evaluationResults);
 
-        return "view/iframe/evaluation/professor/lecQuestion";
+        return "view/iframe/evaluation/admin/lecQuestion";
+    }
+
+    // 관리자용 강의평가 결과 페이지
+    @GetMapping("/admin/lecture/{ofregistrationId}")
+    public String showAdminLectureEvaluation(
+            @PathVariable Long ofregistrationId,
+            Model model
+    ) {
+        // 강의평가 결과 데이터 조회 (DTO로 변환)
+        List<LecQuestionDTO> evaluationResults = lecQuestionService.getEvaluationResults(ofregistrationId);
+        model.addAttribute("results", evaluationResults);
+
+        return "view/iframe/evaluation/admin/lecQuestion";
     }
 
     // 학생용 강의평가 페이지

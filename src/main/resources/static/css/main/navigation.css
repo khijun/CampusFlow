@@ -3,16 +3,18 @@
     display: inline-flex;
     flex-wrap: nowrap;
     gap: 15px;
-    /*margin-bottom: 30px;*/
     padding: 10px 20px;
     background-color: var(--primary-color);
     border-radius: 5px;
-    min-width: var(--min-width);  /* 최소 너비 설정 */
-    overflow-x: auto;  /* 가로 스크롤 허용 */
+    min-width: 850px;
+    max-width: 850px;
+    overflow-x: hidden;
     white-space: nowrap;
-    box-sizing: border-box;  /* 패딩을 너비에 포함 */
-    /*margin-left: 240px;  !* 사이드바 너비만큼 여백 추가 *!*/
-    width: calc(100% - 240px);  /* 사이드바 너비를 제외한 너비 */
+    box-sizing: border-box;
+    width: 850px;
+    margin-left: 300px;  /* 사이드바 너비만큼 여백 추가 */
+    position: fixed;     /* 위치 고정 */
+
 }
 
 /* 스크롤바 스타일링 (선택사항) */

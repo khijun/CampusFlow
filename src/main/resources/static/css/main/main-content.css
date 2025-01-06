@@ -3,15 +3,20 @@
    padding: 20px;
    flex-grow: 1;
    box-sizing: border-box;
-   overflow-x: auto;  /* 가로 스크롤 허용 */
-   min-width: 1024px;  /* 최소 너비 설정 */
+   overflow: hidden;  /* 스크롤 제거 */
+   min-width: 1024px;
+   position: absolute; /* 추가 */
+   right: 0; /* 추가 */
+   bottom: 0; /* 추가 */
+   left: 0; /* 추가 */
+   top: 10px;
 }
 
 .main-content .iframe-container {
    width: 100%;
-   height: calc(100vh - 100px);
+   height: calc(100vh - 140px);  /* 상단 여백 고려하여 수정 */
    position: relative;
-   min-width: 1024px;  /* 최소 너비 설정 */
+   min-width: 1024px;
 }
 
 .main-content iframe {
@@ -19,11 +24,11 @@
    height: 100%;
    border: none;
    display: block;
-   min-width: 1024px;  /* 최소 너비 설정 */
+   min-width: 1024px;
 }
 
 .tab-container {
-   min-width: 1024px;  /* 최소 너비 설정 */
+   /*min-width: 1024px;  !* 최소 너비 설정 *!*/
 }
 
 .footer {
