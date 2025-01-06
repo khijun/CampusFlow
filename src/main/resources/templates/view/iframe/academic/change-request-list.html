@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학적 조회</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    /* 전역 스타일 */
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      overflow-y: auto; /* 세로 스크롤 추가 */
+      height: 100vh; /* 화면 높이에 맞게 조정 */
+      box-sizing: border-box; /* padding과 border를 포함한 전체 크기 계산 */
+    }
+
+    /* 제목 스타일 */
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+      font-weight: 700;
+    }
+
+    /* 테이블 컨테이너 */
+    table {
+      width: 90%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 테이블 헤더 스타일 */
+    thead {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid #ddd;
+    }
+
+    /* 테이블 데이터 스타일 */
+    td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    /* hover 효과 */
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* 테이블의 tbody에 스크롤 추가 */
+    tbody {
+      display: block;
+      max-height: 300px; /* 원하는 높이로 조정 */
+      overflow-y: auto;  /* 세로 스크롤 추가 */
+    }
+
+    thead, tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    /* 테이블을 작은 화면에서 반응형으로 조정 */
+    @media (max-width: 768px) {
+      table {
+        width: 100%;
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+<h2>학적 조회</h2>
+<table>
+  <thead>
+  <tr>
+    <th>변경 전 상태</th>
+    <th>변경 후 상태</th>
+    <th>신청 일자</th>
+    <th>상태</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="request : ${changeRequests}">
+    <td th:text="${request.beforeCode.codeName}"></td>
+    <td th:text="${request.afterCode.codeName}"></td>
+    <td th:text="${request.requestDate}"></td>
+    <td th:text="${request.applicationStatus.codeName}"></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

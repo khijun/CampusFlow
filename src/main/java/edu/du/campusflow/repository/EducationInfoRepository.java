@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface EducationInfoRepository extends JpaRepository<EducationInfo,Long> {
 
-    List<EducationInfo> findByMember(Member member);
 }

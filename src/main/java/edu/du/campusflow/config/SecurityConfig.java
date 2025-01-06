@@ -73,7 +73,6 @@ public class SecurityConfig{
                 .permitAll()
                 .and()
                 .csrf().disable();  // 임시 코드
-
 //        http
 //                .authorizeRequests()
 //                .anyRequest().permitAll() // 모든 요청을 허용
@@ -81,5 +80,8 @@ public class SecurityConfig{
 //                .csrf().disable(); // CSRF 보호를 비활성화
 
         return http.build();
+
     }
+
+
 }

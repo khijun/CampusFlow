@@ -20,28 +20,11 @@ public class ChangeHistoryService {
     private final MemberRepository memberRepository;
 
 
-    public void saveChangeHistory(Member member, CommonCode beforeCode, CommonCode afterCode, CommonCode grade) {
-        ChangeHistory changeHistory = ChangeHistory.builder()
-                .member(member)
-                .beforeCode(beforeCode)
-                .afterCode(afterCode)
-                .approvalDate(LocalDateTime.now()) // 기존 approvalDate 활용
-                .grade(grade)
-                .build();
-
-        changeHistoryRepository.save(changeHistory);
+    public List<ChangeHistory> findAll() {
+        return changeHistoryRepository.findAll();
     }
 
-    /**
-     * 특정 멤버의 변동 이력 조회.
-     *
-     * @param memberId 멤버 ID
-     * @return 변동 이력 목록
-     */
-    public Optional<ChangeHistory> getChangeHistoryByMember(Long memberId, Long changeHistoryId) {
-        Member member = memberRepository.findByMemberId(memberId);
-        return changeHistoryRepository.findById(changeHistoryId);
-    }
+
 
 
 }

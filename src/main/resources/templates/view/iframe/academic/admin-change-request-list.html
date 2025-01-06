@@ -1,0 +1,43 @@
+<!-- admin-change-request-list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>변동 신청 승인</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+</head>
+<body>
+<h1>변동 신청 목록 (관리자)</h1>
+<div th:if="${message != null}">
+  <p th:text="${message}"></p>
+</div>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>학번</th>
+    <th>변경 전 상태</th>
+    <th>변경 후 상태</th>
+    <th>신청 상태</th>
+    <th>승인</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="request : ${changeRequests}">
+    <td th:text="${request.member.memberId}"></td>
+    <td th:text="${request.beforeCode.codeName}"></td>
+    <td th:text="${request.afterCode.codeName}"></td>
+    <td th:text="${request.applicationStatus.codeName}"></td>
+    <td>
+      <!-- 신청 상태가 '대기'일 때만 승인 버튼 표시 -->
+      <form th:action="@{/approve-change-request/{applicationId}(applicationId=${request.id})}" method="post">
+        <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기'}">승인</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

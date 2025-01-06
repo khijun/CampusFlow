@@ -9,5 +9,4 @@ import java.util.List;
 
 public interface MilitaryInfoRepository extends JpaRepository<MilitaryInfo,Long> {
 
-    List<MilitaryInfo> findByMember(Member memberId);
 }
