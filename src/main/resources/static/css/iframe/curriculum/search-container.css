@@ -62,6 +62,36 @@ html, body {
    background-color: #2980b9;
 }
 
+.result-container {
+   margin-top: 20px;
+   display: grid;
+   grid-template-rows: auto;
+   grid-row-gap: 10px; /* 행 간격 */
+   background-color: white;
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   padding: 10px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.result-header, .result-row {
+   display: grid;
+   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 열의 비율 */
+   gap: 10px; /* 열 간격 */
+   padding: 5px 0;
+}
+
+.result-header {
+   font-weight: bold;
+   background-color: #f9f9f9;
+   border-bottom: 1px solid #ddd;
+}
+
+.result-row:hover {
+   background-color: #f1f1f1;
+}
+
+
 /* 반응형 처리 */
 @media (max-width: 768px) {
    .input-group {
