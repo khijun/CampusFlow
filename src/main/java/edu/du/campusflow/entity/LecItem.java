@@ -3,10 +3,10 @@ package edu.du.campusflow.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-// asd
+
 @Data
 @Entity
-@Table(name = "lec_items") // 강의평가 답변
+@Table(name = "lec_items") // 테이블 이름을 명시
 public class LecItem {
 
     @Id
@@ -14,9 +14,9 @@ public class LecItem {
     @Column(name = "answer_id")
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 
-    @ManyToOne
-    @JoinColumn(name = "ofregistration_id")
-    private Ofregistration ofRegistration; // 외래 키: ofregistration_id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ofregistration_id", referencedColumnName = "id")  // referencedColumnName 제거
+    private Ofregistration ofRegistration;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -24,4 +24,6 @@ public class LecItem {
 
     @Column(name = "score")
     private Integer score; // score, INT -> Integer로 매핑
+
 }
+
