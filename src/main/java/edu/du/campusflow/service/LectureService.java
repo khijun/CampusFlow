@@ -34,43 +34,36 @@ public class LectureService {
     @Autowired
     MemberRepository memberRepository;
 
-    //강의 개설 화면에서 사용할 강의 검색
-    public List<LectureDTO> searchLectures(String semester, String subjectType, String lectureName, String deptName) {
-        List<Lecture> lectures = lectureRepository.findAll((root, query, criteriaBuilder) -> {
-            Specification<Lecture> spec = Specification.where(null);
-            // 검색 조건 추가
-            if (semester != null && !semester.isEmpty()) {
-                spec = spec.and((root1, query1, criteriaBuilder1) ->
-                        criteriaBuilder1.equal(root1.get("semester").get("codeValue"), semester));
-            }
+    public void createLecture(LectureDTO request) {
 
-            if (subjectType != null && !subjectType.isEmpty()) {
-                spec = spec.and((root1, query1, criteriaBuilder1) ->
-                        criteriaBuilder1.equal(root1.get("curriculumSubject").get("subjectType").get("codeValue"), subjectType));
-            }
+        CurriculumSubject curriculumSubject = curriculumSubjectRepository.findById(request.getCurriculumSubjectId())
+                .orElseThrow(() -> new RuntimeException("교과목을 찾을 수 없습니다."));
 
-            if (lectureName != null && !lectureName.isEmpty()) {
-                spec = spec.and((root1, query1, criteriaBuilder1) ->
-                        criteriaBuilder1.like(root1.get("lectureName"), "%" + lectureName + "%"));
-            }
+        // 과목명과 교육과정명 비교
+        if (!curriculumSubject.getSubject().getSubjectName().equals(request.getLectureName())) {
+            throw new RuntimeException("과목명이 일치하지 않습니다.");
+        }
 
-            if (deptName != null && !deptName.isEmpty()) {
-                spec = spec.and((root1, query1, criteriaBuilder1) ->
-                        criteriaBuilder1.like(root1.get("curriculumSubject").get("curriculum").get("dept").get("deptName"), "%" + deptName + "%"));
-            }
-            return spec.toPredicate(root, query, criteriaBuilder);
-        });
 
-        return lectures.stream().map(lecture -> {
-            LectureDTO dto = new LectureDTO();
-            dto.setLectureId(lecture.getLectureId());
-            dto.setLectureName(lecture.getLectureName());
-            dto.setProfessorName(lecture.getMember() != null ? lecture.getMember().getName() : null);
-            dto.setSemesterCodeName(lecture.getSemester() != null ? lecture.getSemester().getCodeName() : null); // Code_name으로 변경
-            dto.setMaxStudents(lecture.getMaxStudents());
-            dto.setSubjectCredits(lecture.getCurriculumSubject() != null ? lecture.getCurriculumSubject().getSubject().getSubjectCredits() : null);
-            return dto;
-        }).collect(Collectors.toList());
+        // 강의 객체를 생성합니다.
+        Lecture lecture = new Lecture();
+        lecture.setLectureName(request.getLectureName());
+        lecture.setMaxStudents(request.getMaxStudents());
+        lecture.setCurrentStudents(0);
+        lecture.setCurriculumSubject(curriculumSubject);
+
+        // 학기 정보 설정
+        CommonCode semester = curriculumSubject.getSemester(); // CurriculumSubject에서 학기 정보 가져오기
+        lecture.setSemester(semester);
+
+        CommonCode lectureStatus = commonCodeRepository.findByCodeValue("PENDING");
+        if (lectureStatus == null) {
+            throw new RuntimeException("강의 상태를 찾을 수 없습니다.");
+        }
+        lecture.setLectureStatus(lectureStatus);
+
+        // 강의 저장
+        lectureRepository.save(lecture);
     }
 
 }
