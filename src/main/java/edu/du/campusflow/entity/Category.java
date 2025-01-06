@@ -17,26 +17,33 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    private Long categoryId;
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Category parent;
 
     @Column(name = "category_name", length = 50)
-    private String categoryName;
+    private String name;
 
     @ManyToOne
-    @JoinColumn(name = "file_id")
-    private FileInfo fileInfo;
+    @JoinColumn(name = "category_image")
+    private FileInfo image;
 
     @Column(name = "category_url", length = 200)
-    private String categoryUrl;
+    private String url;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @ManyToOne
-    @JoinColumn(name = "parent_id", nullable = true)
-    private Category parent;
+    @JoinColumn(name = "member_type")
+    private CommonCode memberType;
+
+    @Column(name = "order_no")
+    private Integer orderNo;
 
     @OneToMany(mappedBy = "parent")
     private List<Category> children;
 
-    @OneToMany(mappedBy = "category")
-    private List<CategoryOrder> categoryOrders;
 }
