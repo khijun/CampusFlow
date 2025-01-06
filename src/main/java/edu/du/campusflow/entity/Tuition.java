@@ -31,6 +31,6 @@ public class Tuition {
     private CommonCode semester;
 
     @Column(name = "amount")
-    private Long amount;
+    private Integer amount;
 
 } 
