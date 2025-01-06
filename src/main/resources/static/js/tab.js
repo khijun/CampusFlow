@@ -94,9 +94,7 @@ function toggleSubmenu(event, submenuId) {
 function loadIframe(url) {
    const iframe = document.querySelector('iframe[name="contentFrame"]');
    if (iframe) {
-      iframe.src = url;
+      iframe.src = `/view${url}`; // "view"를 추가
    }
 }
 
-console.log('main-content:', document.querySelector('.main-content').offsetHeight);
-console.log('iframe:', document.querySelector('iframe').offsetHeight);

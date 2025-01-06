@@ -12,10 +12,11 @@
 <body>
 <div class="container">
    <!-- 검색 컨테이너 -->
-   <div class="search-container">
+   <form class="search-container" th:action="@{/view/iframe/curriculum/register}" method="get">
       <div class="input-group">
          <label for="year">학년도</label>
          <select id="year" name="year">
+            <option value="">전체</option>
             <option value="2023">2023</option>
             <option value="2024">2024</option>
             <option value="2025">2025</option>
@@ -24,36 +25,32 @@
       <div class="input-group">
          <label for="grade">편성학년</label>
          <select id="grade" name="grade">
-            <option value="1">1학년</option>
-            <option value="2">2학년</option>
-            <option value="3">3학년</option>
-            <option value="4">4학년</option>
+            <option value="">전체</option>
+            <option value="GRADE_1">1학년</option>
+            <option value="GRADE_2">2학년</option>
+            <option value="GRADE_3">3학년</option>
+            <option value="GRADE_4">4학년</option>
          </select>
       </div>
       <div class="input-group">
-         <label for="deptName">편성 학과</label>
+         <label for="deptName">학과 이름</label>
          <input type="text" id="deptName" name="deptName" placeholder="예: 컴퓨터공학과">
       </div>
       <div class="input-group">
-         <label for="deptCode">학과 코드</label>
-         <input type="text" id="deptCode" name="deptCode" placeholder="예: CS001">
+         <label for="curriculumName">교육과정명</label>
+         <input type="text" id="curriculumName" name="curriculumName" placeholder="예: 프로그래밍 기초">
       </div>
       <div class="input-group">
-         <label for="subjectCode">과목 코드</label>
-         <input type="text" id="subjectCode" name="subjectCode" placeholder="예: SUB123">
-      </div>
-      <div class="input-group">
-         <label for="category">이수 구분</label>
+         <label for="category">교육과정 상태</label>
          <select id="category" name="category">
-            <option value="core-major">전공 필수</option>
-            <option value="optional-major">전공 선택</option>
-            <option value="core-general">교양 필수</option>
-            <option value="optional-general">교양 선택</option>
-            <option value="free">자유 선택</option>
+            <option value="">전체</option>
+            <option value="active">운영중(활성화)</option>
+            <option value="inactive">운영중단(비활성화)</option>
+            <option value="deprecated">폐지(사용중단)</option>
          </select>
       </div>
-      <button type="button">검색</button>
-   </div>
+      <button type="submit">검색</button>
+   </form>
 
    <!-- 검색 결과 컨테이너 -->
    <div class="result-container">
@@ -61,19 +58,17 @@
          <div>학년도</div>
          <div>편성학년</div>
          <div>학과 이름</div>
-         <div>학과 코드</div>
-         <div>과목 코드</div>
+         <div>교육과정명</div>
          <div>이수 구분</div>
       </div>
-      <div class="result-row">
-         <div>2023</div>
-         <div>1학년</div>
-         <div>컴퓨터공학과</div>
-         <div>CS001</div>
-         <div>SUB123</div>
-         <div>전공 필수</div>
+      <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row">
+         <div th:text="${curriculum.curriculumYear}"></div>
+         <div th:text="${curriculum.grade.codeName}"></div>
+         <div th:text="${curriculum.dept.deptName}"></div>
+         <div th:text="${curriculum.curriculumName}"></div>
+         <div th:text="${curriculum.curriculumStatus.codeName}"></div>
       </div>
-      <!-- 추가적인 결과 행 -->
+      <div th:each="curriculum : ${results}"></div>
    </div>
 </div>
 </body>

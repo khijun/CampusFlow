@@ -62,23 +62,31 @@ html, body {
    background-color: #2980b9;
 }
 
+/* 결과 컨테이너 스타일 */
 .result-container {
+   width: calc(100% - 60px); /* main-content의 너비에 맞춤 */
+   margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
    margin-top: 20px;
+   padding: 0; /* 내부 여백 제거 */
+   max-height: 400px; /* 최대 높이 고정 */
+   overflow-y: auto; /* 세로 스크롤 활성화 */
+   box-sizing: border-box; /* 패딩 포함한 크기 계산 */
    display: grid;
    grid-template-rows: auto;
-   grid-row-gap: 10px; /* 행 간격 */
+   gap: 0; /* 행 간격 제거 */
    background-color: white;
    border: 1px solid #ddd;
    border-radius: 5px;
-   padding: 10px;
    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 결과 헤더 및 행 스타일 */
 .result-header, .result-row {
    display: grid;
-   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 열의 비율 */
-   gap: 10px; /* 열 간격 */
-   padding: 5px 0;
+   grid-template-columns: repeat(5, 1fr); /* 열 비율 설정 (5개 열 균등 분배) */
+   gap: 0; /* 열 간격 제거 */
+   padding: 10px;
+   border-bottom: 1px solid #ddd; /* 행 사이 줄 */
 }
 
 .result-header {
@@ -91,6 +99,34 @@ html, body {
    background-color: #f1f1f1;
 }
 
+/* 마지막 행 줄 제거 */
+.result-row:last-child {
+   border-bottom: none;
+}
+
+/* 스크롤 커스터마이징 */
+.result-container::-webkit-scrollbar {
+   width: 8px; /* 스크롤바 너비 */
+}
+
+.result-container::-webkit-scrollbar-thumb {
+   background: #888; /* 스크롤바 색상 */
+   border-radius: 4px; /* 둥근 모서리 */
+}
+
+.result-container::-webkit-scrollbar-thumb:hover {
+   background: #555; /* 스크롤바 hover 색상 */
+}
+
+.result-header div:nth-child(1),
+.result-header div:nth-child(2),
+.result-header div:nth-child(5),
+.result-row div:nth-child(1),
+.result-row div:nth-child(2),
+.result-row div:nth-child(5) {
+   text-align: center; /* 텍스트 중앙 정렬 */
+}
+
 
 /* 반응형 처리 */
 @media (max-width: 768px) {
@@ -101,10 +137,18 @@ html, body {
    .search-container button {
       width: 100%; /* 작은 화면에서 버튼 전체 너비 */
    }
+
+   .result-header, .result-row {
+      grid-template-columns: repeat(3, 1fr); /* 중간 화면에서 3개 열로 조정 */
+   }
 }
 
 @media (max-width: 480px) {
    .input-group {
       width: 100%; /* 1개씩 배치 */
+   }
+
+   .result-header, .result-row {
+      grid-template-columns: 1fr; /* 작은 화면에서 1개 열로 조정 */
    }
 }
