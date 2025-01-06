@@ -59,7 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
         children.forEach(child => {
             const childItem = document.createElement('li');
             const childLink = document.createElement('a');
-            childLink.setAttribute('href', child.url || '#'); // 자식 항목의 url 사용
+
+            // onclick을 사용하여 iframe을 로드
+            childLink.setAttribute('href', '#');
+            childLink.setAttribute('onclick', `loadIframe('${child.url}')`);
             childLink.innerHTML = child.image
                 ? `<img src="/file/${child.image}" alt="${child.name}" style="width: 20px; height: 20px;"> ${child.name}`
                 : `${child.name}`;
