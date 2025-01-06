@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Builder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
 @Builder
@@ -26,7 +27,7 @@ public class TuitionDTO {
     // 실제 납부한 금액
     private Integer paidAmount;
     
-    // 납부 일시
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paidDate;
     
     // 납부 완료 여부
@@ -37,7 +38,7 @@ public class TuitionDTO {
      * @return 천 단위 구분자가 포함된 금액 문자열
      */
     public String getFormattedAmount() {
-        return formatAmount(amount);
+        return String.format("%,d", amount);
     }
 
     /**
@@ -45,7 +46,7 @@ public class TuitionDTO {
      * @return 천 단위 구분자가 포함된 금액 문자열
      */
     public String getFormattedPaidAmount() {
-        return formatAmount(paidAmount);
+        return String.format("%,d", paidAmount);
     }
 
     /**

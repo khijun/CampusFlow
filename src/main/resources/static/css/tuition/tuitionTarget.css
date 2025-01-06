@@ -99,3 +99,32 @@ th {
 .btn-unpaid:hover {
     background-color: #d35400;
 }
+
+/* 페이지네이션 컨테이너 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+/* 페이지 버튼 기본 스타일 */
+.page-btn {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* 현재 페이지 버튼 스타일 */
+.page-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* 페이지 버튼 호버 효과 */
+.page-btn:hover:not(.active) {
+    background-color: #f0f0f0;
+}

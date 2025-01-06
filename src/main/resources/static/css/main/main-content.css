@@ -4,8 +4,9 @@
    flex-grow: 1;
    height: auto; /* 높이 자동 조정 */
    min-height: calc(100vh - 150px); /* 최소 높이 설정 */
+   min-width: 1024px; /* 최소 너비 설정 */
    box-sizing: border-box; /* 패딩과 테두리를 너비 계산에 포함 */
-   overflow: hidden; /* 스크롤바 제거 */
+   overflow-x: auto; /* 가로 스크롤 허용 */
 }
 
 .main-content iframe {
@@ -13,7 +14,7 @@
    height: 100%;
    margin: 0; /* 여백 제거 */
    border: none;
-   overflow: hidden;
+   overflow-x: auto; /* iframe 내부 가로 스크롤 허용 */
 }
 
 .footer {
