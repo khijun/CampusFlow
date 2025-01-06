@@ -1,6 +1,7 @@
 package edu.du.campusflow;
 
 import edu.du.campusflow.entity.Category;
+import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.repository.CategoryRepository;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.service.CommonCodeService;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @SpringBootTest
@@ -70,5 +73,9 @@ public class HijunTest {
     public void categoryTest(){
         Category category = categoryRepository.findById(50L).orElse(null);
         System.out.println(category);
+        CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
+        List<Category> studentCategory = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(student);
+        studentCategory.forEach(c->System.out.println(c.getName()));
+        System.out.println();
     }
 }
