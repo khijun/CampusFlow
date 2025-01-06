@@ -9,4 +9,9 @@ public interface DiagItemRepository extends JpaRepository<DiagItem, Long> {
     List<DiagItem> findByOfRegistration_Id(Long ofregistrationId);
     List<DiagItem> findByDiagQuestion_QuestionId(Long questionId);
     boolean existsByOfRegistration_Id(Long ofregistrationId);
+
+    List<DiagItem> findByOfRegistration_IdAndDiagQuestion_QuestionId(
+            Long ofregistrationId,
+            Long questionId
+    );
 }
