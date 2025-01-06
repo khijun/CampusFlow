@@ -76,10 +76,16 @@
                 </ul>
             </li>
             <li>
-                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'evaluationMenu')"><i class="fas fa-clipboard-list"></i> 평가</a>
+                <a class="menu-item" href="#" onclick="toggleSubmenu(event, 'evaluationMenu')">
+                    <i class="fas fa-clipboard-list"></i> 평가
+                </a>
                 <ul id="evaluationMenu" class="submenu">
-                    <li><a href="#">강의 평가 설문 결과 확인</a></li>
-                    <li><a href="#">진단 평가 결과 분석 및 피드백 제공</a></li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/lec/professor')">강의 평가 설문 결과 확인</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/diag/professor')">진단 평가 결과 분석 및 피드백 제공</a>
+                    </li>
                 </ul>
             </li>
             <li>
@@ -106,10 +112,14 @@
             <button class="close-all" onclick="closeAllTabs()">모두 닫기</button>
         </div>
 
-        <!-- Iframe for Content -->
-        <iframe src="dashboard.html" th:src="@{/dashboard}" name="contentFrame"></iframe>
+        <div class="iframe-container">
+            <iframe id="contentFrame" name="contentFrame" style="width: 100%; height: 800px; border: none;"></iframe>
+        </div>
     </div>
 </div>
-<script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
+<script th:inline="javascript">
+    const professorId = /*[[${memberId}]]*/ null;
+</script>
+<script src="/js/tab.js"></script>
 </body>
 </html>

@@ -1,9 +1,11 @@
 package edu.du.campusflow.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@Slf4j
 public class MainController {
 
    @GetMapping("/")
@@ -18,7 +20,7 @@ public class MainController {
 
    @GetMapping("/professor_main")
    public String professorPage() {
-      return "view/main_view/professor_main"; // 교수 페이지
+      return "view/main_view/professor_main"; // 교수 페이지 }
    }
 
    @GetMapping("/staff_main")

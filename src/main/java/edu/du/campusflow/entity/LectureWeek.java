@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Table(name = "lecture_week")
-public class LectureWeek { //강의 주차 데이터를 저장하는 엔티티
+public class    LectureWeek { //강의 주차 데이터를 저장하는 엔티티
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,9 +14,9 @@ public class LecItem {
     @Column(name = "answer_id")
     private Long answerId; // answer_id, BIGINT -> Long으로 매핑
 
-    @ManyToOne
-    @JoinColumn(name = "ofregistration_id")
-    private Ofregistration ofRegistration; // 외래 키: ofregistration_id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ofregistration_id", referencedColumnName = "id")  // referencedColumnName 제거
+    private Ofregistration ofRegistration;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -24,4 +24,5 @@ public class LecItem {
 
     @Column(name = "score")
     private Integer score; // score, INT -> Integer로 매핑
+
 }

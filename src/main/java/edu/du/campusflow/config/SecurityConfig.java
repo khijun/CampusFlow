@@ -46,7 +46,6 @@ public class SecurityConfig{
     public UserDetails toUserDetails(Member member){
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(member.getMemberType().toString().toUpperCase()));
-        System.out.println("현재 유저의 권한: " + member.getMemberType().toString());
         return User.builder()
                 .username(member.getMemberId().toString())
                 .password(member.getPassword())
@@ -63,6 +62,9 @@ public class SecurityConfig{
 //                .anyRequest().authenticated() // 그 외 요청은 인증 필요
                 .anyRequest().permitAll() // 실험코드
                 .and()
+                .headers()
+                .frameOptions().sameOrigin() // X-Frame-Options 설정
+                .and()
                 .formLogin() // 폼 로그인 활성화
 //                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
                 .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
@@ -73,6 +75,7 @@ public class SecurityConfig{
                 .permitAll()
                 .and()
                 .csrf().disable();  // 임시 코드
+
 //        http
 //                .authorizeRequests()
 //                .anyRequest().permitAll() // 모든 요청을 허용
@@ -80,8 +83,5 @@ public class SecurityConfig{
 //                .csrf().disable(); // CSRF 보호를 비활성화
 
         return http.build();
-
     }
-
-
 }

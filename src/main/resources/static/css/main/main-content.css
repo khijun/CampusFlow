@@ -1,19 +1,34 @@
 .main-content {
-   margin-left: 220px;
+   margin-left: 240px;
    padding: 20px;
    flex-grow: 1;
-   height: auto; /* 높이 자동 조정 */
-   min-height: calc(100vh - 150px); /* 최소 높이 설정 */
-   box-sizing: border-box; /* 패딩과 테두리를 너비 계산에 포함 */
-   overflow: hidden; /* 스크롤바 제거 */
+   box-sizing: border-box;
+   overflow: hidden;  /* 스크롤 제거 */
+   min-width: 1024px;
+   position: absolute; /* 추가 */
+   right: 0; /* 추가 */
+   bottom: 0; /* 추가 */
+   left: 0; /* 추가 */
+   top: 10px;
+}
+
+.main-content .iframe-container {
+   width: 100%;
+   height: calc(100vh - 140px);  /* 상단 여백 고려하여 수정 */
+   position: relative;
+   min-width: 1024px;
 }
 
 .main-content iframe {
    width: 100%;
    height: 100%;
-   margin: 0; /* 여백 제거 */
    border: none;
-   overflow: hidden;
+   display: block;
+   min-width: 1024px;
+}
+
+.tab-container {
+   /*min-width: 1024px;  !* 최소 너비 설정 *!*/
 }
 
 .footer {
@@ -21,4 +36,5 @@
    text-align: center;
    padding: 10px;
    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+   min-width: 1024px;  /* 최소 너비 설정 */
 }
