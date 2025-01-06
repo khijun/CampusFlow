@@ -26,7 +26,7 @@ public class NoticeService {
 
     // 공지 생성
     public Notice createNotice(Notice notice) {
-        notice.setCreatedAt(LocalDateTime.now()); // 생성 날짜 설정
+        notice.setCreatedAt(LocalDateTime.now());
         return noticeRepository.save(notice);
     }
 
@@ -36,7 +36,7 @@ public class NoticeService {
         if (existingNotice != null) {
             existingNotice.setSubject(notice.getSubject());
             existingNotice.setContent(notice.getContent());
-            existingNotice.setUpdatedAt(LocalDateTime.now()); // 업데이트 날짜 설정
+            existingNotice.setUpdatedAt(LocalDateTime.now());
             return noticeRepository.save(existingNotice);
         }
         return null;

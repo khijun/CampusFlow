@@ -3,6 +3,9 @@ package edu.du.campusflow.entity;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @Entity
@@ -10,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "academic_calendar")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AcademicCalendar {
 
     @Id
@@ -18,18 +22,21 @@ public class AcademicCalendar {
     private Long calendarId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id") // 외래 키 설정
-    private Member member; // 교직원 엔티티
+    @JoinColumn(name = "member_id")
+    @JsonIgnore
+    private Member member;
 
     @Column(name = "title", length = 100)
-    private String title; // 제목
+    private String title;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "start_date")
-    private LocalDateTime startDate; // 시작 날짜
+    private LocalDateTime startDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "end_date")
-    private LocalDateTime endDate; // 종료 날짜
+    private LocalDateTime endDate;
 
     @Column(name = "description", columnDefinition = "TEXT")
-    private String description; //학사 일정 설명
+    private String description;
 }

@@ -7,7 +7,7 @@ import edu.du.campusflow.annotation.Code;
 @Code(name="처리 상태", description ="현재 상태")
 public enum InquiryStatus {
     @Code(name ="대기", description = "대기상태")
-    PENDING,
+    AWAITING,
 
     @Code(name = "처리중", description =  "처리중 상태")
     IN_PROGRESS,

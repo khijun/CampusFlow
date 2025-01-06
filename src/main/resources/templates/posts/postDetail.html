@@ -42,12 +42,14 @@
 
   <!-- 댓글 작성 영역 -->
   <div class="mb-4 border p-3 rounded">
-    <div class="input-group mb-3">
-      <textarea class="form-control" id="commentContent" name="content" rows="1" required></textarea>
-      <div class="input-group-append">
-        <button id="addCommentButton" class="btn btn-primary" type="button">댓글 추가</button>
-      </div>
-    </div>
+    <form id="commentForm">
+        <div class="input-group mb-3">
+            <textarea class="form-control" id="commentContent" name="content" rows="1" required></textarea>
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">댓글 추가</button>
+            </div>
+        </div>
+    </form>
   </div>
 
   <!-- 댓글 목록 -->
@@ -73,46 +75,62 @@
   </div>
 </div>
 
-<script>
-  $(document).ready(function() {
-    // 댓글 추가 버튼 클릭 시
-    $('#addCommentButton').click(function() {
-      addComment();
-    });
+<script th:inline="javascript">
+    $(document).ready(function() {
+        const postId = [[${post.postId}]]; // Thymeleaf 변수
 
-    // 엔터 키를 눌렀을 때 댓글 추가
-    $('#commentContent').keypress(function(event) {
-      if (event.which === 13) { // Enter 키
-        event.preventDefault(); // 기본 동작 방지
-        addComment();
-      }
-    });
+        // 댓글 폼 제출 처리
+        $('#commentForm').on('submit', function(e) {
+            e.preventDefault();
+            const content = $('#commentContent').val();
+            
+            if (!content.trim()) {
+                alert('댓글 내용을 입력해주세요.');
+                return;
+            }
 
-    function addComment() {
-      var content = $('#commentContent').val();
-      if (content) {
-        // AJAX 요청으로 댓글 추가
-        $.post('/posts/' + /* 게시물 ID */ + '/comments', { content: content }, function() {
-          location.reload(); // 댓글 추가 후 페이지 새로고침
+            $.ajax({
+                url: `/posts/${postId}/comments`,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    content: content
+                }),
+                success: function(response) {
+                    console.log('댓글 추가 성공:', response);
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('댓글 추가 실패:', error);
+                    console.error('상태:', xhr.status);
+                    console.error('응답:', xhr.responseText);
+                    alert('댓글 추가에 실패했습니다.');
+                }
+            });
         });
-      }
-    }
-  });
 
-  function editComment(commentId, currentContent) {
-    var newContent = prompt("댓글 수정", currentContent);
-    if (newContent !== null) {
-      // AJAX 요청으로 댓글 수정
-      $.ajax({
-        url: '/posts/' + /* 게시물 ID */ + '/comments/' + commentId,
-        type: 'PUT',
-        data: { content: newContent },
-        success: function() {
-          location.reload(); // 수정 후 페이지 새로고침
-        }
-      });
-    }
-  }
+        // 댓글 수정
+        window.editComment = function(commentId, currentContent) {
+            const newContent = prompt("댓글 수정", currentContent);
+            if (newContent !== null && newContent.trim() !== '') {
+                $.ajax({
+                    url: `/posts/${postId}/comments/${commentId}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        content: newContent
+                    }),
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('댓글 수정 실패:', error);
+                        alert('댓글 수정에 실패했습니다.');
+                    }
+                });
+            }
+        };
+    });
 </script>
 </body>
 </html>

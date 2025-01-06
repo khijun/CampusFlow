@@ -6,23 +6,48 @@
     <title>공지사항</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .notice-link {
+            color: #212529;
+            text-decoration: none;
+        }
+        .notice-link:hover {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="text-center">공지사항</h1>
-    <table class="table table-bordered table-striped">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>공지사항</h1>
+        <div th:if="${isStaff}">
+            <a href="/notice/add" class="btn btn-primary">공지사항 작성</a>
+        </div>
+    </div>
+    
+    <table class="table table-bordered table-hover">
         <thead class="thead-dark">
         <tr>
-            <th style="width: 10%;">순번</th> <!-- 1의 비율 -->
-            <th style="width: 60%;">제목</th> <!-- 6의 비율 -->
-            <th style="width: 30%;">작성일</th> <!-- 3의 비율 -->
+            <th style="width: 10%;">순번</th>
+            <th style="width: 60%;">제목</th>
+            <th style="width: 30%;">작성일</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="notice, iterStat : ${notices}">
-            <td th:text="${iterStat.index + 1}"></td> <!-- 순번 표시 -->
-            <td th:text="${notice.subject}"></td>
-            <td th:text="${#dates.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${iterStat.index + 1}"></td>
+            <td>
+                <a th:href="@{/notice/{id}(id=${notice.noticeId})}" 
+                   th:text="${notice.subject}"
+                   class="notice-link"></a>
+            </td>
+            <td>
+                <span th:if="${notice.updatedAt == null}" 
+                      th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                <span th:if="${notice.updatedAt != null}" 
+                      th:text="${#temporals.format(notice.updatedAt, 'yyyy-MM-dd HH:mm') + ' (수정)'}"></span>
+            </td>
         </tr>
         </tbody>
     </table>
