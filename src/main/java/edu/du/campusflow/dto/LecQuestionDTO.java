@@ -8,6 +8,12 @@ public class LecQuestionDTO {
     private String questionName;
     private double averageScore;
 
+    // 강의 정보 필드 추가
+    private String lectureName;    // 과목명
+    private String name;  // 교수명
+    private String semester;       // 학기
+    private Long subjectId;    // 과목 코드
+
     // 각 점수별 응답 수
     private long score5Count;
     private long score4Count;
