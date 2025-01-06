@@ -6,7 +6,6 @@
   <title>학사 일정 보기</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
-
 </head>
 <body>
 <div class="container mt-5">
@@ -43,7 +42,7 @@
   $(document).ready(function() {
     // AJAX 요청으로 데이터 가져오기
     $.ajax({
-      url: '/api/academic-calendar',
+      url: '/calendar/api/academic-calendar', // 수정된 URL
       type: 'GET',
       success: function(data) {
         $('#calendar').fullCalendar({

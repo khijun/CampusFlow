@@ -71,7 +71,7 @@
                 $('#eventModalLabel').text('일정 추가');
                 $('#submitBtn').text('추가'); // 추가 버튼으로 설정
                 $('#deleteEventBtn').hide(); // 삭제 버튼 숨기기
-                $('#eventModal').modal('show');
+                $('#eventModal').modal('show').attr('aria-hidden', 'false'); // 모달 열기 및 aria-hidden 설정
                 $('#calendar').fullCalendar('unselect'); // 선택 해제
             },
             eventClick: function(event) {
@@ -80,11 +80,10 @@
                 $('#startDate').val(moment(event.start).format('YYYY-MM-DD'));
                 $('#endDate').val(moment(event.end).format('YYYY-MM-DD'));
                 $('#description').val(event.description || ''); // 설명이 없으면 빈 문자열
-                $('#color').val(event.color || '#007bff'); // 색상 설정
                 $('#eventModalLabel').text('일정 수정');
                 $('#submitBtn').text('수정'); // 수정 버튼으로 설정
                 $('#deleteEventBtn').show(); // 삭제 버튼 보이기
-                $('#eventModal').modal('show');
+                $('#eventModal').modal('show').attr('aria-hidden', 'false'); // 모달 열기 및 aria-hidden 설정
             },
             events: [], // 여기에 기존 이벤트를 추가할 수 있습니다.
             dayRender: function(date, cell) {
@@ -105,7 +104,6 @@
             var start = $('#startDate').val();
             var end = $('#endDate').val();
             var description = $('#description').val();
-            var color = $('#color').val(); // 선택한 색상 가져오기
 
             if (currentEvent) {
                 // 수정하는 경우
@@ -113,8 +111,21 @@
                 currentEvent.start = start;
                 currentEvent.end = end;
                 currentEvent.description = description;
-                currentEvent.color = color; // 색상 업데이트
                 $('#calendar').fullCalendar('updateEvent', currentEvent);
+
+                // AJAX 요청으로 수정된 일정 전송
+                $.ajax({
+                    url: '/calendar/api/academic-calendar/' + currentEvent._id, // 수정된 일정의 API 엔드포인트
+                    method: 'PUT', // 수정 요청
+                    contentType: 'application/json',
+                    data: JSON.stringify(currentEvent), // 수정된 이벤트 데이터 전송
+                    success: function() {
+                        console.log('일정이 수정되었습니다.');
+                    },
+                    error: function() {
+                        alert('일정 수정에 실패했습니다.');
+                    }
+                });
             } else {
                 // 새 이벤트 추가
                 $('#calendar').fullCalendar('renderEvent', {
@@ -122,12 +133,31 @@
                     start: start,
                     end: end,
                     description: description,
-                    color: color // 색상 추가
                 }, true);
+
+                // AJAX 요청으로 새 일정 전송
+                $.ajax({
+                    url: '/calendar/api/academic-calendar', // 요청 URL
+                    type: 'POST', // 요청 메서드
+                    contentType: 'application/json', // 데이터 형식
+                    data: JSON.stringify({
+                        title: title,
+                        startDate: start,
+                        endDate: end,
+                        description: description
+                    }),
+                    success: function(response) {
+                        alert('일정이 추가되었습니다.');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX 요청 실패:', textStatus, errorThrown);
+                        alert('일정 추가에 실패했습니다. 오류: ' + textStatus);
+                    }
+                });
             }
 
             // 모달 닫기
-            $('#eventModal').modal('hide');
+            $('#eventModal').modal('hide').attr('aria-hidden', 'true'); // 모달 닫기 및 aria-hidden 설정
 
             // 폼 초기화
             $('#eventForm')[0].reset();
@@ -138,14 +168,27 @@
         $('#deleteEventBtn').on('click', function() {
             if (currentEvent) {
                 $('#calendar').fullCalendar('removeEvents', currentEvent._id); // 이벤트 삭제
-                $('#eventModal').modal('hide'); // 모달 닫기
+                // AJAX 요청으로 삭제 요청 전송
+                $.ajax({
+                    url: '/calendar/api/academic-calendar/' + currentEvent._id, // 삭제할 일정의 API 엔드포인트
+                    method: 'DELETE', // 삭제 요청
+                    success: function() {
+                        console.log('일정이 삭제되었습니다.');
+                    },
+                    error: function() {
+                        alert('일정 삭제에 실패했습니다.');
+                    }
+                });
+
+                $('#eventModal').modal('hide').attr('aria-hidden', 'true'); // 모달 닫기 및 aria-hidden 설정
                 $('#eventForm')[0].reset(); // 폼 초기화
                 currentEvent = null; // 수정 중인 이벤트 초기화
             }
         });
 
-        // 모달이 닫힐 때 폼 초기화
+        // 모달이 닫힐 때 aria-hidden 설정
         $('#eventModal').on('hidden.bs.modal', function () {
+            $(this).attr('aria-hidden', 'true'); // 모달이 닫힐 때 aria-hidden 설정
             $('#eventForm')[0].reset(); // 폼 초기화
             currentEvent = null; // 수정 중인 이벤트 초기화
             $('#deleteEventBtn').hide(); // 삭제 버튼 숨기기
