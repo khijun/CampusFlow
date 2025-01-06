@@ -56,27 +56,29 @@ public class SecurityConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
+        http
+                .authorizeRequests()
 //                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
 //                .antMatchers("/login").permitAll() // 로그인 페이지 허용
 //                .anyRequest().authenticated() // 그 외 요청은 인증 필요
-//                .and()
-//                .formLogin() // 폼 로그인 활성화
-////                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
-//                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout")
-//                .permitAll();
-
-        http
-                .authorizeRequests()
-                .anyRequest().permitAll() // 모든 요청을 허용
+                .anyRequest().permitAll() // 실험코드
                 .and()
-                .csrf().disable(); // CSRF 보호를 비활성화
+                .formLogin() // 폼 로그인 활성화
+//                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
+                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
+                .permitAll()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .permitAll()
+                .and()
+                .csrf().disable();  // 임시 코드
+
+//        http
+//                .authorizeRequests()
+//                .anyRequest().permitAll() // 모든 요청을 허용
+//                .and()
+//                .csrf().disable(); // CSRF 보호를 비활성화
 
         return http.build();
     }
