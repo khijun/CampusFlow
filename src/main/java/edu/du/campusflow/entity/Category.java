@@ -3,7 +3,6 @@ package edu.du.campusflow.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Builder
@@ -19,10 +18,10 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    @ToString.Exclude
-    private Category parent;
+//    @ManyToOne
+//    @JoinColumn(name = "parent_id")
+//    @ToString.Exclude
+//    private Category parent;
 
     @Column(name = "category_name", length = 50)
     private String name;
@@ -44,7 +43,7 @@ public class Category {
     @Column(name = "order_no")
     private Integer orderNo;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Category> children;
+//    @OneToMany(mappedBy = "parent")
+//    private List<Category> children;
 
 }

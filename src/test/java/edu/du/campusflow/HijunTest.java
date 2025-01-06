@@ -1,12 +1,16 @@
 package edu.du.campusflow;
 
-import edu.du.campusflow.entity.FileInfo;
-import edu.du.campusflow.enums.*;
+import edu.du.campusflow.dto.CategoryDTO;
 import edu.du.campusflow.entity.Category;
 import edu.du.campusflow.entity.CommonCode;
+import edu.du.campusflow.entity.FileInfo;
+import edu.du.campusflow.entity.Member;
+import edu.du.campusflow.enums.*;
 import edu.du.campusflow.repository.CategoryRepository;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.FileInfoRepository;
+import edu.du.campusflow.repository.MemberRepository;
+import edu.du.campusflow.service.CategoryService;
 import edu.du.campusflow.service.CommonCodeService;
 import edu.du.campusflow.utils.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -30,6 +34,10 @@ public class HijunTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private FileInfoRepository fileInfoRepository;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private MemberRepository memberRepository;
 
 
     @Test
@@ -85,7 +93,11 @@ public class HijunTest {
         CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
         List<Category> studentCategory = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(student);
         studentCategory.forEach(c->System.out.println(c.getName()));
-        System.out.println();
+        List<CategoryDTO> dtos = categoryService.findByType(student);
+        Member professor = memberRepository.findById(1001L).orElse(null);
+        dtos = categoryService.findByType(professor);
+        System.out.println(dtos.size());
+        dtos.forEach(System.out::println);
     }
     @Test
     public void fileTest(){
