@@ -4,7 +4,6 @@
     --background-color: #ecf0f1;
     --text-color: #34495e;
     --sidebar-width: 200px;
-    --min-width: 1024px;  /* 최소 너비 변수 추가 */
 }
 
 body, html {
@@ -14,8 +13,6 @@ body, html {
     height: 100%;
     background-color: var(--background-color);
     color: var(--text-color);
-    min-width: var(--min-width);  /* 최소 너비 설정 */
-    overflow-x: auto;  /* 가로 스크롤 허용 */
 }
 
 .header-nav {
@@ -26,19 +23,12 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 40px;
     justify-content: space-between;
-    min-width: var(--min-width);  /* 최소 너비 설정 */
-    position: fixed;  /* 헤더 고정 */
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;  /* 다른 요소들 위에 표시 */
 }
 
 .header-left {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 300px;  /* 로고와 타이틀이 겹치지 않도록 */
 }
 
 .header-logo img {
@@ -57,7 +47,6 @@ body, html {
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 25px;
     font-weight: 600;
-    white-space: nowrap;  /* 텍스트 줄바꿈 방지 */
 }
 
 .header-title small {
@@ -71,7 +60,6 @@ body, html {
     align-items: center;
     list-style-type: none;
     gap: 15px;
-    margin-right: 20px;  /* 우측 여백 추가 */
 }
 
 .header-list a {
@@ -81,15 +69,8 @@ body, html {
     background-color: var(--primary-color);
     padding: 6px 10px;
     border-radius: 4px;
-    white-space: nowrap;  /* 텍스트 줄바꿈 방지 */
 }
 
 .header-list a:hover {
     background-color: #0056b3;
-}
-
-/* 컨테이너 전체에 최소 너비 적용 */
-.container {
-    min-width: var(--min-width);
-    position: relative;
 }
