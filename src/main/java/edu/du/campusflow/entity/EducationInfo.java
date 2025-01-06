@@ -17,16 +17,20 @@ public class EducationInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "educationinfo_id")
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;            //학번
 
+    @Column(name = "school_name")
     private String schoolName;              //학교명
 
+    @Column(name = "enrollment_date")
     private LocalDateTime enrollmentDate;         //입학 날짜
 
+    @Column(name = "graduation_date")
     private LocalDateTime graduationDate;           //졸업 날짜
 
     @ManyToOne

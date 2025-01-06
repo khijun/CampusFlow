@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ChangeHistoryRepository extends JpaRepository<ChangeHistory,Long> {
 
     List<ChangeHistory> findByMember(Member memberId);
+
+    
 }

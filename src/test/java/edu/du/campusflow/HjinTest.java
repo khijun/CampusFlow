@@ -50,7 +50,8 @@ public class HjinTest {
     @Test
     void Test_add(){
 
-        changeHistoryService.getChangeHistoryByMember(memberId);
+        List<ChangeRequest> changeRequests = changeRequestService.viewChangeRequest();
+        System.out.println(changeRequests);
 
 
     }

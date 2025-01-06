@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +38,9 @@ public class ChangeHistoryService {
      * @param memberId 멤버 ID
      * @return 변동 이력 목록
      */
-    public List<ChangeHistory> getChangeHistoryByMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다: " + memberId));
-        return changeHistoryRepository.findByMember(member);
+    public Optional<ChangeHistory> getChangeHistoryByMember(Long memberId, Long changeHistoryId) {
+        Member member = memberRepository.findByMemberId(memberId);
+        return changeHistoryRepository.findById(changeHistoryId);
     }
 
 

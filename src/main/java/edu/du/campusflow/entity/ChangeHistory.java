@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class ChangeHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "history_id")
     private Long id;
 
     @ManyToOne
@@ -29,6 +30,7 @@ public class ChangeHistory {
     @JoinColumn(name = "after_code",referencedColumnName = "code_id")
     private CommonCode afterCode;            // 변경 후 코드
 
+    @Column(name = "approval_date")
     private LocalDateTime approvalDate;        //승인 일자
 
     @ManyToOne
