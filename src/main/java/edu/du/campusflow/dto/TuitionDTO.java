@@ -2,11 +2,14 @@ package edu.du.campusflow.dto;
 
 import lombok.Data;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
+@Getter
+@Setter
 @Builder
 public class TuitionDTO {
     // 등록금 대상자 ID
@@ -27,41 +30,31 @@ public class TuitionDTO {
     // 실제 납부한 금액
     private Integer paidAmount;
     
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime paidDate;
+    // 납부 일자
+    private String paidDate;
     
     // 납부 완료 여부
     private boolean paymentStatus;
+    
+    // 납부 상태 업데이트를 위한 필드
+    private boolean newPaymentStatus;
 
     /**
      * 등록금 총액을 포맷팅하여 반환
-     * @return 천 단위 구분자가 포함된 금액 문자열
      */
     public String getFormattedAmount() {
-        return String.format("%,d", amount);
+        return formatAmount(amount);
     }
 
     /**
      * 납부 금액을 포맷팅하여 반환
-     * @return 천 단위 구분자가 포함된 금액 문자열
      */
     public String getFormattedPaidAmount() {
-        return String.format("%,d", paidAmount);
-    }
-
-    /**
-     * 납부 일시를 포맷팅하여 반환
-     * @return yyyy-MM-dd HH:mm:ss 형식의 날짜 문자열, 미납의 경우 "-" 반환
-     */
-    public String getFormattedPaidDate() {
-        if (paidDate == null) return "-";
-        return paidDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return formatAmount(paidAmount);
     }
 
     /**
      * 금액을 천 단위 구분자가 포함된 형식으로 변환
-     * @param amount 변환할 금액
-     * @return 천 단위 구분자가 포함된 금액 문자열, null인 경우 "0" 반환
      */
     private String formatAmount(Integer amount) {
         if (amount == null) return "0";

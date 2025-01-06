@@ -2,171 +2,112 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>등록금 관리</title>
     <link rel="stylesheet" th:href="@{/css/tuition/tuitionTarget.css}">
 </head>
 <body>
-    <div class="container">
-        <!-- 페이지 헤더 -->
-        <div class="header">
-            <h1>등록금 대상자 관리</h1>
-        </div>
-        
-        <!-- 검색 폼: 학번, 이름, 학과로 검색 가능 -->
-        <div class="search-form">
-            <input type="text" id="studentId" placeholder="학번">
-            <input type="text" id="studentName" placeholder="이름">
-            <input type="text" id="department" placeholder="학과">
-            <button onclick="searchTuitionTargets()">검색</button>
-            <button class="btn-danger" onclick="updateAllUnpaid()">전체 미납처리</button>
-        </div>
+<div class="container">
+    <!-- 페이지 헤더 -->
+    <div class="header">
+        <h1>등록금 대상자 관리</h1>
+    </div>
 
-        <!-- 등록금 대상자 목록 테이블 -->
-        <table>
-            <thead>
-                <tr>
-                    <th>학과</th>
-                    <th>학번</th>
-                    <th>이름</th>
-                    <th>학년</th>
-                    <th>등록금액</th>
-                    <th>납부금액</th>
-                    <th>납부일자</th>
-                    <th>납부상태</th>
-                    <th>관리</th>
-                </tr>
-            </thead>
-            <tbody id="tuitionTargetList">
-                <!-- 각 등록금 대상자 정보를 반복하여 표시 -->
-                <tr th:each="target : ${tuitionTargets}">
-                    <td th:text="${target.department}"></td>
-                    <td th:text="${target.memberId}"></td>
-                    <td th:text="${target.memberName}"></td>
-                    <td th:text="${target.grade}"></td>
-                    <td th:text="${#numbers.formatDecimal(target.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                    <td th:text="${#numbers.formatDecimal(target.paidAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                    <td th:text="${target.paidDate != null ? #temporals.format(target.paidDate, 'yyyy-MM-dd HH:mm') : '-'}"></td>
-                    <td th:text="${target.paymentStatus ? '완납' : '미납'}"></td>
-                    <td>
-                        <!-- 납부상태에 따른 버튼 표시 -->
-                        <button th:if="${!target.paymentStatus}" 
-                                th:onclick="'markAsPaid(' + ${target.targetId} + ')'"
-                                class="btn-paid">완납처리</button>
-                        <button th:if="${target.paymentStatus}" 
-                                th:onclick="'markAsUnpaid(' + ${target.targetId} + ')'"
-                                class="btn-unpaid">미납처리</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- 검색 폼 -->
+    <div class="search-form">
+        <input type="text" id="studentId" placeholder="학번">
+        <input type="text" id="studentName" placeholder="이름">
+        <input type="text" id="department" placeholder="학과">
+        <button onclick="searchTuitionTargets()">검색</button>
+    </div>
 
-        <!-- 페이지네이션 컨트롤 -->
-        <div class="pagination">
-            <!-- 이전 페이지 버튼 -->
-            <button th:if="${currentPage > 0}" 
-                    th:onclick="'changePage(' + ${currentPage - 1} + ')'"
-                    class="page-btn">&lt; 이전</button>
-            
-            <!-- 페이지 번호 버튼들 -->
-            <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+    <!-- 등록금 대상자 목록 테이블 -->
+    <table>
+        <thead>
+        <tr>
+            <th>학과</th>
+            <th>학번</th>
+            <th>이름</th>
+            <th>등록금액</th>
+            <th>납부금액</th>
+            <th>납부일자</th>
+            <th>납부상태</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody id="tuitionTargetList">
+        <tr th:each="target : ${tuitionTargets}">
+            <td th:text="${target.department}"></td>
+            <td th:text="${target.memberId}"></td>
+            <td th:text="${target.memberName}"></td>
+            <td th:text="${#numbers.formatDecimal(target.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+            <td th:text="${#numbers.formatDecimal(target.paidAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+            <td th:text="${target.paidDate != null ? #temporals.format(target.paidDate, 'yyyy-MM-dd') : '-'}"></td>
+            <td th:text="${target.paymentStatus ? '완납' : '미납'}"></td>
+            <td>
+                <button th:if="${!target.paymentStatus}"
+                        th:onclick="'markAsPaid(' + ${target.targetId} + ')'">완납처리</button>
+                <button th:if="${target.paymentStatus}"
+                        th:onclick="'markAsUnpaid(' + ${target.targetId} + ')'">미납처리</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination" th:if="${totalPages > 0}">
+        <button th:if="${currentPage > 0}"
+                th:onclick="'changePage(' + ${currentPage - 1} + ')'">이전</button>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
                 <button th:text="${pageNum + 1}"
-                        th:class="${pageNum == currentPage ? 'page-btn active' : 'page-btn'}"
+                        th:class="${pageNum == currentPage ? 'active' : ''}"
                         th:onclick="'changePage(' + ${pageNum} + ')'"></button>
             </span>
-            
-            <!-- 다음 페이지 버튼 -->
-            <button th:if="${currentPage < totalPages - 1}" 
-                    th:onclick="'changePage(' + ${currentPage + 1} + ')'"
-                    class="page-btn">다음 &gt;</button>
-        </div>
+        <button th:if="${currentPage < totalPages - 1}"
+                th:onclick="'changePage(' + ${currentPage + 1} + ')'">다음</button>
     </div>
-    
-    <!-- JavaScript 함수들 -->
-    <script th:inline="javascript">
-        // 검색 기능 구현
-        function searchTuitionTargets() {
-            const studentId = document.getElementById('studentId').value;
-            const studentName = document.getElementById('studentName').value;
-            const department = document.getElementById('department').value;
-            
-            // 검색 API 호출
-            fetch(`/api/tuition/search?studentId=${studentId}&studentName=${studentName}&department=${department}`)
-                .then(response => response.json())
-                .then(data => updateTable(data));
-        }
-        
-        // 완납 처리 함수
-        function markAsPaid(targetId) {
-            updatePaymentStatus(targetId, true);
-        }
-        
-        // 미납 처리 함수
-        function markAsUnpaid(targetId) {
-            updatePaymentStatus(targetId, false);
-        }
-        
-        // 전체 미납 처리 함수
-        function updateAllUnpaid() {
-            if (confirm('모든 대상자를 미납 상태로 변경하시겠습니까?')) {
-                fetch('/api/tuition/update-all-unpaid', {
-                    method: 'POST'
-                }).then(() => location.reload());
-            }
-        }
-        
-        // 납부 상태 업데이트 함수
-        function updatePaymentStatus(targetId, status) {
-            fetch('/api/tuition/update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    targetId: targetId,
-                    paymentStatus: status
-                })
-            }).then(() => location.reload());
-        }
+</div>
 
-        // 페이지 변경 함수
-        function changePage(page) {
-            const studentId = document.getElementById('studentId').value;
-            const studentName = document.getElementById('studentName').value;
-            const department = document.getElementById('department').value;
-            
-            // 페이지 변경 API 호출
-            fetch(`/api/tuition/search?page=${page}&studentId=${studentId}&studentName=${studentName}&department=${department}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateTable(data.content);
-                    updatePagination(data);
-                });
-        }
-        
-        // 페이지네이션 UI 업데이트 함수
-        function updatePagination(data) {
-            const pagination = document.querySelector('.pagination');
-            let html = '';
-            
-            // 이전 페이지 버튼
-            if (data.number > 0) {
-                html += `<button onclick="changePage(${data.number - 1})" class="page-btn">&lt; 이전</button>`;
-            }
-            
-            // 페이지 번호 버튼들
-            for (let i = 0; i < data.totalPages; i++) {
-                html += `<button onclick="changePage(${i})" 
-                                class="page-btn ${i === data.number ? 'active' : ''}">${i + 1}</button>`;
-            }
-            
-            // 다음 페이지 버튼
-            if (data.number < data.totalPages - 1) {
-                html += `<button onclick="changePage(${data.number + 1})" class="page-btn">다음 &gt;</button>`;
-            }
-            
-            pagination.innerHTML = html;
-        }
-    </script>
+<!-- JavaScript -->
+<script>
+    // 검색 기능
+    function searchTuitionTargets() {
+        const studentId = document.getElementById('studentId').value;
+        const studentName = document.getElementById('studentName').value;
+        const department = document.getElementById('department').value;
+
+        fetch(`/api/tuition/search?studentId=${studentId}&studentName=${studentName}&department=${department}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data.content);
+                updatePagination(data);
+            });
+    }
+
+    // 납부 상태 변경
+    function updatePaymentStatus(targetId, status) {
+        fetch('/api/tuition/update-status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                targetId: targetId,
+                paymentStatus: status
+            })
+        }).then(() => location.reload());
+    }
+
+    // 완납/미납 처리
+    function markAsPaid(targetId) { updatePaymentStatus(targetId, true); }
+    function markAsUnpaid(targetId) { updatePaymentStatus(targetId, false); }
+
+    // 페이지 변경
+    function changePage(page) {
+        fetch(`/api/tuition/search?page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data.content);
+                updatePagination(data);
+            });
+    }
+</script>
 </body>
 </html>

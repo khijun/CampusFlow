@@ -13,6 +13,7 @@ import java.time.Year;
 @AllArgsConstructor
 @Table(name = "tuition")
 public class Tuition {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

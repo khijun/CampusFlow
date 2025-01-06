@@ -35,12 +35,4 @@ public class TuitionTarget{
 
     @Column(name = "payment_status")
     private boolean paymentStatus;
-
-    public Integer getPaidAmount() {
-        return paidAmount != null ? paidAmount : 0;
-    }
-
-    public LocalDateTime getPaidDate() {
-        return paidDate != null ? paidDate : null;
-    }
 }
