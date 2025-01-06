@@ -1,8 +1,6 @@
 package edu.du.campusflow.dto;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.du.campusflow.entity.Category;
-import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.FileInfo;
 import lombok.*;
 
@@ -21,9 +19,7 @@ public class CategoryDTO {
     private FileInfo image; // image 정보를 그대로 보내기 원할 경우. 필요시 이미지 URL 등으로 변환 가능
     private String url;
     private Boolean isActive;
-    private CommonCode memberType;
     private Integer orderNo;
-    @JsonManagedReference
     private List<CategoryDTO> children; // children도 DTO로 변환하여 전달
 
     // 엔티티를 DTO로 변환하는 메서드 (필요한 경우)
@@ -35,7 +31,6 @@ public class CategoryDTO {
                 .image(category.getImage())
                 .url(category.getUrl())
                 .isActive(category.getIsActive())
-                .memberType(category.getMemberType())
                 .orderNo(category.getOrderNo())
                 .children(children)
                 .build();
