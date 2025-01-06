@@ -16,6 +16,7 @@ public class Ofregistration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")  // 이 부분 추가
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
