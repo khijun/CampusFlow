@@ -1,0 +1,110 @@
+/* 검색 컨테이너 스타일 */
+html, body {
+   margin: 0;
+   padding: 0;
+   overflow: hidden; /* 내부 스크롤 제거 */
+   height: 100%;
+}
+
+.search-container {
+   display: flex;
+   flex-wrap: wrap; /* 내용이 많아질 경우 줄바꿈 */
+   align-items: flex-start; /* 상단 정렬 */
+   justify-content: space-between;
+   padding: 15px 15px;
+   min-height: 100px; /* 기본 높이 설정 */
+   width: calc(100% - 60px); /* main-content의 너비에 맞춤 */
+   background-color: white;
+   margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
+   border: 1px solid #ddd; /* 확인용 테두리 */
+   color: black;
+   box-sizing: border-box; /* 패딩 포함한 크기 계산 */
+}
+
+/* 개별 입력 그룹 스타일 */
+.input-group {
+   display: flex;
+   flex-direction: column;
+   width: calc(25% - 15px); /* 4개씩 배치 (반응형) */
+   min-width: 200px; /* 최소 너비 */
+}
+
+.input-group label {
+   font-size: 14px;
+   margin-bottom: 5px;
+   color: #333;
+}
+
+.input-group input,
+.input-group select {
+   padding: 10px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   font-size: 14px;
+   box-sizing: border-box;
+   width: 100%;
+}
+
+/* 검색 버튼 스타일 */
+.search-container button {
+   background-color: var(--primary-color, #3498db);
+   color: white;
+   border: none;
+   padding: 10px 15px;
+   font-size: 14px;
+   border-radius: 4px;
+   cursor: pointer;
+   width: 100px;
+   align-self: flex-end;
+}
+
+.search-container button:hover {
+   background-color: #2980b9;
+}
+
+.result-container {
+   margin-top: 20px;
+   display: grid;
+   grid-template-rows: auto;
+   grid-row-gap: 10px; /* 행 간격 */
+   background-color: white;
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   padding: 10px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.result-header, .result-row {
+   display: grid;
+   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 열의 비율 */
+   gap: 10px; /* 열 간격 */
+   padding: 5px 0;
+}
+
+.result-header {
+   font-weight: bold;
+   background-color: #f9f9f9;
+   border-bottom: 1px solid #ddd;
+}
+
+.result-row:hover {
+   background-color: #f1f1f1;
+}
+
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+   .input-group {
+      width: calc(50% - 15px); /* 2개씩 배치 */
+   }
+
+   .search-container button {
+      width: 100%; /* 작은 화면에서 버튼 전체 너비 */
+   }
+}
+
+@media (max-width: 480px) {
+   .input-group {
+      width: 100%; /* 1개씩 배치 */
+   }
+}

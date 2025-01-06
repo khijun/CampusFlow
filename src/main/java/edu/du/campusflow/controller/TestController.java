@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class TestController {
 
-    private final FileLoadService fileLoadService;
-
-    @GetMapping
-    public String index(Model model) {
-        model.addAttribute("fileIds", fileLoadService.getAllImagesId());
-        return "index";
-    }
+//   private final FileLoadService fileLoadService;
+//
+//   @GetMapping
+//   public String index(Model model) {
+//      model.addAttribute("fileIds", fileLoadService.getAllImagesId());
+//      return "index";
+//   }
 
 }

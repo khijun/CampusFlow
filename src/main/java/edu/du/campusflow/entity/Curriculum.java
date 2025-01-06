@@ -30,6 +30,7 @@ public class Curriculum {
    @Column(name = "curriculum_year")
    private Integer curriculumYear;
 
+   //학생정원
    @Column(name = "grade_capacity")
    private Integer gradeCapacity;
 
@@ -46,6 +47,4 @@ public class Curriculum {
    @ManyToOne
    @JoinColumn(name = "grade")
    private CommonCode grade;
-
-
 }

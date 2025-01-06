@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리 시스템</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="css/main/header.css" rel="stylesheet">
+    <link href="css/main/navigation.css" rel="stylesheet">
+    <link href="css/main/sidebar.css" rel="stylesheet">
+    <link href="css/main/main-content.css" rel="stylesheet">
+    <link href="css/main/tab.css" rel="stylesheet">
+    <link href="css/main/mainStyle.css" rel="stylesheet">
+    <link href="css/main/sidebar-menu.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <nav class="header-nav">
+        <div class="header-left">
+            <div class="header-logo">
+                <img src="/assets/logo/doinUniver_02.png" alt="두인대학교 로고">
+            </div>
+            <div class="header-title">
+                두인대학교
+                <small>DOIN UNIVERSITY 통합정보시스템</small>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <ul class="nav-list">
+            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>
+            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>
+            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i>  메인</a></li>
+            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i>  학생 페이지</a></li>
+            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i>  교수 페이지</a></li>
+            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i>  관리자 페이지</a></li>
+        </ul>
+
+        <ul class="header-list">
+            <span th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>&nbsp;&nbsp;
+            <span>컴퓨터소프트웨어학과</span>|
+            <span>241020001(교수)</span>|
+            <span>김 교 수</span>
+            <a href="#" th:href="@{/logout}">로그아웃</a>
+        </ul>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>교수</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'lectureMenu')"><i class="fas fa-chalkboard-teacher"></i> 강의</a>
+                <ul id="lectureMenu" class="submenu">
+                    <li><a href="#">강의 계획서 등록 및 수정</a></li>
+                    <li><a href="#">강의 계획서 PDF 출력</a></li>
+                    <li><a href="#">강좌 개설 신청 및 상태 확인</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'attendanceMenu')"><i class="fas fa-calendar-check"></i> 출석</a>
+                <ul id="attendanceMenu" class="submenu">
+                    <li><a href="#">출석 상태 입력 및 수정</a></li>
+                    <li><a href="#">출석률 통계 확인</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'assignmentMenu')"><i class="fas fa-tasks"></i> 과제</a>
+                <ul id="assignmentMenu" class="submenu">
+                    <li><a href="#">과제 등록 및 수정</a></li>
+                    <li><a href="#">제출된 과제 평가 및 점수 입력</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="menu-item" href="#" onclick="toggleSubmenu(event, 'evaluationMenu')">
+                    <i class="fas fa-clipboard-list"></i> 평가
+                </a>
+                <ul id="evaluationMenu" class="submenu">
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/lec/professor')">강의 평가 설문 결과 확인</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/diag/professor')">진단 평가 결과 분석 및 피드백 제공</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'gradeMenu')"><i class="fas fa-chart-line"></i> 성적</a>
+                <ul id="gradeMenu" class="submenu">
+                    <li><a href="#">점수 등록 및 수정</a></li>
+                    <li><a href="#">점수 범위 검증 및 평균/합계 계산</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <ul id="tabs">
+                <!-- 기본 탭 -->
+                <li class="tab-item active" onclick="switchTab('dashboard.html')">
+                    대시보드
+                    <button class="close-tab" onclick="closeTab(this)">×</button>
+                </li>
+            </ul>
+            <button class="close-all" onclick="closeAllTabs()">모두 닫기</button>
+        </div>
+
+        <div class="iframe-container">
+            <iframe id="contentFrame" name="contentFrame" style="width: 100%; height: 800px; border: none;"></iframe>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    const professorId = /*[[${memberId}]]*/ null;
+</script>
+<script src="/js/tab.js"></script>
+</body>
+</html>

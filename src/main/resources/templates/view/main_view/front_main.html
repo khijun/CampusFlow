@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리 시스템</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="css/main/header.css" rel="stylesheet">
+    <link href="css/main/navigation.css" rel="stylesheet">
+    <link href="css/main/sidebar.css" rel="stylesheet">
+    <link href="css/main/main-content.css" rel="stylesheet">
+    <link href="css/main/tab.css" rel="stylesheet">
+    <link href="css/main/mainStyle.css" rel="stylesheet">
+    <link href="css/main/sidebar-menu.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <nav class="header-nav">
+        <div class="header-left">
+            <div class="header-logo">
+                <img src="/assets/logo/doinUniver_02.png" alt="두인대학교 로고">
+            </div>
+            <div class="header-title">
+                두인대학교
+                <small>DOIN UNIVERSITY 통합정보시스템</small>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <ul class="nav-list">
+            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>
+            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>
+            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i>  메인</a></li>
+            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i>  학생 페이지</a></li>
+            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i>  교수 페이지</a></li>
+            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i>  관리자 페이지</a></li>
+        </ul>
+
+        <ul class="header-list">
+            <span th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>&nbsp;&nbsp;
+            <span>컴퓨터소프트웨어학과</span>|
+            <span>2490001(학생)</span>|
+            <span>박 두 인</span>
+            <a href="#" th:href="@{/logout}">로그아웃</a>
+        </ul>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="side-bar">
+        <div class="sidebar-header">
+            <h2>학 사</h2>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <ul id="tabs">
+                <!-- 기본 탭 -->
+                <li class="tab-item active" onclick="switchTab('dashboard.html')">
+                    대시보드
+                    <button class="close-tab" onclick="closeTab(this)">×</button>
+                </li>
+            </ul>
+            <button class="close-all" onclick="closeAllTabs()">모두 닫기</button>
+        </div>
+
+        <!-- Iframe for Content -->
+        <iframe src="dashboard.html" th:src="@{/dashboard}" name="contentFrame"></iframe>
+    </div>
+</div>
+<script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
+<script src="/js/sidebar_category.js"></script>
+</body>
+</html>
