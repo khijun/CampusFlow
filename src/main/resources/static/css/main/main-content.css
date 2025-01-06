@@ -9,6 +9,7 @@
    right: 0; /* 추가 */
    bottom: 0; /* 추가 */
    left: 0; /* 추가 */
+   top: 10px;
 }
 
 .main-content .iframe-container {

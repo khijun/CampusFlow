@@ -14,5 +14,4 @@ public class AuthService {
         return Long.parseLong(authentication.getName());
     }
 
-
 }
