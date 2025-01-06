@@ -61,27 +61,7 @@ public class SecurityConfig{
 //                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
 //                .antMatchers("/login").permitAll() // 로그인 페이지 허용
 //                .anyRequest().authenticated() // 그 외 요청은 인증 필요
-<<<<<<< HEAD
-//                .and()
-//                .formLogin() // 폼 로그인 활성화
-////                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
-//                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout")
-//                .permitAll();
-
-        http
-                .headers()
-                .frameOptions().sameOrigin() // X-Frame-Options 설정
-                .and()
-                .authorizeRequests()
-                .anyRequest().permitAll() // 모든 요청을 허용
-=======
                 .anyRequest().permitAll() // 실험코드
->>>>>>> 9758835aa10a6cc6f9e6f227832944b43715b6b9
                 .and()
                 .formLogin() // 폼 로그인 활성화
 //                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)

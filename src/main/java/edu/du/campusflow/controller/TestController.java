@@ -11,17 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/test")
 @RequiredArgsConstructor
 public class TestController {
-<<<<<<< HEAD
-//    private final AuthService authService;
-//    private final MemberService memberService;
-//
-//    @GetMapping
-//    public String index(Model model) {
-//        Long memberId = authService.getCurrentMemberId();
-//        model.addAttribute("member", memberService.findByMemberId(memberId));
-//        return "index";
-//    }
-=======
 
     private final FileLoadService fileLoadService;
 
@@ -30,6 +19,5 @@ public class TestController {
         model.addAttribute("fileIds", fileLoadService.getAllImagesId());
         return "index";
     }
->>>>>>> 9758835aa10a6cc6f9e6f227832944b43715b6b9
 
 }
