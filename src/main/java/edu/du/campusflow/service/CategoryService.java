@@ -18,24 +18,29 @@ public class CategoryService {
 
     public CategoryDTO findById(Long id) {
         Category category = categoryRepository.findById(id).orElse(null);
-        CategoryDTO result = CategoryDTO.fromEntity(category);
-        if(category != null&&categoryRepository.existsByParent(category)) {
-            List<CategoryDTO> children = new ArrayList<>();
-            for(Category c : categoryRepository.findByParentOrderByOrderNoAsc(category)) {
-                children.add(CategoryDTO.fromEntity(c));
-            }
-            result.setChildren(children);
+        return CategoryDTO.fromEntity(category, findByParent(category));
+    }
+
+    public List<CategoryDTO> findByType(CommonCode memberType){
+        List<Category> categories = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(memberType);
+        List<CategoryDTO> result = new ArrayList<>();
+        for(Category category : categories){
+            result.add(CategoryDTO.fromEntity(category, findByParent(category)));
         }
         return result;
     }
 
-    public List<CategoryDTO> findByType(CommonCode memberType){
-        List<Category> rootCategories = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(memberType);
-        rootCategories.forEach(category -> category.setChildren(categoryRepository.findByParentOrderByOrderNoAsc(category)));
-        return CategoryDTO.fromEntities(rootCategories);
-    }
-
     public List<CategoryDTO> findByType(Member member){
         return findByType(member.getMemberType());
+    }
+
+    public List<CategoryDTO> findByParent(Category category){
+        List<CategoryDTO> result = new ArrayList<>();
+        if(category != null&&categoryRepository.existsByParent(category.getId())) {
+            for(Category c : categoryRepository.findByParentOrderByOrderNoAsc(category.getId())) {
+                result.add(CategoryDTO.fromEntity(c));
+            }
+        }
+        return result;
     }
 }

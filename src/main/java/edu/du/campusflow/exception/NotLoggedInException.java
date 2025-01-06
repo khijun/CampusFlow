@@ -1,6 +1,6 @@
 package edu.du.campusflow.exception;
 
-public class NotLoggedInException extends Exception {
+public class NotLoggedInException extends RuntimeException {
     public NotLoggedInException(String message) {
         super(message);
     }

@@ -18,10 +18,8 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "parent_id")
-//    @ToString.Exclude
-//    private Category parent;
+    @Column(name = "parent_id")
+    private Long parent;
 
     @Column(name = "category_name", length = 50)
     private String name;
