@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>교육과정 등록</title>
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+   <!-- 검색 컨테이너 -->
+   <div class="search-container">
+      <div class="input-group">
+         <label for="year">학년도</label>
+         <select id="year" name="year">
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="grade">편성학년</label>
+         <select id="grade" name="grade">
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
+            <option value="4">4학년</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="deptName">편성 학과</label>
+         <input type="text" id="deptName" name="deptName" placeholder="예: 컴퓨터공학과">
+      </div>
+      <div class="input-group">
+         <label for="deptCode">학과 코드</label>
+         <input type="text" id="deptCode" name="deptCode" placeholder="예: CS001">
+      </div>
+      <div class="input-group">
+         <label for="subjectCode">과목 코드</label>
+         <input type="text" id="subjectCode" name="subjectCode" placeholder="예: SUB123">
+      </div>
+      <div class="input-group">
+         <label for="category">이수 구분</label>
+         <select id="category" name="category">
+            <option value="core-major">전공 필수</option>
+            <option value="optional-major">전공 선택</option>
+            <option value="core-general">교양 필수</option>
+            <option value="optional-general">교양 선택</option>
+            <option value="free">자유 선택</option>
+         </select>
+      </div>
+      <button type="button">검색</button>
+   </div>
+
+   <!-- 검색 결과 컨테이너 -->
+   <div class="result-container">
+      <div class="result-header">
+         <div>학년도</div>
+         <div>편성학년</div>
+         <div>학과 이름</div>
+         <div>학과 코드</div>
+         <div>과목 코드</div>
+         <div>이수 구분</div>
+      </div>
+      <div class="result-row">
+         <div>2023</div>
+         <div>1학년</div>
+         <div>컴퓨터공학과</div>
+         <div>CS001</div>
+         <div>SUB123</div>
+         <div>전공 필수</div>
+      </div>
+      <!-- 추가적인 결과 행 -->
+   </div>
+</div>
+</body>
+</html>
