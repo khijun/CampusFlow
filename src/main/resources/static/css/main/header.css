@@ -26,24 +26,12 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 40px;
     justify-content: space-between;
-    min-width: var(--min-width);
+    min-width: var(--min-width);  /* 최소 너비 설정 */
     position: fixed;  /* 헤더 고정 */
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
-}
-
-.header-list {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    gap: 15px;
-    margin-right: 20px;
-    position: absolute;  /* 추가 */
-    right: 0;          /* 추가 */
-    top: 25%;          /* 추가 */
-    transform: translateY(-50%);  /* 추가 */
+    z-index: 1000;  /* 다른 요소들 위에 표시 */
 }
 
 .header-left {
@@ -76,6 +64,14 @@ body, html {
     font-size: 14px;
     color: var(--text-color);
     font-weight: 200;
+}
+
+.header-list {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    gap: 15px;
+    margin-right: 20px;  /* 우측 여백 추가 */
 }
 
 .header-list a {
