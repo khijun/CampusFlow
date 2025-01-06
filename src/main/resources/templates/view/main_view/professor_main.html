@@ -76,12 +76,16 @@
                 </ul>
             </li>
             <li>
-                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'evaluationMenu')"><i class="fas fa-clipboard-list"></i> 평가</a>
+                <a class="menu-item" href="#" onclick="toggleSubmenu(event, 'evaluationMenu')">
+                    <i class="fas fa-clipboard-list"></i> 평가
+                </a>
                 <ul id="evaluationMenu" class="submenu">
-                    <li><a href="#" onclick="loadIframe('/iframe/evaluation/professor/1')">강의 평가 설문 결과 확인</a></li>
-                    <!-- 여기서 1은 실제 ofregistrationId 값으로 변경해야 합니다 -->
-
-                    <li><a href="#">진단 평가 결과 분석 및 피드백 제공</a></li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/lec/professor')">강의 평가 설문 결과 확인</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/diag/professor')">진단 평가 결과 분석 및 피드백 제공</a>
+                    </li>
                 </ul>
             </li>
             <li>
