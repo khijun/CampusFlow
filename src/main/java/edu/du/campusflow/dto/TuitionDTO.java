@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+
 @Getter
 @Setter
 @Builder
@@ -22,7 +22,7 @@ public class TuitionDTO {
     private String memberName;
     
     // 소속 학과명
-    private String department;
+    private Long deptId;
     
     // 납부해야 할 등록금 총액
     private Integer amount;
@@ -31,7 +31,7 @@ public class TuitionDTO {
     private Integer paidAmount;
     
     // 납부 일자
-    private String paidDate;
+    private LocalDateTime paidDate;
     
     // 납부 완료 여부
     private boolean paymentStatus;

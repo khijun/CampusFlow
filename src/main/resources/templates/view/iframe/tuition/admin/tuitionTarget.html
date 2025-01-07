@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>등록금 관리</title>
+    <title>등록금 대상자 관리</title>
     <link rel="stylesheet" th:href="@{/css/tuition/tuitionTarget.css}">
 </head>
 <body>
@@ -10,14 +10,6 @@
     <!-- 페이지 헤더 -->
     <div class="header">
         <h1>등록금 대상자 관리</h1>
-    </div>
-
-    <!-- 검색 폼 -->
-    <div class="search-form">
-        <input type="text" id="studentId" placeholder="학번">
-        <input type="text" id="studentName" placeholder="이름">
-        <input type="text" id="department" placeholder="학과">
-        <button onclick="searchTuitionTargets()">검색</button>
     </div>
 
     <!-- 등록금 대상자 목록 테이블 -->
@@ -34,9 +26,9 @@
             <th>관리</th>
         </tr>
         </thead>
-        <tbody id="tuitionTargetList">
-        <tr th:each="target : ${tuitionTargets}">
-            <td th:text="${target.department}"></td>
+        <tbody>
+        <tr th:each="target : ${tuitionTarget}">
+            <td th:text="${target.deptId}"></td>
             <td th:text="${target.memberId}"></td>
             <td th:text="${target.memberName}"></td>
             <td th:text="${#numbers.formatDecimal(target.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
@@ -45,69 +37,32 @@
             <td th:text="${target.paymentStatus ? '완납' : '미납'}"></td>
             <td>
                 <button th:if="${!target.paymentStatus}"
-                        th:onclick="'markAsPaid(' + ${target.targetId} + ')'">완납처리</button>
+                        th:onclick="'markAsPaid(' + ${target.memberId} + ')'">완납처리</button>
                 <button th:if="${target.paymentStatus}"
-                        th:onclick="'markAsUnpaid(' + ${target.targetId} + ')'">미납처리</button>
+                        th:onclick="'markAsUnpaid(' + ${target.memberId} + ')'">미납처리</button>
             </td>
         </tr>
         </tbody>
     </table>
-
-    <!-- 페이지네이션 -->
-    <div class="pagination" th:if="${totalPages > 0}">
-        <button th:if="${currentPage > 0}"
-                th:onclick="'changePage(' + ${currentPage - 1} + ')'">이전</button>
-        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
-                <button th:text="${pageNum + 1}"
-                        th:class="${pageNum == currentPage ? 'active' : ''}"
-                        th:onclick="'changePage(' + ${pageNum} + ')'"></button>
-            </span>
-        <button th:if="${currentPage < totalPages - 1}"
-                th:onclick="'changePage(' + ${currentPage + 1} + ')'">다음</button>
-    </div>
 </div>
 
 <!-- JavaScript -->
 <script>
-    // 검색 기능
-    function searchTuitionTargets() {
-        const studentId = document.getElementById('studentId').value;
-        const studentName = document.getElementById('studentName').value;
-        const department = document.getElementById('department').value;
-
-        fetch(`/api/tuition/search?studentId=${studentId}&studentName=${studentName}&department=${department}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data.content);
-                updatePagination(data);
-            });
-    }
-
     // 납부 상태 변경
-    function updatePaymentStatus(targetId, status) {
-        fetch('/api/tuition/update-status', {
+    function updatePaymentStatus(memberId, status) {
+        fetch('/iframe/tuition/update-status', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                targetId: targetId,
+                memberId: memberId,
                 paymentStatus: status
             })
         }).then(() => location.reload());
     }
 
     // 완납/미납 처리
-    function markAsPaid(targetId) { updatePaymentStatus(targetId, true); }
-    function markAsUnpaid(targetId) { updatePaymentStatus(targetId, false); }
-
-    // 페이지 변경
-    function changePage(page) {
-        fetch(`/api/tuition/search?page=${page}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data.content);
-                updatePagination(data);
-            });
-    }
+    function markAsPaid(memberId) { updatePaymentStatus(memberId, true); }
+    function markAsUnpaid(memberId) { updatePaymentStatus(memberId, false); }
 </script>
 </body>
 </html>

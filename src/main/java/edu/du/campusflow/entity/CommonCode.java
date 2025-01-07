@@ -19,7 +19,7 @@ public class CommonCode {
     @Column(name = "code_id")
     private Long codeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     @JsonBackReference
     private CommonCodeGroup codeGroup;
