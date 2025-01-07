@@ -21,17 +21,30 @@ body, html {
 .header-nav {
     display: flex;
     align-items: center;
+    justify-content: space-between;  /* 추가 */
     background-color: white;
     padding: 10px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 40px;
-    justify-content: space-between;
-    min-width: var(--min-width);  /* 최소 너비 설정 */
-    position: fixed;  /* 헤더 고정 */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;  /* 다른 요소들 위에 표시 */
+    z-index: 1000;
+    min-width: var(--min-width);
+}
+
+.header-list {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    position: fixed;  /* absolute 대신 fixed 사용 */
+    right: 20px;     /* 오른쪽 여백 */
+    top: 10px;       /* 상단 여백 */
+    z-index: 1001;   /* header-nav보다 위에 표시 */
 }
 
 .header-left {
@@ -66,13 +79,6 @@ body, html {
     font-weight: 200;
 }
 
-.header-list {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    gap: 15px;
-    margin-right: 20px;  /* 우측 여백 추가 */
-}
 
 .header-list a {
     font-size: 16px;
