@@ -39,12 +39,6 @@ public class LectureService {
         CurriculumSubject curriculumSubject = curriculumSubjectRepository.findById(request.getCurriculumSubjectId())
                 .orElseThrow(() -> new RuntimeException("교과목을 찾을 수 없습니다."));
 
-        // 과목명과 교육과정명 비교
-        if (!curriculumSubject.getSubject().getSubjectName().equals(request.getLectureName())) {
-            throw new RuntimeException("과목명이 일치하지 않습니다.");
-        }
-
-
         // 강의 객체를 생성합니다.
         Lecture lecture = new Lecture();
         lecture.setLectureName(request.getLectureName());
@@ -56,7 +50,7 @@ public class LectureService {
         CommonCode semester = curriculumSubject.getSemester(); // CurriculumSubject에서 학기 정보 가져오기
         lecture.setSemester(semester);
 
-        CommonCode lectureStatus = commonCodeRepository.findByCodeValue("PENDING");
+        CommonCode lectureStatus = commonCodeRepository.findByCodeValue("LECTURE_PENDING");
         if (lectureStatus == null) {
             throw new RuntimeException("강의 상태를 찾을 수 없습니다.");
         }

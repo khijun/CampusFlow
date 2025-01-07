@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "diag_feedback") // 테이블 이름을 명시
+@Table(name = "diag_feedback") // 진단평가 피드백
 public class DiagFeedback {
 
     @Id

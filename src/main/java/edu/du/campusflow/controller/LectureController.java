@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class LectureController {
 
     @Autowired
     LectureService lectureService;
 
+    @GetMapping("/iframe/lecture/create")
+    public String lectureCreate(Model model) {
+        return "/view/iframe/lecture/lectureCreate";
+    }
+
+    //강의 개설에 사용
     @PostMapping("/api/lecture/create")
     public ResponseEntity<String> createLecture(@RequestBody LectureDTO lectureDTO) {
         try {

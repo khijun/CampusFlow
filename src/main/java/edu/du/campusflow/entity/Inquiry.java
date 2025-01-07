@@ -1,6 +1,10 @@
 package edu.du.campusflow.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -12,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "inquiry")
 public class Inquiry {
-
+// ㅁㄴㅇㄹㅁㄴㅇㄹ
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_id")
