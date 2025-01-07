@@ -11,6 +11,7 @@
     overflow-y: auto; /* 세로 스크롤 활성화 */
     overflow-x: hidden; /* 가로 스크롤 방지 */
     margin-top: 60px;
+    scrollbar-width: none; /* 스크롤바 삭제, 스크롤은 가능 */
 }
 
 .sidebar-header h2 {

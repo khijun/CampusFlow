@@ -26,4 +26,3 @@ public class LecItem {
     private Integer score; // score, INT -> Integer로 매핑
 
 }
-

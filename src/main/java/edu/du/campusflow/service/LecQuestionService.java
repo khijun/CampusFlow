@@ -1,14 +1,15 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.LecQuestionDTO;
-import edu.du.campusflow.entity.LecItem;
-import edu.du.campusflow.entity.LecQuestion;
+import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.LecItemRepository;
 import edu.du.campusflow.repository.LecQuestionRepository;
+import edu.du.campusflow.repository.OfregistrationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +20,29 @@ public class LecQuestionService {
 
     private final LecQuestionRepository lecQuestionRepository;
     private final LecItemRepository lecItemRepository;
+    private final OfregistrationRepository ofregistrationRepository;
+    private final AuthService authService;
+
+    public List<Map<String, Object>> getProfessorLectures() {
+        // 현재 로그인한 교수의 ID 가져오기
+        Member currentMember = authService.getCurrentMember();
+
+        // 해당 교수의 강의 목록 조회
+        List<Ofregistration> ofregistrations = ofregistrationRepository.findDistinctByLectureId_Member(currentMember);
+
+        // DTO 변환
+        return ofregistrations.stream()
+                .map(reg -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("ofregistrationId", reg.getId());
+                    map.put("lectureName", reg.getLectureId().getLectureName());
+                    map.put("professorName", reg.getLectureId().getMember().getName());
+                    map.put("semester", reg.getLectureId().getSemester().getCodeName());  // CommonCode의 codeName 사용
+                    map.put("subjectId", reg.getLectureId().getCurriculumSubject().getSubject().getSubjectId());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
 
     /**
      * 모든 강의평가 문항 조회
@@ -35,21 +59,52 @@ public class LecQuestionService {
                 .orElseThrow(() -> new IllegalArgumentException("강의평가 문항을 찾을 수 없습니다. ID: " + id));
     }
 
+    public List<Map<String, Object>> getProfessorLectures(Long professorId) {
+        // 교수의 강의 목록 조회
+        List<Ofregistration> registrations = ofregistrationRepository.findByLectureId_Member_MemberId(professorId);
+
+        // 강의 정보를 Map으로 변환
+        return registrations.stream()
+                .map(reg -> {
+                    Map<String, Object> lecture = new HashMap<>();
+                    lecture.put("ofregistrationId", reg.getId());
+                    lecture.put("lectureName", reg.getLectureId().getLectureName());
+                    lecture.put("professorName", reg.getLectureId().getMember().getName());
+                    lecture.put("semester", reg.getLectureId().getSemester().getCodeName());
+                    lecture.put("subjectId", reg.getLectureId().getCurriculumSubject().getSubject().getSubjectId());
+                    return lecture;
+                })
+                .collect(Collectors.toList());
+    }
 
     public List<LecQuestionDTO> getEvaluationResults(Long ofregistrationId) {
+        // 수강신청 정보 조회
+        Ofregistration ofregistration = ofregistrationRepository.findById(ofregistrationId)
+                .orElseThrow(() -> new IllegalArgumentException("수강신청 정보를 찾을 수 없습니다."));
+
+        // 강의 정보 가져오기
+        Lecture lecture = ofregistration.getLectureId();
+
         List<LecQuestion> questions = getAllQuestions();
         List<LecQuestionDTO> results = new ArrayList<>();
 
         for (LecQuestion question : questions) {
-            // 특정 수강신청의 특정 문항에 대한 답변들만 조회
             List<LecItem> items = lecItemRepository.findByOfRegistration_IdAndLecQuestion_QuestionId(
                     ofregistrationId,
                     question.getQuestionId()
             );
 
             LecQuestionDTO result = new LecQuestionDTO();
+
+            // 기본 문항 정보 설정
             result.setQuestionId(question.getQuestionId());
             result.setQuestionName(question.getQuestionName());
+
+            // 강의 정보 설정
+            result.setLectureName(lecture.getLectureName());
+            result.setName(lecture.getMember().getName());
+            result.setSemester(lecture.getSemester().getCodeName());  // CommonCode의 codeName을 가져옴
+            result.setSubjectId(lecture.getCurriculumSubject().getSubject().getSubjectId());
 
             if (!items.isEmpty()) {
                 // 평균 점수 계산
