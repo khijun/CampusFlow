@@ -48,14 +48,10 @@
     </nav>
 
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="side-bar">
         <div class="sidebar-header">
             <h2>학 사</h2>
         </div>
-        <a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i>  메인</a>
-        <a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i>  학생 페이지</a>
-        <a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i>  교수 페이지</a>
-        <a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i>  관리자 페이지</a>
     </div>
 
     <!-- Main Content -->
@@ -77,5 +73,6 @@
     </div>
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
+<script src="/js/sidebar_category.js"></script>
 </body>
 </html>
