@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학사관리 시스템</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="css/main/header.css" rel="stylesheet">
+    <link href="css/main/navigation.css" rel="stylesheet">
+    <link href="css/main/sidebar.css" rel="stylesheet">
+    <link href="css/main/main-content.css" rel="stylesheet">
+    <link href="css/main/tab.css" rel="stylesheet">
+    <link href="css/main/mainStyle.css" rel="stylesheet">
+    <link href="css/main/sidebar-menu.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <nav class="header-nav">
+        <div class="header-left">
+            <div class="header-logo">
+                <img src="/assets/logo/doinUniver_02.png" alt="두인대학교 로고">
+            </div>
+            <div class="header-title">
+                두인대학교
+                <small>DOIN UNIVERSITY 통합정보시스템</small>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <ul class="nav-list">
+            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>
+            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>
+            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i>  메인</a></li>
+            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i>  학생 페이지</a></li>
+            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i>  교수 페이지</a></li>
+            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i>  관리자 페이지</a></li>
+        </ul>
+
+        <ul class="header-list">
+            <span th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>&nbsp;&nbsp;
+            <span>인사과</span>|
+            <span>24240001(관리자)</span>|
+            <span>김 관 리</span>
+            <a href="#" th:href="@{/logout}">로그아웃</a>
+        </ul>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>관리자</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'userManagement')"><i class="fas fa-users-cog"></i> 사용자</a>
+                <ul id="userManagement" class="submenu">
+                    <li><a href="#">학생, 교수 계정 생성/수정/삭제</a></li>
+                    <li><a href="#">사용자 정보 조회</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'registrationManagement')"><i class="fas fa-wallet"></i> 등록</a>
+                <ul id="registrationManagement" class="submenu">
+                    <li><a href="#">납부 상태 조회 및 미납자 관리</a></li>
+                    <li><a href="#">분할 납부 설정</a></li>
+                    <li><a href="#">납부 기한 설정 및 알림 관리</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'curriculumManagement')"><i class="fas fa-book"></i> 교육과정</a>
+                <ul id="curriculumManagement" class="submenu">
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/register')">교육과정 등록</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/update')">교육과정 수정</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/approval')">교육과정 승인</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/curriculum/history')">교육과정 개편 이력</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'courseManagement')"><i class="fas fa-chalkboard"></i> 강좌</a>
+                <ul id="courseManagement" class="submenu">
+                    <li><a href="#">강의실 배정</a></li>
+                    <li><a href="#">수강 정원 및 강의 상태 관리</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'academicSchedule')"><i class="fas fa-calendar-alt"></i> 학사 일정</a>
+                <ul id="academicSchedule" class="submenu">
+                    <li><a href="#" onclick="loadIframe('/calendar/add')">학사 일정 등록/수정/삭제</a></li>
+                    <li><a href="#" onclick="loadIframe('/calendar')">학사 일정 조회</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'attendanceAndGrades')"><i class="fas fa-clipboard-list"></i> 출석 및 성적</a>
+                <ul id="attendanceAndGrades" class="submenu">
+                    <li><a href="#">출석률 통계 확인</a></li>
+                    <li><a href="#">성적 통계 확인</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'graduationManagement')"><i class="fas fa-graduation-cap"></i> 졸업</a>
+                <ul id="graduationManagement" class="submenu">
+                    <li><a href="#">졸업생 현황 통계 확인</a></li>
+                    <li><a href="#">학생별 졸업 요건 상태 조회</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <ul id="tabs">
+                <!-- 기본 탭 -->
+                <li class="tab-item active" onclick="loadIframe('/iframe/curriculum/register')">
+                    교육과정 등록
+                    <button class="close-tab" onclick="closeTab(this)">×</button>
+                </li>
+            </ul>
+            <button class="close-all" onclick="closeAllTabs()">모두 닫기</button>
+        </div>
+
+        <!-- Iframe for Content -->
+        <div class="iframe-container">
+            <iframe name="contentFrame" ></iframe>
+        </div>
+    </div>
+
+</div>
+<script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
+</body>
+</html>

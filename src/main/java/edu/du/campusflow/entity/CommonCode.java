@@ -1,5 +1,6 @@
 package edu.du.campusflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class CommonCode {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
+    @JsonBackReference
     private CommonCodeGroup codeGroup;
 
     @Column(name = "code_value", length = 100)

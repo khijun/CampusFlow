@@ -85,34 +85,7 @@
                 $('#deleteEventBtn').show(); // 삭제 버튼 보이기
                 $('#eventModal').modal('show').attr('aria-hidden', 'false'); // 모달 열기 및 aria-hidden 설정
             },
-            events: function(start, end, timezone, callback) {
-                $.ajax({
-                    url: '/calendar/api/academic-calendar',
-                    type: 'GET',
-                    success: function(response) {
-                        console.log('Received calendar data:', response);
-                        var events = response.map(function(event) {
-                            return {
-                                id: event.calendarId,
-                                title: event.title.replace(/^\d+a\s*/, ''),
-                                start: moment(event.startDate).format('YYYY-MM-DD'),
-                                end: moment(event.endDate).format('YYYY-MM-DD'),
-                                description: event.description,
-                                allDay: true
-                            };
-                        });
-                        callback(events);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Calendar load error:', {
-                            status: status,
-                            error: error,
-                            response: xhr.responseText
-                        });
-                        alert('일정을 불러오는데 실패했습니다. 상세 내용은 콘솔을 확인해주세요.');
-                    }
-                });
-            },
+            events: [], // 여기에 기존 이벤트를 추가할 수 있습니다.
             dayRender: function(date, cell) {
                 // 토요일과 일요일에 배경색 적용
                 if (date.day() === 6) { // 토요일
@@ -142,23 +115,12 @@
 
                 // AJAX 요청으로 수정된 일정 전송
                 $.ajax({
-                    url: '/calendar/api/academic-calendar/' + currentEvent.id,
-                    method: 'PUT',
+                    url: '/calendar/api/academic-calendar/' + currentEvent._id, // 수정된 일정의 API 엔드포인트
+                    method: 'PUT', // 수정 요청
                     contentType: 'application/json',
-                    data: JSON.stringify({
-                        title: title,
-                        startDate: start + 'T00:00:00',
-                        endDate: moment(end).add(1, 'days').format('YYYY-MM-DD') + 'T00:00:00',
-                        description: description
-                    }),
-                    success: function(response) {
-                        alert('일정이 수정되었습니다.');
-                        currentEvent.title = title;
-                        currentEvent.start = moment(start).format('YYYY-MM-DD');
-                        currentEvent.end = moment(end).format('YYYY-MM-DD');
-                        currentEvent.description = description;
-                        currentEvent.allDay = true;
-                        $('#calendar').fullCalendar('updateEvent', currentEvent);
+                    data: JSON.stringify(currentEvent), // 수정된 이벤트 데이터 전송
+                    success: function() {
+                        console.log('일정이 수정되었습니다.');
                     },
                     error: function() {
                         alert('일정 수정에 실패했습니다.');
@@ -166,31 +128,30 @@
                 });
             } else {
                 // 새 이벤트 추가
+                $('#calendar').fullCalendar('renderEvent', {
+                    title: title,
+                    start: start,
+                    end: end,
+                    description: description,
+                }, true);
+
                 // AJAX 요청으로 새 일정 전송
                 $.ajax({
-                    url: '/calendar/api/academic-calendar',
-                    type: 'POST',
-                    contentType: 'application/json',
+                    url: '/calendar/api/academic-calendar', // 요청 URL
+                    type: 'POST', // 요청 메서드
+                    contentType: 'application/json', // 데이터 형식
                     data: JSON.stringify({
-                        title: title.replace(/^\d+a\s*/, ''),
-                        startDate: start + 'T00:00:00',
-                        endDate: moment(end).add(1, 'days').format('YYYY-MM-DD') + 'T00:00:00',
+                        title: title,
+                        startDate: start,
+                        endDate: end,
                         description: description
                     }),
                     success: function(response) {
                         alert('일정이 추가되었습니다.');
-                        $('#calendar').fullCalendar('renderEvent', {
-                            id: response.calendarId,
-                            title: response.title,
-                            start: moment(response.startDate).format('YYYY-MM-DD'),
-                            end: moment(response.endDate).format('YYYY-MM-DD'),
-                            description: response.description,
-                            allDay: true
-                        }, true);
                     },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX 요청 실패:', error);
-                        alert('일정 추가에 실패했습니다.');
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX 요청 실패:', textStatus, errorThrown);
+                        alert('일정 추가에 실패했습니다. 오류: ' + textStatus);
                     }
                 });
             }
@@ -206,14 +167,13 @@
         // 삭제 버튼 클릭 이벤트
         $('#deleteEventBtn').on('click', function() {
             if (currentEvent) {
-                $('#calendar').fullCalendar('removeEvents', currentEvent.id); // 이벤트 삭제
+                $('#calendar').fullCalendar('removeEvents', currentEvent._id); // 이벤트 삭제
                 // AJAX 요청으로 삭제 요청 전송
                 $.ajax({
-                    url: '/calendar/api/academic-calendar/' + currentEvent.id,
-                    method: 'DELETE',
+                    url: '/calendar/api/academic-calendar/' + currentEvent._id, // 삭제할 일정의 API 엔드포인트
+                    method: 'DELETE', // 삭제 요청
                     success: function() {
-                        alert('일정이 삭제되었습니다.');
-                        $('#calendar').fullCalendar('removeEvents', currentEvent.id);
+                        console.log('일정이 삭제되었습니다.');
                     },
                     error: function() {
                         alert('일정 삭제에 실패했습니다.');

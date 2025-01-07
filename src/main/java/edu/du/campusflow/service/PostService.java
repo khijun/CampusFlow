@@ -69,9 +69,4 @@ public class PostService {
             postRepository.save(post); // 게시물 저장 (댓글도 함께 저장됨)
         }
     }
-
-    // 게시물 저장 메서드 추가
-    public Post save(Post post) {
-        return postRepository.save(post);
-    }
 }

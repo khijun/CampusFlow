@@ -5,13 +5,10 @@ import edu.du.campusflow.entity.Post;
 import edu.du.campusflow.service.DeptService;
 import edu.du.campusflow.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,31 +89,9 @@ public class PostController {
         return "redirect:/posts/view"; // 게시물 삭제 후 목록 페이지로 리다이렉트
     }
     // 댓글 추가
-    @PostMapping("/{postId}/comments")
-    @ResponseBody
-    public ResponseEntity<?> addComment(@PathVariable Long postId, @RequestBody Post comment) {
-        try {
-            Post parentPost = postService.getPostById(postId);
-            if (parentPost == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            // 댓글 정보 설정
-            comment.setCreatedAt(LocalDateTime.now());
-            comment.setRelatedPost(parentPost);
-            comment.setDept(parentPost.getDept());  // 부모 게시글의 학과 정보
-            comment.setTitle(""); // 댓글은 제목 없음
-            
-            // 테스트용 임시 데이터 - 부모 게시글의 작성자 정보를 사용
-            comment.setMember(parentPost.getMember());
-            
-            postService.createPost(comment);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            System.out.println("댓글 추가 실패 상세: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("댓글 추가 실패: " + e.getMessage());
-        }
+    @PostMapping("/{id}/comments")
+    public String addComment(@PathVariable Long id, @RequestParam String content) {
+        postService.addComment(id, content); // 댓글 추가 서비스 호출
+        return "redirect:/posts/" + id; // 댓글 추가 후 게시물 상세 페이지로 리다이렉트
     }
 }
