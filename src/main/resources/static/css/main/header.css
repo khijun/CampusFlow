@@ -97,3 +97,18 @@ body, html {
     min-width: var(--min-width);
     position: relative;
 }
+
+.header-member-info-li{
+    box-sizing: border-box;
+    padding: 15px;
+    align-content: space-between;
+}
+
+.header-member-info-li span:first-child{
+    border: none;
+}
+
+.header-member-info-li span{
+    padding: 15px;
+    border-left: dimgray solid 1px;
+}

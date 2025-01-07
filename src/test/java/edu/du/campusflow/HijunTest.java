@@ -98,6 +98,30 @@ public class HijunTest {
         dtos = categoryService.findByType(professor);
         System.out.println(dtos.size());
         dtos.forEach(System.out::println);
+
+
+        int iterations = 1; // 메서드 실행 횟수
+        long startTime, endTime, duration;
+
+        System.out.println("-- findByType --");
+        startTime = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
+            dtos = categoryService.findByType(student);
+        }
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        System.out.println("메서드 종료시간: " + endTime);
+        System.out.println("평균 실행시간 (findByType): " + (duration / iterations) + " 나노초");
+
+        System.out.println("-- findByTypeNew --");
+        startTime = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
+//            dtos = categoryService.findByTypeOld(student);
+        }
+        endTime = System.nanoTime();
+        duration = endTime - startTime;
+        System.out.println("메서드 종료시간: " + endTime);
+        System.out.println("평균 실행시간 (findByTypeOld): " + (duration / iterations) + " 나노초");
     }
     @Test
     public void fileTest(){
