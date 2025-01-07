@@ -44,8 +44,5 @@ public class Inquiry {
     @OneToMany(mappedBy = "responseTo", fetch = FetchType.LAZY)
     private List<Inquiry> comments = new ArrayList<>();
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    
 }
