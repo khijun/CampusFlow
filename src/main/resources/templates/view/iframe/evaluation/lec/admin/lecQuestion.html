@@ -59,12 +59,7 @@
   </style>
 </head>
 <body>
-<h2>강의평가 결과</h2>
-
-<div th:if="${#lists.isEmpty(results)}">
-  <p>아직 제출된 강의평가가 없습니다.</p>
-</div>
-
+<h2>강의 평가 결과</h2>
 <div class="lecture-select">
   <h3>강의 선택</h3>
   <select onchange="if(this.value) location.href='/iframe/evaluation/lec/admin/' + this.value">
