@@ -90,7 +90,7 @@ html, body {
    margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
    margin-top: 20px;
    padding: 0; /* 내부 여백 제거 */
-   max-height: 400px; /* 최대 높이 고정 */
+   max-height: 250px; /* 최대 높이 고정 */
    overflow-y: auto; /* 세로 스크롤 활성화 */
    box-sizing: border-box; /* 패딩 포함한 크기 계산 */
    display: grid;

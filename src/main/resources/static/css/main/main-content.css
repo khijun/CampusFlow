@@ -3,7 +3,7 @@
    padding: 20px;
    flex-grow: 1;
    box-sizing: border-box;
-   overflow: hidden;  /* 스크롤 제거 */
+   /*overflow: hidden;  !* 스크롤 제거 *!*/
    min-width: 1024px;
    position: absolute; /* 추가 */
    right: 0; /* 추가 */
