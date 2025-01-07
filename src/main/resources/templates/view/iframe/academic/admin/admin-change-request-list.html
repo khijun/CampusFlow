@@ -1,4 +1,3 @@
-<!-- admin-change-request-list.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,39 +7,51 @@
   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
   <style>
-    /* 테이블을 감싸는 div에 스크롤을 추가 */
-    .table-container {
-      max-height: 400px;  /* 최대 높이 설정 */
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      overflow-y: auto;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    /* 공통 그리드 스타일 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 5열 */
       overflow-y: auto;   /* 수직 스크롤 추가 */
-      margin: 0 auto;     /* 테이블 중앙 정렬 */
-      width: 80%;         /* 테이블 너비 */
+      gap: 10px;
+      width: 80%;
+      margin: 0 auto;
     }
 
-    /* 기본 테이블 스타일 */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #fff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* 나머지 스타일은 이전과 동일 */
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-
-    th {
+    /* 헤더 스타일 */
+    .header-container {
       background-color: #4CAF50;
       color: white;
       font-weight: bold;
+      text-align: center;
+      padding: 12px 0;
+      border-radius: 5px;
     }
 
-    td {
+    /* 데이터 스타일 */
+    .data-container .data {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
       font-size: 14px;
+      background-color: #fff;
+      border-radius: 5px;
     }
 
+    .data-container .data:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* 버튼 스타일 */
     button {
       padding: 8px 16px;
       margin: 5px;
@@ -64,58 +75,39 @@
       background-color: #f44336;
       color: white;
     }
-
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    div {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    p {
-      color: #e74c3c;
-      font-weight: bold;
-    }
-
   </style>
 </head>
 <body>
 <h1>변동 신청 목록 (관리자)</h1>
+
+<!-- 메시지 표시 -->
 <div th:if="${message != null}">
-  <p th:text="${message}"></p>
+  <p style="color: #e74c3c; font-weight: bold;" th:text="${message}"></p>
 </div>
 
-<div class="table-container">
-  <table border="1">
-    <thead>
-    <tr>
-      <th>학번</th>
-      <th>변경 전 상태</th>
-      <th>변경 후 상태</th>
-      <th>신청 상태</th>
-      <th>승인</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="request : ${changeRequests}">
-      <td th:text="${request.member.memberId}"></td>
-      <td th:text="${request.beforeCode.codeName}"></td>
-      <td th:text="${request.afterCode.codeName}"></td>
-      <td th:text="${request.applicationStatus.codeName}"></td>
-      <td>
-        <form th:action="@{/iframe/admin/academic/approve-change-request/{applicationId}(applicationId=${request.id})}" method="post">
-          <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">승인</button>
-        </form>
-        <form th:action="@{/iframe/admin/academic/reject-change-request/{applicationId}(applicationId=${request.id})}" method="post">
-          <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">거절</button>
-        </form>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<!-- 헤더 부분 -->
+<div class="grid-container header-container">
+  <div>학번</div>
+  <div>변경 전 상태</div>
+  <div>변경 후 상태</div>
+  <div>신청 상태</div>
+  <div>승인</div>
 </div>
 
+<!-- 데이터 반복 부분 -->
+<div class="grid-container data-container" th:each="request : ${changeRequests}">
+  <div class="data" th:text="${request.member.memberId}"></div>
+  <div class="data" th:text="${request.beforeCode.codeName}"></div>
+  <div class="data" th:text="${request.afterCode.codeName}"></div>
+  <div class="data" th:text="${request.applicationStatus.codeName}"></div>
+  <div class="data">
+    <form th:action="@{/iframe/admin/academic/approve-change-request/{applicationId}(applicationId=${request.id})}" method="post">
+      <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">승인</button>
+    </form>
+    <form th:action="@{/iframe/admin/academic/reject-change-request/{applicationId}(applicationId=${request.id})}" method="post">
+      <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">거절</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>

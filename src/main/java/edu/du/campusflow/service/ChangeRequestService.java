@@ -97,6 +97,7 @@ public class ChangeRequestService {
     public List<ChangeRequest> getALlChangeRequests() {
         return changeRequestRepository.findAll();
     }
+
     @Transactional
     public void handleChangeRequest(Long applicationId, boolean approve) {
         // 1. 신청서 조회

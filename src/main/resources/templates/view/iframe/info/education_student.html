@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학력 정보</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+</head>
+<body>
+<h2>학력 정보</h2>
+<div class="education-container">
+  <table>
+    <thead>
+    <tr>
+      <th>학교명</th>
+      <th>입학일</th>
+      <th>졸업일</th>
+      <th>졸업 상태</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="info : ${educationInfos}">
+      <td th:text="${info.schoolName}">학교명</td>
+      <td th:text="${info.enrollmentDate}">입학일</td>
+      <td th:text="${info.graduationDate}">졸업일</td>
+      <td th:text="${info.graduationStatus.codeName}">졸업 상태</td>
+    </tr>
+    <tr th:if="${educationInfos.empty}">
+      <td colspan="4">학력 정보가 없습니다.</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

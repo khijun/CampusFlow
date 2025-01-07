@@ -41,8 +41,8 @@ public class InfoService {
         return educationInfoRepository.findAll();
     }
 
-    public Optional<EducationInfo> getEducationInfoById(Long id) {
-        return educationInfoRepository.findById(id);
+    public List<EducationInfo> getEducationInfoById(Long memberId) {
+        return educationInfoRepository.findByMember_MemberId(memberId);
     }
 
     public EducationInfo saveEducationInfo(EducationInfo educationInfo) {

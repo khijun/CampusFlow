@@ -26,101 +26,95 @@
       font-weight: 700;
     }
 
-    table {
+    /* 공통 그리드 스타일 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 5개의 열 */
+      gap: 10px; /* 셀 간 간격 */
       width: 90%;
+      overflow-y: auto;   /* 수직 스크롤 추가 */
       margin: 0 auto;
-      border-collapse: collapse;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    thead {
+    /* 헤더 스타일 */
+    .header-container {
       background-color: #007BFF;
       color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 5px;
     }
 
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    tr:nth-child(even) {
+    /* 아이템 스타일 */
+    .item-container .item {
+      padding: 10px;
+      text-align: center;
       background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
     }
 
-    tr:hover {
+    .item-container .item:hover {
       background-color: #f1f1f1;
     }
 
-    tbody {
-      display: block;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    thead, tbody tr {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
-    }
-
+    /* 버튼 스타일 */
     .cancel-btn {
       color: #dc3545;
       border: none;
       background: none;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .cancel-btn:hover {
       text-decoration: underline;
     }
 
+
     @media (max-width: 768px) {
-      table {
-        width: 100%;
-        font-size: 14px;
+      .grid-container {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 모바일 화면에서 5개의 열 */
       }
 
-      th, td {
+      .header, .item {
+        font-size: 14px;
         padding: 8px;
       }
     }
+
 
   </style>
 </head>
 <body>
 <h2>학적 조회</h2>
 
-<table>
-  <thead>
-  <tr>
-    <th>변경 전 상태</th>
-    <th>변경 후 상태</th>
-    <th>신청 일자</th>
-    <th>상태</th>
-    <th>신청 취소</th> <!-- 신청 취소 열 추가 -->
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="request : ${changeRequests}">
-    <td th:text="${request.beforeCode.codeName}"></td>
-    <td th:text="${request.afterCode.codeName}"></td>
-    <td th:text="${request.requestDate}"></td>
-    <td th:text="${request.applicationStatus.codeName}"></td>
-    <td>
-      <!-- 신청 상태가 '승인'일 경우 삭제 버튼 숨기기 -->
-      <form th:action="@{/iframe/academic/delete-change-request}" method="post"
-            onsubmit="return confirm('정말 신청을 취소하시겠습니까?')"
-            th:if="${request.applicationStatus.codeName != '승인'}">
-        <input type="hidden" th:name="applicationId" th:value="${request.id}" />
-        <button type="submit" class="cancel-btn">신청 취소</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<!-- 헤더 부분 -->
+<div class="grid-container header-container">
+  <div class="header">변경 전 상태</div>
+  <div class="header">변경 후 상태</div>
+  <div class="header">신청 일자</div>
+  <div class="header">상태</div>
+  <div class="header">신청 취소</div>
+</div>
+
+<!-- 아이템 반복 부분 -->
+<div class="grid-container item-container" th:each="request : ${changeRequests}">
+  <div class="item" th:text="${request.beforeCode.codeName}"></div>
+  <div class="item" th:text="${request.afterCode.codeName}"></div>
+  <div class="item" th:text="${request.requestDate}"></div>
+  <div class="item" th:text="${request.applicationStatus.codeName}"></div>
+  <div class="item">
+    <form th:action="@{/iframe/academic/delete-change-request}" method="post"
+          onsubmit="return confirm('정말 신청을 취소하시겠습니까?')"
+          th:if="${request.applicationStatus.codeName != '승인'}">
+      <input type="hidden" th:name="applicationId" th:value="${request.id}" />
+      <button type="submit" class="cancel-btn">신청 취소</button>
+    </form>
+  </div>
+</div>
+
+
 </body>
 </html>

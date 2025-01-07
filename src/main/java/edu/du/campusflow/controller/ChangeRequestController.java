@@ -30,9 +30,10 @@ public class ChangeRequestController {
 
     // 관리자용 - 모든 학생의 신청서 조회
     @GetMapping("/iframe/academic/admin/admin-change-request-list")
-    public String getAllChangeRequests(Model model) {
+    public String getAllChangeRequests(Model model,ChangeRequestDto changeRequestDto) {
         List<ChangeRequest> changeRequests = changeRequestService.getALlChangeRequests();  // 모든 학생의 신청서 조회
         model.addAttribute("changeRequests", changeRequests);
+        model.addAttribute("changeRequestDto", changeRequestDto);
         return "view/iframe/academic/admin/admin-change-request-list"; // 관리자용 변동 신청 목록 페이지
     }
     // 학적 조회

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChangeRequestDto {
     private Long memberId;           // 회원 ID
-    private Long newStatusCodeId;    // 신청할 상태 코드 ID
+    private Long newStatusCodeId; // 신청할 상태 코드 ID
 }
