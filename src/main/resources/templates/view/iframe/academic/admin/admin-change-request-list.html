@@ -1,0 +1,121 @@
+<!-- admin-change-request-list.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>변동 신청 승인</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    /* 테이블을 감싸는 div에 스크롤을 추가 */
+    .table-container {
+      max-height: 400px;  /* 최대 높이 설정 */
+      overflow-y: auto;   /* 수직 스크롤 추가 */
+      margin: 0 auto;     /* 테이블 중앙 정렬 */
+      width: 80%;         /* 테이블 너비 */
+    }
+
+    /* 기본 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 나머지 스타일은 이전과 동일 */
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    button {
+      padding: 8px 16px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    button[type="submit"]:not(:disabled):first-of-type {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    button[type="submit"]:not(:disabled):last-of-type {
+      background-color: #f44336;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    div {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+<h1>변동 신청 목록 (관리자)</h1>
+<div th:if="${message != null}">
+  <p th:text="${message}"></p>
+</div>
+
+<div class="table-container">
+  <table border="1">
+    <thead>
+    <tr>
+      <th>학번</th>
+      <th>변경 전 상태</th>
+      <th>변경 후 상태</th>
+      <th>신청 상태</th>
+      <th>승인</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="request : ${changeRequests}">
+      <td th:text="${request.member.memberId}"></td>
+      <td th:text="${request.beforeCode.codeName}"></td>
+      <td th:text="${request.afterCode.codeName}"></td>
+      <td th:text="${request.applicationStatus.codeName}"></td>
+      <td>
+        <form th:action="@{/iframe/admin/academic/approve-change-request/{applicationId}(applicationId=${request.id})}" method="post">
+          <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">승인</button>
+        </form>
+        <form th:action="@{/iframe/admin/academic/reject-change-request/{applicationId}(applicationId=${request.id})}" method="post">
+          <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">거절</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

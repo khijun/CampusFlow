@@ -28,6 +28,13 @@ public class ChangeRequestController {
         this.commonCodeRepository = commonCodeRepository;
     }
 
+    // 관리자용 - 모든 학생의 신청서 조회
+    @GetMapping("/iframe/academic/admin/admin-change-request-list")
+    public String getAllChangeRequests(Model model) {
+        List<ChangeRequest> changeRequests = changeRequestService.getALlChangeRequests();  // 모든 학생의 신청서 조회
+        model.addAttribute("changeRequests", changeRequests);
+        return "view/iframe/academic/admin/admin-change-request-list"; // 관리자용 변동 신청 목록 페이지
+    }
     // 학적 조회
     @GetMapping("/iframe/academic/change-request-list")
     public String getChangeRequests(Model model) {
@@ -70,5 +77,33 @@ public class ChangeRequestController {
         changeRequestService.deleteChangeRequest(applicationId, memberId);
 
         return "redirect:/iframe/academic/change-request-list"; // 삭제 후 목록으로 리다이렉트
+    }
+
+    // 승인 처리
+    @PostMapping("/iframe/admin/academic/approve-change-request/{applicationId}")
+    public String approveChangeRequest(@PathVariable("applicationId") Long applicationId) {
+        Long memberId = authService.getCurrentMemberId();
+        if (memberId == null) {
+            throw new IllegalStateException("Authentication required to perform this action.");
+        }
+
+        // 신청서 승인 처리
+        changeRequestService.handleChangeRequest(applicationId, true);
+
+        return "redirect:/iframe/academic/admin/admin-change-request-list"; // 승인 후 목록으로 리다이렉트
+    }
+
+    // 거절 처리
+    @PostMapping("/iframe/admin/academic/reject-change-request/{applicationId}")
+    public String rejectChangeRequest(@PathVariable("applicationId") Long applicationId) {
+        Long memberId = authService.getCurrentMemberId();
+        if (memberId == null) {
+            throw new IllegalStateException("Authentication required to perform this action.");
+        }
+
+        // 신청서 거절 처리
+        changeRequestService.handleChangeRequest(applicationId, false);
+
+        return "redirect:/iframe/academic/admin/admin-change-request-list"; // 거절 후 목록으로 리다이렉트
     }
 }

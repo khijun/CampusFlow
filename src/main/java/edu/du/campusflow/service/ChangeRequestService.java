@@ -98,36 +98,47 @@ public class ChangeRequestService {
         return changeRequestRepository.findAll();
     }
     @Transactional
-    public void approveChangeRequest(Long applicationId) {
+    public void handleChangeRequest(Long applicationId, boolean approve) {
         // 1. 신청서 조회
         ChangeRequest changeRequest = changeRequestRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid change request ID"));
 
-        // 2. 신청 상태를 '승인' 상태로 변경
-        CommonCode approvedStatus = commonCodeRepository.findById(12L)  // 'APPROVED' 상태 코드
-                .orElseThrow(() -> new IllegalArgumentException("Invalid approval status code"));
+        // 2. 승인 또는 거절 상태 코드 설정
+        CommonCode statusCode;
+        if (approve) {
+            statusCode = commonCodeRepository.findById(12L)  // 'APPROVED' 상태 코드
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid approval status code"));
+        } else {
+            statusCode = commonCodeRepository.findById(13L)  // 'REJECTED' 상태 코드 (예: 13L)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid rejection status code"));
+        }
 
-        changeRequest.setApplicationStatus(approvedStatus);  // 신청 상태를 승인으로 변경
+        // 3. 신청 상태 변경
+        changeRequest.setApplicationStatus(statusCode);  // 신청 상태를 승인 또는 거절로 변경
 
-        // 3. Member의 학적 상태를 변경 후 코드(afterCode)로 업데이트
-        Member member = changeRequest.getMember();
-        member.setAcademicStatus(changeRequest.getAfterCode());
+        // 4. 승인인 경우 Member의 학적 상태 변경
+        if (approve) {
+            Member member = changeRequest.getMember();
+            member.setAcademicStatus(changeRequest.getAfterCode());  // 변경 후 학적 상태로 업데이트
 
-        // 4. Member와 ChangeRequest를 저장
-        memberRepository.save(member);  // Member 엔티티 저장
+            // 5. Member와 ChangeRequest 저장
+            memberRepository.save(member);  // Member 엔티티 저장
+        }
+
         changeRequestRepository.save(changeRequest);  // ChangeRequest 업데이트
 
-        // 5. ChangeHistory 생성 및 저장
+        // 6. ChangeHistory 생성 및 저장
         ChangeHistory changeHistory = ChangeHistory.builder()
-                .member(member)
+                .member(changeRequest.getMember())
                 .beforeCode(changeRequest.getBeforeCode())  // 기존 학적 상태
                 .afterCode(changeRequest.getAfterCode())    // 변경된 학적 상태
-                .approvalDate(LocalDateTime.now())          // 승인 일자
-                .grade(member.getGrade())                   // 학년 정보
+                .approvalDate(LocalDateTime.now())          // 승인 또는 거절 일자
+                .grade(changeRequest.getMember().getGrade()) // 학년 정보
                 .build();
 
-        changeHistoryRepository.save(changeHistory);  // 승인 내역 저장
+        changeHistoryRepository.save(changeHistory);  // 내역 저장
     }
+
 
     @Transactional
     public void deleteChangeRequest(Long applicationId,Long memberId) {
