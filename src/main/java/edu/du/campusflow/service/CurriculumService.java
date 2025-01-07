@@ -21,7 +21,6 @@ public class CurriculumService {
          spec = spec.and((root, query, cb) -> cb.equal(root.get("curriculumYear"), Integer.parseInt(year)));
       }
       if (grade != null && !grade.isEmpty()) {
-         // grade를 codeValue로 검색
          spec = spec.and((root, query, cb) -> cb.equal(root.get("grade").get("codeValue"), grade));
       }
       if (deptName != null && !deptName.isEmpty()) {
