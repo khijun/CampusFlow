@@ -25,25 +25,25 @@ import java.util.List;
 //@EnableWebSecurity(debug = true)
 @Log4j2
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final MemberService memberService;
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username ->{
+        return username -> {
             log.info("사용자: " + username);
             return toUserDetails(memberService.findByMemberId(Long.parseLong(username)));
         };
     }
 
-    public UserDetails toUserDetails(Member member){
+    public UserDetails toUserDetails(Member member) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(member.getMemberType().toString().toUpperCase()));
         return User.builder()
@@ -72,6 +72,7 @@ public class SecurityConfig{
                 .and()
                 .logout()
                 .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
                 .permitAll()
                 .and()
                 .csrf().disable();  // 임시 코드

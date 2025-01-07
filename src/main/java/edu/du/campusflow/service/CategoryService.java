@@ -21,14 +21,15 @@ public class CategoryService {
         return CategoryDTO.fromEntity(category, findByParent(category));
     }
 
-    public List<CategoryDTO> findByType(CommonCode memberType){
-        List<Category> categories = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(memberType);
-        List<CategoryDTO> result = new ArrayList<>();
-        for(Category category : categories){
-            result.add(CategoryDTO.fromEntity(category, findByParent(category)));
-        }
-        return result;
-    }
+//    public List<CategoryDTO> findByTypeOld(CommonCode memberType){
+//        System.out.println("!!findByType()");
+//        List<Category> categories = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(memberType);
+//        List<CategoryDTO> result = new ArrayList<>();
+//        for(Category category : categories){
+//            result.add(CategoryDTO.fromEntity(category, findByParent(category)));
+//        }
+//        return result;
+//    }
 
     public List<CategoryDTO> findByType(Member member){
         return findByType(member.getMemberType());
@@ -36,10 +37,24 @@ public class CategoryService {
 
     public List<CategoryDTO> findByParent(Category category){
         List<CategoryDTO> result = new ArrayList<>();
-        if(category != null&&categoryRepository.existsByParent(category.getId())) {
-            for(Category c : categoryRepository.findByParentOrderByOrderNoAsc(category.getId())) {
+        if(category != null&&categoryRepository.existsByParent(category)) {
+            for(Category c : categoryRepository.findByParentOrderByOrderNoAsc(category)) {
                 result.add(CategoryDTO.fromEntity(c));
             }
+        }
+        return result;
+    }
+
+    public List<CategoryDTO> findByType(CommonCode memberType){
+        System.out.println("!!findByTypeNew()");
+        List<Category> categories = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(memberType);
+        List<CategoryDTO> result = new ArrayList<>();
+        for(Category category : categories){
+            CategoryDTO dto = CategoryDTO.fromEntity(category);
+            for(Category child : category.getChildren()){
+                dto.addChildren(child);
+            }
+            result.add(dto);
         }
         return result;
     }
