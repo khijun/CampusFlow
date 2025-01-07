@@ -76,4 +76,5 @@ public class Member {
 
     @Column(name = "end_date")
     private Date endDate; // 졸업, 퇴직 날짜
+
 }

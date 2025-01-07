@@ -3,7 +3,6 @@ package edu.du.campusflow.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Builder
@@ -17,26 +16,32 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    private Long categoryId;
+    private Long id;
 
+    @Column(name = "parent_id")
+    private Long parent;
 
     @Column(name = "category_name", length = 50)
-    private String categoryName;
+    private String name;
 
     @ManyToOne
-    @JoinColumn(name = "file_id")
-    private FileInfo fileInfo;
+    @JoinColumn(name = "category_image")
+    private FileInfo image;
 
     @Column(name = "category_url", length = 200)
-    private String categoryUrl;
+    private String url;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @ManyToOne
-    @JoinColumn(name = "parent_id", nullable = true)
-    private Category parent;
+    @JoinColumn(name = "member_type")
+    private CommonCode memberType;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Category> children;
+    @Column(name = "order_no")
+    private Integer orderNo;
 
-    @OneToMany(mappedBy = "category")
-    private List<CategoryOrder> categoryOrders;
+//    @OneToMany(mappedBy = "parent")
+//    private List<Category> children;
+
 }
