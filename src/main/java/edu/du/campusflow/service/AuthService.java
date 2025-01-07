@@ -1,7 +1,6 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.entity.Member;
-import edu.du.campusflow.exception.NotLoggedInException;
 import edu.du.campusflow.repository.MemberRepository;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,14 +29,14 @@ public class AuthService {
     public Long getCurrentMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName().isEmpty() || !authentication.isAuthenticated() || isAnonymousUser(authentication))
-            throw new NotLoggedInException();
+            return null;
         System.out.println(authentication.getName());
         return Long.parseLong(authentication.getName());
     }
 
     public Member getCurrentMember() {
         Long id = getCurrentMemberId();
-        if (id == null) throw new NotLoggedInException();
+        if (id == null) return null;
         return memberRepository.findById(id).orElse(null);
     }
 
