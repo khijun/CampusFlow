@@ -6,6 +6,7 @@ import edu.du.campusflow.repository.LecItemRepository;
 import edu.du.campusflow.repository.LecQuestionRepository;
 import edu.du.campusflow.repository.OfregistrationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LecQuestionService {
@@ -143,5 +145,22 @@ public class LecQuestionService {
         }
 
         return results;
+    }
+
+    // 관리자용 조회
+    public List<Map<String, Object>> getAllLectures() {
+        log.info("모든 강의 목록 조회 시작");  // 로그 추가
+        List<Ofregistration> registrations = ofregistrationRepository.findAll();
+        log.info("데이터베이스에서 조회된 수강신청 수: {}", registrations.size());
+
+        return registrations.stream()
+                .map(reg -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("ofregistrationId", reg.getId());
+                    map.put("lectureName", reg.getLectureId().getLectureName());
+                    map.put("semester", reg.getLectureId().getSemester().getCodeName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 }

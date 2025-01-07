@@ -53,15 +53,37 @@ public class LecEvaluationController {
         return "view/iframe/evaluation/lec/professor/lecQuestion";
     }
 
-    // 관리자용 강의평가 결과 페이지
-    @GetMapping("/admin/lecture/{ofregistrationId}")
+    @GetMapping("/admin")
+    public String showAdminLectureList(Model model) {
+        log.info("교직원용 강의평가 목록 조회 시작");  // 로그 추가
+        try {
+            List<Map<String, Object>> lectures = lecQuestionService.getAllLectures();
+            log.info("조회된 강의 수: {}", lectures.size());  // 로그 추가
+            model.addAttribute("lectures", lectures);
+            model.addAttribute("showResults", false);
+            return "view/iframe/evaluation/lec/admin/lecQuestion";
+        } catch (Exception e) {
+            log.error("강의평가 목록 조회 중 오류 발생", e);  // 에러 로그 추가
+            throw e;
+        }
+    }
+
+    @GetMapping("/admin/{ofregistrationId}")
     public String showAdminLectureEvaluation(
             @PathVariable Long ofregistrationId,
             Model model
     ) {
-        // 강의평가 결과 데이터 조회 (DTO로 변환)
+        log.info("교직원용 강의평가 결과 조회 - 강의 ID: {}", ofregistrationId);
+
+        // 모든 강의 목록 조회
+        List<Map<String, Object>> lectures = lecQuestionService.getAllLectures();
+        model.addAttribute("lectures", lectures);
+        model.addAttribute("selectedOfregistrationId", ofregistrationId);
+
+        // 선택된 강의의 평가 결과 조회
         List<LecQuestionDTO> evaluationResults = lecQuestionService.getEvaluationResults(ofregistrationId);
         model.addAttribute("results", evaluationResults);
+        model.addAttribute("showResults", true);
 
         return "view/iframe/evaluation/lec/admin/lecQuestion";
     }
