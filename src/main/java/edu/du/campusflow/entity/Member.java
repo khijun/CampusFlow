@@ -51,25 +51,25 @@ public class Member {
     @Column(name = "email")
     private String email;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id")
     private FileInfo fileInfo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender")
     private CommonCode gender; // CommonCode 테이블과 연관
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academic_status")
     private CommonCode academicStatus; // CommonCode 테이블과 연관
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade")
     private CommonCode grade; // CommonCode 테이블과 연관
 
     @ManyToOne
     @JoinColumn(name = "member_type")
-    private CommonCode memberType; // CommonCode 테이블과 연관
+    private CommonCode memberType; // CommonCode 테이블과 연관, 보통 필요해서 일단 Lazy 안달음
 
     @Column(name = "start_date")
     private Date startDate; // 입학, 임용 날짜

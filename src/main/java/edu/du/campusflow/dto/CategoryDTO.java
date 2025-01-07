@@ -36,6 +36,14 @@ public class CategoryDTO {
                 .build();
     }
 
+    public boolean addChildren(Category category) {
+        return addChildren(fromEntity(category));
+    }
+
+    public boolean addChildren(CategoryDTO categoryDTO) {
+        return this.children.add(categoryDTO);
+    }
+
     // 자식 요소를 넣지 않을 시 빈 리스트를 삽입
     public static CategoryDTO fromEntity(Category category) {
         return fromEntity(category, new ArrayList<>());
