@@ -3,20 +3,23 @@ package edu.du.campusflow.controller;
 import edu.du.campusflow.entity.Curriculum;
 import edu.du.campusflow.service.CurriculumService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/iframe/curriculum")
 public class CurriculumController {
 
    private final CurriculumService curriculumService;
 
-   @GetMapping("/view/iframe/curriculum/register")
+   // GET 요청 처리: 검색
+   @GetMapping("/register")
    public String searchCurriculum(
        @RequestParam(required = false) String year,
        @RequestParam(required = false) String grade,
@@ -34,7 +37,22 @@ public class CurriculumController {
       List<Curriculum> results = curriculumService.searchCurriculum(year, grade, deptName, curriculumName, category);
       model.addAttribute("results", results);
 
-      // View 파일 경로 업데이트
       return "view/iframe/curriculum/curriculum_register";
    }
+
+   // POST 요청 처리: 데이터 삽입
+//   @PostMapping("/register")
+//   @ResponseBody
+//   public String insertCurriculum(@RequestBody Curriculum curriculum) {
+//      curriculumService.saveCurriculum(curriculum);
+//      return "등록 성공!";
+//   }
+
+   // PUT 요청 처리: 데이터 수정
+//   @PutMapping("/register")
+//   @ResponseBody
+//   public String updateCurriculum(@RequestBody Curriculum curriculum) {
+//      curriculumService.updateCurriculum(curriculum);
+//      return "수정 성공!";
+//   }
 }
