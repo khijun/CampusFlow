@@ -38,11 +38,14 @@ public class TuitionService {
 
         TuitionTarget tuitionTarget = tuitionTargetRepository.findByMember(student);
 
+        Integer paidAmount = null;
+        LocalDateTime paidDate = null;
+
         if (tuitionTarget== null) {
 
             // paidAmount와 paidDate 가져오기
-            Integer paidAmount = tuitionTarget.getPaidAmount();
-            LocalDateTime paidDate = tuitionTarget.getPaidDate();
+           paidAmount = tuitionTarget.getPaidAmount();
+           paidDate = tuitionTarget.getPaidDate();
             // 원하는 로직 수행
         } else {
             // targetId에 해당하는 TuitionTarget을 찾지 못한 경우 처리
