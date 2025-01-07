@@ -10,5 +10,7 @@ import java.util.List;
 
 public interface OfregistrationRepository extends JpaRepository<Ofregistration, Long> {
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.member.memberId = :professorId")
-    List<Ofregistration> findDistinctByLectureId_Member(@Param("professorId") Long professorId);
+    List<Ofregistration> findByLectureId_Member_MemberId(@Param("professorId") Long professorId);
+
+    List<Ofregistration> findDistinctByLectureId_Member(Member member);
 }

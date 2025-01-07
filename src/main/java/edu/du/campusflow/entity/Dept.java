@@ -11,7 +11,6 @@ import java.util.List;
 @Builder
 @Data
 @ToString
-@Data
 @Table(name = "dept")
 public class Dept {
 
