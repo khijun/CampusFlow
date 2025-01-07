@@ -20,7 +20,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<?> getCategory() {
-        List<CategoryDTO> categories = categoryService.findByType(authService.getCurrentMember().getMemberType());
+        List<CategoryDTO> categories = categoryService.findByType(authService.getCurrentMember());
         return ResponseEntity.ok(categories);
     }
 }
