@@ -2,6 +2,7 @@ package edu.du.campusflow.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
    @GetMapping("/")
-   public String front_main() {
+   public String front_main(Model model) {
+      model.addAttribute()
       return "view/main_view/front_main"; // 메인 페이지
    }
 

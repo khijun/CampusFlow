@@ -38,10 +38,10 @@
             <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i>  관리자 페이지</a></li>
         </ul>
 
-        <ul class="header-list">
+        <ul class="header-list" th:object="${memberDTO}">
             <span th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>&nbsp;&nbsp;
-            <span>컴퓨터소프트웨어학과</span>|
-            <span>2490001(학생)</span>|
+            <span th:text="*{memberId}(${member})" >학과</span>|
+            <span>학번(멤버 타입)</span>|
             <span>박 두 인</span>
             <a href="#" th:href="@{/logout}">로그아웃</a>
         </ul>
