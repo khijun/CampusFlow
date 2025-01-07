@@ -12,7 +12,7 @@
 <body>
 <div class="container">
    <!-- 검색 컨테이너 -->
-   <form class="search-container" th:action="@{/view/iframe/curriculum/register}" method="get">
+   <form class="search-container" th:action="@{/iframe/curriculum/register}" method="get">
       <div class="input-group">
          <label for="year">학년도</label>
          <select id="year" name="year">
@@ -49,7 +49,10 @@
             <option value="deprecated">폐지(사용중단)</option>
          </select>
       </div>
-      <button type="submit">검색</button>
+      <div class="button-group">
+         <button type="button">신규</button>
+         <button type="submit">검색</button>
+      </div>
    </form>
 
    <!-- 검색 결과 컨테이너 -->
@@ -59,7 +62,7 @@
          <div>편성학년</div>
          <div>학과 이름</div>
          <div>교육과정명</div>
-         <div>이수 구분</div>
+         <div>교육과정 상태</div>
       </div>
       <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row">
          <div th:text="${curriculum.curriculumYear}"></div>
