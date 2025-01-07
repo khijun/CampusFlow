@@ -9,26 +9,23 @@
   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
   <style>
-    /* 전역 스타일 */
     body {
       font-family: 'Noto Sans KR', sans-serif;
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
       color: #333;
-      overflow-y: auto; /* 세로 스크롤 추가 */
-      height: 100vh; /* 화면 높이에 맞게 조정 */
-      box-sizing: border-box; /* padding과 border를 포함한 전체 크기 계산 */
+      overflow-y: auto;
+      height: 100vh;
+      box-sizing: border-box;
     }
 
-    /* 제목 스타일 */
     h2 {
       text-align: center;
       margin: 20px 0;
       font-weight: 700;
     }
 
-    /* 테이블 컨테이너 */
     table {
       width: 90%;
       margin: 0 auto;
@@ -38,21 +35,12 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    /* 테이블 헤더 스타일 */
     thead {
       background-color: #007BFF;
       color: white;
     }
 
-    th {
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid #ddd;
-    }
-
-    /* 테이블 데이터 스타일 */
-    td {
+    th, td {
       padding: 12px;
       text-align: left;
       border-bottom: 1px solid #ddd;
@@ -62,16 +50,14 @@
       background-color: #f9f9f9;
     }
 
-    /* hover 효과 */
     tr:hover {
       background-color: #f1f1f1;
     }
 
-    /* 테이블의 tbody에 스크롤 추가 */
     tbody {
       display: block;
-      max-height: 300px; /* 원하는 높이로 조정 */
-      overflow-y: auto;  /* 세로 스크롤 추가 */
+      max-height: 300px;
+      overflow-y: auto;
     }
 
     thead, tbody tr {
@@ -80,7 +66,18 @@
       table-layout: fixed;
     }
 
-    /* 테이블을 작은 화면에서 반응형으로 조정 */
+    .cancel-btn {
+      color: #dc3545;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .cancel-btn:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
       table {
         width: 100%;
@@ -96,6 +93,7 @@
 </head>
 <body>
 <h2>학적 조회</h2>
+
 <table>
   <thead>
   <tr>
@@ -103,6 +101,7 @@
     <th>변경 후 상태</th>
     <th>신청 일자</th>
     <th>상태</th>
+    <th>신청 취소</th> <!-- 신청 취소 열 추가 -->
   </tr>
   </thead>
   <tbody>
@@ -111,6 +110,15 @@
     <td th:text="${request.afterCode.codeName}"></td>
     <td th:text="${request.requestDate}"></td>
     <td th:text="${request.applicationStatus.codeName}"></td>
+    <td>
+      <!-- 신청 상태가 '승인'일 경우 삭제 버튼 숨기기 -->
+      <form th:action="@{/iframe/academic/delete-change-request}" method="post"
+            onsubmit="return confirm('정말 신청을 취소하시겠습니까?')"
+            th:if="${request.applicationStatus.codeName != '승인'}">
+        <input type="hidden" th:name="applicationId" th:value="${request.id}" />
+        <button type="submit" class="cancel-btn">신청 취소</button>
+      </form>
+    </td>
   </tr>
   </tbody>
 </table>

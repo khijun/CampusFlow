@@ -1,7 +1,10 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.ChangeRequestDto;
 import edu.du.campusflow.entity.ChangeRequest;
+import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Member;
+import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.ChangeRequestService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,10 +20,12 @@ public class ChangeRequestController {
 
     private final ChangeRequestService changeRequestService;
     private final AuthService authService;
+    private final CommonCodeRepository commonCodeRepository;
 
-    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService) {
+    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService, CommonCodeRepository commonCodeRepository) {
         this.changeRequestService = changeRequestService;
         this.authService = authService;
+        this.commonCodeRepository = commonCodeRepository;
     }
 
     // 학적 조회
@@ -33,13 +38,37 @@ public class ChangeRequestController {
 
     // 휴학/복학 신청 폼
     @GetMapping("/iframe/academic/change-request-form")
-    public String changeRequestForm() {
+    public String changeRequestForm(Model model) {
+        model.addAttribute("changeRequestDto", new ChangeRequestDto());
+        model.addAttribute("authService", authService);
         return "view/iframe/academic/change-request-form"; // 휴학/복학 신청 페이지
     }
 
+    // 휴학/복학 신청 처리
     @PostMapping("/iframe/academic/process-change-request")
-    public String proequest(ChangeRequest changeRequest, Long gradeCodeId, Long newStatusCodeId) {
-        changeRequestService.processChangeRequest(changeRequest, gradeCodeId, newStatusCodeId);
+    public String processChangeRequest(@ModelAttribute ChangeRequestDto changeRequestDto) {
+        Long memberId = authService.getCurrentMemberId();
+        if (memberId == null) {
+            throw new IllegalStateException("Authentication required to perform this action.");
+        }
+
+        // DTO를 서비스에 전달하여 처리
+        changeRequestService.processChangeRequest(changeRequestDto);
+        System.out.println(authService.getCurrentMemberId());
         return "redirect:/iframe/academic/change-request-list"; // 신청 후 목록으로 리다이렉트
+    }
+
+    // 신청 삭제
+    @PostMapping("/iframe/academic/delete-change-request")
+    public String deleteChangeRequest(@RequestParam("applicationId") Long applicationId) {
+        Long memberId = authService.getCurrentMemberId();
+        if (memberId == null) {
+            throw new IllegalStateException("Authentication required to perform this action.");
+        }
+
+        // 신청서 삭제 처리
+        changeRequestService.deleteChangeRequest(applicationId, memberId);
+
+        return "redirect:/iframe/academic/change-request-list"; // 삭제 후 목록으로 리다이렉트
     }
 }
