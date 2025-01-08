@@ -22,6 +22,7 @@ public class CommonCode {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     @JsonBackReference
+    @ToString.Exclude
     private CommonCodeGroup codeGroup;
 
     @Column(name = "code_value", length = 100)

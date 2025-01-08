@@ -52,18 +52,22 @@ public class Member {
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(name = "file_id")
     private FileInfo fileInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(name = "gender")
     private CommonCode gender; // CommonCode 테이블과 연관
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(name = "academic_status")
     private CommonCode academicStatus; // CommonCode 테이블과 연관
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(name = "grade")
     private CommonCode grade; // CommonCode 테이블과 연관
 
