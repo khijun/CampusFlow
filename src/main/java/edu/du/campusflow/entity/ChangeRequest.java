@@ -39,4 +39,7 @@ public class ChangeRequest {
     private CommonCode applicationStatus;            // 신청 상태
 
     private LocalDateTime requestDate;                  // 신청 일자
+
+    @Column(name = "reason")
+    private String reason; // 사유
 }

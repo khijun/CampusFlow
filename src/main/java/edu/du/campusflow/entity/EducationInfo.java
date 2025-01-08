@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -25,9 +25,11 @@ public class EducationInfo {
 
     private String schoolName;              //학교명
 
-    private LocalDateTime enrollmentDate;         //입학 날짜
+    @Column(name = "enrollment_date")
+    private LocalDate enrollmentDate;         //입학 날짜
 
-    private LocalDateTime graduationDate;           //졸업 날짜
+    @Column(name = "graduation_date")
+    private LocalDate graduationDate;           //졸업 날짜
 
     @ManyToOne
     @JoinColumn(name = "graduation_status", referencedColumnName = "code_id")
