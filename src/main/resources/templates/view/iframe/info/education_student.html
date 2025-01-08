@@ -8,6 +8,12 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    .hidden { display: none; }
+    .form-container { margin-top: 20px; }
+    .form-container input { margin-right: 10px; }
+    .add-button { cursor: pointer; color: #007bff; font-size: 18px; }
+  </style>
 </head>
 <body>
 <h2>학력 정보</h2>
@@ -34,5 +40,38 @@
     </tbody>
   </table>
 </div>
+
+<!-- 추가 버튼 -->
+<div>
+  <span class="add-button" onclick="toggleForm()">+ 학력 추가</span>
+</div>
+
+<!-- 숨겨진 폼 -->
+<form th:action="@{/iframe/info/education_student/insert}" method="post">
+  <label for="schoolName">학교명:</label>
+  <input type="text" name="schoolName" id="schoolName" placeholder="학교명" required>
+
+  <label for="enrollmentDate">입학일:</label>
+  <input type="datetime-local" name="enrollmentDate" id="enrollmentDate" required>
+
+  <label for="graduationDate">졸업일:</label>
+  <input type="datetime-local" name="graduationDate" id="graduationDate">
+
+  <label for="graduationStatus">졸업 상태:</label>
+  <select name="graduationStatus" id="graduationStatus" required>
+    <option value="3">졸업</option>
+    <option value="1">재학</option>
+  </select>
+
+  <button type="submit">저장</button>
+</form>
+</div>
+
+<script>
+  function toggleForm() {
+    const form = document.getElementById("addForm");
+    form.classList.toggle("hidden");
+  }
+</script>
 </body>
 </html>

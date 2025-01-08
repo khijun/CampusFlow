@@ -1,6 +1,6 @@
 package edu.du.campusflow.service;
 
-import edu.du.campusflow.dto.ChangeRequestDto;
+import edu.du.campusflow.dto.ChangeRequestDTO;
 import edu.du.campusflow.entity.ChangeHistory;
 import edu.du.campusflow.entity.ChangeRequest;
 import edu.du.campusflow.entity.CommonCode;
@@ -26,7 +26,7 @@ public class ChangeRequestService {
     private final ChangeRequestRepository changeRequestRepository;// ChangeHistory 테이블을 조회하고 저장할 리포지토리
 
     @Transactional
-    public void processChangeRequest(ChangeRequestDto dto) {
+    public void processChangeRequest(ChangeRequestDTO dto) {
         // Member 조회
         Member member = memberRepository.findById(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + dto.getMemberId()));
@@ -110,34 +110,35 @@ public class ChangeRequestService {
             statusCode = commonCodeRepository.findById(12L)  // 'APPROVED' 상태 코드
                     .orElseThrow(() -> new IllegalArgumentException("Invalid approval status code"));
         } else {
-            statusCode = commonCodeRepository.findById(13L)  // 'REJECTED' 상태 코드 (예: 13L)
+            statusCode = commonCodeRepository.findById(13L)  // 'REJECTED' 상태 코드
                     .orElseThrow(() -> new IllegalArgumentException("Invalid rejection status code"));
         }
 
         // 3. 신청 상태 변경
         changeRequest.setApplicationStatus(statusCode);  // 신청 상태를 승인 또는 거절로 변경
 
-        // 4. 승인인 경우 Member의 학적 상태 변경
+        // 4. 승인인 경우 Member의 학적 상태 변경 및 이력 생성
         if (approve) {
             Member member = changeRequest.getMember();
             member.setAcademicStatus(changeRequest.getAfterCode());  // 변경 후 학적 상태로 업데이트
 
-            // 5. Member와 ChangeRequest 저장
+            // Member와 ChangeRequest 저장
             memberRepository.save(member);  // Member 엔티티 저장
+
+            // ChangeHistory 생성 및 저장
+            ChangeHistory changeHistory = ChangeHistory.builder()
+                    .member(member)
+                    .beforeCode(changeRequest.getBeforeCode())  // 기존 학적 상태
+                    .afterCode(changeRequest.getAfterCode())    // 변경된 학적 상태
+                    .approvalDate(LocalDateTime.now())          // 승인 일자
+                    .grade(member.getGrade())                   // 학년 정보
+                    .build();
+
+            changeHistoryRepository.save(changeHistory);  // 내역 저장
         }
 
-        changeRequestRepository.save(changeRequest);  // ChangeRequest 업데이트
-
-        // 6. ChangeHistory 생성 및 저장
-        ChangeHistory changeHistory = ChangeHistory.builder()
-                .member(changeRequest.getMember())
-                .beforeCode(changeRequest.getBeforeCode())  // 기존 학적 상태
-                .afterCode(changeRequest.getAfterCode())    // 변경된 학적 상태
-                .approvalDate(LocalDateTime.now())          // 승인 또는 거절 일자
-                .grade(changeRequest.getMember().getGrade()) // 학년 정보
-                .build();
-
-        changeHistoryRepository.save(changeHistory);  // 내역 저장
+        // ChangeRequest 저장 (승인 또는 거절 상태)
+        changeRequestRepository.save(changeRequest);
     }
 
 

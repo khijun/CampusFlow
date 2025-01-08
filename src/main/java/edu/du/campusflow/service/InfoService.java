@@ -16,6 +16,7 @@ public class InfoService {
     private final MilitaryInfoRepository militaryInfoRepository;
     private final FamilyInfoRepository familyInfoRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final MemberRepository memberRepository;
 
     // FamilyInfo Methods
 
@@ -45,8 +46,21 @@ public class InfoService {
         return educationInfoRepository.findByMember_MemberId(memberId);
     }
 
-    public EducationInfo saveEducationInfo(EducationInfo educationInfo) {
-        return educationInfoRepository.save(educationInfo);
+    public EducationInfo saveEducationInfo(EducationInfo educationInfo, Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
+
+        EducationInfo newEducationInfo = EducationInfo.builder()
+                .schoolName(educationInfo.getSchoolName())
+                .enrollmentDate(educationInfo.getEnrollmentDate())
+                .graduationDate(educationInfo.getGraduationDate())
+                .graduationStatus(educationInfo.getGraduationStatus())
+                .member(member) // Member와 연관 관계 설정
+                .build();
+
+
+        return educationInfoRepository.save(newEducationInfo);
     }
 
     public void deleteEducationInfo(Long id) {

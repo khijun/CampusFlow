@@ -95,7 +95,9 @@
 </div>
 
 <!-- 데이터 반복 부분 -->
-<div class="grid-container data-container" th:each="request : ${changeRequests}">
+<div class="grid-container data-container"
+     th:each="request : ${changeRequests}"
+     th:if="${request.applicationStatus.codeName != '거절' and request.applicationStatus.codeName != '승인'}">
   <div class="data" th:text="${request.member.memberId}"></div>
   <div class="data" th:text="${request.beforeCode.codeName}"></div>
   <div class="data" th:text="${request.afterCode.codeName}"></div>

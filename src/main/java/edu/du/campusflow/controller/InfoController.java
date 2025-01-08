@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -27,5 +29,15 @@ public class InfoController {
         List<EducationInfo> educationInfos = infoService.getEducationInfoById(authService.getCurrentMemberId());
         model.addAttribute("educationInfos", educationInfos);
         return "view/iframe/info/education_student";
+    }
+
+    @PostMapping("/iframe/info/education_student/insert")
+    public String insertEducationInfo(@ModelAttribute EducationInfo educationInfo) {
+        Long memberId = authService.getCurrentMemberId();
+        if (memberId == null) {
+            throw new IllegalStateException("Authentication required to perform this action.");
+        }
+        infoService.saveEducationInfo(educationInfo, memberId);
+        return "redirect:/view/iframe/info/education_student";
     }
 }
