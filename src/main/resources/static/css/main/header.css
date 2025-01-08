@@ -15,7 +15,7 @@ body, html {
     background-color: var(--background-color);
     color: var(--text-color);
     min-width: var(--min-width);  /* 최소 너비 설정 */
-    overflow-x: auto;  /* 가로 스크롤 허용 */
+    overflow: hidden;
 }
 
 .header-nav {

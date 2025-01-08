@@ -1,42 +1,68 @@
-/* 검색 컨테이너 스타일 */
+/* 공통 스타일 */
 html, body {
    margin: 0;
    padding: 0;
-   overflow: hidden; /* 내부 스크롤 제거 */
    height: 100%;
 }
 
+.container {
+   width: 100%;
+   box-sizing: border-box;
+}
+
+/* 공통 아이프레임 스타일 */
+.iframe-container {
+   width: 100%;
+   height: calc(100vh - 150px); /* 헤더 및 기타 여백 제외 */
+   box-sizing: border-box;
+   padding: 10px;
+   overflow: hidden; /* 스크롤바 제거 */
+}
+
+iframe {
+   width: 100%;
+   height: 100%;
+   border: none;
+   display: block;
+}
+
+/* 검색 컨테이너 스타일 */
 .search-container {
    display: flex;
    flex-wrap: wrap; /* 내용이 많아질 경우 줄바꿈 */
    align-items: flex-start; /* 상단 정렬 */
-   justify-content: space-between;
+   justify-content: space-between; /* 공간 분배 */
    padding: 15px 15px;
    min-height: 100px; /* 기본 높이 설정 */
    width: calc(100% - 60px); /* main-content의 너비에 맞춤 */
+   margin: 20px auto; /* 가운데 정렬 */
    background-color: white;
-   margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
    border: 1px solid #ddd; /* 확인용 테두리 */
    color: black;
-   box-sizing: border-box; /* 패딩 포함한 크기 계산 */
+   box-sizing: border-box;
 }
 
-/* 개별 입력 그룹 스타일 */
+/* 검색 입력 그룹 스타일 */
 .input-group {
    display: flex;
-   flex-direction: column;
-   width: calc(25% - 15px); /* 4개씩 배치 (반응형) */
-   min-width: 200px; /* 최소 너비 */
+   align-items: center;
+   gap: 10px; /* 라벨과 입력 필드 간격 */
+   width: calc(50% - 15px); /* 두 개씩 배치 */
+   min-width: 200px;
+   margin-bottom: 20px; /* 항목 간격 */
 }
 
 .input-group label {
    font-size: 14px;
    margin-bottom: 5px;
+   text-align: right; /* 라벨 텍스트 오른쪽 정렬 */
    color: #333;
+   width: 150px; /* 라벨 고정 너비 */
 }
 
 .input-group input,
 .input-group select {
+   flex: 1; /* 남은 공간 채우기 */
    padding: 10px;
    border: 1px solid #ccc;
    border-radius: 4px;
@@ -58,11 +84,25 @@ html, body {
    align-self: flex-end;
 }
 
+.search-container button:hover {
+   background-color: #2980b9;
+}
+
+/* 버튼 그룹 스타일 */
 .button-group {
-   display: flex; /* 가로 배치 */
-   gap: 10px; /* 버튼 간격 */
-   margin-top: 15px; /* 검색 필드와 버튼 그룹 간의 여백 */
-   align-self: flex-end; /* 오른쪽 정렬 */
+   display: flex;
+   gap: 10px;
+   justify-content: flex-end;
+   margin-top: 15px;
+}
+
+.add-form .button-group {
+   display: flex;
+   justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+   width: 100%;
+   gap: 10px; /* 버튼 간 간격 */
+   margin-top: 20px; /* 버튼 그룹과 위 요소 간 여백 */
+   align-self: flex-end; /* 오른쪽 하단으로 위치 */
 }
 
 .button-group button {
@@ -80,41 +120,32 @@ html, body {
    background-color: #2980b9;
 }
 
-.search-container button:hover {
-   background-color: #2980b9;
-}
-
 /* 결과 컨테이너 스타일 */
 .result-container {
    width: calc(100% - 60px); /* main-content의 너비에 맞춤 */
-   margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
+   margin-left: 30px; /* search-container와 동일한 여백 */
    margin-top: 20px;
-   padding: 0; /* 내부 여백 제거 */
+   padding: 0;
    max-height: 250px; /* 최대 높이 고정 */
    overflow-y: auto; /* 세로 스크롤 활성화 */
-   box-sizing: border-box; /* 패딩 포함한 크기 계산 */
-   display: grid;
-   grid-template-rows: auto;
-   gap: 0; /* 행 간격 제거 */
    background-color: white;
    border: 1px solid #ddd;
    border-radius: 5px;
    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+   box-sizing: border-box;
 }
 
-/* 결과 헤더 및 행 스타일 */
 .result-header, .result-row {
    display: grid;
    grid-template-columns: repeat(5, 1fr); /* 열 비율 설정 (5개 열 균등 분배) */
    gap: 0; /* 열 간격 제거 */
    padding: 10px;
-   border-bottom: 1px solid #ddd; /* 행 사이 줄 */
+   border-bottom: 1px solid #ddd;
 }
 
 .result-header {
    font-weight: bold;
    background-color: #f9f9f9;
-   border-bottom: 1px solid #ddd;
 }
 
 .result-row:hover {
@@ -128,49 +159,110 @@ html, body {
 
 /* 스크롤 커스터마이징 */
 .result-container::-webkit-scrollbar {
-   width: 8px; /* 스크롤바 너비 */
+   width: 8px;
 }
 
 .result-container::-webkit-scrollbar-thumb {
-   background: #888; /* 스크롤바 색상 */
-   border-radius: 4px; /* 둥근 모서리 */
+   background: #888;
+   border-radius: 4px;
 }
 
 .result-container::-webkit-scrollbar-thumb:hover {
-   background: #555; /* 스크롤바 hover 색상 */
+   background: #555;
 }
 
-.result-header div:nth-child(1),
-.result-header div:nth-child(2),
-.result-header div:nth-child(5),
-.result-row div:nth-child(1),
-.result-row div:nth-child(2),
-.result-row div:nth-child(5) {
-   text-align: center; /* 텍스트 중앙 정렬 */
+/* 신규 교육과정 추가 컨테이너 스타일 */
+.add-container {
+   display: none;
+   width: calc(100% - 60px); /* search-container와 동일한 너비 */
+   margin: 20px auto; /* 상단 여백과 가운데 정렬 */
+   padding: 20px;
+   background-color: white;
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+   box-sizing: border-box;
 }
 
+/* 신규 교육과정 추가 폼 스타일 */
+.add-form {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 15px;
+   align-items: flex-start;
+}
 
-/* 반응형 처리 */
+.add-form .input-group {
+   display: flex;
+   gap: 10px;
+   align-items: center;
+   width: calc(50% - 15px); /* 두 개씩 배치 */
+   min-width: 200px;
+   margin-bottom: 20px;
+}
+
+.add-form .input-group label {
+   width: 150px;
+   font-size: 14px;
+   color: #333;
+}
+
+.add-form .input-group input,
+.add-form .input-group select {
+   flex: 1;
+   padding: 10px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   font-size: 14px;
+   box-sizing: border-box;
+   width: 100%;
+}
+
+/* 텍스트 영역 스타일 */
+.input-group textarea {
+   flex: 1;
+   padding: 12px;
+   border: 1px solid #ccc;
+   border-radius: 6px;
+   font-size: 14px;
+   box-sizing: border-box;
+   resize: vertical;
+   min-height: 100px;
+   max-height: 300px;
+}
+
+.input-group textarea::placeholder {
+   color: #aaa;
+   font-style: italic;
+}
+
+.input-group textarea:focus {
+   outline: none;
+   border-color: #3498db;
+   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* 반응형 스타일 */
 @media (max-width: 768px) {
    .input-group {
-      width: calc(50% - 15px); /* 2개씩 배치 */
+      width: 100%;
    }
 
-   .search-container button {
-      width: 100%; /* 작은 화면에서 버튼 전체 너비 */
+   .button-group {
+      justify-content: center;
    }
 
    .result-header, .result-row {
-      grid-template-columns: repeat(3, 1fr); /* 중간 화면에서 3개 열로 조정 */
+      grid-template-columns: repeat(3, 1fr);
    }
 }
 
 @media (max-width: 480px) {
    .input-group {
-      width: 100%; /* 1개씩 배치 */
+      width: 100%;
    }
 
    .result-header, .result-row {
-      grid-template-columns: 1fr; /* 작은 화면에서 1개 열로 조정 */
+      grid-template-columns: 1fr;
    }
 }
