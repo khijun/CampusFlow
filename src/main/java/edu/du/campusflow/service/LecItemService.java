@@ -17,9 +17,8 @@ public class LecItemService {
 
     private final LecItemRepository lecItemRepository;
     private final LecQuestionService lecQuestionService;
-    private final OfregistrationService ofregistrationService;  // 추가
+    private final OfregistrationService ofregistrationService;
 
-    // 기존 메서드들은 유지
     public List<LecItem> getLecItemsByOfRegistrationId(Long ofregistrationId) {
         return lecItemRepository.findByOfRegistration_Id(ofregistrationId);
     }
@@ -38,7 +37,6 @@ public class LecItemService {
             throw new IllegalStateException("이미 제출된 강의평가입니다.");
         }
 
-        // 실제 Ofregistration 엔티티 조회
         Ofregistration ofregistration = ofregistrationService.getOfregistrationById(ofregistrationId);
         if (ofregistration == null) {
             throw new IllegalArgumentException("존재하지 않는 수강신청입니다.");
@@ -53,7 +51,7 @@ public class LecItemService {
 
             LecItem item = new LecItem();
             item.setScore(score);
-            item.setOfRegistration(ofregistration);  // 실제 엔티티 사용
+            item.setOfRegistration(ofregistration);
             item.setLecQuestion(lecQuestionService.getQuestionById(questionId));
 
             items.add(item);

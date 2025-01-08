@@ -100,6 +100,18 @@
                 </ul>
             </li>
             <li>
+            <li>
+                <a class="menu-item" href="#" onclick="toggleSubmenu(event, 'evaluation')"><i class="fas fa-calendar-alt"></i> 평가 조회</a>
+                <ul class="submenu" id="evaluation">
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/lec/admin')">강의 평가 조회</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/diag/admin')">진단 평가 조회</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
                 <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'attendanceAndGrades')"><i class="fas fa-clipboard-list"></i> 출석 및 성적</a>
                 <ul id="attendanceAndGrades" class="submenu">
                     <li><a href="#">출석률 통계 확인</a></li>
