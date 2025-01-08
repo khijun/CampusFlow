@@ -25,7 +25,7 @@ public class Tuition {
     private Dept deptId;
 
     @Column(name = "tui_year")
-    private Year tuiYear;
+    private Integer tuiYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester")
