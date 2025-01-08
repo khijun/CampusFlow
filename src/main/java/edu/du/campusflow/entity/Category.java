@@ -22,8 +22,8 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name = "parent_id")
     @ToString.Exclude
+    @JoinColumn(name = "parent_id")
     private Category parent;
 
     @Column(name = "category_name", length = 50)
