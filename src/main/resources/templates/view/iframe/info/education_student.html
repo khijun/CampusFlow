@@ -33,6 +33,13 @@
       <td th:text="${info.enrollmentDate}">입학일</td>
       <td th:text="${info.graduationDate}">졸업일</td>
       <td th:text="${info.graduationStatus.codeName}">졸업 상태</td>
+      <td>
+      <form th:action="@{/iframe/info/education_student/delete}" method="post"
+            onsubmit="return confirm('정말 삭제하시겠습니까?')">
+        <input type="hidden" name="id" th:value="${info.id}" />
+        <button type="submit" class="cancel-btn">삭제</button>
+      </form>
+      </td>
     </tr>
     <tr th:if="${educationInfos.empty}">
       <td colspan="4">학력 정보가 없습니다.</td>
@@ -52,10 +59,10 @@
   <input type="text" name="schoolName" id="schoolName" placeholder="학교명" required>
 
   <label for="enrollmentDate">입학일:</label>
-  <input type="datetime-local" name="enrollmentDate" id="enrollmentDate" required>
+  <input type="date" name="enrollmentDate" id="enrollmentDate" required>
 
   <label for="graduationDate">졸업일:</label>
-  <input type="datetime-local" name="graduationDate" id="graduationDate">
+  <input type="date" name="graduationDate" id="graduationDate">
 
   <label for="graduationStatus">졸업 상태:</label>
   <select name="graduationStatus" id="graduationStatus" required>
@@ -65,7 +72,7 @@
 
   <button type="submit">저장</button>
 </form>
-</div>
+
 
 <script>
   function toggleForm() {

@@ -24,12 +24,21 @@ public class InfoService {
         return familyInfoRepository.findAll();
     }
 
-    public Optional<FamilyInfo> getFamilyInfoById(Long id) {
-        return familyInfoRepository.findById(id);
+    public List<FamilyInfo> getFamilyInfoById(Long memberId) {
+        return familyInfoRepository.findByMember_MemberId(memberId);
     }
 
-    public FamilyInfo saveFamilyInfo(FamilyInfo familyInfo) {
-        return familyInfoRepository.save(familyInfo);
+    public FamilyInfo saveFamilyInfo(FamilyInfo familyInfo, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
+        FamilyInfo newFamilyInfo = FamilyInfo.builder()
+                .member(member)
+                .familyRelation(familyInfo.getFamilyRelation())
+                .birthDate(familyInfo.getBirthDate())
+                .contact(familyInfo.getContact())
+                .name(familyInfo.getName())
+                .build();
+        return familyInfoRepository.save(newFamilyInfo);
     }
 
     public void deleteFamilyInfo(Long id) {
@@ -73,12 +82,21 @@ public class InfoService {
         return militaryInfoRepository.findAll();
     }
 
-    public Optional<MilitaryInfo> getMilitaryInfoById(Long id) {
-        return militaryInfoRepository.findById(id);
+    public List<MilitaryInfo> getMilitaryInfoById(Long memberId) {
+        return militaryInfoRepository.findByMember_MemberId(memberId);
     }
 
-    public MilitaryInfo saveMilitaryInfo(MilitaryInfo militaryInfo) {
-        return militaryInfoRepository.save(militaryInfo);
+    public MilitaryInfo saveMilitaryInfo(MilitaryInfo militaryInfo, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
+
+        MilitaryInfo newMilitaryInfo = MilitaryInfo.builder()
+                .member(member)
+                .dischargeType(militaryInfo.getDischargeType())
+                .serviceNumber(militaryInfo.getServiceNumber())
+                .finalRank(militaryInfo.getFinalRank())
+                .build();
+        return militaryInfoRepository.save(newMilitaryInfo);
     }
 
     public void deleteMilitaryInfo(Long id) {
