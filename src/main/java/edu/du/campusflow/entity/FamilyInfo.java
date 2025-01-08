@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -28,7 +28,8 @@ public class FamilyInfo {
 
     private String name;                 // 가족 이름
 
-    private LocalDateTime birthDate;      // 생년월일
+    @Column(name = "birth_date")
+    private LocalDate birthDate;      // 생년월일
 
     private String contact;               //전화번호
 
