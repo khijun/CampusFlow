@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 public class FamilyInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "familyinfo_id")
     private Long id;
 
     @ManyToOne
@@ -27,11 +26,10 @@ public class FamilyInfo {
     @JoinColumn(name = "family_relation",referencedColumnName = "code_id")
     private CommonCode familyRelation;      //가족 관계
 
-
     private String name;                 // 가족 이름
 
     @Column(name = "birth_date")
-    private LocalDateTime birthDate;      // 생년월일
+    private LocalDate birthDate;      // 생년월일
 
     private String contact;               //전화번호
 

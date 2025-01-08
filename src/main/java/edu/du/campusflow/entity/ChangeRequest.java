@@ -41,4 +41,7 @@ public class ChangeRequest {
 
     @Column(name = "request_date")
     private LocalDateTime requestDate;                  // 신청 일자
+
+    @Column(name = "reason")
+    private String reason; // 사유
 }

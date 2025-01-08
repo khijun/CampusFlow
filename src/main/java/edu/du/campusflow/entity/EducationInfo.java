@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -17,21 +17,19 @@ public class EducationInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "educationinfo_id")
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;            //학번
 
-    @Column(name = "school_name")
     private String schoolName;              //학교명
 
     @Column(name = "enrollment_date")
-    private LocalDateTime enrollmentDate;         //입학 날짜
+    private LocalDate enrollmentDate;         //입학 날짜
 
     @Column(name = "graduation_date")
-    private LocalDateTime graduationDate;           //졸업 날짜
+    private LocalDate graduationDate;           //졸업 날짜
 
     @ManyToOne
     @JoinColumn(name = "graduation_status", referencedColumnName = "code_id")
