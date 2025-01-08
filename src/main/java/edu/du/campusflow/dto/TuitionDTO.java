@@ -21,8 +21,11 @@ public class TuitionDTO {
     // 학생 이름
     private String memberName;
     
-    // 소속 학과명
+    // 소속 학과아이디
     private Long deptId;
+
+    //소속 학과 명
+    private String deptName;
     
     // 납부해야 할 등록금 총액
     private Integer amount;

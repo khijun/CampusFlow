@@ -28,7 +28,7 @@
         </thead>
         <tbody>
         <tr th:each="target : ${tuitionTarget}">
-            <td th:text="${target.deptId}"></td>
+            <td th:text="${target.deptName}"></td>
             <td th:text="${target.memberId}"></td>
             <td th:text="${target.memberName}"></td>
             <td th:text="${#numbers.formatDecimal(target.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>

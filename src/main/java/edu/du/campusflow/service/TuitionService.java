@@ -94,6 +94,7 @@ public class TuitionService {
                         .memberId(tuitionTarget.getMember().getMemberId())
                         .memberName(tuitionTarget.getMember().getName())
                         .deptId(tuitionTarget.getMember().getDept().getDeptId())
+                        .deptName(tuitionTarget.getMember().getDept().getDeptName())
                         .amount(tuitionTarget.getPaidAmount())
                         .paidAmount(tuitionTarget.getPaidAmount())
                         .paidDate(tuitionTarget.getPaidDate())
