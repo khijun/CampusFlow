@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class ChangeRequestService {
         changeRequest.setApplicationStatus(applicationStatus);
 
         // 5. 신청 날짜 설정
-        changeRequest.setRequestDate(LocalDateTime.now());
+        changeRequest.setRequestDate(LocalDate.now());
 
         //사유 추가
         changeRequest.setReason(changeRequest.getReason());
@@ -132,7 +133,7 @@ public class ChangeRequestService {
                     .member(member)
                     .beforeCode(changeRequest.getBeforeCode())  // 기존 학적 상태
                     .afterCode(member.getAcademicStatus())      // 변경된 학적 상태
-                    .approvalDate(LocalDateTime.now())          // 승인 일자
+                    .approvalDate(LocalDate.now())          // 승인 일자
                     .grade(member.getGrade())                   // 학년 정보
                     .build();
 

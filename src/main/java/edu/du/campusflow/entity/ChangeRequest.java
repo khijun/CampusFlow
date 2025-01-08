@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,7 +41,7 @@ public class ChangeRequest {
     private CommonCode applicationStatus;            // 신청 상태
 
     @Column(name = "request_date")
-    private LocalDateTime requestDate;                  // 신청 일자
+    private LocalDate requestDate;                  // 신청 일자
 
     @Column(name = "reason")
     private String reason; // 사유

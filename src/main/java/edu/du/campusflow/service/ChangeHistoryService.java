@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -60,7 +61,7 @@ public class ChangeHistoryService {
                 .member(member)
                 .beforeCode(currentStatus) // 기존 학적 상태
                 .afterCode(statusCode) // 변경된 학적 상태 (퇴학/제적)
-                .approvalDate(LocalDateTime.now()) // 처리 일자
+                .approvalDate(LocalDate.now()) // 처리 일자
                 .grade(member.getGrade()) // 학년 정보
                 .build();
 

@@ -3,6 +3,7 @@ package edu.du.campusflow.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,7 +32,7 @@ public class ChangeHistory {
     private CommonCode afterCode;            // 변경 후 코드
 
     @Column(name = "approval_date")
-    private LocalDateTime approvalDate;        //승인 일자
+    private LocalDate approvalDate;        //승인 일자
 
     @ManyToOne
     @JoinColumn(name = "grade")
