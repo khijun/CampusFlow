@@ -1,7 +1,7 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.LectureDTO;
-import edu.du.campusflow.entity.Lecture;
+import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +17,13 @@ public class LectureController {
     @Autowired
     LectureService lectureService;
 
+    @Autowired
+    AuthService authService;
+
     @GetMapping("/iframe/lecture/create")
     public String lectureCreate(Model model) {
-        return "/view/iframe/lecture/lectureCreate";
+        model.addAttribute("member", authService.getCurrentMember());
+        return "/view/iframe/lecture/professor/lectureCreate";
     }
 
     //강의 개설에 사용
@@ -32,5 +36,19 @@ public class LectureController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/iframe/lecture/lectureApproval")
+    public String lectureApproval(Model model) {
+        return "/view/iframe/lecture/admin/lectureApproval";
+    }
+
+    @GetMapping("/api/lecture/search")  // lectures/search -> lecture/search
+    @ResponseBody
+    public List<LectureDTO> searchLectures(
+            @RequestParam(required = false) String deptName,
+            @RequestParam(required = false) String professorName) {
+        return lectureService.searchLectures(deptName, professorName);
+    }
+
 
 }

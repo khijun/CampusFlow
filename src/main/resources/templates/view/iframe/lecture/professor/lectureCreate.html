@@ -129,6 +129,15 @@
     .search-form-container {
       margin-bottom: 20px;
     }
+
+    /* 선택된 항목 스타일 */
+    .result-item.selected {
+      background-color: #e3f2fd;
+    }
+
+    .result-item:hover {
+      background-color: #f5f5f5;
+    }
   </style>
 </head>
 
@@ -149,8 +158,7 @@
                 placeholder="교육과정명을 입력하세요">
             </div>
             <div class="form-group d-flex align-items-end">
-              <button type="submit" class="btn btn-primary mr-2">검색</button>
-              <button type="button" id="selectButton" class="btn btn-success">선택</button>
+              <button type="submit" class="btn btn-primary">검색</button>
             </div>
           </div>
         </form>
@@ -179,7 +187,8 @@
         </div>
         <div class="form-group">
           <label for="professorName">교수명</label>
-          <input type="text" class="form-control" id="professorName" name="professorName" placeholder="교수명을 입력하세요">
+          <input type="text" class="form-control" id="professorName" name="professorName" th:value="${member.name}"
+            readonly>
         </div>
         <div class="form-group">
           <label for="maxStudents">인원수</label>
@@ -187,53 +196,6 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label for="lectureDays">강의 요일</label>
-          <select class="form-control" id="lectureDays" name="lectureDays">
-            <option value="MONDAY">월요일</option>
-            <option value="TUESDAY">화요일</option>
-            <option value="WEDNESDAY">수요일</option>
-            <option value="THURSDAY">목요일</option>
-            <option value="FRIDAY">금요일</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="lectureWeeks">강의 주차</label>
-          <select class="form-control" id="lectureWeeks" name="lectureWeeks">
-            <option value="15">15주차</option>
-            <option value="16">16주차</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="startLectureTime">시작 교시</label>
-          <select class="form-control" id="startLectureTime" name="startTime">
-            <option value="1">1교시</option>
-            <option value="2">2교시</option>
-            <option value="3">3교시</option>
-            <option value="4">4교시</option>
-            <option value="5">5교시</option>
-            <option value="6">6교시</option>
-            <option value="7">7교시</option>
-            <option value="8">8교시</option>
-            <option value="9">9교시</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="endLectureTime">종료 교시</label>
-          <select class="form-control" id="endLectureTime" name="endTime">
-            <option value="1">1교시</option>
-            <option value="2">2교시</option>
-            <option value="3">3교시</option>
-            <option value="4">4교시</option>
-            <option value="5">5교시</option>
-            <option value="6">6교시</option>
-            <option value="7">7교시</option>
-            <option value="8">8교시</option>
-            <option value="9">9교시</option>
-          </select>
-        </div>
         <div class="form-group">
           <label for="selectedSubjectName">과목명</label>
           <input type="text" class="form-control" id="selectedSubjectName" name="subjectName" placeholder="선택한 과목명"
@@ -256,37 +218,33 @@
   <script>
     $(document).ready(function () {
       $('#searchForm').on('submit', function (event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-        const formData = $(this).serialize(); // 폼 데이터 직렬화
+        event.preventDefault();
+        const formData = $(this).serialize();
 
         $.ajax({
           url: '/api/curriculum-subjects/search',
           type: 'GET',
           data: formData,
           success: function (data) {
-            const tbody = $('tbody');
-            tbody.empty(); // 이전 결과 삭제
+            $('.result-list').empty();
 
             if (data.length === 0) {
-              alert('검색 결과가 없습니다.'); // alert 추가
+              alert('검색 결과가 없습니다.');
             } else {
-              // 검색 결과를 테이블에 추가
               data.forEach(function (subject) {
                 $('.result-list').append(`
-                <div class="result-item">
-                    <div>
-                        <input type="radio" class="subject-checkbox" name="selectedSubject"
-                               data-subject-name="${subject.subjectName}"
-                               data-curriculum-name="${subject.curriculumName}"
-                               data-curriculum-subject-id="${subject.curriculumSubjectId}" />
-                    </div>
+                  <div class="result-item" style="cursor: pointer;" 
+                       data-subject-name="${subject.subjectName}"
+                       data-curriculum-name="${subject.curriculumName}"
+                       data-curriculum-subject-id="${subject.curriculumSubjectId}">
+                    <div></div>
                     <div>${subject.subjectName}</div>
                     <div>${subject.curriculumName || '정보 없음'}</div>
                     <div>${subject.subjectCredits || '정보 없음'}</div>
                     <div>${subject.semesterName || '정보 없음'}</div>
                     <div>${subject.subjectTypeName || '정보 없음'}</div>
-                </div>
-            `);
+                  </div>
+                `);
               });
             }
           },
@@ -296,29 +254,23 @@
         });
       });
 
-      $('#selectButton').on('click', function () {
-        const selectedSubject = $('.subject-checkbox:checked');
-        if (selectedSubject.length === 0) {
-          alert('선택된 과목이 없습니다.');
-          return;
-        }
-
-        const subjectName = selectedSubject.data('subject-name');
-        const curriculumName = selectedSubject.data('curriculum-name');
-        const curriculumSubjectId = selectedSubject.data('curriculum-subject-id'); // ID 가져오기
-
-        // 확인: 콘솔에 출력하여 값이 올바른지 확인
-        console.log('Subject Name:', subjectName);
-        console.log('Curriculum Name:', curriculumName);
-        console.log('Curriculum Subject ID:', curriculumSubjectId);
+      // 검색 결과 항목 클릭 이벤트
+      $(document).on('click', '.result-item', function () {
+        const subjectName = $(this).data('subject-name');
+        const curriculumName = $(this).data('curriculum-name');
+        const curriculumSubjectId = $(this).data('curriculum-subject-id');
 
         $('#selectedSubjectName').val(subjectName);
         $('#selectedCurriculumName').val(curriculumName);
-        $('#curriculumSubjectId').val(curriculumSubjectId); // ID 설정
+        $('#curriculumSubjectId').val(curriculumSubjectId);
+
+        // 선택된 항목 하이라이트
+        $('.result-item').removeClass('selected');
+        $(this).addClass('selected');
       });
 
       $('#lectureForm').on('submit', function (event) {
-        event.preventDefault();
+        event.preventDefault(); // 기본 폼 제출 방지
 
         const formData = {
           lectureName: $('#lectureName').val(),
@@ -333,13 +285,10 @@
           data: JSON.stringify(formData),
           success: function (response) {
             alert(response); // 성공 메시지 표시
-
-            // 폼 초기화
-            $('#lectureForm')[0].reset();  // 일반 입력 필드 초기화
-
+            // 추가적인 성공 처리 로직 (예: 폼 초기화)
           },
           error: function (xhr) {
-            alert(xhr.responseText);
+            alert(xhr.responseText); // 에러 메시지 표시
           }
         });
       });

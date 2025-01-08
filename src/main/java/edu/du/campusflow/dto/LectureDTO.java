@@ -12,4 +12,14 @@ public class LectureDTO {
     private String semesterCodeName; // 학기 코드 이름
     private String lectureStatus; //강의 상태
 
+
+    private String lectureDays;      // 강의 요일
+    private Integer week;            // 강의 주차
+    private String startTime;        // 시작 교시
+    private String endTime;          // 종료 교시
+
+    private String deptName;         //학과명
+    private Long lectureId;          //강의 아이디
+    private Long facilityId;         //강의실 아이디
+
 }
