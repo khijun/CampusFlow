@@ -8,7 +8,7 @@
    color: black;
    margin-top: -10px;
    margin-bottom: 10px;
-   width: calc(100% - 60px); /* main-content와 동일한 너비 */
+   /*width: calc(100% - 60px); !* main-content와 동일한 너비 *!*/
    border: 1px solid #ddd; /* 확인용 테두리 */
    border-radius: 2px;
    box-sizing: border-box; /* 패딩을 포함한 크기 계산 */

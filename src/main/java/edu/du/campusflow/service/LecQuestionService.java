@@ -90,8 +90,7 @@ public class LecQuestionService {
         for (LecQuestion question : questions) {
             List<LecItem> items = lecItemRepository.findByOfRegistration_IdInAndLecQuestion_QuestionId(
                     allOfregistrationIds,
-                    question.getQuestionId()
-            );
+                    question.getQuestionId());
 
             LecQuestionDTO result = createQuestionDTO(question, representativeReg, items);
             results.add(result);
@@ -124,8 +123,7 @@ public class LecQuestionService {
         Map<Integer, Long> scoreCounts = items.stream()
                 .collect(Collectors.groupingBy(
                         LecItem::getScore,
-                        Collectors.counting()
-                ));
+                        Collectors.counting()));
 
         result.setScore5Count(scoreCounts.getOrDefault(5, 0L));
         result.setScore4Count(scoreCounts.getOrDefault(4, 0L));
@@ -156,9 +154,7 @@ public class LecQuestionService {
                                     map.put("lectureName", reg.getLectureId().getLectureName());
                                     map.put("semester", reg.getLectureId().getSemester().getCodeName());
                                     return map;
-                                }
-                        )
-                ))
+                                })))
                 .values()
                 .stream()
                 .collect(Collectors.toList());
