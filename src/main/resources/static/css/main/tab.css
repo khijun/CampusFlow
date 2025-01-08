@@ -6,9 +6,9 @@
    background-color: whitesmoke;
    padding: 7px 10px; /* 좌우 패딩 조정 */
    color: black;
-   margin-left: 30px; /* main-content와 동일한 왼쪽 여백 */
    margin-top: -10px;
-   width: calc(100% - 60px); /* main-content와 동일한 너비 */
+   margin-bottom: 10px;
+   /*width: calc(100% - 60px); !* main-content와 동일한 너비 *!*/
    border: 1px solid #ddd; /* 확인용 테두리 */
    border-radius: 2px;
    box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
