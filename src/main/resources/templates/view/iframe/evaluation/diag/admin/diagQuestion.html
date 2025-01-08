@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8">
+   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+   <title>진단평가 조회</title>
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+   <style>
+      /* professor의 스타일을 가져와서 추가 */
+      .diagnostic-results {
+         background-color: white;
+         padding: 25px;
+         border-radius: 8px;
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         margin-top: 20px;
+      }
+
+      .question-item {
+         background-color: #f8f9fa;
+         padding: 20px;
+         margin-bottom: 20px;
+         border-radius: 8px;
+         border: 1px solid #e0e0e0;
+      }
+
+      .average-score {
+         font-size: 1.1em;
+         margin-bottom: 15px;
+         color: #2196F3;
+         font-weight: bold;
+      }
+
+      .score-distribution {
+         list-style: none;
+      }
+
+      .score-distribution li {
+         display: flex;
+         align-items: center;
+         margin-bottom: 8px;
+         padding: 8px;
+         background-color: white;
+         border-radius: 4px;
+      }
+
+      .score-label {
+         flex: 0 0 80px;
+         font-weight: bold;
+      }
+
+      .score-count {
+         flex: 0 0 100px;
+      }
+
+      .score-percent {
+         color: #666;
+      }
+   </style>
+</head>
+<body>
+<div class="container">
+   <!-- 검색 컨테이너 -->
+   <form class="search-container" id="searchForm">
+      <div class="input-group">
+         <label for="department">학과</label>
+         <select id="department" name="department">
+            <option value="">학과를 선택해주세요</option>
+            <option th:each="dept : ${departments}"
+                    th:text="${dept.deptName}"
+                    th:value="${dept.deptId}">
+            </option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="grade">학년</label>
+         <select id="grade" name="grade">
+            <option value="">학년을 선택해주세요</option>
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
+            <option value="4">4학년</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="lectureName">강의명</label>
+         <input id="lectureName" name="lectureName" type="text">
+      </div>
+      <div class="input-group">
+         <label for="studentName">학생명</label>
+         <input id="studentName" name="studentName" type="text">
+      </div>
+      <div class="button-group">
+         <button type="submit">검색</button>
+      </div>
+   </form>
+
+   <!-- 검색 결과가 없을 때 -->
+   <div class="no-results" th:if="${#lists.isEmpty(results)}">
+      <p>검색 결과가 없습니다.</p>
+   </div>
+
+   <!-- 진단평가 결과 표시 -->
+   <div class="diagnostic-results" th:if="${not #lists.isEmpty(results)}">
+      <h3>진단평가 결과</h3>
+      <div class="question-item" th:each="result : ${results}">
+         <h4 th:text="${result.questionName}">문항</h4>
+         <p class="average-score">
+            평균 점수: <span th:text="${#numbers.formatDecimal(result.averageScore, 1, 1)}">0.0</span>
+         </p>
+         <ul class="score-distribution">
+            <li th:each="score : ${#numbers.sequence(5, 1, -1)}">
+               <span class="score-label" th:text="${score + '점:'}">5점:</span>
+               <span class="score-count" th:text="${result['score' + score + 'Count'] + '명'}">0명</span>
+               <span class="score-percent"
+                     th:text="'(' + ${#numbers.formatDecimal(result['score' + score + 'Percent'], 1, 1)} + '%)'">
+                        (0.0%)
+                    </span>
+            </li>
+         </ul>
+      </div>
+   </div>
+</div>
+
+<script>
+   document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const searchParams = new URLSearchParams();
+
+      for (let pair of formData.entries()) {
+         if (pair[1]) {
+            searchParams.append(pair[0], pair[1]);
+         }
+      }
+
+      location.href = '/iframe/evaluation/diag/admin?' + searchParams.toString();
+   });
+</script>
+</body>
+</html>

@@ -55,14 +55,14 @@ html, body {
    border-radius: 4px;
    cursor: pointer;
    width: 100px;
-   align-self: flex-end;
 }
 
 .button-group {
-   display: flex; /* 가로 배치 */
-   gap: 10px; /* 버튼 간격 */
-   margin-top: 15px; /* 검색 필드와 버튼 그룹 간의 여백 */
-   align-self: flex-end; /* 오른쪽 정렬 */
+   display: flex;
+   gap: 10px;
+   margin-top: 15px;
+   margin-left: auto; /* 왼쪽 여백을 자동으로 설정하여 오른쪽 정렬 */
+   width: auto; /* 버튼 그룹의 너비를 내용에 맞게 조정 */
 }
 
 .button-group button {
