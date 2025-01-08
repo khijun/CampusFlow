@@ -28,7 +28,7 @@ public class CommonCodeGroup {
     @Column(name = "group_description", length = 100)
     private String groupDescription;
 
-    @OneToMany(mappedBy = "codeGroup", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "codeGroup", fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<CommonCode> commonCodes;
 } 
