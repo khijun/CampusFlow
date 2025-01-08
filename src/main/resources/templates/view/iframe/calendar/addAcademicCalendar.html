@@ -9,6 +9,7 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/ko.js"></script>
 </head>
 <body>
 <div class="container mt-5">
@@ -17,7 +18,7 @@
 </div>
 
 <!-- 모달 -->
-<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -44,9 +45,11 @@
                         <label for="description">설명</label>
                         <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                     </div>
-
-                    <button type="submit" class="btn btn-primary" id="submitBtn">추가</button>
-                    <button type="button" class="btn btn-danger" id="deleteEventBtn" style="display: none;">삭제</button>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">추가</button>
+                        <button type="button" class="btn btn-danger" id="deleteEventBtn" style="display: none;">삭제</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -124,12 +127,43 @@
             }
         });
 
+        // 모달 관련 처리
+        $('#eventModal').on('show.bs.modal', function () {
+            $(this).removeAttr('aria-hidden');
+        });
+
+        $('#eventModal').on('hidden.bs.modal', function () {
+            $('#eventForm')[0].reset();
+            currentEvent = null;
+            $('#deleteEventBtn').hide();
+        });
+
+        // AJAX 설정
+        $.ajaxSetup({
+            timeout: 30000,  // 30초
+            cache: false
+        });
+
         $('#eventForm').on('submit', function(e) {
             e.preventDefault();
+            
+            // 폼 버튼들 비활성화
+            var $submitBtn = $('#submitBtn');
+            var $deleteBtn = $('#deleteEventBtn');
+            var originalSubmitText = $submitBtn.text();
+            
+            $submitBtn.prop('disabled', true).text('처리중...');
+            $deleteBtn.prop('disabled', true);
+
             var title = $('#title').val();
             var start = $('#startDate').val();
             var end = $('#endDate').val();
             var description = $('#description').val();
+
+            function enableButtons() {
+                $submitBtn.prop('disabled', false).text(originalSubmitText);
+                $deleteBtn.prop('disabled', false);
+            }
 
             if (currentEvent) {
                 // 수정하는 경우
@@ -140,85 +174,85 @@
                     data: JSON.stringify({
                         title: title,
                         startDate: start + 'T00:00:00',
-                        endDate: moment(end).add(1, 'days').format('YYYY-MM-DD') + 'T00:00:00',
-                        description: description
-                    }),
-                    success: function (response) {
-                        alert('일정이 수정되었습니다.');
-                        currentEvent.title = title;
-                        currentEvent.start = moment(start).format('YYYY-MM-DD');
-                        currentEvent.end = moment(end).format('YYYY-MM-DD');
-                        currentEvent.description = description;
-                        currentEvent.allDay = true;
-                        $('#calendar').fullCalendar('updateEvent', currentEvent);
-                    },
-                    error: function (xhr, status, error) {
-                        if (xhr.status === 409) { // 중복 오류
-                            alert('해당 기간에 동일한 제목의 일정이 이미 존재합니다.');
-                        } else {
-                            alert('일정 수정에 실패했습니다.');
-                        }
-                    }
-                });
-                // 새 이벤트 추가
-                $.ajax({
-                    url: '/iframe/calendar/api/academic-calendar',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        title: title.replace(/^\d+a\s*/, ''),
-                        startDate: start + 'T00:00:00',
-                        endDate: moment(end).add(1, 'days').format('YYYY-MM-DD') + 'T00:00:00',
+                        endDate: end + 'T23:59:59',
                         description: description
                     }),
                     success: function(response) {
-                        alert('일정이 추가되었습니다.');
-                        $('#calendar').fullCalendar('renderEvent', {
-                            id: response.calendarId,
-                            title: response.title,
-                            start: moment(response.startDate).format('YYYY-MM-DD'),
-                            end: moment(response.endDate).format('YYYY-MM-DD'),
-                            description: response.description,
-                            allDay: true
-                        }, true);
+                        $('#calendar').fullCalendar('refetchEvents');
                     },
                     error: function(xhr, status, error) {
-                        console.error('AJAX 요청 실패:', error);
-                        alert('일정 추가에 실패했습니다.');
+                        console.log('일정 수정 상태:', status);
+                        $('#calendar').fullCalendar('refetchEvents');
+                    },
+                    complete: function() {
+                        enableButtons();
+                        $('#eventModal').modal('hide');
+                        alert('일정이 수정되었습니다.');
+                    }
+                });
+            } else {
+                // 새 이벤트 추가
+                var eventData = {
+                    title: title,
+                    startDate: start + 'T00:00:00',
+                    endDate: end + 'T23:59:59',
+                    description: description
+                };
+
+                $.ajax({
+                    url: '/iframe/calendar/add',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(eventData),
+                    success: function(response) {
+                        $('#calendar').fullCalendar('refetchEvents');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('일정 추가 상태:', status);
+                        $('#calendar').fullCalendar('refetchEvents');
+                    },
+                    complete: function() {
+                        enableButtons();
+                        $('#eventModal').modal('hide');
+                        alert('일정이 추가되었습니다.');
                     }
                 });
             }
-
-            $('#eventModal').modal('hide').attr('aria-hidden', 'true');
-            $('#eventForm')[0].reset();
-            currentEvent = null;
         });
 
-        $('#deleteEventBtn').on('click', function() {
-            if (currentEvent) {
+        // 삭제 버튼 클릭 이벤트
+        $('#deleteEventBtn').on('click', function(e) {
+            e.preventDefault();
+            if (currentEvent && confirm('정말 삭제하시겠습니까?')) {
+                var $deleteBtn = $(this);
+                var $submitBtn = $('#submitBtn');
+                
+                // 버튼들 비활성화
+                $deleteBtn.prop('disabled', true).text('삭제중...');
+                $submitBtn.prop('disabled', true);
+
                 $.ajax({
                     url: '/iframe/calendar/api/academic-calendar/' + currentEvent.id,
                     method: 'DELETE',
-                    success: function() {
+                    success: function(response) {
                         alert('일정이 삭제되었습니다.');
                         $('#calendar').fullCalendar('removeEvents', currentEvent.id);
+                        $('#eventModal').modal('hide');
                     },
-                    error: function() {
-                        alert('일정 삭제에 실패했습니다.');
+                    error: function(xhr) {
+                        let errorMessage = '일정 삭제에 실패했습니다.';
+                        if (xhr.responseText) {
+                            errorMessage = xhr.responseText;
+                        }
+                        alert(errorMessage);
+                    },
+                    complete: function() {
+                        // 버튼들 다시 활성화
+                        $deleteBtn.prop('disabled', false).text('삭제');
+                        $submitBtn.prop('disabled', false);
                     }
                 });
-
-                $('#eventModal').modal('hide').attr('aria-hidden', 'true');
-                $('#eventForm')[0].reset();
-                currentEvent = null;
             }
-        });
-
-        $('#eventModal').on('hidden.bs.modal', function () {
-            $(this).attr('aria-hidden', 'true');
-            $('#eventForm')[0].reset();
-            currentEvent = null;
-            $('#deleteEventBtn').hide();
         });
     });
 </script>

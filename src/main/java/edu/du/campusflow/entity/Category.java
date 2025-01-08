@@ -1,8 +1,10 @@
 package edu.du.campusflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,8 +20,11 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-    @Column(name = "parent_id")
-    private Long parent;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @ToString.Exclude
+    @JoinColumn(name = "parent_id")
+    private Category parent;
 
     @Column(name = "category_name", length = 50)
     private String name;
@@ -41,7 +46,8 @@ public class Category {
     @Column(name = "order_no")
     private Integer orderNo;
 
-//    @OneToMany(mappedBy = "parent")
-//    private List<Category> children;
+    @OneToMany(mappedBy = "parent")
+    @OrderBy("orderNo asc")
+    private List<Category> children;
 
 }

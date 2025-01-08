@@ -13,7 +13,7 @@ public enum InquiryStatus {
     IN_PROGRESS,
 
     @Code(name = "완료", description = "완료 상태")
-    COMPLETED;
+    PROCESSED;
 
 
 }
