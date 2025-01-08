@@ -11,21 +11,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/calendar")
 public class AcademicCalendarController {
 
     @Autowired
     private AcademicCalendarService academicCalendarService;
 
-    @GetMapping("/add") // 추가 페이지를 보여주는 메서드
+    @GetMapping("/iframe/calendar/addAcademicCalendar") // 추가 페이지를 보여주는 메서드
     public String showAddCalendarPage(Model model) {
-        return "calendar/addAcademicCalendar"; // templates/calendar/addAcademicCalendar.html을 렌더링
+        return "calendar/addAcademicCalendar";
     }
-    @GetMapping // 학사 일정 뷰 화면을 보여주는 메서드
+    @GetMapping ("/iframe/calendar/view_event")// 학사 일정 뷰 화면을 보여주는 메서드
     public String showCalendarPage(Model model) {
         List<AcademicCalendar> calendars = academicCalendarService.getAllCalendars();
         model.addAttribute("calendars", calendars); // 모델에 일정 추가
-        return "/calendar/view_event"; // templates/calendar.html을 렌더링
+        return "/calendar/view_event";
     }
 
     @PostMapping
@@ -33,7 +32,7 @@ public class AcademicCalendarController {
         return academicCalendarService.addAcademicCalendar(academicCalendar);
     }
 
-    @GetMapping("/api/academic-calendar") // 일정 목록을 가져오는 API 엔드포인트
+    @GetMapping("/iframe/calendar/api/academic-calendar") // 일정 목록을 가져오는 API 엔드포인트
     @ResponseBody // JSON 형식으로 응답
     public ResponseEntity<List<AcademicCalendar>> getAcademicCalendars() {
         List<AcademicCalendar> calendars = academicCalendarService.getAllCalendars(); // 모든 학사 일정 가져오기
