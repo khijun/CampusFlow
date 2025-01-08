@@ -34,6 +34,7 @@ public class ChangeRequestService {
         // ChangeRequest 엔티티 생성
         ChangeRequest changeRequest = new ChangeRequest();
         changeRequest.setMember(member);
+        changeRequest.setReason(dto.getReason());
 
         // 기존 로직 활용
         processChangeRequest(changeRequest, dto.getNewStatusCodeId());
@@ -71,21 +72,13 @@ public class ChangeRequestService {
         // 5. 신청 날짜 설정
         changeRequest.setRequestDate(LocalDateTime.now());
 
+        //사유 추가
+        changeRequest.setReason(changeRequest.getReason());
+
         // 6. ChangeRequest 저장
         ChangeRequest savedRequest = changeRequestRepository.save(changeRequest);
 
 
-
-        // 8. ChangeHistory 생성 및 저장
-        ChangeHistory changeHistory = ChangeHistory.builder()
-                .member(savedRequest.getMember())
-                .beforeCode(savedRequest.getBeforeCode())
-                .afterCode(savedRequest.getAfterCode())
-                .approvalDate(LocalDateTime.now())
-                .grade(savedRequest.getMember().getGrade())
-                .build();
-
-        changeHistoryRepository.save(changeHistory);
     }
 
 
@@ -120,7 +113,16 @@ public class ChangeRequestService {
         // 4. 승인인 경우 Member의 학적 상태 변경 및 이력 생성
         if (approve) {
             Member member = changeRequest.getMember();
-            member.setAcademicStatus(changeRequest.getAfterCode());  // 변경 후 학적 상태로 업데이트
+
+            // 복학 상태인 경우 재학 상태로 변경
+            if (changeRequest.getAfterCode().getCodeId() == 8L) {  // 복학의 codeId가 8
+                CommonCode enrolled = commonCodeRepository.findById(1L)  // 재학의 codeId가 1
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid academic status code: 재학"));
+
+                member.setAcademicStatus(enrolled);  // 학적 상태를 재학으로 업데이트
+            } else {
+                member.setAcademicStatus(changeRequest.getAfterCode());  // 일반적인 상태 변경 처리
+            }
 
             // Member와 ChangeRequest 저장
             memberRepository.save(member);  // Member 엔티티 저장
@@ -129,7 +131,7 @@ public class ChangeRequestService {
             ChangeHistory changeHistory = ChangeHistory.builder()
                     .member(member)
                     .beforeCode(changeRequest.getBeforeCode())  // 기존 학적 상태
-                    .afterCode(changeRequest.getAfterCode())    // 변경된 학적 상태
+                    .afterCode(member.getAcademicStatus())      // 변경된 학적 상태
                     .approvalDate(LocalDateTime.now())          // 승인 일자
                     .grade(member.getGrade())                   // 학년 정보
                     .build();

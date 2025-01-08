@@ -20,9 +20,9 @@
     /* 공통 그리드 스타일 */
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(5, 1fr); /* 5열 */
+      grid-template-columns: repeat(6, 1fr); /* 6열 */
       overflow-y: auto;   /* 수직 스크롤 추가 */
-      gap: 10px;
+      /*gap: 10px;*/
       width: 80%;
       margin: 0 auto;
     }
@@ -34,7 +34,7 @@
       font-weight: bold;
       text-align: center;
       padding: 12px 0;
-      border-radius: 5px;
+      /*border-radius: 5px;*/
     }
 
     /* 데이터 스타일 */
@@ -44,7 +44,7 @@
       border: 1px solid #ddd;
       font-size: 14px;
       background-color: #fff;
-      border-radius: 5px;
+      /*border-radius: 5px;*/
     }
 
     .data-container .data:hover {
@@ -91,6 +91,7 @@
   <div>변경 전 상태</div>
   <div>변경 후 상태</div>
   <div>신청 상태</div>
+  <div>사유</div>
   <div>승인</div>
 </div>
 
@@ -102,6 +103,7 @@
   <div class="data" th:text="${request.beforeCode.codeName}"></div>
   <div class="data" th:text="${request.afterCode.codeName}"></div>
   <div class="data" th:text="${request.applicationStatus.codeName}"></div>
+  <div class="data" th:text="${request.reason}"></div>
   <div class="data">
     <form th:action="@{/iframe/admin/academic/approve-change-request/{applicationId}(applicationId=${request.id})}" method="post">
       <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">승인</button>

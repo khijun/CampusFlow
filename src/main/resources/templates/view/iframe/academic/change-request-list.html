@@ -29,8 +29,8 @@
     /* 공통 그리드 스타일 */
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(5, 1fr); /* 5개의 열 */
-      gap: 10px; /* 셀 간 간격 */
+      grid-template-columns: repeat(6, 1fr); /* 5개의 열 */
+      /*gap: 10px; !* 셀 간 간격 *!*/
       width: 90%;
       overflow-y: auto;   /* 수직 스크롤 추가 */
       margin: 0 auto;
@@ -43,7 +43,7 @@
       font-weight: bold;
       text-align: center;
       padding: 10px 0;
-      border-radius: 5px;
+      /*border-radius: 5px;*/
     }
 
     /* 아이템 스타일 */
@@ -52,7 +52,7 @@
       text-align: center;
       background-color: #f9f9f9;
       border: 1px solid #ddd;
-      border-radius: 5px;
+      /*border-radius: 5px;*/
     }
 
     .item-container .item:hover {
@@ -96,6 +96,7 @@
   <div class="header">변경 후 상태</div>
   <div class="header">신청 일자</div>
   <div class="header">상태</div>
+  <div class="header">사유</div>
   <div class="header">신청 취소</div>
 </div>
 
@@ -105,6 +106,7 @@
   <div class="item" th:text="${request.afterCode.codeName}"></div>
   <div class="item" th:text="${request.requestDate}"></div>
   <div class="item" th:text="${request.applicationStatus.codeName}"></div>
+  <div class="item" th:text="${request.reason}"></div>
   <div class="item">
     <form th:action="@{/iframe/academic/delete-change-request}" method="post"
           onsubmit="return confirm('정말 신청을 취소하시겠습니까?')"
