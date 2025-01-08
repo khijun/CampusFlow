@@ -58,8 +58,8 @@ public class DiagEvaluationController {
 
     @GetMapping("/admin")
     public String showAdminDiagnosticList(
+            @RequestParam(required = false) String grade,
             @RequestParam(required = false) String department,
-            @RequestParam(required = false) Integer grade,
             @RequestParam(required = false) String lectureName,
             @RequestParam(required = false) String studentName,
             Model model
@@ -67,16 +67,27 @@ public class DiagEvaluationController {
         log.info("학과 정보 조회 시작");
         List<Dept> departments = deptRepository.findAll();
         model.addAttribute("departments", departments);
+        model.addAttribute("showResults", false);  // 초기 상태는 false
+        model.addAttribute("selectedDepartment", department);
+        model.addAttribute("selectedGrade", grade);
+        model.addAttribute("selectedLectureName", lectureName);
+        model.addAttribute("selectedStudentName", studentName);
 
-        if (department != null || grade != null ||
-                !StringUtils.isEmpty(lectureName) || !StringUtils.isEmpty(studentName)) {
-            // String을 Long으로 변환
-            Long departmentId = department != null ? Long.parseLong(department) : null;
+        if (department != null || !StringUtils.isEmpty(lectureName) || !StringUtils.isEmpty(studentName)) {
+            try {
+                Long departmentId = department != null && !department.isEmpty()
+                        ? Long.parseLong(department)
+                        : null;
 
-            List<DiagQuestionDTO> results = diagQuestionService
-                    .getDiagnosticResultsBySearchCriteria(departmentId, grade, lectureName, studentName);
-            model.addAttribute("results", results);
-            model.addAttribute("showResults", true);
+                List<DiagQuestionDTO> results = diagQuestionService
+                        .getDiagnosticResultsBySearchCriteria(departmentId, lectureName, studentName);
+                model.addAttribute("results", results);
+                model.addAttribute("showResults", true);  // 검색 결과가 있을 때 true
+            } catch (NumberFormatException e) {
+                log.error("ID 변환 중 오류 발생: {}", e.getMessage());
+                model.addAttribute("error", "잘못된 입력값입니다.");
+                model.addAttribute("showResults", false);  // 에러 발생 시 false
+            }
         }
 
         return "view/iframe/evaluation/diag/admin/diagQuestion";

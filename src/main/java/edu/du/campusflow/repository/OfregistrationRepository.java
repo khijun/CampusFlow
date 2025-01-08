@@ -19,18 +19,12 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
 
     @Query("SELECT DISTINCT o FROM Ofregistration o " +
             "JOIN FETCH o.lectureId l " +
-            "JOIN FETCH l.curriculumSubject cs " +
-            "JOIN FETCH cs.curriculum c " +     // curriculum 조인 추가
-            "JOIN FETCH cs.subject s " +
-            "JOIN FETCH s.dept d " +
             "JOIN FETCH o.member m " +
-            "WHERE (:departmentId IS NULL OR d.deptId = :departmentId) " +
-            "AND (:grade IS NULL OR c.grade.codeId = :grade) " +  // grade 조건 수정
+            "WHERE (:departmentId IS NULL OR m.dept.deptId = :departmentId) " +
             "AND (:lectureName IS NULL OR LOWER(l.lectureName) LIKE LOWER(CONCAT('%', :lectureName, '%'))) " +
             "AND (:studentName IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :studentName, '%')))")
     List<Ofregistration> findBySearchCriteria(
             @Param("departmentId") Long departmentId,
-            @Param("grade") Integer grade,
             @Param("lectureName") String lectureName,
             @Param("studentName") String studentName
     );

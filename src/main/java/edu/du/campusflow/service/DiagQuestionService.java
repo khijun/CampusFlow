@@ -120,19 +120,83 @@ public class DiagQuestionService {
         return (count * 100.0) / total;
     }
 
-    // admin 검색 기능을 위한 메서드 추가
     public List<DiagQuestionDTO> getDiagnosticResultsBySearchCriteria(
-            Long departmentId, Integer grade, String lectureName, String studentName) {
+            Long departmentId, String lectureName, String studentName) {
 
-        // 검색 조건에 맞는 수강신청 정보 찾기
+        log.info("서비스 파라미터 확인:");
+        log.info("departmentId: {}, 타입: {}", departmentId, departmentId != null ? departmentId.getClass() : "null");
+        log.info("lectureName: {}", lectureName);
+        log.info("studentName: {}", studentName);
+
+        // 1. 수강신청 정보 조회
         List<Ofregistration> ofregistrations = ofregistrationRepository
-                .findBySearchCriteria(departmentId, grade, lectureName, studentName);
+                .findBySearchCriteria(departmentId, lectureName, studentName);
+
+        log.info("조회된 수강신청 수: {}", ofregistrations.size());
 
         if (ofregistrations.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // 첫 번째 학생의 진단평가 결과 조회
-        return getDiagnosticResults(ofregistrations.get(0).getId());
+        // 2. 모든 진단평가 문항 조회
+        List<DiagQuestion> allQuestions = getAllQuestions();
+        log.info("전체 진단평가 문항 수: {}", allQuestions.size());
+
+        List<DiagQuestionDTO> results = new ArrayList<>();
+
+        // 3. 각 수강신청별로 처리
+        for (Ofregistration registration : ofregistrations) {
+            Lecture lecture = registration.getLectureId();
+
+            // 4. 진단평가 응답 조회
+            List<DiagItem> items = diagItemService.getDiagItemsByOfRegistrationId(registration.getId());
+            log.info("수강신청 ID [{}]의 진단평가 응답 수: {}", registration.getId(), items.size());
+
+            // 5. 각 문항별로 통계 계산
+            for (DiagQuestion question : allQuestions) {
+                DiagQuestionDTO dto = new DiagQuestionDTO();
+                dto.setQuestionId(question.getQuestionId());
+                dto.setQuestionName(question.getQuestionName());
+                dto.setLectureName(lecture.getLectureName());
+                dto.setName(lecture.getMember().getName());
+                dto.setSemester(lecture.getSemester().getCodeName());
+                dto.setSubjectId(lecture.getCurriculumSubject().getSubject().getSubjectId());
+
+                // 해당 문항에 대한 답변만 필터링
+                List<DiagItem> itemsForQuestion = items.stream()
+                        .filter(item -> item.getDiagQuestion().getQuestionId().equals(question.getQuestionId()))
+                        .collect(Collectors.toList());
+
+                calculateStatistics(dto, itemsForQuestion);
+                results.add(dto);
+            }
+        }
+
+        log.info("최종 결과 수: {}", results.size());
+        return results;
+    }
+
+
+    private void calculateStatistics(DiagQuestionDTO dto, List<DiagItem> items) {
+        int totalResponses = items.size();
+        if (totalResponses > 0) {
+            double averageScore = items.stream()
+                    .mapToInt(DiagItem::getScore)
+                    .average()
+                    .orElse(0.0);
+            dto.setAverageScore(averageScore);
+
+            dto.setScore5Count(countScores(items, 5));
+            dto.setScore4Count(countScores(items, 4));
+            dto.setScore3Count(countScores(items, 3));
+            dto.setScore2Count(countScores(items, 2));
+            dto.setScore1Count(countScores(items, 1));
+
+            dto.setScore5Percent(calculatePercent(dto.getScore5Count(), totalResponses));
+            dto.setScore4Percent(calculatePercent(dto.getScore4Count(), totalResponses));
+            dto.setScore3Percent(calculatePercent(dto.getScore3Count(), totalResponses));
+            dto.setScore2Percent(calculatePercent(dto.getScore2Count(), totalResponses));
+            dto.setScore1Percent(calculatePercent(dto.getScore1Count(), totalResponses));
+        }
     }
 }
