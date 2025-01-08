@@ -4,6 +4,7 @@ import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.TuitionTarget;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,11 +12,15 @@ import org.springframework.stereotype.Repository;
 
 import java.lang.annotation.Target;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface TuitionTargetRepository extends JpaRepository<TuitionTarget, Long> {
     TuitionTarget findByMember(Member member);
+
+    @EntityGraph(attributePaths = {"tuitionId", "member", "member.dept"})
+    List<TuitionTarget> findAll();
     /**
      * 검색 조건에 따른 등록금 대상자 조회
      */
