@@ -16,4 +16,16 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     List<Ofregistration> findByLectureId_LectureId(@Param("lectureId") Long lectureId);
 
     List<Ofregistration> findDistinctByLectureId_Member(Member member);
+
+    @Query("SELECT DISTINCT o FROM Ofregistration o " +
+            "JOIN FETCH o.lectureId l " +
+            "JOIN FETCH o.member m " +
+            "WHERE (:departmentId IS NULL OR m.dept.deptId = :departmentId) " +
+            "AND (:lectureName IS NULL OR LOWER(l.lectureName) LIKE LOWER(CONCAT('%', :lectureName, '%'))) " +
+            "AND (:studentName IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :studentName, '%')))")
+    List<Ofregistration> findBySearchCriteria(
+            @Param("departmentId") Long departmentId,
+            @Param("lectureName") String lectureName,
+            @Param("studentName") String studentName
+    );
 }
