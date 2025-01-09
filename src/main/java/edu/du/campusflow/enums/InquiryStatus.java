@@ -10,7 +10,7 @@ public enum InquiryStatus {
     AWAITING,
 
     @Code(name = "처리중", description =  "처리중 상태")
-    IN_PROGRESS,
+    PROCESSING,
 
     @Code(name = "완료", description = "완료 상태")
     PROCESSED;

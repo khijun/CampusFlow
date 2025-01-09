@@ -29,22 +29,13 @@
 <body>
 <div class="container mt-5">
     <div class="notice-header">
-        <h2 th:text="${notice.subject}" class="mb-3"></h2>
-        <div class="row">
-            <div class="col-md-6">
-                <p class="text-muted">
-                    작성자: <span th:text="${notice.member?.name}"></span>
-                </p>
-            </div>
-            <div class="col-md-6 text-right">
-                <p class="text-muted">
-                    작성일: 
-                    <span th:if="${notice.updatedAt == null}" 
-                          th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-                    <span th:if="${notice.updatedAt != null}" 
-                          th:text="${#temporals.format(notice.updatedAt, 'yyyy-MM-dd HH:mm') + ' (수정)'}"></span>
-                </p>
-            </div>
+        <h2 th:text="${notice.subject}"></h2>
+        <p>
+            <span th:text="|번호: ${notice.noticeId}|"></span> |
+            <span th:text="|작성자: ${notice.member.name}|"></span> |
+            <span th:text="|등록일: ${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}|"></span>
+        </p>
+    </div>
         </div>
     </div>
 
@@ -55,14 +46,13 @@
     <div class="notice-footer">
         <div class="row">
             <div class="col">
-                <a href="/notice/view" class="btn btn-secondary">목록으로</a>
+                <a href="/iframe/notice/view" class="btn btn-secondary">목록으로</a>
             </div>
             <!-- 교직원인 경우에만 수정/삭제 버튼 표시 -->
             <div class="col text-right" th:if="${isStaff}">
-                <a th:href="@{/templates/view/iframe/notice/edit/{id}(id=${notice.noticeId})}" class="btn btn-primary">수정</a>
-                <form th:action="@{/templates/view/iframe/notice/delete/{id}(id=${notice.noticeId})}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-danger" 
-                            onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                <a th:href="@{/iframe/notice/edit/{id}(id=${notice.noticeId})}" class="btn btn-primary">수정</a>
+                <form th:action="@{/iframe/notice/delete/{id}(id=${notice.noticeId})}" method="post" style="display: inline;" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-danger">삭제</button>
                 </form>
             </div>
         </div>

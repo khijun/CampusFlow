@@ -57,17 +57,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-//                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
-//                .antMatchers("/login").permitAll() // 로그인 페이지 허용
-//                .anyRequest().authenticated() // 그 외 요청은 인증 필요
-                .anyRequest().permitAll() // 실험코드
+                .antMatchers("/iframe/inquiry/view").authenticated()
+                .antMatchers("/iframe/inquiry/detail-view/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .headers()
-                .frameOptions().sameOrigin() // X-Frame-Options 설정
+                .frameOptions().sameOrigin()
                 .and()
-                .formLogin() // 폼 로그인 활성화
-//                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
-                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
+                .formLogin()
+                .defaultSuccessUrl("/")
                 .permitAll()
                 .and()
                 .logout()
@@ -75,13 +73,11 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
                 .permitAll()
                 .and()
-                .csrf().disable();  // 임시 코드
-
-//        http
-//                .authorizeRequests()
-//                .anyRequest().permitAll() // 모든 요청을 허용
-//                .and()
-//                .csrf().disable(); // CSRF 보호를 비활성화
+                .csrf().disable()
+                .exceptionHandling()
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.sendRedirect("/iframe/inquiry/view?error=access-denied");
+                });
 
         return http.build();
     }

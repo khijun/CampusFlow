@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.access.AccessDeniedException;
 
 @Controller
 @RequestMapping("/iframe/inquiry")
@@ -20,6 +21,10 @@ public class InquiryController {
     // 문의 추가 페이지
     @GetMapping("/add")
     public String showAddInquiryForm() {
+        // 학생이 아닌 경우 접근 거부
+        if (!inquiryService.isStudent()) {
+            throw new AccessDeniedException("학생만 문의사항을 작성할 수 있습니다.");
+        }
         return "/view/iframe/inquiry/addInquiry"; // 문의 추가 페이지로 이동
     }
 
@@ -34,6 +39,8 @@ public class InquiryController {
     @GetMapping("/view")
     public String viewInquiries(Model model) {
         model.addAttribute("inquiries", inquiryService.getAllInquiries()); // 모든 문의를 모델에 추가
+        model.addAttribute("isStaff", inquiryService.isStaff()); // 교직원 여부 추가
+        model.addAttribute("isStudent", inquiryService.isStudent()); // 학생 여부 추가
         return "/view/iframe/inquiry/viewInquiries"; // 문의 목록 페이지로 이동
     }
 
@@ -41,6 +48,11 @@ public class InquiryController {
     @GetMapping("detail-view/{id}")
     public String showInquiryDetail(@PathVariable Long id, Model model) {
         Inquiry inquiry = inquiryService.getInquiryById(id);
+        
+        // 작성자나 교직원이 아닌 경우 접근 거부
+        if (!inquiryService.isAuthor(inquiry) && !inquiryService.isStaff()) {
+            throw new AccessDeniedException("해당 문의사항에 대한 접근 권한이 없습니다.");
+        }
 
         model.addAttribute("inquiry", inquiry);
         model.addAttribute("isAuthor", inquiryService.isAuthor(inquiry));

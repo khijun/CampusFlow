@@ -1,13 +1,14 @@
 package edu.du.campusflow.repository;
 
+import edu.du.campusflow.entity.Dept;
 import edu.du.campusflow.entity.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findByDept_DeptIdAndRelatedPostIsNull(Long deptId);
-    // 추가적인 쿼리 메서드가 필요하면 여기에 정의할 수 있습니다.
+    // 학과별 게시물 조회 (생성일 기준 내림차순, 댓글 제외, 페이징 적용)
+    Page<Post> findByDeptAndRelatedPostIsNullOrderByCreatedAtDesc(Dept dept, Pageable pageable);
 }

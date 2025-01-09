@@ -1,72 +1,126 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.entity.Dept;
+import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.Post;
 import edu.du.campusflow.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class PostService {
-
     @Autowired
     private PostRepository postRepository;
+    
+    @Autowired
+    private AuthService authService;
 
-    // 모든 게시물 조회
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    // 현재 사용자의 학과 게시물 조회 (댓글 제외, 페이징 적용)
+    public Page<Post> getPostsByDepartment(int page, int size) {
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null || currentMember.getDept() == null) {
+            throw new IllegalStateException("학과 정보가 없습니다.");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findByDeptAndRelatedPostIsNullOrderByCreatedAtDesc(currentMember.getDept(), pageable);
     }
-
 
     // 특정 게시물 조회
     public Post getPostById(Long postId) {
-        return postRepository.findById(postId).orElse(null);
-    }
-    //학과별 게시물 조회?
-    public List<Post> getPostsByDepartment(Long deptId) {
-        return postRepository.findByDept_DeptIdAndRelatedPostIsNull(deptId); // deptId로 게시물 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
+                
+        // 현재 사용자가 같은 학과인지 확인
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null || currentMember.getDept() == null ||
+            !currentMember.getDept().equals(post.getDept())) {
+            throw new IllegalStateException("해당 게시물에 접근할 수 없습니다.");
+        }
+        
+        return post;
     }
 
     // 게시물 생성
     public Post createPost(Post post) {
-        post.setCreatedAt(LocalDateTime.now()); // 생성 날짜 설정
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        
+        if (currentMember.getDept() == null) {
+            throw new IllegalStateException("학과 정보가 없습니다.");
+        }
+
+        // 현재 시간 설정
+        post.setCreatedAt(LocalDateTime.now());
+        
+        // 작성자와 학과 설정
+        post.setMember(currentMember);
+        post.setDept(currentMember.getDept());
+
         return postRepository.save(post);
     }
 
-    // 게시물 업데이트
-    public Post updatePost(Long postId, Post post) {
-        Post existingPost = getPostById(postId);
-        if (existingPost != null) {
-            existingPost.setTitle(post.getTitle());
-            existingPost.setContent(post.getContent());
-            existingPost.setUpdatedAt(LocalDateTime.now()); // 업데이트 날짜 설정
-            return postRepository.save(existingPost);
+    // 학생 여부 확인
+    public boolean isStudent() {
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null || currentMember.getMemberType() == null) {
+            return false;
         }
-        return null;
+        return "STUDENT".equals(currentMember.getMemberType().getCodeValue());
     }
 
-    // 게시물 삭제
-    public void deletePost(Long postId) {
-        postRepository.deleteById(postId);
+    // 현재 사용자의 학과 정보 조회
+    public Dept getCurrentUserDepartment() {
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null) {
+            return null;
+        }
+        return currentMember.getDept();
     }
-    // 게시물 찾기
-    public Post findById(Long id) {
-        return postRepository.findById(id).orElse(null);
-    }
-
-    // 댓글 추가
+    
+    // 댓글 작성
     public void addComment(Long postId, String content) {
-        Post post = findById(postId);
-        if (post != null) {
-            Post comment = Post.builder()
-                    .content(content)
-                    .createdAt(LocalDateTime.now())
-                    .relatedPost(post) // 댓글의 관련 게시물 설정
-                    .build();
-            post.getComments().add(comment); // 댓글 목록에 추가
-            postRepository.save(post); // 게시물 저장 (댓글도 함께 저장됨)
+        Post post = getPostById(postId);
+        
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
         }
+        
+        Post comment = Post.builder()
+                .content(content)
+                .createdAt(LocalDateTime.now())
+                .member(currentMember)
+                .dept(currentMember.getDept())
+                .relatedPost(post)
+                .build();
+        
+        postRepository.save(comment);
+    }
+    
+    // 댓글 삭제
+    public void deleteComment(Long commentId) {
+        Post comment = postRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+        
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null || !currentMember.equals(comment.getMember())) {
+            throw new IllegalStateException("댓글 삭제 권한이 없습니다.");
+        }
+        
+        postRepository.delete(comment);
+    }
+    
+    // 현재 사용자가 댓글 작성자인지 확인
+    public boolean isCommentAuthor(Post comment) {
+        Member currentMember = authService.getCurrentMember();
+        return currentMember != null && currentMember.equals(comment.getMember());
     }
 }

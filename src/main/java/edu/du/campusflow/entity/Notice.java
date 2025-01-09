@@ -3,6 +3,7 @@ package edu.du.campusflow.entity;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -34,5 +35,6 @@ public class Notice {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; // 업데이트 날짜
 
-
+//    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
+//    private List<FileInfo> attachedFiles; // 첨부 파일 목록
 }

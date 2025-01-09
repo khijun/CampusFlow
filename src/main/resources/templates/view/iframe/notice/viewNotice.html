@@ -22,14 +22,14 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>공지사항</h1>
         <div th:if="${isStaff}">
-            <a href="/notice/add" class="btn btn-primary">공지사항 작성</a>
+            <a href="/iframe/notice/add" class="btn btn-primary">공지사항 작성</a>
         </div>
     </div>
     
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
         <tr>
-            <th style="width: 10%;">순번</th>
+            <th style="width: 10%;">번호</th>
             <th style="width: 60%;">제목</th>
             <th style="width: 30%;">작성일</th>
         </tr>
@@ -38,7 +38,7 @@
         <tr th:each="notice, iterStat : ${notices}">
             <td th:text="${iterStat.index + 1}"></td>
             <td>
-                <a th:href="@{/templates/view/iframe/notice/{id}(id=${notice.noticeId})}"
+                <a th:href="@{/iframe/notice/{id}(id=${notice.noticeId})}"
                    th:text="${notice.subject}"
                    class="notice-link"></a>
             </td>

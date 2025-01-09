@@ -7,31 +7,52 @@
 </head>
 <body>
 <div class="container mt-5">
-  <h1>게시물 목록</h1>
-  <a href="/posts/add" class="btn btn-primary mb-3">게시물 추가</a>
+  <h1>학과 게시판</h1>
+  <!-- 게시물 추가 버튼은 학생인 경우에만 표시 -->
+  <a th:if="${isStudent}" href="/iframe/posts/add" class="btn btn-primary mb-3">게시물 작성</a>
 
-  <div th:each="dept, iterStat : ${departments}">
-    <h2 th:text="${dept.deptName}">학과 이름</h2> <!-- 학과 이름 표시 -->
+  <div th:if="${userDepartment != null}">
+    <h2 th:text="${userDepartment.deptName}">학과 이름</h2>
     <table class="table">
       <thead>
       <tr>
-        <th>번호</th> <!-- 목록 번호 -->
+        <th>번호</th>
         <th>제목</th>
         <th>작성일</th>
-        <th>작성자</th> <!-- 작성자 열 추가 -->
+        <th>작성자</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="post : ${postsByDepartment[dept.deptId]}">
-        <td th:text="${post.postId}"></td>
+      <tr th:each="post, status : ${posts}">
+        <td th:text="${posts.totalElements - (posts.number * posts.size) - status.index}"></td>
         <td>
-          <a th:href="@{/templates/view/iframe/posts/{id}(id=${post.postId})}" th:text="${post.title}"></a>
+          <a th:href="@{/iframe/posts/detail-view/{id}(id=${post.postId})}" th:text="${post.title}"></a>
         </td>
         <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-        <td th:text="'익명'"></td>
+        <td>익명</td>
       </tr>
       </tbody>
     </table>
+    
+    <!-- 페이징 -->
+    <nav>
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${posts.first} ? 'disabled'">
+          <a class="page-link" th:href="@{/iframe/posts/view(page=${posts.number - 1}, size=${posts.size})}">이전</a>
+        </li>
+        <li class="page-item" th:each="page : ${#numbers.sequence(0, posts.totalPages - 1)}"
+            th:classappend="${page == posts.number} ? 'active'">
+          <a class="page-link" th:href="@{/iframe/posts/view(page=${page}, size=${posts.size})}" th:text="${page + 1}"></a>
+        </li>
+        <li class="page-item" th:classappend="${posts.last} ? 'disabled'">
+          <a class="page-link" th:href="@{/iframe/posts/view(page=${posts.number + 1}, size=${posts.size})}">다음</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+  <div th:if="${userDepartment == null}" class="alert alert-warning">
+    소속 학과 정보가 없습니다.
   </div>
 </div>
 </body>

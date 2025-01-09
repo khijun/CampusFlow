@@ -22,7 +22,7 @@
             <h2>공지사항 수정</h2>
         </div>
         <div class="card-body">
-            <form th:action="@{/templates/view/iframe/notice/edit/{id}(id=${notice.noticeId})}" method="post">
+            <form th:action="@{/iframe/notice/edit/{id}(id=${notice.noticeId})}" method="post">
                 <div class="form-group">
                     <label for="subject">제목</label>
                     <input type="text" class="form-control" id="subject" name="subject"
@@ -34,7 +34,7 @@
                               rows="10" required th:text="${notice.content}"></textarea>
                 </div>
                 <div class="form-group text-right">
-                    <a th:href="@{/templates/view/iframe/notice/{id}(id=${notice.noticeId})}" class="btn btn-secondary">취소</a>
+                    <a th:href="@{/iframe/notice/{id}(id=${notice.noticeId})}" class="btn btn-secondary">취소</a>
                     <button type="submit" class="btn btn-primary">수정완료</button>
                 </div>
             </form>

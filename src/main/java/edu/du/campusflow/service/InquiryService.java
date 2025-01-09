@@ -3,7 +3,6 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Inquiry;
 import edu.du.campusflow.entity.Member;
-import edu.du.campusflow.enums.InquiryStatus;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.InquiryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,25 +21,20 @@ public class InquiryService {
     @Autowired
     private AuthService authService;
 
-
     // 모든 문의 조회
     public List<Inquiry> getAllInquiries() {
-        List<Inquiry> inquiries = inquiryRepository.findAll();
+        // 원본 문의사항만 조회 (relatedInquiry가 null인 것만)
+        List<Inquiry> inquiries = inquiryRepository.findByRelatedInquiryIsNull();
 
         // 기본 상태 코드 조회
-        CommonCode defaultStatus = commonCodeRepository.findByCodeValue("INQUIRYSTATUS");
+        CommonCode defaultStatus = commonCodeRepository.findByCodeValue("AWAITING");
         if (defaultStatus == null) {
             throw new RuntimeException("기본 상태 코드를 찾을 수 없습니다.");
         }
 
         // 각 문의사항의 상태 확인 및 설정
         for (Inquiry inquiry : inquiries) {
-            try {
-                if (inquiry.getInquiryStatus() == null) {
-                    inquiry.setInquiryStatus(defaultStatus);
-                    inquiryRepository.save(inquiry);
-                }
-            } catch (EntityNotFoundException e) {
+            if (inquiry.getInquiryStatus() == null) {
                 inquiry.setInquiryStatus(defaultStatus);
                 inquiryRepository.save(inquiry);
             }
@@ -55,9 +49,9 @@ public class InquiryService {
 
         // 문의 상태가 null인 경우 기본값 설정
         if (inquiry.getInquiryStatus() == null) {
-            CommonCode defaultStatus = commonCodeRepository.findByCodeValue(InquiryStatus.AWAITING.name());
+            CommonCode defaultStatus = commonCodeRepository.findByCodeValue("AWAITING");
             if (defaultStatus == null){
-                new RuntimeException("기본 상태 코드를 찾을 수 없습니다.");
+                throw new RuntimeException("기본 상태 코드를 찾을 수 없습니다.");
             }
             inquiry.setInquiryStatus(defaultStatus);
             inquiryRepository.save(inquiry);
@@ -65,6 +59,7 @@ public class InquiryService {
 
         return inquiry;
     }
+
     //작성자 확인
     public boolean isAuthor(Inquiry inquiry) {
         var currentMember = authService.getCurrentMember();
@@ -80,12 +75,19 @@ public class InquiryService {
         if (currentMember == null || currentMember.getMemberType() == null) {
             return false;
         }
-        return "STAFF".equals(currentMember.getMemberType().getCodeValue());
+        return "ADMIN".equals(currentMember.getMemberType().getCodeValue());
     }
 
+    // 학생 여부 확인
+    public boolean isStudent() {
+        var currentMember = authService.getCurrentMember();
+        if (currentMember == null || currentMember.getMemberType() == null) {
+            return false;
+        }
+        return "STUDENT".equals(currentMember.getMemberType().getCodeValue());
+    }
 
-
-   // 문의 생성
+    // 문의 생성
     public Inquiry createInquiry(Inquiry inquiry) {
         // 현재 로그인한 사용자 정보 가져오기
         Member currentMember = authService.getCurrentMember();
@@ -99,7 +101,7 @@ public class InquiryService {
         // 작성자 설정
         inquiry.setMember(currentMember);
 
-        // 기존의 AWAITING 상태 코드를 찾아서 사용
+        // 기본 상태 코드 조회
         CommonCode awaitingStatus = commonCodeRepository.findByCodeValue("AWAITING");
         if (awaitingStatus == null) {
             throw new RuntimeException("대기 상태 코드를 찾을 수 없습니다.");
@@ -109,7 +111,6 @@ public class InquiryService {
         return inquiryRepository.save(inquiry);
     }
 
-
     // 문의 완료 처리
     public void completeInquiry(Long inquiryId) {
         Inquiry inquiry = getInquiryById(inquiryId);
@@ -118,11 +119,12 @@ public class InquiryService {
             throw new IllegalStateException("작성자만 완료 처리할 수 있습니다.");
         }
 
-        if (!"IN_PROGRESS".equals(inquiry.getInquiryStatus().getCodeValue())) {
-            throw new IllegalStateException("처리중 상태의 문의사항만 완료 처리가 가능합니다.");
+        if (!"PROCESSING".equals(inquiry.getInquiryStatus().getCodeValue()) || 
+            inquiry.getResponse() == null) {
+            throw new IllegalStateException("답변이 등록되고 처리중 상태인 문의사항만 완료 처리가 가능합니다.");
         }
 
-        CommonCode completedStatus = commonCodeRepository.findByCodeValue(InquiryStatus.PROCESSED.name());
+        CommonCode completedStatus = commonCodeRepository.findByCodeValue("PROCESSED");
         if (completedStatus == null) {
              throw new RuntimeException("완료 상태 코드를 찾을 수 없습니다.");
         }
@@ -131,26 +133,43 @@ public class InquiryService {
         inquiryRepository.save(inquiry);
     }
 
-
     // 문의 삭제
     public void deleteInquiry(Long inquiryId) {
         inquiryRepository.deleteById(inquiryId);
     }
 
-//    @Override
     public Inquiry addResponse(Long inquiryId, Inquiry response) {
         if (!isStaff()) {
             throw new IllegalStateException("교직원만 답변을 등록할 수 있습니다.");
         }
 
         Inquiry existingInquiry = getInquiryById(inquiryId);
-        if (existingInquiry.getRelatedInquiry() != null) {
+        if (existingInquiry.getResponse() != null) {
             throw new IllegalStateException("이미 답변이 등록된 문의사항입니다.");
         }
 
-        response.setRelatedInquiry(existingInquiry);
+        // 답변 등록 시 상태를 '처리중'으로 변경
+        CommonCode inProgressStatus = commonCodeRepository.findByCodeValue("PROCESSING");
+        if (inProgressStatus == null) {
+            throw new RuntimeException("처리중 상태 코드를 찾을 수 없습니다.");
+        }
+
+        // 현재 로그인한 교직원 정보
+        Member currentMember = authService.getCurrentMember();
+        
+        // 답변 정보 설정
+        response.setMember(currentMember);
         response.setCreatedAt(LocalDateTime.now());
-        return inquiryRepository.save(response);
+        response.setRelatedInquiry(existingInquiry);  // 답변과 원본 문의 연결
+        
+        // 답변을 먼저 저장
+        response = inquiryRepository.save(response);
+        
+        // 원본 문의사항 상태 업데이트
+        existingInquiry.setInquiryStatus(inProgressStatus);
+        existingInquiry.setUpdatedAt(LocalDateTime.now());
+        
+        return inquiryRepository.save(existingInquiry);
     }
 }
 
