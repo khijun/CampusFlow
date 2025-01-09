@@ -35,6 +35,9 @@ public enum AcademicStatus {
     FUTURE_LEAVE,        // 휴학 예정
 
     @Code(name = "졸업 예정", description = "졸업 예정인 상태")
-    FUTURE_GRADUATED       // 졸업 예정
+    FUTURE_GRADUATED,       // 졸업 예정
+
+    @Code(name = "전과", description = "전과인 상태")
+    TRANSLATION
 }
 

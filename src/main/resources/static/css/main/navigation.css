@@ -12,7 +12,7 @@
     white-space: nowrap;
     box-sizing: border-box;
     width: 850px;
-    margin-left: 300px;  /* 사이드바 너비만큼 여백 추가 */
+    margin-left: 270px;  /* 사이드바 너비만큼 여백 추가 */
     position: fixed;     /* 위치 고정 */
 
 }

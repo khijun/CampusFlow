@@ -5,11 +5,30 @@
   <title>강의평가 결과</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    .lecture-select {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
 
 
-    .container {
-      min-height: 100%;
+    .lecture-select {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    select {
       width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1em;
+      background-color: white;
     }
 
     .question-item {
@@ -47,10 +66,17 @@
   </style>
 </head>
 <body>
-<h2>강의평가 결과</h2>
-
-<div th:if="${#lists.isEmpty(results)}">
-  <p>아직 제출된 강의평가가 없습니다.</p>
+<h2>강의 평가 결과</h2>
+<div class="lecture-select">
+  <h3>강의 선택</h3>
+  <select onchange="if(this.value) location.href='/iframe/evaluation/lec/admin/' + this.value">
+    <option value="">강의를 선택하세요</option>
+    <option th:each="lecture : ${lectures}"
+            th:selected="${lecture.ofregistrationId == selectedOfregistrationId}"
+            th:text="${lecture.lectureName + ' (' + lecture.semester + ')'}"
+            th:value="${lecture.ofregistrationId}">
+    </option>
+  </select>
 </div>
 
 <div th:if="${not #lists.isEmpty(results)}">
