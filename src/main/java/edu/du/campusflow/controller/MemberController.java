@@ -36,7 +36,7 @@ public class MemberController {
 
     @GetMapping("/test")
     public String test(){
-        return "view/iframe/member/select_member_from_api";
+        return "select_member";
     }
 
     @GetMapping("/api/members")

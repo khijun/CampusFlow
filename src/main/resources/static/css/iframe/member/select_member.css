@@ -2,9 +2,7 @@
 
 }
 #member-list-table-container{
-    overflow: scroll;
-    max-height: 400px;
-    max-width: 1300px;
+
 }
 #member-list-table{
     border-spacing: 0;
