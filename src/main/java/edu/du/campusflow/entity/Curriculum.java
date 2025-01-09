@@ -47,4 +47,18 @@ public class Curriculum {
    @ManyToOne
    @JoinColumn(name = "grade")
    private CommonCode grade;
+
+   // 주야 구분
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "day_night", referencedColumnName = "code_id")
+   private CommonCode dayNight;
+
+   // 성적 평가 (상대평가, 절대평가)
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "grading_method", referencedColumnName = "code_id")
+   private CommonCode gradingMethod;
+
+   // 사유
+   @Column(name = "reason", length = 255)
+   private String reason;
 }
