@@ -3,8 +3,8 @@ package edu.du.campusflow.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -37,7 +37,7 @@ public class Member {
     private String address;
 
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "is_active")
     private Boolean isActive;
@@ -76,9 +76,9 @@ public class Member {
     private CommonCode memberType; // CommonCode 테이블과 연관, 보통 필요해서 일단 Lazy 안달음
 
     @Column(name = "start_date")
-    private Date startDate; // 입학, 임용 날짜
+    private LocalDate startDate; // 입학, 임용 날짜
 
     @Column(name = "end_date")
-    private Date endDate; // 졸업, 퇴직 날짜
+    private LocalDate endDate; // 졸업, 퇴직 날짜
 
 }

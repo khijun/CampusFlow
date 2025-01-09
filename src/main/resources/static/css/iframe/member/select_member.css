@@ -1,0 +1,36 @@
+#member-list-container{
+
+}
+#member-list-table-container{
+    overflow: scroll;
+    max-height: 400px;
+    max-width: 1300px;
+}
+#member-list-table{
+    border-spacing: 0;
+    border-collapse: collapse;  /* 테두리가 겹치지 않도록 설정 */
+    white-space: nowrap;
+}
+
+#member-list-table th{
+    background: lightgrey;
+}
+
+#member-list-table th, td{
+    border: black solid 1px;
+    padding: 5px;
+    text-align: center;
+}
+
+.center-align{
+    text-align: center;
+}
+
+.left-align{
+    text-align: left;
+}
+
+.right-align{
+    text-align: right;
+}
+

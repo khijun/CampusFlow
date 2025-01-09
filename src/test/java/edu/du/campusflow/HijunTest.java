@@ -12,6 +12,7 @@ import edu.du.campusflow.repository.FileInfoRepository;
 import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.CategoryService;
 import edu.du.campusflow.service.CommonCodeService;
+import edu.du.campusflow.service.MemberService;
 import edu.du.campusflow.utils.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class HijunTest {
     private CategoryService categoryService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private MemberService memberService;
 
 
     @Test
@@ -128,5 +131,12 @@ public class HijunTest {
         System.out.println(FileUtils.getFileName("뚱이.jpg"));
         fileInfoRepository.findByFileTypeIn(Collections.singletonList("jpg")).forEach(System.out::println);
         System.out.println(Arrays.toString(fileInfoRepository.findAll().stream().map(FileInfo::getId).toArray()));
+    }
+
+    @Test
+    public void memberServiceTest(){
+        memberService.findAllMemberDTOs().forEach(System.out::println);
+        CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
+        memberService.findAllMemberDTOs(student).forEach(System.out::println);
     }
 }
