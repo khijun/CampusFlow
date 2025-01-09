@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <title>강의 개설 승인</title>
@@ -12,8 +13,10 @@
     max-height: 400px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: calc(100% - 60px);  /* 전체 너비에서 좌우 여백 30px씩 뺌 */
-    margin: 20px 30px;  /* 상하 20px, 좌우 30px 여백 */
+    width: calc(100% - 60px);
+    /* 전체 너비에서 좌우 여백 30px씩 뺌 */
+    margin: 20px 30px;
+    /* 상하 20px, 좌우 30px 여백 */
   }
 
   .result-wrapper {
@@ -38,196 +41,293 @@
     gap: 20px;
     padding: 10px 20px;
     border-bottom: 1px solid #ddd;
-    cursor: pointer;  /* 클릭 가능함을 표시 */
+    cursor: pointer;
+    /* 클릭 가능함을 표시 */
   }
 
   .result-row:hover {
     background-color: #f5f5f5;
   }
 </style>
+
 <body>
-<!-- 검색 섹션 -->
-<div class="search-container">
-  <div class="input-group">
-    <label for="searchDept">학과명</label>
-    <input type="text" id="searchDept" placeholder="학과명을 입력하세요">
+  <!-- 검색 섹션 -->
+  <div class="search-container">
+    <div class="input-group">
+      <label for="searchDept">학과명</label>
+      <input type="text" id="searchDept" placeholder="학과명을 입력하세요">
+    </div>
+    <div class="input-group">
+      <label for="searchProf">교수명</label>
+      <input type="text" id="searchProf" placeholder="교수명을 입력하세요">
+    </div>
+    <div class="input-group">
+      <label for="Semester">학기</label>
+      <select id="Semester">
+        <option value="FIRST_SEMESTER">1학기</option>
+        <option value="SECOND_SEMESTER">2학기</option>
+      </select>
+    </div>
+    <button type="button">검색</button>
   </div>
-  <div class="input-group">
-    <label for="searchProf">교수명</label>
-    <input type="text" id="searchProf" placeholder="교수명을 입력하세요">
-  </div>
-  <button type="button">검색</button>
-</div>
 
-<!-- 검색 결과 섹션 -->
-<div class="result-container">
-  <div class="result-header">
-    <div>강의명</div>
-    <div>교수명</div>
-    <div>인원수</div>
-    <div>학과</div>
-    <div>상태</div>
+  <!-- 검색 결과 섹션 -->
+  <div class="result-container">
+    <div class="result-header">
+      <div>강의명</div>
+      <div>교수명</div>
+      <div>인원수</div>
+      <div>학과</div>
+      <div>학기</div>
+    </div>
+    <div class="result-wrapper">
+      <!-- 검색 결과 항목들이 여기에 들어갑니다 -->
+    </div>
   </div>
-  <div class="result-wrapper">
-    <!-- 검색 결과 항목들이 여기에 들어갑니다 -->
-  </div>
-</div>
 
-<!-- 강의 정보 입력 섹션 -->
-<div class="search-container" style="margin-top: 20px;">
-  <!-- 기존 필드들 유지 -->
-  <div class="input-group">
-    <label for="lectureName">강의명</label>
-    <input type="text" id="lectureName" readonly>
-  </div>
-  <div class="input-group">
-    <label for="professorName">교수명</label>
-    <input type="text" id="professorName" readonly>
-  </div>
-  <div class="input-group">
-    <label for="maxStudents">인원수</label>
-    <input type="text" id="maxStudents" readonly>
-  </div>
-  <!-- 건물 선택 추가 -->
-  <div class="input-group">
-    <label for="building">건물</label>
-    <select id="building">
-      <option value="">건물 선택</option>
-      <option value="ONE">1호관</option>
-      <option value="TWO">2호관</option>
-      <option value="THREE">3호관</option>
-      <option value="FOUR">4호관</option>
-      <option value="FIVE">5호관</option>
-    </select>
-  </div>
-  <!-- 강의실 선택 추가 -->
-  <div class="input-group">
-    <label for="classroom">강의실</label>
-    <select id="classroom">
-      <option value="">강의실 선택</option>
-    </select>
-  </div>
-  <div class="input-group">
-    <label for="lectureWeek">강의 주차</label>
-    <select id="lectureWeek">
-      <option value="15">15주차</option>
-      <option value="16">16주차</option>
-    </select>
-  </div>
-  <div class="input-group">
-    <label for="lectureDays">강의 요일</label>
-    <select id="lectureDays">
-      <option value="MONDAY">월요일</option>
-      <option value="TUESDAY">화요일</option>
-      <option value="WEDNESDAY">수요일</option>
-      <option value="THURSDAY">목요일</option>
-      <option value="FRIDAY">금요일</option>
-    </select>
-  </div>
-  <div class="input-group">
-    <label for="startTime">시작 교시</label>
-    <select id="startTime">
-      <option value="PERIOD_FIRST">1교시</option>
-      <option value="PERIOD_SECOND">2교시</option>
-      <option value="PERIOD_THIRD">3교시</option>
-      <option value="PERIOD_FOURTH">4교시</option>
-      <option value="PERIOD_FIFTH">5교시</option>
-      <option value="PERIOD_SIXTH">6교시</option>
-      <option value="PERIOD_SEVENTH">7교시</option>
-      <option value="PERIOD_EIGHTH">8교시</option>
-      <option value="PERIOD_NINTH">9교시</option>
-    </select>
-  </div>
-  <div class="input-group">
-    <label for="endTime">종료 교시</label>
-    <select id="endTime">
-      <option value="PERIOD_FIRST">1교시</option>
-      <option value="PERIOD_SECOND">2교시</option>
-      <option value="PERIOD_THIRD">3교시</option>
-      <option value="PERIOD_FOURTH">4교시</option>
-      <option value="PERIOD_FIFTH">5교시</option>
-      <option value="PERIOD_SIXTH">6교시</option>
-      <option value="PERIOD_SEVENTH">7교시</option>
-      <option value="PERIOD_EIGHTH">8교시</option>
-      <option value="PERIOD_NINTH">9교시</option>
-    </select>
-  </div>
-  <div style="width: 100%; text-align: right; margin-top: 20px;">
-    <button type="button" class="btn btn-primary">승인</button>
-  </div>
-</div>
+  <!-- 강의 정보 입력 섹션 -->
+  <div class="search-container" style="margin-top: 20px;">
+    <!-- 기존 필드들 유지 -->
+    <div class="input-group">
+      <label for="lectureName">강의명</label>
+      <input type="text" id="lectureName" readonly>
+    </div>
+    <div class="input-group">
+      <label for="professorName">교수명</label>
+      <input type="text" id="professorName" readonly>
+    </div>
+    <div class="input-group">
+      <label for="maxStudents">인원수</label>
+      <input type="text" id="maxStudents" readonly>
+    </div>
+    <!-- 건물 선택 추가 -->
+    <div class="input-group">
+      <label for="building">건물</label>
+      <select id="building">
+        <option value="">건물 선택</option>
+        <option value="ONE">1호관</option>
+        <option value="TWO">2호관</option>
+        <option value="THREE">3호관</option>
+        <option value="FOUR">4호관</option>
+        <option value="FIVE">5호관</option>
+      </select>
+    </div>
+    <!-- 강의실 선택 추가 -->
+    <div class="input-group">
+      <label for="facilityName">강의실</label>
+      <select id="facilityName">
+        <option value="">강의실 선택</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="lectureWeek">강의 주차</label>
+      <select id="lectureWeek">
+        <option value="15">15주차</option>
+        <option value="16">16주차</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="lectureDays">강의 요일</label>
+      <select id="lectureDays">
+        <option value="MONDAY">월요일</option>
+        <option value="TUESDAY">화요일</option>
+        <option value="WEDNESDAY">수요일</option>
+        <option value="THURSDAY">목요일</option>
+        <option value="FRIDAY">금요일</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="startTime">시작 교시</label>
+      <select id="startTime">
+        <option value="PERIOD_FIRST">1교시</option>
+        <option value="PERIOD_SECOND">2교시</option>
+        <option value="PERIOD_THIRD">3교시</option>
+        <option value="PERIOD_FOURTH">4교시</option>
+        <option value="PERIOD_FIFTH">5교시</option>
+        <option value="PERIOD_SIXTH">6교시</option>
+        <option value="PERIOD_SEVENTH">7교시</option>
+        <option value="PERIOD_EIGHTH">8교시</option>
+        <option value="PERIOD_NINTH">9교시</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="endTime">종료 교시</label>
+      <select id="endTime">
+        <option value="PERIOD_FIRST">1교시</option>
+        <option value="PERIOD_SECOND">2교시</option>
+        <option value="PERIOD_THIRD">3교시</option>
+        <option value="PERIOD_FOURTH">4교시</option>
+        <option value="PERIOD_FIFTH">5교시</option>
+        <option value="PERIOD_SIXTH">6교시</option>
+        <option value="PERIOD_SEVENTH">7교시</option>
+        <option value="PERIOD_EIGHTH">8교시</option>
+        <option value="PERIOD_NINTH">9교시</option>
+      </select>
+    </div>
 
-<script>
-  // 기존 스크립트 유지
-  function selectLecture(element) {
-    const lectureName = element.children[0].textContent;
-    const professorName = element.children[1].textContent;
-    const maxStudents = element.children[2].textContent;
+    <input type="hidden" id="lectureId" name="lectureId">
 
-    document.getElementById('lectureName').value = lectureName;
-    document.getElementById('professorName').value = professorName;
-    document.getElementById('maxStudents').value = maxStudents;
+    <div style="width: 100%; text-align: right; margin-top: 20px;">
+      <button type="button" class="btn btn-primary">승인</button>
+    </div>
+  </div>
 
-    const rows = document.getElementsByClassName('result-row');
-    for (let row of rows) {
-      row.style.backgroundColor = '';
+  <script>
+
+    //현재 월을 기준으로 학기 선택
+    document.addEventListener('DOMContentLoaded', function () {
+      const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+      const semesterSelect = document.getElementById('Semester');
+
+      if (currentMonth >= 8 || currentMonth <= 1) {
+        semesterSelect.value = 'SECOND_SEMESTER';
+      }
+    });
+
+
+    // 기존 스크립트 유지
+    function selectLecture(element) {
+      const lectureName = element.children[0].textContent;
+      const professorName = element.children[1].textContent;
+      const maxStudents = element.children[2].textContent;
+
+      document.getElementById('lectureName').value = lectureName;
+      document.getElementById('professorName').value = professorName;
+      document.getElementById('maxStudents').value = maxStudents;
+
+      const rows = document.getElementsByClassName('result-row');
+      for (let row of rows) {
+        row.style.backgroundColor = '';
+      }
+      element.style.backgroundColor = '#f1f1f1';
     }
-    element.style.backgroundColor = '#f1f1f1';
-  }
 
-  // 검색 버튼 클릭 이벤트 처리
-  document.querySelector('.search-container button').addEventListener('click', function() {
-    const deptName = document.getElementById('searchDept').value;
-    const professorName = document.getElementById('searchProf').value;
+    // 검색 버튼 클릭 이벤트 처리
+    document.querySelector('.search-container button').addEventListener('click', function () {
+      const semesterCode = document.getElementById('Semester').value;
+      const deptName = document.getElementById('searchDept').value;
+      const professorName = document.getElementById('searchProf').value;
 
-    // 검색 API 호출
-    fetch(`/api/lecture/search?deptName=${encodeURIComponent(deptName)}&professorName=${encodeURIComponent(professorName)}`)
-            .then(response => response.json())
-            .then(lectures => {
-              if (lectures.length === 0) {
-                alert('검색 결과가 없습니다.');
-                return;
-              }
+      // 검색 API 호출
+      fetch(`/api/lecture/search?semesterCode=${semesterCode}&deptName=${encodeURIComponent(deptName)}&professorName=${encodeURIComponent(professorName)}`)
+        .then(response => response.json())
+        .then(lectures => {
+          const resultWrapper = document.querySelector('.result-wrapper'); // 검색 결과 영역
+          resultWrapper.innerHTML = ''; // 기존 결과 초기화
 
-              const resultWrapper = document.querySelector('.result-wrapper');  // wrapper로 변경
-              resultWrapper.innerHTML = '';  // wrapper 내용만 삭제
+          if (lectures.length === 0) {
+            alert('검색 결과가 없습니다.');
+          } else {
+            lectures.forEach(lecture => {
+              const row = document.createElement('div');
+              row.className = 'result-row';
+              row.style.cursor = 'pointer';
 
-              // 검색 결과 표시
-              lectures.forEach(lecture => {
-                const row = document.createElement('div');
-                row.className = 'result-row';
-                row.onclick = function() { selectLecture(this); };
-                row.innerHTML = `
-                    <div>${lecture.lectureName}</div>
-                    <div>${lecture.professorName}</div>
-                    <div>${lecture.maxStudents}</div>
-                    <div>${lecture.deptName}</div>
-                    <div>${lecture.lectureStatus}</div>
-                `;
-                resultWrapper.appendChild(row);  // wrapper에 추가
-              });
-            });
-  });
+              // 데이터 바인딩
+              row.dataset.lectureId = lecture.lectureId;
+              row.dataset.lectureName = lecture.lectureName;
+              row.dataset.professorName = lecture.professorName;
+              row.dataset.maxStudents = lecture.maxStudents;
 
-  document.getElementById('building').addEventListener('change', function() {
-    const buildingCode = this.value;
-    const classroomSelect = document.getElementById('classroom');
-    classroomSelect.innerHTML = '<option value="">강의실 선택</option>';
+              // 검색 결과 항목 구성
+              row.innerHTML = `
+          <div>${lecture.lectureName}</div>
+          <div>${lecture.professorName}</div>
+          <div>${lecture.maxStudents}</div>
+          <div>${lecture.deptName}</div>
+          <div>${lecture.semesterName}</div>
+        `;
 
-    if (buildingCode) {
-      fetch(`/api/classrooms/${buildingCode}`)
-              .then(response => response.json())
-              .then(classrooms => {
-                classrooms.forEach(classroom => {
-                  const option = document.createElement('option');
-                  option.value = classroom.facilityId;
-                  option.textContent = classroom.facilityName;
-                  classroomSelect.appendChild(option);
+              // 항목 클릭 이벤트
+              row.addEventListener('click', function () {
+                document.getElementById('lectureName').value = this.dataset.lectureName;
+                document.getElementById('professorName').value = this.dataset.professorName;
+                document.getElementById('maxStudents').value = this.dataset.maxStudents;
+                document.getElementById('lectureId').value = this.dataset.lectureId;
+
+                // 선택된 항목 강조 표시
+                document.querySelectorAll('.result-row').forEach(item => {
+                  item.classList.remove('selected');
                 });
+                this.classList.add('selected');
               });
-    }
-  });
 
-</script>
+              resultWrapper.appendChild(row); // 결과 추가
+            });
+          }
+        })
+        .catch(error => {
+          alert('검색 중 오류가 발생했습니다.');
+          console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('building').addEventListener('change', function () {
+      const buildingCode = this.value;
+      const classroomSelect = document.getElementById('facilityName');
+      classroomSelect.innerHTML = '<option value="">강의실 선택</option>';
+
+      if (buildingCode) {
+        fetch(`/api/facility/${buildingCode}`)
+          .then(response => response.json())
+          .then(classrooms => {
+            classrooms.forEach(classroom => {
+              const option = document.createElement('option');
+              option.value = classroom.facilityId;
+              option.textContent = classroom.facilityName;
+              classroomSelect.appendChild(option);
+            });
+          });
+      }
+    });
+
+    document.getElementById('facilityName').addEventListener('change', function () {
+      console.log('Selected Facility ID:', this.value);
+    });
+
+    document.querySelector('.btn-primary').addEventListener('click', function () {
+      const lectureId = document.getElementById('lectureId').value;
+      if (!lectureId) {
+        alert('강의를 선택해주세요.');
+        return;
+      }
+
+      // LectureDTO 데이터 생성
+      const approvalData = {
+        lectureId: lectureId,
+        week: document.getElementById('lectureWeek').value,
+        lectureDays: document.getElementById('lectureDays').value,
+        startTime: document.getElementById('startTime').value,
+        endTime: document.getElementById('endTime').value,
+        facilityId: document.getElementById('facilityName').value
+      }
+
+      if (!approvalData.facilityId) {
+        alert('강의실을 선택해주세요.');
+        return;
+      }
+
+      // 서버에 전송
+      fetch(`/api/lecture/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(approvalData)
+      })
+        .then(response => response.text())
+        .then(message => {
+          alert(message);
+          // 승인 성공 시 검색 결과 갱신
+          document.querySelector('.search-container button').click()
+        })
+        .catch(error => {
+          alert('승인 처리 중 오류가 발생했습니다.');
+          console.error('Error:', error);
+        });
+    });
+
+  </script>
 </body>
+
 </html>

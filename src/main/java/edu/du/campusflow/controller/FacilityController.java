@@ -21,7 +21,7 @@ public class FacilityController {
     @Autowired
     CommonCodeRepository commonCodeRepository;
 
-    @GetMapping("/api/classrooms/{buildingCode}")
+    @GetMapping("/api/facility/{buildingCode}")
     @ResponseBody
     public List<Facility> getClassrooms(@PathVariable String buildingCode) {
         CommonCode building = commonCodeRepository.findByCodeValue(buildingCode);

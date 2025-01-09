@@ -11,12 +11,4 @@ import java.util.List;
 @Service
 public class SubjectRatioService {
 
-    @Autowired
-    SubjectRatioRepository subjectRatioRepository;
-    @Autowired
-    SubjectRepository subjectRepository;
-
-    public List<SubjectRatio> getSubjectRatios() {
-        return subjectRatioRepository.findAll();
-    }
 }

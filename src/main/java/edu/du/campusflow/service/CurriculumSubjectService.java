@@ -16,11 +16,18 @@ public class CurriculumSubjectService {
     CurriculumSubjectRepository curriculumSubjectRepository;
 
     //강좌 개설에서 사용할 교육과정 교과목 검색
-    public List<CurriculumSubjectDTO> searchCurriculumSubjectBySubjectName(String subjectName, String curriculumName) {
+    public List<CurriculumSubjectDTO> searchCurriculumSubjectBySubjectName(String subjectName, String curriculumName, String semesterCode) {
         List<CurriculumSubject> curriculumSubjects = curriculumSubjectRepository.findAll((root, query, criteriaBuilder) -> {
             // 두 조건이 모두 있는 경우
             if (subjectName != null && !subjectName.isEmpty()
                     && curriculumName != null && !curriculumName.isEmpty()) {
+                if (semesterCode != null && !semesterCode.isEmpty()) {
+                    return criteriaBuilder.and(
+                            criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%"),
+                            criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%"),
+                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode)
+                    );
+                }
                 return criteriaBuilder.and(
                         criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%"),
                         criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%")
@@ -28,11 +35,27 @@ public class CurriculumSubjectService {
             }
             //과목명만으로 검색했을 경우
             if (subjectName != null && !subjectName.isEmpty()) {
+                if (semesterCode != null && !semesterCode.isEmpty()) {
+                    return criteriaBuilder.and(
+                            criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%"),
+                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode)
+                    );
+                }
                 return criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%");
             }
             //교육과정명만으로 검색했을경우
             if (curriculumName != null && !curriculumName.isEmpty()) {
+                if (semesterCode != null && !semesterCode.isEmpty()) {
+                    return criteriaBuilder.and(
+                            criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%"),
+                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode)
+                    );
+                }
                 return criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%");
+            }
+            //학기만으로 검색했을 경우
+            if (semesterCode != null && !semesterCode.isEmpty()) {
+                return criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode);
             }
             return criteriaBuilder.conjunction(); // 기본 조건
         });

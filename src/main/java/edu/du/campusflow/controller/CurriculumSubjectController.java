@@ -21,8 +21,9 @@ public class CurriculumSubjectController {
     @GetMapping("/api/curriculum-subjects/search")
     public ResponseEntity<List<CurriculumSubjectDTO>> searchCurriculumSubjects(
             @RequestParam(required = false) String subjectName,
-            @RequestParam(required = false) String curriculumName) {
-        List<CurriculumSubjectDTO> subjects = curriculumSubjectService.searchCurriculumSubjectBySubjectName(subjectName, curriculumName);
+            @RequestParam(required = false) String curriculumName,
+            @RequestParam(required = false) String semesterCode) {
+        List<CurriculumSubjectDTO> subjects = curriculumSubjectService.searchCurriculumSubjectBySubjectName(subjectName, curriculumName, semesterCode);
         return ResponseEntity.ok(subjects);
     }
 

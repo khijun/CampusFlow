@@ -31,7 +31,7 @@ public class LectureController {
     public ResponseEntity<String> createLecture(@RequestBody LectureDTO lectureDTO) {
         try {
             lectureService.createLecture(lectureDTO);
-            return ResponseEntity.ok("강의가 성공적으로 생성되었습니다.");
+            return ResponseEntity.ok("강의 개설 신청이 성공적으로 완료되었습니다.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -45,10 +45,43 @@ public class LectureController {
     @GetMapping("/api/lecture/search")  // lectures/search -> lecture/search
     @ResponseBody
     public List<LectureDTO> searchLectures(
+            @RequestParam(required = false) String semesterCode,
             @RequestParam(required = false) String deptName,
             @RequestParam(required = false) String professorName) {
-        return lectureService.searchLectures(deptName, professorName);
+        return lectureService.searchLectures(semesterCode, deptName, professorName);
     }
 
+    @PostMapping("/api/lecture/approve")
+    @ResponseBody
+    public ResponseEntity<String> approveLecture(@RequestBody LectureDTO lectureDTO) {
+        try {
+            lectureService.approveLecture(lectureDTO);
+            return ResponseEntity.ok("강의가 승인되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/iframe/lecture/createList")
+    public String lectureCreateList(Model model) {
+        model.addAttribute("member", authService.getCurrentMember());
+        return "/view/iframe/lecture/professor/lectureCreate_List";
+    }
+
+    @GetMapping("/api/lecture/approvedList")
+    @ResponseBody
+    public List<LectureDTO> getApprovedLectures(
+            @RequestParam(required = false) String semesterCode,
+            @RequestParam(required = false) String professorId) {
+        return lectureService.getApprovedLectures(semesterCode, professorId);
+    }
+
+    @GetMapping("/api/lecture/pendingList")
+    @ResponseBody
+    public List<LectureDTO> getPendingLectures(
+            @RequestParam(required = false) String semesterCode,
+            @RequestParam(required = false) String professorId) {
+        return lectureService.getPendingLectures(semesterCode, professorId);
+    }
 
 }
