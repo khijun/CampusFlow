@@ -2,20 +2,15 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.TuitionDTO;
 import edu.du.campusflow.entity.Member;
-import edu.du.campusflow.entity.TuitionTarget;
 import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.TuitionService;
 import edu.du.campusflow.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/iframe/tuition")
@@ -37,13 +32,13 @@ public class TuitionController {
 
     }
 
-    @GetMapping("/student/tuitionTarget2")
+    @GetMapping("/student/studentTuition")
     public String showStudentTuitionTargetPage(Model model) {
         Member member = authService.getCurrentMember();
 
         TuitionDTO tuitionDTO = tuitionService.getTuitionInfo(member);
         model.addAttribute("tuitionTarget", tuitionDTO);
-        return "view/iframe/tuition/student/tuitionTarget2";
+        return "view/iframe/tuition/student/studentTuition";
     }
 
     /// 납부 상태 변경 API
