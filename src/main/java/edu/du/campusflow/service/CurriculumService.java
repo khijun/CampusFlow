@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,6 +22,7 @@ public class CurriculumService {
    private final CurriculumSubjectRepository curriculumSubjectRepository;
    private final SubjectRepository subjectRepository;
 
+   // 검색 메서드
    public List<Curriculum> searchCurriculum(String year, String grade, String deptName, String curriculumName, String category) {
       Specification<Curriculum> spec = Specification.where(null);
 
@@ -43,29 +45,35 @@ public class CurriculumService {
       return curriculumRepository.findAll(spec);
    }
 
+   // 교육과정 생성 메서드
    @Transactional
    public void createCurriculum(Curriculum curriculum, Long subjectId, Long prereqSubjectId) {
+      // 필수 필드 설정
+      curriculum.setCreatedAt(LocalDateTime.now());
+      curriculum.setUpdatedAt(LocalDateTime.now());
+
       // 교육과정 저장
       Curriculum savedCurriculum = curriculumRepository.save(curriculum);
 
-      // 과목 추가
+      // 과목 처리
       if (subjectId != null) {
-         Subject subject = subjectRepository.findById(subjectId)
-             .orElseThrow(() -> new IllegalArgumentException("Invalid subject ID: " + subjectId));
-
          CurriculumSubject curriculumSubject = new CurriculumSubject();
          curriculumSubject.setCurriculum(savedCurriculum);
+
+         // 과목 설정
+         Subject subject = subjectRepository.findById(subjectId)
+             .orElseThrow(() -> new IllegalArgumentException("Invalid subject ID: " + subjectId));
          curriculumSubject.setSubject(subject);
 
-         // 선수강 과목 추가 (옵션)
+         // 선수강 과목 설정 (선택 사항)
          if (prereqSubjectId != null) {
             Subject prereqSubject = subjectRepository.findById(prereqSubjectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid prereq subject ID: " + prereqSubjectId));
             curriculumSubject.setPrereqSubject(prereqSubject);
          }
 
+         // CurriculumSubject 저장
          curriculumSubjectRepository.save(curriculumSubject);
       }
    }
 }
-

@@ -64,11 +64,11 @@
          <div>교육과정 상태</div>
       </div>
       <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row">
-         <div th:text="${curriculum.curriculumYear}"></div>
-         <div th:text="${curriculum.grade.codeName}"></div>
-         <div th:text="${curriculum.dept.deptName}"></div>
-         <div th:text="${curriculum.curriculumName}"></div>
-         <div th:text="${curriculum.curriculumStatus.codeName}"></div>
+         <div th:text="${curriculum.curriculumYear ?: 'N/A'}"></div>
+         <div th:text="${curriculum.grade?.codeName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.dept?.deptName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.curriculumName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.curriculumStatus?.codeName ?: 'N/A'}"></div>
       </div>
       <div th:each="curriculum : ${results}"></div>
    </div>
@@ -117,7 +117,8 @@
       </div>
       <div class="input-group">
          <label for="grade-addform">편성학년</label>
-         <select id="grade-addform" name="grade">
+         <select id="grade-addform" name="grade" required>
+            <option value="" disabled selected>학년을 선택하세요</option>
             <option value="GRADE_1">1학년</option>
             <option value="GRADE_2">2학년</option>
             <option value="GRADE_3">3학년</option>
@@ -130,15 +131,21 @@
       </div>
       <div class="input-group">
          <label for="curriculumStatus-addform">교육과정 상태</label>
-         <select id="curriculumStatus-addform" name="curriculumStatus">
+         <select id="curriculumStatus-addform" name="curriculumStatus" required>
+            <option value="" disabled selected>상태를 선택하세요</option>
             <option value="active">운영중(활성화)</option>
             <option value="inactive">운영중단(비활성화)</option>
             <option value="deprecated">폐지(사용중단)</option>
          </select>
       </div>
       <div class="input-group">
+         <label for="gradeCapacity-addform">정원</label>
+         <input type="number" id="gradeCapacity-addform" name="gradeCapacity" placeholder="예: 30" min="1" required>
+      </div>
+      <div class="input-group">
          <label for="semester-addform">학기</label>
-         <select id="semester-addform" name="semester">
+         <select id="semester-addform" name="semester" required>
+            <option value="" disabled selected>학기를 선택하세요</option>
             <option value="FIRST_SEMESTER">1학기</option>
             <option value="SECOND_SEMESTER">2학기</option>
             <option value="SUMMER">여름학기</option>
@@ -147,7 +154,8 @@
       </div>
       <div class="input-group">
          <label for="subjectType-addform">이수구분</label>
-         <select id="subjectType-addform" name="subjectType">
+         <select id="subjectType-addform" name="subjectType" required>
+            <option value="" disabled selected>이수구분을 선택하세요</option>
             <option value="MAJOR_REQUIRED">전공필수</option>
             <option value="MAJOR_ELECTIVE">전공선택</option>
             <option value="GENERAL_REQUIRED">교양 필수</option>
@@ -157,14 +165,16 @@
       </div>
       <div class="input-group">
          <label for="studyTime-addform">주야구분</label>
-         <select id="studyTime-addform" name="studyTime">
+         <select id="studyTime-addform" name="studyTime" required>
+            <option value="" disabled selected>주야구분을 선택하세요</option>
             <option value="day">주간</option>
             <option value="night">야간</option>
          </select>
       </div>
       <div class="input-group">
          <label for="evaluationMethod-addform">성적평가방법</label>
-         <select id="evaluationMethod-addform" name="evaluationMethod">
+         <select id="evaluationMethod-addform" name="evaluationMethod" required>
+            <option value="" disabled selected>평가방법을 선택하세요</option>
             <option value="relative">상대평가</option>
             <option value="absolute">절대평가</option>
          </select>
