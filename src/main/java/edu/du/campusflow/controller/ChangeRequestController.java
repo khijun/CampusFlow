@@ -48,6 +48,14 @@ public class ChangeRequestController {
         return "view/iframe/academic/change-request-form"; // 휴학/복학 신청 페이지
     }
 
+    // 자퇴 신청 폼
+    @GetMapping("/iframe/academic/change-request-form-drop")
+    public String changeRequestForm2(Model model) {
+        model.addAttribute("changeRequestDto", new ChangeRequestDTO());
+        model.addAttribute("authService", authService);
+        return "view/iframe/academic/change-request-form-drop"; // 휴학/복학 신청 페이지
+    }
+
     // 휴학/복학 신청 처리
     @PostMapping("/iframe/academic/process-change-request")
     public String processChangeRequest(@ModelAttribute ChangeRequestDTO changeRequestDto) {
