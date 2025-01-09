@@ -1,11 +1,9 @@
 package edu.du.campusflow.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,9 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ChangeHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "history_id")
     private Long id;
 
     @ManyToOne
@@ -31,7 +31,10 @@ public class ChangeHistory {
     @JoinColumn(name = "after_code",referencedColumnName = "code_id")
     private CommonCode afterCode;            // 변경 후 코드
 
-    private LocalDateTime approvalDate;        //승인 일자
+    @Column(name = "approval_date")
+    private LocalDate approvalDate;        //승인 일자
 
-    private int grade;         //학년
+    @ManyToOne
+    @JoinColumn(name = "grade")
+    private CommonCode grade;         //학년
 }
