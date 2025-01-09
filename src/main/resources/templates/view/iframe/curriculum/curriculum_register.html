@@ -7,8 +7,6 @@
    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-<!--   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">-->
-<!--   <link th:href="@{/css/iframe/curriculum/add-container.css}" rel="stylesheet">-->
 </head>
 <body>
 <div class="container">
@@ -80,15 +78,42 @@
    <form class="add-form" th:action="@{/iframe/curriculum/register}" method="post">
       <div class="input-group">
          <label for="deptName-addform">학과 이름</label>
-         <input type="text" id="deptName-addform" name="deptName" disabled>
+         <select id="deptName-addform" name="deptId" required>
+            <option value="" disabled selected>학과를 선택하세요</option>
+            <th:block th:each="dept : ${departments}">
+               <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+            </th:block>
+         </select>
       </div>
       <div class="input-group">
-         <label for="subjectName-addform">과목명</label>
-         <input type="text" id="subjectName-addform" name="subjectName">
+         <label for="year">학년도</label>
+         <select id="year-curriculum" name="year">
+            <option value="">전체</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+         </select>
       </div>
       <div class="input-group">
-         <label for="curriculumYear-addform">학년도</label>
-         <input type="number" id="curriculumYear-addform" name="curriculumYear" placeholder="예: 2025">
+         <label for="subjectName-search">과목 검색</label>
+         <input type="text" id="subjectName-search" placeholder="과목명을 입력하세요" oninput="searchSubjects('subjectName-search', 'subjectName-addform')">
+      </div>
+      <div class="input-group">
+         <label for="subjectName-addform">과목 선택</label>
+         <select id="subjectName-addform" name="subjectId" required>
+            <option value="" disabled selected>과목 리스트</option>
+         </select>
+      </div>
+
+      <div class="input-group">
+         <label for="prereqSubject-search">선수강 과목 검색</label>
+         <input type="text" id="prereqSubject-search" placeholder="선수강 과목명을 입력하세요" oninput="searchSubjects('prereqSubject-search', 'prereqSubject-addform', selectedSubjectId)">
+      </div>
+      <div class="input-group">
+         <label for="prereqSubject-addform">선수강 과목 선택</label>
+         <select id="prereqSubject-addform" name="prereqSubjectId" required>
+            <option value="" disabled selected>선수강 과목 리스트</option>
+         </select>
       </div>
       <div class="input-group">
          <label for="grade-addform">편성학년</label>
@@ -114,10 +139,10 @@
       <div class="input-group">
          <label for="semester-addform">학기</label>
          <select id="semester-addform" name="semester">
-            <option value="FIRST_SEMESTER" >1학기</option>
-            <option value="SECOND_SEMESTER" >2학기</option>
-            <option value="SUMMER" >여름학기</option>
-            <option value="WINTER" >겨울학기</option>
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+            <option value="SUMMER">여름학기</option>
+            <option value="WINTER">겨울학기</option>
          </select>
       </div>
       <div class="input-group">
@@ -154,6 +179,7 @@
       </div>
    </form>
 </div>
+<script src="/js/curriculum/searchSubject.js"></script>
 <script src="/js/curriculum/toggleAddContainer.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 </body>
 </html>
