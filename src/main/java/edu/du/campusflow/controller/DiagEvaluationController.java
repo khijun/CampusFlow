@@ -2,9 +2,7 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.DiagQuestionDTO;
 import edu.du.campusflow.entity.Dept;
-import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.DeptRepository;
-import edu.du.campusflow.repository.DiagItemRepository;
 import edu.du.campusflow.service.DiagQuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +23,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DiagEvaluationController {
     private final DiagQuestionService diagQuestionService;
-    private final CommonCodeRepository commonCodeRepository;
-    private final DiagItemRepository diagItemRepository;
     private final DeptRepository deptRepository;
 
     @GetMapping("/professor")
@@ -64,32 +60,53 @@ public class DiagEvaluationController {
             @RequestParam(required = false) String studentName,
             Model model
     ) {
-        log.info("학과 정보 조회 시작");
+        log.info("관리자용 진단평가 목록 페이지 요청 - 학년: {}, 학과: {}, 강의명: {}, 학생명: {}",
+                grade, department, lectureName, studentName);
+
         List<Dept> departments = deptRepository.findAll();
-        model.addAttribute("departments", departments);
-        model.addAttribute("showResults", false);  // 초기 상태는 false
-        model.addAttribute("selectedDepartment", department);
-        model.addAttribute("selectedGrade", grade);
-        model.addAttribute("selectedLectureName", lectureName);
-        model.addAttribute("selectedStudentName", studentName);
+        setBaseModelAttributes(model, departments, grade, department, lectureName, studentName);
 
-        if (department != null || !StringUtils.isEmpty(lectureName) || !StringUtils.isEmpty(studentName)) {
+        if (hasSearchCriteria(grade, department, lectureName, studentName)) {
             try {
-                Long departmentId = department != null && !department.isEmpty()
-                        ? Long.parseLong(department)
-                        : null;
-
+                Long departmentId = parseDepartmentId(department);
                 List<DiagQuestionDTO> results = diagQuestionService
-                        .getDiagnosticResultsBySearchCriteria(departmentId, lectureName, studentName);
+                        .getDiagnosticResultsBySearchCriteria(
+                                departmentId,
+                                grade,
+                                lectureName,
+                                studentName
+                        );
+
                 model.addAttribute("results", results);
-                model.addAttribute("showResults", true);  // 검색 결과가 있을 때 true
+                model.addAttribute("showResults", !results.isEmpty());
             } catch (NumberFormatException e) {
-                log.error("ID 변환 중 오류 발생: {}", e.getMessage());
-                model.addAttribute("error", "잘못된 입력값입니다.");
-                model.addAttribute("showResults", false);  // 에러 발생 시 false
+                log.error("학과 ID 변환 중 오류 발생: {}", e.getMessage());
+                model.addAttribute("error", "잘못된 학과 정보입니다.");
+                model.addAttribute("showResults", false);
             }
         }
 
         return "view/iframe/evaluation/diag/admin/diagQuestion";
+    }
+
+    private void setBaseModelAttributes(Model model, List<Dept> departments,
+                                        String grade, String department,
+                                        String lectureName, String studentName) {
+        model.addAttribute("departments", departments);
+        model.addAttribute("showResults", false);
+        model.addAttribute("selectedGrade", grade);
+        model.addAttribute("selectedDepartment", department);
+        model.addAttribute("selectedLectureName", lectureName);
+        model.addAttribute("selectedStudentName", studentName);
+    }
+
+    private boolean hasSearchCriteria(String grade, String department,
+                                      String lectureName, String studentName) {
+        return grade != null || department != null ||
+                !StringUtils.isEmpty(lectureName) || !StringUtils.isEmpty(studentName);
+    }
+
+    private Long parseDepartmentId(String department) {
+        return department != null && !department.isEmpty() ? Long.parseLong(department) : null;
     }
 }

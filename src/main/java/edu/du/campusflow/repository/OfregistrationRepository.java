@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface OfregistrationRepository extends JpaRepository<Ofregistration, Long> {
+
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.member.memberId = :professorId")
     List<Ofregistration> findByLectureId_Member_MemberId(@Param("professorId") Long professorId);
 
@@ -20,11 +21,14 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     @Query("SELECT DISTINCT o FROM Ofregistration o " +
             "JOIN FETCH o.lectureId l " +
             "JOIN FETCH o.member m " +
+            "JOIN m.grade g " +  // grade와의 조인 추가
             "WHERE (:departmentId IS NULL OR m.dept.deptId = :departmentId) " +
+            "AND (:grade IS NULL OR g.codeValue = :grade) " +  // grade 조건 수정
             "AND (:lectureName IS NULL OR LOWER(l.lectureName) LIKE LOWER(CONCAT('%', :lectureName, '%'))) " +
             "AND (:studentName IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :studentName, '%')))")
     List<Ofregistration> findBySearchCriteria(
             @Param("departmentId") Long departmentId,
+            @Param("grade") String grade,
             @Param("lectureName") String lectureName,
             @Param("studentName") String studentName
     );
