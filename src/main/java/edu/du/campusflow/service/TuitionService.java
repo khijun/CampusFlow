@@ -53,26 +53,20 @@ public class TuitionService {
 
     @Transactional
     public TuitionDTO getTuitionInfo(Member student) {
-        Tuition tuition = tuitionRepository.findByDeptId(student.getDept());
-        if (tuition == null) {
-            throw new RuntimeException("등록금 정보를 찾을 수 없습니다.");
+        TuitionTarget tuitionTarget = tuitionTargetRepository.findByMember(student);
+        if (tuitionTarget == null) {
+            throw new RuntimeException("해당 학생의 등록금 정보를 찾을 수 없습니다.");
         }
 
-        TuitionTarget tuitionTarget = tuitionTargetRepository.findByMember(student);
-
-        Integer paidAmount = tuitionTarget != null ? tuitionTarget.getPaidAmount() : 0;
-        LocalDateTime paidDate = tuitionTarget != null ? tuitionTarget.getPaidDate() : null;
-        boolean paymentStatus = tuitionTarget != null && tuitionTarget.isPaymentStatus();
-
         return TuitionDTO.builder()
-                .targetId(tuition.getTuitionId())
-                .memberId(student.getMemberId())
-                .memberName(student.getName())
-                .deptId(student.getDept().getDeptId())
-                .amount(tuition.getAmount())
-                .paidAmount(paidAmount)
-//                .paidDate(paidDate != null ? paidDate.date() : null)
-                .paymentStatus(paymentStatus)
+                .targetId(tuitionTarget.getTargetId())
+                .memberId(tuitionTarget.getMember().getMemberId())
+                .memberName(tuitionTarget.getMember().getName())
+                .deptName(tuitionTarget.getMember().getDept().getDeptName())
+                .amount(tuitionTarget.getTuitionId().getAmount())
+                .paidAmount(tuitionTarget.getPaidAmount())
+                .paidDate(tuitionTarget.getPaidDate())
+                .paymentStatus(tuitionTarget.isPaymentStatus())
                 .build();
     }
 
