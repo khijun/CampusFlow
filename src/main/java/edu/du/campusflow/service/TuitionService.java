@@ -83,6 +83,27 @@ public class TuitionService {
             throw new RuntimeException("해당 학생의 등록금 대상 정보를 찾을 수 없습니다.");
         }
         tuitionTarget.setPaymentStatus(status);
+        if (status) {
+            // 납부 상태가 true일 때 현재 시간을 paidDate에 설정
+            tuitionTarget.setPaidDate(LocalDateTime.now());
+        } else {
+            // 납부 상태가 false일 때 paidDate를 null로 설정
+            tuitionTarget.setPaidDate(null);  
+        }
+        tuitionTargetRepository.save(tuitionTarget);
+    }
+
+    @Transactional
+    public void updatePaidAmount(Member student, Integer paidAmount) {
+        if (paidAmount == null || paidAmount < 0) {
+            throw new IllegalArgumentException("지불 금액은 0 이상이어야 합니다.");
+        }
+
+        TuitionTarget tuitionTarget = tuitionTargetRepository.findByMember(student);
+        if (tuitionTarget == null) {
+            throw new RuntimeException("해당 학생의 등록금 정보를 찾을 수 없습니다.");
+        }
+        tuitionTarget.setPaidAmount(paidAmount);
         tuitionTargetRepository.save(tuitionTarget);
     }
 
@@ -103,4 +124,5 @@ public class TuitionService {
                         .build())
                 .collect(Collectors.toList());
     }
+
 }
