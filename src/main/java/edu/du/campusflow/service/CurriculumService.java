@@ -1,8 +1,7 @@
 package edu.du.campusflow.service;
 
-import edu.du.campusflow.entity.Curriculum;
-import edu.du.campusflow.entity.CurriculumSubject;
-import edu.du.campusflow.entity.Subject;
+import edu.du.campusflow.entity.*;
+import edu.du.campusflow.repository.CommonCodeGroupRepository;
 import edu.du.campusflow.repository.CurriculumRepository;
 import edu.du.campusflow.repository.CurriculumSubjectRepository;
 import edu.du.campusflow.repository.SubjectRepository;
@@ -21,6 +20,7 @@ public class CurriculumService {
    private final CurriculumRepository curriculumRepository;
    private final CurriculumSubjectRepository curriculumSubjectRepository;
    private final SubjectRepository subjectRepository;
+   private final CommonCodeGroupRepository commonCodeGroupRepository;
 
    // 검색 메서드
    public List<Curriculum> searchCurriculum(String year, String grade, String deptName, String curriculumName, String category) {
@@ -45,17 +45,14 @@ public class CurriculumService {
       return curriculumRepository.findAll(spec);
    }
 
-   // 교육과정 생성 메서드
    @Transactional
-   public void createCurriculum(Curriculum curriculum, Long subjectId, Long prereqSubjectId) {
-      // 필수 필드 설정
+   public void createCurriculum(Curriculum curriculum, Long subjectId, Long prereqSubjectId, String semester, String subjectType) {
       curriculum.setCreatedAt(LocalDateTime.now());
       curriculum.setUpdatedAt(LocalDateTime.now());
 
       // 교육과정 저장
       Curriculum savedCurriculum = curriculumRepository.save(curriculum);
 
-      // 과목 처리
       if (subjectId != null) {
          CurriculumSubject curriculumSubject = new CurriculumSubject();
          curriculumSubject.setCurriculum(savedCurriculum);
@@ -72,8 +69,31 @@ public class CurriculumService {
             curriculumSubject.setPrereqSubject(prereqSubject);
          }
 
+         // semester와 subjectType 값 설정
+         if (semester != null && !semester.isEmpty()) {
+            curriculumSubject.setSemester(findCommonCode("SEMESTER", semester));
+         }
+
+         if (subjectType != null && !subjectType.isEmpty()) {
+            curriculumSubject.setSubjectType(findCommonCode("SUBJECTTYPE", subjectType));
+         }
+
          // CurriculumSubject 저장
          curriculumSubjectRepository.save(curriculumSubject);
       }
    }
+
+   public CommonCode findCommonCode(String groupCode, String codeValue) {
+      CommonCodeGroup group = commonCodeGroupRepository.findByGroupCode(groupCode);
+      if (group == null) {
+         throw new IllegalArgumentException("Invalid group code: " + groupCode);
+      }
+
+      return group.getCommonCodes().stream()
+          .filter(code -> code.getCodeValue().equals(codeValue))
+          .findFirst()
+          .orElseThrow(() -> new IllegalArgumentException("Invalid code value: " + codeValue));
+   }
+
 }
+

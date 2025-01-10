@@ -1,9 +1,7 @@
 package edu.du.campusflow.controller;
 
-import edu.du.campusflow.entity.CommonCodeGroup;
 import edu.du.campusflow.entity.Curriculum;
 import edu.du.campusflow.entity.Subject;
-import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.repository.CommonCodeGroupRepository;
 import edu.du.campusflow.service.CurriculumService;
 import edu.du.campusflow.service.DeptService;
@@ -56,33 +54,31 @@ public class CurriculumController {
        @RequestParam Integer gradeCapacity,
        @RequestParam String curriculumStatus, // code_value로 받음
        @RequestParam String grade,           // code_value로 받음
+       @RequestParam(required = false) String semester, // code_value로 받음
+       @RequestParam(required = false) String subjectType, // code_value로 받음
+       @RequestParam(required = false) String dayNight, // code_value로 받음
+       @RequestParam(required = false) String gradingMethod, // code_value로 받음
+       @RequestParam(required = false) String reason, // 사유 추가
        @RequestParam(required = false) Long subjectId,
        @RequestParam(required = false) Long prereqSubjectId,
        Model model) {
 
-      // Curriculum 객체 생성 및 기본 값 설정
       Curriculum curriculum = new Curriculum();
       curriculum.setDept(deptService.getDepartmentById(deptId));
       curriculum.setCurriculumName(curriculumName);
       curriculum.setCurriculumYear(year);
-      curriculum.setGradeCapacity(gradeCapacity); // 정원 설정
-      curriculum.setCreatedAt(LocalDateTime.now()); // 생성 시간 설정
-      curriculum.setUpdatedAt(LocalDateTime.now()); // 수정 시간 설정
+      curriculum.setGradeCapacity(gradeCapacity);
+      curriculum.setCreatedAt(LocalDateTime.now());
+      curriculum.setUpdatedAt(LocalDateTime.now());
+      curriculum.setReason(reason); // 사유 매핑
 
       // 공통코드 매핑
-      CommonCode status = commonCodeGroupRepository.findByGroupCode("CURRICULUMSTATUS").getCommonCodes().stream()
-          .filter(code -> code.getCodeValue().equals(curriculumStatus))
-          .findFirst()
-          .orElse(null);
-      curriculum.setCurriculumStatus(status);
+      curriculum.setCurriculumStatus(curriculumService.findCommonCode("CURRICULUMSTATUS", curriculumStatus));
+      curriculum.setGrade(curriculumService.findCommonCode("GRADE", grade));
+      curriculum.setDayNight(curriculumService.findCommonCode("DAY_NIGHT", dayNight));
+      curriculum.setGradingMethod(curriculumService.findCommonCode("GRADING_METHOD", gradingMethod));
 
-      CommonCode gradeCode = commonCodeGroupRepository.findByGroupCode("GRADE").getCommonCodes().stream()
-          .filter(code -> code.getCodeValue().equals(grade))
-          .findFirst()
-          .orElse(null);
-      curriculum.setGrade(gradeCode);
-
-      curriculumService.createCurriculum(curriculum, subjectId, prereqSubjectId);
+      curriculumService.createCurriculum(curriculum, subjectId, prereqSubjectId, semester, subjectType);
       return "redirect:/iframe/curriculum/register";
    }
 
