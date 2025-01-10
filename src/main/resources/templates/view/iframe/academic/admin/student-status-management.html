@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학생 상태 관리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    /* 테이블 외부에 스크롤 적용 */
+    .table-container {
+      max-height: 400px; /* 테이블 높이를 400px로 제한 */
+      overflow-y: auto;  /* 세로 스크롤 */
+      margin-bottom: 20px; /* 아래 여백 */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    button {
+      margin: 5px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+<h1>학생 상태 관리</h1>
+<div class="table-container">
+<table>
+  <thead>
+  <tr>
+    <th>학번</th>
+    <th>이름</th>
+    <th>학적 상태</th>
+    <th>퇴학/제적 처리</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- 회원 목록 반복 출력 -->
+  <tr th:each="member : ${members}"
+      th:if="${member.academicStatus.codeName != '퇴학' and member.academicStatus.codeName != '졸업' and member.academicStatus.codeName != '제적'}">
+    <td th:text="${member.memberId}"></td>
+    <td th:text="${member.name}"></td>
+    <td th:text="${member.academicStatus.codeName}"></td>
+    <td>
+      <!-- 퇴학 버튼 -->
+      <form th:action="@{/members/{id}/withdraw(id=${member.memberId})}" method="post" style="display:inline;">
+        <button type="submit">퇴학</button>
+      </form>
+
+      <!-- 제적 버튼 -->
+      <form th:action="@{/members/{id}/expel(id=${member.memberId})}" method="post" style="display:inline;">
+        <button type="submit">제적</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</div>
+</body>
+</html>
