@@ -57,13 +57,14 @@
                 <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'userManagement')"><i class="fas fa-users-cog"></i> 사용자</a>
                 <ul id="userManagement" class="submenu">
                     <li><a href="#">학생, 교수 계정 생성/수정/삭제</a></li>
+                    <li><a href="#" onclick="loadIframe('/iframe/academic/admin/admin-change-request-list')">학적 조회</a></li>
                     <li><a href="#">사용자 정보 조회</a></li>
                 </ul>
             </li>
             <li>
                 <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'registrationManagement')"><i class="fas fa-wallet"></i> 등록</a>
                 <ul id="registrationManagement" class="submenu">
-                    <li><a href="#">납부 상태 조회 및 미납자 관리</a></li>
+                    <li><a href="#" onclick="loadIframe('/iframe/tuition/admin/tuitionTarget')">납부 상태 조회 및 미납자 관리</a></li>
                     <li><a href="#">분할 납부 설정</a></li>
                     <li><a href="#">납부 기한 설정 및 알림 관리</a></li>
                 </ul>
@@ -97,6 +98,18 @@
                 <ul id="academicSchedule" class="submenu">
                     <li><a href="#" onclick="loadIframe('/calendar/add')">학사 일정 등록/수정/삭제</a></li>
                     <li><a href="#" onclick="loadIframe('/calendar')">학사 일정 조회</a></li>
+                </ul>
+            </li>
+            <li>
+            <li>
+                <a class="menu-item" href="#" onclick="toggleSubmenu(event, 'evaluation')"><i class="fas fa-calendar-alt"></i> 평가 조회</a>
+                <ul class="submenu" id="evaluation">
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/lec/admin')">강의 평가 조회</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadIframe('/iframe/evaluation/diag/admin')">진단 평가 조회</a>
+                    </li>
                 </ul>
             </li>
             <li>

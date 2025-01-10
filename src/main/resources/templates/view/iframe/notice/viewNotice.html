@@ -30,27 +30,60 @@
         <thead class="thead-dark">
         <tr>
             <th style="width: 10%;">번호</th>
-            <th style="width: 60%;">제목</th>
-            <th style="width: 30%;">작성일</th>
+            <th style="width: 50%;">제목</th>
+            <th style="width: 20%;">작성자</th>
+            <th style="width: 20%;">등록일</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="notice, iterStat : ${notices}">
-            <td th:text="${iterStat.index + 1}"></td>
+        <tr th:each="notice : ${noticePage}">
+            <td th:text="${noticePage.getTotalElements() - (noticePage.getNumber() * noticePage.getSize()) - noticeStat.index}"></td>
             <td>
                 <a th:href="@{/iframe/notice/{id}(id=${notice.noticeId})}"
                    th:text="${notice.subject}"
                    class="notice-link"></a>
             </td>
+            <td th:text="${notice.member.name}"></td>
             <td>
-                <span th:if="${notice.updatedAt == null}" 
+                <span th:if="${notice.updatedAt == null}"
                       th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-                <span th:if="${notice.updatedAt != null}" 
+                <span th:if="${notice.updatedAt != null}"
                       th:text="${#temporals.format(notice.updatedAt, 'yyyy-MM-dd HH:mm') + ' (수정)'}"></span>
             </td>
         </tr>
         </tbody>
     </table>
+
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${noticePage.isFirst()} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/iframe/notice/view(page=${noticePage.getNumber() - 1}, size=${noticePage.getSize()}, searchType=${param.searchType}, keyword=${param.keyword})}">이전</a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(0, noticePage.getTotalPages() - 1)}"
+                th:classappend="${page == noticePage.getNumber()} ? 'active'">
+                <a class="page-link" 
+                   th:href="@{/iframe/notice/view(page=${page}, size=${noticePage.getSize()}, searchType=${param.searchType}, keyword=${param.keyword})}" 
+                   th:text="${page + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${noticePage.isLast()} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/iframe/notice/view(page=${noticePage.getNumber() + 1}, size=${noticePage.getSize()}, searchType=${param.searchType}, keyword=${param.keyword})}">다음</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="d-flex justify-content-center mt-4">
+        <form class="form-inline" action="/iframe/notice/view" method="get">
+            <input type="hidden" name="page" value="0">
+            <select class="form-control mr-sm-2" name="searchType">
+                <option value="subject" th:selected="${param.searchType == 'subject'}">제목</option>
+                <option value="member" th:selected="${param.searchType == 'member'}">작성자</option>
+            </select>
+            <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="검색어 입력" aria-label="Search" th:value="${param.keyword}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
+        </form>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

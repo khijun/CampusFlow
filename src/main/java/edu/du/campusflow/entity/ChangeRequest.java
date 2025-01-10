@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 public class ChangeRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "application_id")
     private Long id;
 
     @ManyToOne
@@ -38,5 +40,9 @@ public class ChangeRequest {
     @JoinColumn(name = "application_status",referencedColumnName = "code_id")
     private CommonCode applicationStatus;            // 신청 상태
 
-    private LocalDateTime requestDate;                  // 신청 일자
+    @Column(name = "request_date")
+    private LocalDate requestDate;                  // 신청 일자
+
+    @Column(name = "reason")
+    private String reason; // 사유
 }

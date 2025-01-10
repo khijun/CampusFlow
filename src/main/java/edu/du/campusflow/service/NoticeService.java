@@ -3,6 +3,8 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.entity.Notice;
 import edu.du.campusflow.repository.NoticeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,8 +19,8 @@ public class NoticeService {
     private AuthService authService;
 
     // 모든 공지 조회
-    public List<Notice> getAllNotices() {
-        return noticeRepository.findAll();
+    public Page<Notice> getAllNotices(Pageable pageable) {
+        return noticeRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
     // 특정 공지 조회
@@ -57,5 +59,18 @@ public class NoticeService {
     // 공지 삭제
     public void deleteNotice(Long noticeId) {
         noticeRepository.deleteById(noticeId);
+    }
+
+    // 공지 검색
+    public Page<Notice> searchNotices(String keyword, Pageable pageable) {
+        return noticeRepository.findBySubjectContainingOrderByCreatedAtDesc(keyword, pageable);
+    }
+
+    public Page<Notice> searchNoticesBySubject(String keyword, Pageable pageable) {
+        return noticeRepository.findBySubjectContainingOrderByCreatedAtDesc(keyword, pageable);
+    }
+
+    public Page<Notice> searchNoticesByMember(String keyword, Pageable pageable) {
+        return noticeRepository.findByMember_NameContainingOrderByCreatedAtDesc(keyword, pageable);
     }
 }

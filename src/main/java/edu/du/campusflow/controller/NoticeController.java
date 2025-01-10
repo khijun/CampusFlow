@@ -5,6 +5,10 @@ import edu.du.campusflow.entity.Notice;
 import edu.du.campusflow.service.NoticeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,8 +16,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/iframe/notice")
@@ -25,7 +32,7 @@ public class NoticeController {
     // 공지 추가 페이지
     @GetMapping("/add")
     public String showAddNoticeForm() {
-        return "view/iframe/notice/addNotice"; // 공지 추가 페이지로 이동
+        return "/view/iframe/notice/addNotice"; // 공지 추가 페이지로 이동
     }
 
     // 공지 추가 처리
@@ -39,8 +46,23 @@ public class NoticeController {
 
     // 모든 공지 조회 페이지
     @GetMapping("/view")
-    public String viewNotices(Model model) {
-        model.addAttribute("notices", noticeService.getAllNotices());
+    public String viewNotices(@RequestParam(value = "searchType", required = false) String searchType,
+                              @RequestParam(value = "keyword", required = false) String keyword, 
+                              @RequestParam(value = "page", defaultValue = "0") int page,
+                              @RequestParam(value = "size", defaultValue = "8") int size,
+                              Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Notice> noticePage;
+        if (keyword != null && !keyword.isEmpty()) {
+            if ("member".equals(searchType)) {
+                noticePage = noticeService.searchNoticesByMember(keyword, pageable);
+            } else {
+                noticePage = noticeService.searchNoticesBySubject(keyword, pageable);
+            }
+        } else {
+            noticePage = noticeService.getAllNotices(pageable);
+        }
+        model.addAttribute("noticePage", noticePage);
         model.addAttribute("isStaff", noticeService.isStaff());
         return "/view/iframe/notice/viewNotice";
     }
