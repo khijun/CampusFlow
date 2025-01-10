@@ -3,25 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
-    <link href="/css/iframe/member/select_member.css" rel="stylesheet">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <title>사용자 정보 조회</title>
 </head>
 <body>
-<div id="member-list-table-container">
-    <div id="member-list-search-select">
-        <form action="#" method="get">
-            <select name="memberType" onchange="createMemberGrid(document.querySelector('#member-list'))">
-                <option th:value="0" th:text="전체" th:selected="${selectedTypeId==null}"></option>
-                <option th:each="memberType : ${typeList}" th:text="${memberType.codeName}"
-                        th:value="${memberType.codeId}" th:selected="${memberType.codeId == selectedTypeId}"></option>
-            </select>
-            <input type="submit" value="조회" onclick="createMemberGrid(document.querySelector('#member-list'))"/>
-        </form>
+<div>
+    <div id="member-list-option-container">
+        <select id="member-type-select">
+            <option th:value="0" th:text="전체" th:selected="${selectedTypeId==null}"></option>
+            <option th:each="memberType : ${typeList}" th:text="${memberType.codeName}"
+                    th:value="${memberType.codeId}" th:selected="${memberType.codeId == selectedTypeId}"></option>
+        </select>
+        <input id="member-list-select-btn" type="button" value="조회"/>
+<!--        클릭시 함수를 실행해 리스트를 보여줌. -->
     </div>
+    <div id="member-list"></div>
 </div>
-<div id="member-list"></div>
+
+<!--리스트를 보여줄 요소-->
+
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
-<script src="/js/member_list.js"></script>
+<script src="/js/create_grid.js"></script>
+
+<script>
+    let instance = null; // 리스트를 저장해놓기 위한 변수
+
+    const memberListSelectButton = document.querySelector("#member-list-select-btn");
+    const memberTypeSelect = document.querySelector("#member-type-select");
+    const memberListDiv = document.querySelector('#member-list');
+
+    memberListSelectButton.addEventListener('click', () => {
+        createMemberGrid(memberListDiv);
+    })
+
+    function createMemberGrid(memberListDiv) {
+        const columns = [
+            {header: '아이디', name: 'memberId', width: 'auto'},
+            {header: '학과', name: 'deptName', width: 'auto'},
+            {header: '이름', name: 'name', width: 'auto'},
+            {header: '전화 번호', name: 'tel', width: 'auto'},
+            {header: '주소', name: 'address', width: 'auto'},
+            {header: '생년월일', name: 'birthDate', width: 'auto'},
+            {header: '계정 상태', name: 'isActive', width: 'auto'},
+            {header: '생성일', name: 'createAt', width: 'auto'},
+            {header: '최근 수정일', name: 'updateAt', width: 'auto'},
+            {header: '개인 이메일', name: 'email', width: 'auto'},
+            {header: '증명사진', name: 'fileInfo', width: 'auto'},
+            {header: '성별', name: 'genderStr', width: 'auto'},
+            {header: '학적 상태', name: 'academicStatusStr', width: 'auto'},
+            {header: '학년', name: 'gradeStr', width: 'auto'},
+            {header: '회원 구분', name: 'memberTypeStr', width: 'auto'},
+            {header: '입학/입사 일자', name: 'startDate', width: 'auto'},
+            {header: '졸업 일자', name: 'endDate', width: 'auto'}];
+
+        fetch('/api/members?memberType='+memberTypeSelect.value)
+            .then(response => { // 응답을 받으면
+                if (!response.ok) { // 응답이 ok인지 확인한다. 아니면 에러를 발생
+                    throw new Error('Network response was not ok' + response.statusText);
+                }
+
+                return response.json(); // json으로 변환한다.
+            })
+            .then(data => { // 이건 데이터의 형태를 바꾸는 작업. 없으면 스킵해도됨
+                return data.map(member => ({
+                    ...member, // data에 있는 모든 변수들을 그대로 복사해 붙여넣는다.
+                    isActive: member.isActive ? '활성화' : '비활성화', // boolean 타입을 보기쉽게 변경
+                }));
+            })
+            .then(mappedData => {
+                if (instance != null) { // 리스트가 이미 있으면, 그 전껄 지우고 새로운걸 띄우기 위함
+                    instance.destroy();
+                    instance = null;
+                }
+                instance = createGrid(memberListDiv, columns, mappedData, null);
+            })
+    }
+</script>
 </body>
 </html>
