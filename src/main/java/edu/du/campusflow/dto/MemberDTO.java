@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -31,6 +33,10 @@ public class MemberDTO {
     private String memberTypeStr; // CommonCode 테이블과 연관
     private LocalDate startDate; // 입학, 임용 날짜
     private LocalDate endDate; // 졸업, 퇴직 날짜
+
+    public static List<MemberDTO> fromEntityList(List<Member> memberList) {
+        return memberList.stream().map(MemberDTO::fromEntity).collect(Collectors.toList());
+    }
 
     public static MemberDTO fromEntity(Member member) {
         if(member == null) return null;
