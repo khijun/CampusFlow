@@ -137,6 +137,8 @@ public class HijunTest {
     public void memberServiceTest(){
         memberService.findAllMemberDTOs().forEach(System.out::println);
         CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
-        memberService.findAllMemberDTOs(student).forEach(System.out::println);
+        memberService.findAllMemberDTOs(student.getCodeId()).forEach(System.out::println);
+        System.out.println("0L");
+        memberService.findAllMemberDTOs(0L).forEach(System.out::println);
     }
 }
