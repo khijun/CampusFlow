@@ -98,5 +98,3 @@ function loadIframe(url) {
    }
 }
 
-console.log('main-content:', document.querySelector('.main-content').offsetHeight);
-console.log('iframe:', document.querySelector('iframe').offsetHeight);

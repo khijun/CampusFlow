@@ -81,4 +81,19 @@ public class Member {
     @Column(name = "end_date")
     private LocalDate endDate; // 졸업, 퇴직 날짜
 
+    public boolean isStudent(){
+        return this.memberType!=null&&this.getMemberType().getCodeValue().equals("STUDENT");
+    }
+
+    public boolean isProfessor(){
+        return this.memberType!=null&&this.getMemberType().getCodeValue().equals("PROFESSOR");
+    }
+
+    public boolean isStaff(){
+        return this.memberType!=null&&this.getMemberType().getCodeValue().equals("STAFF");
+    }
+
+    public boolean equals(Long memberId){
+        return this.memberId!=null&&this.memberId.equals(memberId);
+    }
 }

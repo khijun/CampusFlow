@@ -16,6 +16,7 @@ public class MilitaryInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "military_info_id")
     private Long id;
 
     @ManyToOne
@@ -26,8 +27,10 @@ public class MilitaryInfo {
     @JoinColumn(name = "discharge_type", referencedColumnName = "code_id")
     private CommonCode dischargeType;           // 전역 구분 코드
 
+    @Column(name = "final_rank")
     private String finalRank;                   // 최종 군 계급
 
+    @Column(name = "service_number")
     private String serviceNumber;               //군번
 
 }

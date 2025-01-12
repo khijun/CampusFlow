@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>변동 신청 승인</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      overflow-y: auto;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    /* 공통 그리드 스타일 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 6열 */
+      overflow-y: auto;   /* 수직 스크롤 추가 */
+      /*gap: 10px;*/
+      width: 80%;
+      height: 10%;
+      margin: 0 auto;
+    }
+
+    /* 헤더 스타일 */
+    .header-container {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 12px 0;
+      /*border-radius: 5px;*/
+    }
+
+    /* 데이터 스타일 */
+    .data-container .data {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      background-color: #fff;
+      /*border-radius: 5px;*/
+    }
+
+    .data-container .data:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* 버튼 스타일 */
+    button {
+      padding: 8px 16px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    button[type="submit"]:not(:disabled):first-of-type {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    button[type="submit"]:not(:disabled):last-of-type {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<h1>변동 이력 조회</h1>
+
+<!-- 메시지 표시 -->
+<div th:if="${message != null}">
+  <p style="color: #e74c3c; font-weight: bold;" th:text="${message}"></p>
+</div>
+
+<!-- 헤더 부분 -->
+<div class="grid-container header-container">
+  <div>학번</div>
+  <div>이름</div>
+  <div>학년</div>
+  <div>변경 전 상태</div>
+  <div>변경 후 상태</div>
+  <div>승인 날짜</div>
+</div>
+
+<!-- 데이터 반복 부분 -->
+<div class="grid-container data-container"
+     th:each="history : ${changeHistoryList}">
+  <div class="data" th:text="${history.member.memberId}"></div>
+  <div class="data" th:text="${history.member.name}"></div>
+  <div class="data" th:text="${history.grade.codeName}"></div>
+  <div class="data" th:text="${history.beforeCode.codeName}"></div>
+  <div class="data" th:text="${history.afterCode.codeName}"></div>
+  <div class="data" th:text="${#temporals.format(history.approvalDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+</div>
+</body>
+</html>

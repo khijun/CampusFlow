@@ -28,8 +28,11 @@ public class TuitionTarget{
     private Member member;
 
     @Column(name = "paid_amount")
-    private Long paidAmount;
+    private Integer paidAmount;
 
     @Column(name = "paid_date")
     private LocalDateTime paidDate;
+
+    @Column(name = "payment_status")
+    private boolean paymentStatus;
 }

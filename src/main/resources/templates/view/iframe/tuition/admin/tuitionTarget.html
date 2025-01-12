@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>등록금 대상자 관리</title>
+    <link rel="stylesheet" th:href="@{/css/tuition/tuitionTarget.css}">
+</head>
+<body>
+<div class="container">
+    <!-- 페이지 헤더 -->
+    <div class="header">
+        <h1>등록금 대상자 관리</h1>
+    </div>
+
+    <!-- 등록금 대상자 목록 테이블 -->
+    <table>
+        <thead>
+        <tr>
+            <th>학과</th>
+            <th>학번</th>
+            <th>이름</th>
+            <th>등록금액</th>
+            <th>납부금액</th>
+            <th>납부일자</th>
+            <th>납부상태</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="target : ${tuitionTarget}">
+            <td th:text="${target.deptName}"></td>
+            <td th:text="${target.memberId}"></td>
+            <td th:text="${target.memberName}"></td>
+            <td th:text="${#numbers.formatDecimal(target.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+            <td>
+                <input type="number" th:value="${target.paidAmount}" th:attr="data-member-id=${target.memberId}" class="paid-amount-input" />
+            </td>
+            <td th:text="${target.paymentStatus ? #temporals.format(target.paidDate, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+            <td th:text="${target.paymentStatus ? '완납' : '미납'}"></td>
+            <td>
+                <button th:if="${!target.paymentStatus}"
+                        th:onclick="'markAsPaid(' + ${target.memberId} + ')'">완납처리</button>
+                <button th:if="${target.paymentStatus}"
+                        th:onclick="'markAsUnpaid(' + ${target.memberId} + ')'">미납처리</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // 납부 상태 변경
+    function updatePaymentStatus(memberId, status) {
+        fetch('/iframe/tuition/update-status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                memberId: memberId,
+                paymentStatus: status
+            })
+        }).then(() => location.reload());
+    }
+
+    // 완납/미납 처리
+    function markAsPaid(memberId) { updatePaymentStatus(memberId, true); }
+    function markAsUnpaid(memberId) { updatePaymentStatus(memberId, false); }
+
+    // 납부 금액 변경
+    function updatePaidAmount(memberId, paidAmount) {
+        fetch('/iframe/tuition/update-paid-amount', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                memberId: memberId,
+                paidAmount: paidAmount
+            })
+        }).then(() => location.reload());
+    }
+
+    // 납부 금액 입력 필드의 변경 감지
+    document.querySelectorAll('.paid-amount-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const memberId = this.getAttribute('data-member-id');
+            const paidAmount = parseInt(this.value);
+            updatePaidAmount(memberId, paidAmount);
+        });
+    });
+</script>
+</body>
+</html>
