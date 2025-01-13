@@ -22,6 +22,8 @@
         <th>기말</th>
         <th>과제</th>
         <th>출석</th>
+        <th>총점</th>
+        <th>등급</th>
       </tr>
       </thead>
       <tbody>
@@ -32,6 +34,8 @@
         <td th:text="${grade.scores['기말']}"></td>
         <td th:text="${grade.scores['과제']}"></td>
         <td th:text="${grade.scores['출석']}"></td>
+        <td th:text="${grade.totalScore}"></td>
+        <td th:text="${grade.finalGrade}"></td>
       </tr>
       </tbody>
     </table>

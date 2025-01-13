@@ -2,12 +2,10 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.GradeDTO;
 import edu.du.campusflow.entity.CommonCode;
+import edu.du.campusflow.entity.Completion;
 import edu.du.campusflow.entity.Grade;
 import edu.du.campusflow.entity.Member;
-import edu.du.campusflow.repository.CommonCodeRepository;
-import edu.du.campusflow.repository.GradeRepository;
-import edu.du.campusflow.repository.LectureRepository;
-import edu.du.campusflow.repository.MemberRepository;
+import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +56,20 @@ public class GradeService {
                     String lectureName = keys[1];
 
                     Map<String, Integer> scores = new HashMap<>();
+                    int totalScore = 0;
+
+                    // 성적 정보를 scores에 추가 및 가중치 적용
                     for (Grade grade : entry.getValue()) {
                         scores.put(grade.getGradeType().getCodeName(), grade.getScore());
                     }
 
-                    return new GradeDTO(professorName, lectureName, scores);
+                    // 총점 계산
+                    int finalTotalScore = calculateTotalScore(entry.getValue());
+
+                    // Completion 테이블에서 finalGrade를 바로 가져오기
+                    String finalGrade = entry.getValue().get(0).getCompletion().getFinalGrade().getCodeName();
+
+                    return new GradeDTO(professorName, lectureName, scores, finalGrade,finalTotalScore);
                 })
                 .collect(Collectors.toList());
 
@@ -71,5 +78,38 @@ public class GradeService {
 
 
 
+
+
+
+
+
+
+    private int calculateTotalScore(List<Grade> grades) {
+        int totalScore = 0;
+
+        // 각 성적 항목(중간, 기말, 과제, 출석)을 더함
+        for (Grade grade : grades) {
+            Long codeId = grade.getGradeType().getCodeId();  // 성적 항목의 codeId
+
+            switch (codeId.intValue()) {
+                case 67: // 중간
+                    totalScore += grade.getScore();
+                    break;
+                case 68: // 기말
+                    totalScore += grade.getScore();
+                    break;
+                case 69: // 과제
+                    totalScore += grade.getScore();
+                    break;
+                case 70: // 출석
+                    totalScore += grade.getScore();
+                    break;
+                default:
+                    throw new IllegalArgumentException("알 수 없는 성적 항목 코드입니다: " + codeId);
+            }
+        }
+
+        return totalScore;
+    }
 
 }
