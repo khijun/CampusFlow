@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>성적 조회</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+  <h1>성적 조회</h1>
+
+
+  <!-- 성적 리스트 테이블 -->
+  <div class="grades">
+    <table>
+      <thead>
+      <tr>
+        <th>교수</th>
+        <th>강의</th>
+        <th>중간</th>
+        <th>기말</th>
+        <th>과제</th>
+        <th>출석</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="grade : ${grades}">
+        <td th:text="${grade.professorName}"></td>
+        <td th:text="${grade.lectureName}"></td>
+        <td th:text="${grade.scores['중간']}"></td>
+        <td th:text="${grade.scores['기말']}"></td>
+        <td th:text="${grade.scores['과제']}"></td>
+        <td th:text="${grade.scores['출석']}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

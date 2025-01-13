@@ -1,81 +1,75 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.dto.GradeDTO;
+import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Grade;
+import edu.du.campusflow.entity.Member;
+import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.GradeRepository;
+import edu.du.campusflow.repository.LectureRepository;
+import edu.du.campusflow.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class GradeService {
 
     private final GradeRepository gradeRepository;
-//    private final CompletionRepository completionRepository;
+    private final MemberRepository memberRepository;
+    private final LectureRepository lectureRepository;
 
-    // 1. 모든 성적 조회
-    public List<Grade> view_all_grades() {
-        return gradeRepository.findAll();
+
+    public List<GradeDTO> getGroupedGradesByRole(Long memberId, List<Long> gradeTypeList) {
+        var member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        var memberType = member.getMemberType().getCodeId();
+        List<Grade> grades;
+
+        if (memberType == 101L) { // 학생
+            grades = gradeRepository.findByMemberIdAndGradeTypes(memberId, gradeTypeList);
+        } else if (memberType == 102L || memberType == 103L) { // 교수 또는 교직원
+            var lectureIds = lectureRepository.findLectureIdsByMemberId(memberId);
+            grades = gradeRepository.findByLectureIdsAndGradeTypes(lectureIds, gradeTypeList);
+        } else {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        // 데이터 그룹화
+        Map<String, List<Grade>> groupedGrades = grades.stream()
+                .collect(Collectors.groupingBy(grade ->
+                        grade.getCompletion().getOfRegistration().getLectureId().getMember().getName()
+                                + ":" + grade.getCompletion().getOfRegistration().getLectureId().getLectureName()
+                ));
+
+        // 그룹화된 데이터를 DTO로 변환
+        List<GradeDTO> result = groupedGrades.entrySet().stream()
+                .map(entry -> {
+                    String[] keys = entry.getKey().split(":");
+                    String professorName = keys[0];
+                    String lectureName = keys[1];
+
+                    Map<String, Integer> scores = new HashMap<>();
+                    for (Grade grade : entry.getValue()) {
+                        scores.put(grade.getGradeType().getCodeName(), grade.getScore());
+                    }
+
+                    return new GradeDTO(professorName, lectureName, scores);
+                })
+                .collect(Collectors.toList());
+
+        return result;
     }
 
-//    // 2. 특정 completion_id에 해당하는 성적 조회
-//    public List<Grade> view_grades_by_completion(Long completionId) {
-//        Completion completion = completionRepository.findById(completionId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 completion_id에 대한 이수 정보 없음"));
-//
-//        return gradeRepository.findByCompletion(completion);  // completion_id로 성적 조회
-//    }
-//
-//    // 3. 성적 추가하기 (Builder 패턴 사용)
-//    public Grade add_grade(Grade grade) {
-//        Completion completion = completionRepository.findById(grade.getCompletion().getCompletionId())
-//                .orElseThrow(() -> new IllegalArgumentException("해당 completion_id에 대한 이수 정보 없음"));
-//
-//        return gradeRepository.save(Grade.builder()
-//                .completion(completion)   // completion_id 참조
-//                .gradeType(grade.getGradeType())         // grade_type
-//                .score(grade.getScore())   // score
-//                .build());
-//    }
-//
-//    // 4. 성적 수정하기 (Builder 패턴 사용)
-//    public Grade update_grade(Long gradeId, Grade updatedGrade) {
-//        Grade existingGrade = gradeRepository.findById(gradeId)
-//                .orElseThrow(() -> new IllegalArgumentException("성적 정보 없음"));
-//
-//        Completion completion = completionRepository.findById(updatedGrade.getCompletion().getCompletionId())
-//                .orElseThrow(() -> new IllegalArgumentException("해당 completion_id에 대한 이수 정보 없음"));
-//
-//        Grade updatedGradeEntity = Grade.builder()
-//                .gradeId(gradeId)
-//                .completion(completion)
-//                .gradeType(updatedGrade.getGradeType())
-//                .score(updatedGrade.getScore())
-//                .build();
-//
-//        return gradeRepository.save(updatedGradeEntity);  // 수정된 성적 정보 저장
-//    }
-//
-//    // 5. 성적 삭제하기
-//    public void delete_grade(Long gradeId) {
-//        Grade existingGrade = gradeRepository.findById(gradeId)
-//                .orElseThrow(() -> new IllegalArgumentException("성적 정보 없음"));
-//        gradeRepository.delete(existingGrade);  // 성적 정보 삭제
-//    }
-//
-//    // 6. 성적 평균 구하기
-//    public double calculate_average_score(Long completionId) {
-//        List<Grade> grades = view_grades_by_completion(completionId);
-//        if (grades.isEmpty()) {
-//            throw new IllegalArgumentException("해당 completionId에 대한 성적이 존재하지 않음");
-//        }
-//
-//        return grades.stream()
-//                .mapToInt(Grade::getScore)
-//                .average()
-//                .orElseThrow(() -> new IllegalArgumentException("성적 계산 오류"));
-//    }
+
+
 
 }
-
