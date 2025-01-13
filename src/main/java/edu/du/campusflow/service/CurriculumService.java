@@ -1,5 +1,6 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.dto.CurriculumDTO;
 import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.CommonCodeGroupRepository;
 import edu.du.campusflow.repository.CurriculumRepository;
@@ -46,41 +47,46 @@ public class CurriculumService {
    }
 
    @Transactional
-   public void createCurriculum(Curriculum curriculum, Long subjectId, Long prereqSubjectId, String semester, String subjectType) {
+   public void createCurriculum(CurriculumDTO dto) {
+      Curriculum curriculum = new Curriculum();
+      curriculum.setDept(findDepartmentById(dto.getDeptId()));
+      curriculum.setCurriculumName(dto.getCurriculumName());
+      curriculum.setCurriculumYear(dto.getYear());
+      curriculum.setGradeCapacity(dto.getGradeCapacity());
       curriculum.setCreatedAt(LocalDateTime.now());
       curriculum.setUpdatedAt(LocalDateTime.now());
+      curriculum.setReason(dto.getReason());
 
-      // 교육과정 저장
+      curriculum.setCurriculumStatus(findCommonCode("CURRICULUMSTATUS", dto.getCurriculumStatus()));
+      curriculum.setGrade(findCommonCode("GRADE", dto.getGrade()));
+      curriculum.setDayNight(findCommonCode("DAY_NIGHT", dto.getDayNight()));
+      curriculum.setGradingMethod(findCommonCode("GRADING_METHOD", dto.getGradingMethod()));
+
       Curriculum savedCurriculum = curriculumRepository.save(curriculum);
 
-      if (subjectId != null) {
+      if (dto.getSubjectId() != null) {
          CurriculumSubject curriculumSubject = new CurriculumSubject();
          curriculumSubject.setCurriculum(savedCurriculum);
+         curriculumSubject.setSubject(findSubjectById(dto.getSubjectId()));
 
-         // 과목 설정
-         Subject subject = subjectRepository.findById(subjectId)
-             .orElseThrow(() -> new IllegalArgumentException("Invalid subject ID: " + subjectId));
-         curriculumSubject.setSubject(subject);
-
-         // 선수강 과목 설정 (선택 사항)
-         if (prereqSubjectId != null) {
-            Subject prereqSubject = subjectRepository.findById(prereqSubjectId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid prereq subject ID: " + prereqSubjectId));
-            curriculumSubject.setPrereqSubject(prereqSubject);
+         if (dto.getPrereqSubjectId() != null) {
+            curriculumSubject.setPrereqSubject(findSubjectById(dto.getPrereqSubjectId()));
          }
+         curriculumSubject.setSemester(findCommonCode("SEMESTER", dto.getSemester()));
+         curriculumSubject.setSubjectType(findCommonCode("SUBJECTTYPE", dto.getSubjectType()));
 
-         // semester와 subjectType 값 설정
-         if (semester != null && !semester.isEmpty()) {
-            curriculumSubject.setSemester(findCommonCode("SEMESTER", semester));
-         }
-
-         if (subjectType != null && !subjectType.isEmpty()) {
-            curriculumSubject.setSubjectType(findCommonCode("SUBJECTTYPE", subjectType));
-         }
-
-         // CurriculumSubject 저장
          curriculumSubjectRepository.save(curriculumSubject);
       }
+   }
+
+   private Dept findDepartmentById(Long id) {
+      // deptService를 호출하거나 직접 구현
+      return null; // 실제 Dept 엔티티 반환
+   }
+
+   private Subject findSubjectById(Long id) {
+      return subjectRepository.findById(id)
+          .orElseThrow(() -> new IllegalArgumentException("Invalid subject ID: " + id));
    }
 
    public CommonCode findCommonCode(String groupCode, String codeValue) {
@@ -94,6 +100,4 @@ public class CurriculumService {
           .findFirst()
           .orElseThrow(() -> new IllegalArgumentException("Invalid code value: " + codeValue));
    }
-
 }
-

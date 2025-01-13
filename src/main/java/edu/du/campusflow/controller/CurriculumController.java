@@ -1,5 +1,6 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.CurriculumDTO;
 import edu.du.campusflow.entity.Curriculum;
 import edu.du.campusflow.entity.Subject;
 import edu.du.campusflow.repository.CommonCodeGroupRepository;
@@ -46,39 +47,10 @@ public class CurriculumController {
       return "view/iframe/curriculum/curriculum_register";
    }
 
+   // POST 요청 처리: 등록
    @PostMapping("/register")
-   public String createCurriculum(
-       @RequestParam Long deptId,
-       @RequestParam String curriculumName,
-       @RequestParam Integer year,
-       @RequestParam Integer gradeCapacity,
-       @RequestParam String curriculumStatus, // code_value로 받음
-       @RequestParam String grade,           // code_value로 받음
-       @RequestParam(required = false) String semester, // code_value로 받음
-       @RequestParam(required = false) String subjectType, // code_value로 받음
-       @RequestParam(required = false) String dayNight, // code_value로 받음
-       @RequestParam(required = false) String gradingMethod, // code_value로 받음
-       @RequestParam(required = false) String reason, // 사유 추가
-       @RequestParam(required = false) Long subjectId,
-       @RequestParam(required = false) Long prereqSubjectId,
-       Model model) {
-
-      Curriculum curriculum = new Curriculum();
-      curriculum.setDept(deptService.getDepartmentById(deptId));
-      curriculum.setCurriculumName(curriculumName);
-      curriculum.setCurriculumYear(year);
-      curriculum.setGradeCapacity(gradeCapacity);
-      curriculum.setCreatedAt(LocalDateTime.now());
-      curriculum.setUpdatedAt(LocalDateTime.now());
-      curriculum.setReason(reason); // 사유 매핑
-
-      // 공통코드 매핑
-      curriculum.setCurriculumStatus(curriculumService.findCommonCode("CURRICULUMSTATUS", curriculumStatus));
-      curriculum.setGrade(curriculumService.findCommonCode("GRADE", grade));
-      curriculum.setDayNight(curriculumService.findCommonCode("DAY_NIGHT", dayNight));
-      curriculum.setGradingMethod(curriculumService.findCommonCode("GRADING_METHOD", gradingMethod));
-
-      curriculumService.createCurriculum(curriculum, subjectId, prereqSubjectId, semester, subjectType);
+   public String createCurriculum(@ModelAttribute CurriculumDTO curriculumDTO) {
+      curriculumService.createCurriculum(curriculumDTO);
       return "redirect:/iframe/curriculum/register";
    }
 
