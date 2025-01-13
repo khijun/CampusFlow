@@ -49,10 +49,23 @@ public class CurriculumController {
 
    // POST 요청 처리: 등록
    @PostMapping("/register")
-   public String createCurriculum(@ModelAttribute CurriculumDTO curriculumDTO) {
-      curriculumService.createCurriculum(curriculumDTO);
+   public String createCurriculum(@ModelAttribute CurriculumDTO dto) {
+      curriculumService.createCurriculum(dto);
       return "redirect:/iframe/curriculum/register";
    }
+
+   @PostMapping("/register-subject")
+   public String addCurriculumSubject(
+       @RequestParam Long curriculumId,
+       @RequestParam Long subjectId,
+       @RequestParam(required = false) Long prereqSubjectId,
+       @RequestParam(required = false) String semester,
+       @RequestParam(required = false) String subjectType
+   ) {
+      curriculumService.addCurriculumSubject(curriculumId, subjectId, prereqSubjectId, semester, subjectType);
+      return "redirect:/iframe/curriculum/register";
+   }
+
 
    @GetMapping("/subjects")
    @ResponseBody
