@@ -16,12 +16,10 @@ public class ChangeRequestController {
 
     private final ChangeRequestService changeRequestService;
     private final AuthService authService;
-    private final CommonCodeRepository commonCodeRepository;
 
-    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService, CommonCodeRepository commonCodeRepository) {
+    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService) {
         this.changeRequestService = changeRequestService;
         this.authService = authService;
-        this.commonCodeRepository = commonCodeRepository;
     }
 
     // 관리자용 - 모든 학생의 신청서 조회
@@ -43,16 +41,20 @@ public class ChangeRequestController {
     // 휴학/복학 신청 폼
     @GetMapping("/iframe/academic/change-request-form")
     public String changeRequestForm(Model model) {
-        model.addAttribute("changeRequestDto", new ChangeRequestDTO());
-        model.addAttribute("authService", authService);
+        Long memberId = authService.getCurrentMemberId();
+        ChangeRequestDTO changeRequestDto = new ChangeRequestDTO();
+        changeRequestDto.setMemberId(memberId);
+        model.addAttribute("changeRequestDto",changeRequestDto);
         return "view/iframe/academic/change-request-form"; // 휴학/복학 신청 페이지
     }
 
     // 자퇴 신청 폼
     @GetMapping("/iframe/academic/change-request-form-drop")
     public String changeRequestForm2(Model model) {
-        model.addAttribute("changeRequestDto", new ChangeRequestDTO());
-        model.addAttribute("authService", authService);
+        Long memberId = authService.getCurrentMemberId();
+        ChangeRequestDTO changeRequestDto = new ChangeRequestDTO();
+        changeRequestDto.setMemberId(memberId);
+        model.addAttribute("changeRequestDto", changeRequestDto);
         return "view/iframe/academic/change-request-form-drop"; // 휴학/복학 신청 페이지
     }
 
@@ -66,7 +68,6 @@ public class ChangeRequestController {
 
         // DTO를 서비스에 전달하여 처리
         changeRequestService.processChangeRequest(changeRequestDto);
-        System.out.println(authService.getCurrentMemberId());
         return "redirect:/iframe/academic/change-request-list"; // 신청 후 목록으로 리다이렉트
     }
 
