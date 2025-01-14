@@ -35,11 +35,6 @@ public class MemberController {
         return "view/iframe/member/select_member";
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "select_member";
-    }
-
     @GetMapping("/api/members")
     public ResponseEntity<?> getMembers(@RequestParam(required = false, name = "memberType") Long typeId
     , @RequestParam(required = false, name = "isActive") Boolean isActive) {
