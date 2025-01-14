@@ -28,33 +28,6 @@ public class DiagEvaluationService {
     private final DeptRepository deptRepository;
     private final AuthService authService;
 
-    @Transactional
-    public List<DiagEvaluationDetailDTO> searchEvaluationsByDeptAndGrade(Long deptId, String grade) {
-        log.info("학과/학년별 진단평가 조회 시작 - deptId: {}, grade: {}", deptId, grade);
-
-        // 학년에 따른 코드ID 매핑
-        Long gradeCodeId;
-        if ("1".equals(grade)) {
-            gradeCodeId = 97L;  // 1학년
-        } else if ("2".equals(grade)) {
-            gradeCodeId = 98L;  // 2학년
-        } else if ("3".equals(grade)) {
-            gradeCodeId = 99L;  // 3학년
-        } else if ("4".equals(grade)) {
-            gradeCodeId = 100L; // 4학년
-        } else {
-            throw new IllegalArgumentException("Invalid grade: " + grade);
-        }
-
-        // findEvaluationsByDeptAndGrade를 findEvaluations로 변경
-        List<DiagEvaluationDetailDTO> results = diagEvaluationRepository
-                .findEvaluations(deptId, gradeCodeId, null, null);  // lectureName과 studentName은 null
-
-        log.info("조회된 결과 수: {}", results.size());
-        return results;
-    }
-
-
     // 교수의 강의 목록 조회 메서드 추가
     @Transactional
     public List<Map<String, Object>> getProfessorLectures() {
@@ -156,5 +129,4 @@ public class DiagEvaluationService {
                 })
                 .collect(Collectors.toList());
     }
-
 }
