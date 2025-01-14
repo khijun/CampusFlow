@@ -54,8 +54,6 @@ public class LectureService {
             throw new IllegalArgumentException("최대 수강 인원을 입력해주세요.");
         }
 
-
-
         // 현재 로그인한 교수 정보 가져오기
         Member professor = authService.getCurrentMember();
         if (professor == null) {
@@ -153,6 +151,7 @@ public class LectureService {
                 .collect(Collectors.toList());
     }
 
+    //강의 승인시 강의 주차 및 강의 교시 생성하는 서비스
     @Transactional
     public void approveLecture(LectureDTO lectureDTO) {
         // 강의 조회
@@ -163,13 +162,6 @@ public class LectureService {
         Lecture lecture = lectureRepository.findById(lectureDTO.getLectureId())
                 .orElseThrow(() -> new RuntimeException("강의를 찾을 수 없습니다."));
 
-        // 강의 상태를 승인으로 변경
-        CommonCode approvedStatus = commonCodeRepository.findByCodeValue("LECTURE_PENDING");
-        if (approvedStatus == null) {
-            throw new RuntimeException("승인 상태 코드를 찾을 수 없습니다.");
-        }
-        lecture.setLectureStatus(approvedStatus);
-        
         // 강의실 조회
         if (lectureDTO.getFacilityId() == null) {
             throw new IllegalArgumentException("강의실 ID가 제공되지 않았습니다.");
@@ -186,6 +178,13 @@ public class LectureService {
         CommonCode classStatus = commonCodeRepository.findByCodeValue("SCHEDULED");
         if (classStatus == null) {
             throw new RuntimeException("수업 상태 코드를 찾을 수 없습니다");
+        }
+
+        // 강의실과 일정 중복 체크
+        for (int i = 1; i <= lectureDTO.getWeek(); i++) {
+            if (isLectureTimeDuplicated(lectureDTO, i)) {
+                throw new RuntimeException("선택한 강의실과 일정에 이미 다른 강의가 있습니다.");
+            }
         }
 
         // 선택한 주차만큼 강의 주차와 강의 시간 데이터 생성 (1주차부터)
@@ -206,20 +205,22 @@ public class LectureService {
             lectureTime.setFacility(facility);
             lectureTime.setClassStatus(classStatus);
 
-            // 강의실과 일정 중복 체크
-            if (isLectureTimeDuplicated(lectureDTO, i)) {
-                throw new RuntimeException("선택한 강의실과 일정에 이미 다른 강의가 있습니다.");
-            }
-
             lectureTimeRepository.save(lectureTime);
         }
+
+        // 강의 상태를 승인으로 변경
+        CommonCode approvedStatus = commonCodeRepository.findByCodeValue("LECTURE_PENDING");
+        if (approvedStatus == null) {
+            throw new RuntimeException("승인 상태 코드를 찾을 수 없습니다.");
+        }
+        lecture.setLectureStatus(approvedStatus);
 
         // 변경된 강의 저장
         lectureRepository.save(lecture);
     }
 
     //강의 주차 교시 생성시 중복 체크
-    public boolean isLectureTimeDuplicated(LectureDTO lectureDTO, int week) {
+    public boolean isLectureTimeDuplicated(LectureDTO lectureDTO, Integer week) {
         CommonCode startTime = commonCodeRepository.findByCodeValue(lectureDTO.getStartTime());
         CommonCode endTime = commonCodeRepository.findByCodeValue(lectureDTO.getEndTime());
 

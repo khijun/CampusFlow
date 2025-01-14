@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface LectureTimeRepository extends JpaRepository<LectureTime, Long> {
-    List<LectureTime> findByStartTimeAndEndTimeAndLectureWeek_Week(CommonCode startTime, CommonCode endTime, int week);
+    List<LectureTime> findByStartTimeAndEndTimeAndLectureWeek_Week(CommonCode startTime, CommonCode endTime, Integer week);
 }
