@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface OfregistrationRepository extends JpaRepository<Ofregistration, Long> {
@@ -15,6 +16,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     List<Ofregistration> findDistinctByLectureId_Member(Member member);
     List<Ofregistration> findByLectureId_LectureId(Long lectureId);
 
+    // 교수, 관리자용 검색 쿼리
     @Query(value = "SELECT " +
             "l.lecture_name AS lectureName, " +
             "dq.question_name AS questionName, " +
@@ -46,5 +48,20 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
 
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.member.dept.deptId = :deptId")
     List<Ofregistration> findByMemberDeptId(@Param("deptId") String deptId);
+
+    @Query("SELECT new map(" +
+            "o.id as ofregistrationId, " +
+            "l.lectureName as lectureName, " +
+            "m.name as professorName, " +
+            "s.codeValue as semester, " +  // codeName -> codeValue로 수정
+            "CASE WHEN COUNT(di.answerId) > 0 THEN 'Y' ELSE 'N' END as evalStatus) " +
+            "FROM Ofregistration o " +
+            "JOIN o.lectureId l " +
+            "JOIN l.member m " +
+            "JOIN l.semester s " +  // semester는 CommonCode 타입
+            "LEFT JOIN DiagItem di ON di.ofRegistration = o " +
+            "WHERE o.member.memberId = :studentId " +
+            "GROUP BY o.id, l.lectureName, m.name, s.codeValue")  // codeName -> codeValue로 수정
+    List<Map<String, Object>> findLecturesWithEvalStatus(@Param("studentId") Long studentId);
 
 }
