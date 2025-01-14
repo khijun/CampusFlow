@@ -1,6 +1,5 @@
 package edu.du.campusflow.service;
 
-import edu.du.campusflow.dto.MemberDTO;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.repository.CommonCodeGroupRepository;
@@ -9,8 +8,8 @@ import edu.du.campusflow.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,27 +25,26 @@ public class MemberService {
         return memberRepository.findById(memberId).orElse(null);
     };
 
-    // 공통코드 아이디를 받아 멤버 타입으로서 필터링해 반환하는 메서드. null 이거나 0이면 모든 값을 반환하는 메서드
-    public List<MemberDTO> findAllMemberDTOs(Long typeId, Boolean isActive) {
-        if(typeId == null) typeId = 0L;
-        if(isActive == null) isActive = true ;
-        return typeId==0L?findAllMemberDTOs(new ArrayList<>(), isActive):
-                findAllMemberDTOs(Collections.singletonList(typeId), isActive);
-    }
-
     // AcademicStatus에 따라 Member 목록을 찾는 메서드
     public List<Member> findByAcademicStatus(CommonCode academicStatus) {
         return memberRepository.findByAcademicStatus(academicStatus); // AcademicStatus로 Member 찾기
     }
 
-    public List<Member> findAllMembers(List<Long> typeIds, Boolean isActive) {
+    public List<Member> findAllWithFilter(
+            Long memberType, Boolean isActive, Long deptId, String name, String tel,
+            LocalDate birthStart, LocalDate birthEnd, LocalDateTime createAtStart, LocalDateTime createAtEnd,
+            Long academicStatus, Long grade, LocalDate startDateStart, LocalDate startDateEnd,
+            LocalDate endDateStart, LocalDate endDateEnd) {
         if(isActive==null)  isActive=true;
-        return typeIds==null||typeIds.isEmpty()?memberRepository.findAllWithDetails(isActive):memberRepository.findAllWithDetailsByIds(typeIds, isActive);
+        if(memberType!=null&&memberType==0L) memberType=null;
+        if(name!=null) name = '%'+name+'%';
+        if(tel!=null) tel = '%'+tel+'%';
+        return memberRepository.findAllWithFilter(memberType, isActive, deptId, name, tel, birthStart, birthEnd, createAtStart, createAtEnd, academicStatus, grade, startDateStart, startDateEnd,
+                endDateStart, endDateEnd);
     }
 
-    // 멤버 타입 공통 코드의 리스트를 받아 조건에 맞는 값을 반환하는 메서드
-    public List<MemberDTO> findAllMemberDTOs(List<Long> typeIds, Boolean isActive){
-        return MemberDTO.fromEntityList(findAllMembers(typeIds, isActive));
+    public List<Member> findAllByMemberType(Long memberType) {
+        return findAllWithFilter(memberType, null, null, null, null, null, null,null,null,null,null,null,null,null,null);
     }
 
     // 모든 학생을 반환하는 메서드

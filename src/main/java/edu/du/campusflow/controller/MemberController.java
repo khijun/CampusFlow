@@ -26,7 +26,7 @@ public class MemberController {
     @GetMapping("/iframe/member/select_member")
     public String selectMember(Model model, @RequestParam(required = false, name = "memberType") Long typeId
     , @RequestParam(required = false, name = "isActive") Boolean isActive) {
-        List<MemberDTO> memberDTOList = memberService.findAllMemberDTOs(typeId, isActive);
+        List<MemberDTO> memberDTOList = MemberDTO.fromEntityList(memberService.findAllByMemberType(typeId));
         List<CommonCode> typeList = commonCodeGroupRepository.findByGroupCode("MEMBERTYPE").getCommonCodes();
 
         model.addAttribute("selectedTypeId", typeId);
@@ -38,6 +38,6 @@ public class MemberController {
     @GetMapping("/api/members")
     public ResponseEntity<?> getMembers(@RequestParam(required = false, name = "memberType") Long typeId
     , @RequestParam(required = false, name = "isActive") Boolean isActive) {
-        return ResponseEntity.ok(memberService.findAllMemberDTOs(typeId, isActive));
+        return ResponseEntity.ok(MemberDTO.fromEntityList(memberService.findAllByMemberType(typeId)));
     }
 }
