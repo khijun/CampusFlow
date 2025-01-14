@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>강의 개설 목록</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+  <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<style>
+
+</style>
+
+<body>
+    <!-- 검색 컨테이너 -->
+    <div class="search-container">
+      <div class="input-group">
+        <label for="Semester">학기</label>
+        <select id="Semester">
+          <option value="FIRST_SEMESTER">1학기</option>
+          <option value="SECOND_SEMESTER">2학기</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="professorId">교번</label>
+        <input type="text" id="professorId" name="professorId" th:value="${member.memberId}" readonly>
+      </div>
+      <div class="input-group">
+        <label for="professorName">교수명</label>
+        <input type="text" id="professorName" name="professorName" th:value="${member.name}" readonly>
+      </div>
+      <button type="submit" id="searchButton">조회</button>
+    </div>
+
+    <!-- 승인된 강의 목록 그리드 -->
+    <div id="approvedLectureGrid"></div>
+
+    <!-- 대기중인 강의 목록 그리드 -->
+    <div id="approval_pendingLectureGrid"></div>
+
+  <script>
+    // Toast UI Grid 초기화
+    const approvedGrid = new tui.Grid({
+      el: document.getElementById('approvedLectureGrid'),
+      columns: [
+        { header: '강의아이디', name: 'lectureId', sortable: false },
+        { header: '강의명', name: 'lectureName', sortable: false },
+        { header: '학점', name: 'subjectCredits', sortable: false },
+        { header: '학기', name: 'semesterName', sortable: false },
+        { header: '이수 인원', name: 'currentStudents', sortable: false },
+        { header: '최대 인원', name: 'maxStudents', sortable: false }
+      ],
+      bodyHeight: 300
+    });
+
+    const pendingGrid = new tui.Grid({
+      el: document.getElementById('approval_pendingLectureGrid'),
+      columns: [
+        { header: '강의아이디', name: 'lectureId', sortable: false },
+        { header: '강의명', name: 'lectureName', sortable: false },
+        { header: '학점', name: 'subjectCredits', sortable: false },
+        { header: '학기', name: 'semesterName', sortable: false },
+        { header: '최대 인원', name: 'maxStudents', sortable: false },
+        { header: '강의 상태', name: 'lectureStatus', sortable: false }
+      ],
+      bodyHeight: 300
+    });
+
+    // 현재 월을 기준으로 학기 선택
+    document.addEventListener('DOMContentLoaded', function () {
+      const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+      const semesterSelect = document.getElementById('Semester');
+      const professorId = document.getElementById('professorId').value;
+
+      if (currentMonth >= 8 || currentMonth <= 1) {
+        semesterSelect.value = 'SECOND_SEMESTER';
+      }
+      // 초기 데이터 로드
+      const semesterCode = semesterSelect.value;
+      Promise.all([
+        fetch(`/api/lecture/approvedList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json()),
+        fetch(`/api/lecture/pendingList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json())
+      ])
+              .then(([approvedLectures, pendingLectures]) => {
+                approvedGrid.resetData(approvedLectures);
+                pendingGrid.resetData(pendingLectures);
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+    });
+
+    // 조회 버튼 클릭 이벤트 처리
+    document.getElementById('searchButton').addEventListener('click', function () {
+      const semesterCode = document.getElementById('Semester').value;
+      const professorId = document.getElementById('professorId').value;
+
+      // Promise.all을 사용하여 두 개의 API 호출을 병렬로 처리
+      Promise.all([
+        fetch(`/api/lecture/approvedList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json()),
+        fetch(`/api/lecture/pendingList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json())
+      ])
+              .then(([approvedLectures, pendingLectures]) => {
+                if (approvedLectures.length === 0) {
+                  approvedGrid.resetData([]);
+                } else {
+                  approvedGrid.resetData(approvedLectures);
+                }
+
+                if (pendingLectures.length === 0) {
+                  pendingGrid.resetData([]);
+                } else {
+                  pendingGrid.resetData(pendingLectures);
+                }
+              })
+              .catch(error => {
+                alert('강의 리스트 조회 중 오류가 발생했습니다.');
+                console.error('Error:', error);
+              });
+    });
+  </script>
+</body>
+
+</html>
