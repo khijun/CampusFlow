@@ -1,9 +1,7 @@
 package edu.du.campusflow.controller;
 
-import edu.du.campusflow.entity.CommonCode;
-import edu.du.campusflow.entity.Curriculum;
+import edu.du.campusflow.dto.CurriculumDTO;
 import edu.du.campusflow.entity.Subject;
-import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.service.CurriculumService;
 import edu.du.campusflow.service.DeptService;
 import edu.du.campusflow.service.SubjectService;
@@ -24,16 +22,15 @@ public class CurriculumController {
    private final CurriculumService curriculumService;
    private final DeptService deptService;
    private final SubjectService subjectService;
-   private final CommonCodeRepository commonCodeRepository; // 공통코드 Repository 추가
 
    @GetMapping("/register")
    public String searchCurriculum(
-           @RequestParam(required = false) String year,
-           @RequestParam(required = false) String grade,
-           @RequestParam(required = false) String deptName,
-           @RequestParam(required = false) String curriculumName,
-           @RequestParam(required = false) String category,
-           Model model) {
+       @RequestParam(required = false) String year,
+       @RequestParam(required = false) String grade,
+       @RequestParam(required = false) String deptName,
+       @RequestParam(required = false) String curriculumName,
+       @RequestParam(required = false) String category,
+       Model model) {
 
       // 학과 리스트 추가
       model.addAttribute("departments", deptService.getAllDepartments());
@@ -44,39 +41,36 @@ public class CurriculumController {
       return "view/iframe/curriculum/curriculum_register";
    }
 
+   // POST 요청 처리: 등록
    @PostMapping("/register")
-   public String createCurriculum(
-           @RequestParam Long deptId,
-           @RequestParam String curriculumName,
-           @RequestParam Integer year,
-           @RequestParam String curriculumStatus, // code_value로 받음
-           @RequestParam String grade,           // code_value로 받음
-           @RequestParam(required = false) Long subjectId,
-           @RequestParam(required = false) Long prereqSubjectId,
-           Model model) {
+   public String createCurriculum(@ModelAttribute CurriculumDTO dto) {
+      log.info("Received Subject IDs: {}", dto.getSubjectIds());
+      log.info("Received Semesters: {}", dto.getSemesters());
 
-      // Curriculum 객체 생성 및 기본 값 설정
-      Curriculum curriculum = new Curriculum();
-      curriculum.setDept(deptService.getDepartmentById(deptId));
-      curriculum.setCurriculumName(curriculumName);
-      curriculum.setCurriculumYear(year);
-
-      // 공통코드 매핑
-      CommonCode status = commonCodeRepository.findByCodeValue(curriculumStatus);
-      if (status != null) {
-         curriculum.setCurriculumStatus(status);
-      } else {
-         log.warn("Invalid curriculumStatus: {}", curriculumStatus);
+      if (dto.getSubjectIds() == null || dto.getSubjectIds().isEmpty()) {
+         throw new IllegalArgumentException("Subject IDs are missing.");
       }
 
-      CommonCode gradeCode = commonCodeRepository.findByCodeValue(grade);
-      if (gradeCode != null) {
-         curriculum.setGrade(gradeCode);
-      } else {
-         log.warn("Invalid grade: {}", grade);
+      curriculumService.createCurriculum(dto);
+      return "redirect:/iframe/curriculum/register";
+   }
+
+
+   @PostMapping("/register-subject")
+   public String addCurriculumSubject(
+       @RequestParam Long curriculumId,
+       @RequestParam Long subjectId,
+       @RequestParam String semester // 필수 매개변수로 변경
+   ) {
+      // 유효성 검증
+      if (semester == null || semester.isEmpty()) {
+         throw new IllegalArgumentException("Semester is required");
       }
 
-      curriculumService.createCurriculum(curriculum, subjectId, prereqSubjectId);
+      // 서비스 호출
+      curriculumService.addCurriculumSubject(curriculumId, subjectId, semester);
+
+      // 리다이렉트
       return "redirect:/iframe/curriculum/register";
    }
 

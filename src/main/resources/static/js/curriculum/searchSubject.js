@@ -1,56 +1,96 @@
-// 선택된 과목과 선수강 과목 ID를 저장
-let selectedSubjectId = null; // 선택된 과목 ID
-let selectedPrereqSubjectId = null; // 선택된 선수강 과목 ID
-
-function searchSubjects(inputId, selectId, excludeId = null) {
-    const keyword = document.getElementById(inputId).value;
-    const select = document.getElementById(selectId);
+// 과목 검색 기능
+function searchSubjects(inputElement, datalistId) {
+    const keyword = inputElement.value.trim();
+    const datalist = document.getElementById(datalistId);
 
     if (keyword.length > 0) {
+        // 서버에 검색 요청
         fetch(`/iframe/curriculum/subjects?keyword=${encodeURIComponent(keyword)}`)
-            .then(response => response.json())
-            .then(data => {
-                // 현재 선택된 값 저장
-                const currentSelectedId = select.value;
-
-                // `<select>` 초기화
-                select.innerHTML = '<option value="" disabled>검색 결과를 선택하세요</option>';
-
-                data.forEach(subject => {
-                    // 제외할 ID가 있는 경우 필터링
-                    if (excludeId !== null && subject.subjectId === excludeId) return;
-
-                    const option = document.createElement("option");
-                    option.value = subject.subjectId;
-                    option.textContent = `${subject.subjectName} (${subject.subjectCredits}학점)`;
-
-                    // 이전 선택값 유지
-                    if (subject.subjectId == currentSelectedId) {
-                        option.selected = true;
-                    }
-
-                    select.appendChild(option);
-                });
-
-                // 기본 상태 설정
-                if (!currentSelectedId) {
-                    select.value = "";
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch subjects");
                 }
+                return response.json();
             })
-            .catch(error => console.error("Error fetching subjects:", error));
+            .then(data => {
+                // `<datalist>` 초기화
+                datalist.innerHTML = "";
+
+                // 검색 결과 추가
+                data.forEach(subject => {
+                    const option = document.createElement("option");
+                    option.value = subject.subjectName; // 과목명 표시
+                    option.dataset.id = subject.subjectId; // 과목 ID 저장
+                    datalist.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching subjects:", error);
+                alert("과목 검색 중 문제가 발생했습니다.");
+            });
     } else {
-        // 검색어가 없을 경우 초기화
-        select.innerHTML = '<option value="" disabled selected>검색 결과가 여기에 표시됩니다</option>';
+        datalist.innerHTML = ""; // 검색어가 없을 경우 초기화
     }
 }
 
-// 과목 선택 이벤트 처리
-document.getElementById("subjectName-addform").addEventListener("change", function () {
-    selectedSubjectId = parseInt(this.value); // 선택된 과목 ID 저장
-    searchSubjects("subjectName-search", "prereqSubject-addform", selectedSubjectId); // 선수강 과목에서 선택된 과목 제외
+// 과목 선택 이벤트
+document.getElementById("subjectSearch").addEventListener("change", function () {
+    const selectedOption = Array.from(document.querySelectorAll("#subjectOptions option")).find(option => option.value === this.value);
+
+    if (selectedOption) {
+        document.getElementById("subjectId").value = selectedOption.dataset.id;
+    } else {
+        document.getElementById("subjectId").value = ""; // 선택한 값이 없다면 초기화
+    }
 });
 
-// 선수강 과목 선택 이벤트 처리
-document.getElementById("prereqSubject-addform").addEventListener("change", function () {
-    selectedPrereqSubjectId = parseInt(this.value); // 선택된 선수강 과목 ID 저장
+function addSubjectFromRow() {
+    const subjectInput = document.getElementById("subjectSearch");
+    const semesterSelect = document.querySelector("#add-row select[name='semesters[]']");
+    const subjectIdInput = document.getElementById("subjectId");
+
+    // 입력 값 검증
+    const subjectName = subjectInput.value.trim();
+    const semester = semesterSelect.value;
+    const subjectId = subjectIdInput.value;
+
+    if (!subjectName || !semester || !subjectId) {
+        alert("과목명과 학기를 모두 입력하세요.");
+        return;
+    }
+
+    // 테이블 본문 선택
+    const tableBody = document.querySelector("#subject-table tbody");
+
+    // 새 행 추가
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${subjectName}</td>
+        <td>${semester === "FIRST_SEMESTER" ? "1학기" :
+        semester === "SECOND_SEMESTER" ? "2학기" :
+            semester === "SUMMER" ? "여름학기" : "겨울학기"}</td>
+        <td><button type="button" onclick="removeRow(this)">삭제</button></td>
+        <input type="hidden" name="subjectIds[]" value="${subjectId}">
+        <input type="hidden" name="semesters[]" value="${semester}">
+    `;
+    tableBody.insertBefore(row, document.getElementById("add-row"));
+
+    // 입력 필드 초기화
+    subjectInput.value = "";
+    semesterSelect.value = "";
+    subjectIdInput.value = "";
+}
+
+// 행 삭제 함수
+function removeRow(button) {
+    const row = button.closest("tr");
+    row.remove();
+}
+
+// 폼 제출 전 add-row 행 제거
+document.querySelector(".add-form").addEventListener("submit", function (event) {
+    const addRow = document.getElementById("add-row");
+    if (addRow) {
+        addRow.remove();
+    }
 });
