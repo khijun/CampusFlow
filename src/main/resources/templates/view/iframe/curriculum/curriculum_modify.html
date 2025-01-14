@@ -3,7 +3,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>교육과정 등록</title>
+   <title>교육과정 수정</title>
    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
@@ -11,7 +11,7 @@
 <body>
 <div class="container">
    <!-- 검색 컨테이너 -->
-   <form class="search-container" th:action="@{/iframe/curriculum/register}" method="get">
+   <form class="search-container" th:action="@{/iframe/curriculum/modify}" method="get">
       <div class="input-group">
          <label for="year">학년도</label>
          <select id="year" name="year">
@@ -49,7 +49,6 @@
          </select>
       </div>
       <div class="button-group">
-         <button type="button">신규</button>
          <button type="submit">검색</button>
       </div>
    </form>
@@ -63,97 +62,87 @@
          <div>교육과정명</div>
          <div>교육과정 상태</div>
       </div>
-      <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row">
+      <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row"
+           onclick="populateForm(
+             /* 학과 ID */
+             [[${curriculum.dept?.deptId != null} ? '${curriculum.dept.deptId}' : '']],
+             /* 교육과정명 */
+             [[${curriculum.curriculumName != null} ? '${curriculum.curriculumName}' : '' ]],
+             /* 학년도 */
+             [[${curriculum.curriculumYear != null} ? '${curriculum.curriculumYear}' : '' ]],
+             /* 과목 ID */
+             [[${curriculum.subject?.subjectId != null} ? '${curriculum.subject.subjectId}' : '' ]],
+             /* 선수강 과목 ID */
+             [[${curriculum.prereqSubject?.subjectId != null} ? '${curriculum.prereqSubject.subjectId}' : '' ]],
+             /* 편성 학년 */
+             [[${curriculum.grade?.codeValue != null} ? '${curriculum.grade.codeValue}' : '' ]],
+             /* 교육과정 상태 */
+             [[${curriculum.curriculumStatus?.codeValue != null} ? '${curriculum.curriculumStatus.codeValue}' : '' ]],
+             /* 정원 */
+             [[${curriculum.gradeCapacity != null} ? '${curriculum.gradeCapacity}' : '' ]],
+             /* 학기 */
+             [[${curriculum.semester?.codeValue != null} ? '${curriculum.semester.codeValue}' : '' ]],
+             /* 이수 구분 */
+             [[${curriculum.subjectType?.codeValue != null} ? '${curriculum.subjectType.codeValue}' : '' ]],
+             /* 주야구분 */
+             [[${curriculum.dayNight?.codeValue != null} ? '${curriculum.dayNight.codeValue}' : '' ]],
+             /* 성적 평가 방법 */
+             [[${curriculum.gradingMethod?.codeValue != null} ? '${curriculum.gradingMethod.codeValue}' : '' ]],
+             /* 사유 */
+             [[${curriculum.reason != null} ? '${curriculum.reason}' : '' ]]
+     )">
          <div th:text="${curriculum.curriculumYear ?: 'N/A'}"></div>
-         <div th:text="${curriculum.grade?.codeName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.grade != null ? curriculum.grade.codeName : 'N/A'}"></div>
          <div th:text="${curriculum.dept?.deptName ?: 'N/A'}"></div>
          <div th:text="${curriculum.curriculumName ?: 'N/A'}"></div>
          <div th:text="${curriculum.curriculumStatus?.codeName ?: 'N/A'}"></div>
       </div>
-      <div th:each="curriculum : ${results}"></div>
+
    </div>
 </div>
 
-<!-- 교육과정 개설 컨테이너 -->
-<div class="add-container" style="display: none;">
-   <h3>교육과정 개설</h3>
-   <form class="add-form" th:action="@{/iframe/curriculum/register}" method="post">
-      <!-- 학과 선택 -->
+<!-- 수정 컨테이너 -->
+<div class="modify-container" style="display: none;">
+   <h3>교육과정 수정</h3>
+   <form id="modify-form" class="modify-form" th:action="@{/iframe/curriculum/update}" method="post">
       <div class="input-group">
-         <label for="deptName-addform">학과 이름</label>
-         <select id="deptName-addform" name="deptId" required>
+         <label for="deptName-modify">학과 이름</label>
+         <select id="deptName-modify" name="deptId" required>
             <option value="" disabled selected>학과를 선택하세요</option>
             <th:block th:each="dept : ${departments}">
                <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
             </th:block>
          </select>
       </div>
-
-      <!-- 학년도 선택 -->
       <div class="input-group">
-         <label for="year">학년도</label>
-         <select id="year-curriculum" name="year" required>
-            <option value="" disabled selected>학년도를 선택하세요</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-         </select>
+         <label for="year-modify">학년도</label>
+         <input type="number" id="year-modify" name="year" required>
       </div>
-
-      <!-- 과목 추가 -->
       <div class="input-group">
-         <label>과목 추가</label>
-         <div id="subject-container">
-            <!-- 과목 추가 테이블 -->
-            <table id="subject-table" class="subject-table">
-               <thead>
-               <tr>
-                  <th>과목명</th>
-                  <th>학기</th>
-                  <th>삭제</th>
-               </tr>
-               </thead>
-               <tbody>
-               <!-- 행 추가를 위한 입력 필드 -->
-               <tr id="add-row">
-                  <td>
-                     <label for="subjectSearch">과목명</label>
-                     <input
-                         type="text"
-                         id="subjectSearch"
-                         placeholder="과목명을 입력하세요"
-                         list="subjectOptions"
-                         oninput="searchSubjects(this, 'subjectOptions')"
-                     />
-                     <datalist id="subjectOptions">
-                        <!-- JavaScript로 동적으로 옵션 추가 -->
-                     </datalist>
-                     <!-- 숨겨진 필드: subjectIds[] -->
-                     <input type="hidden" name="subjectIds[]" id="subjectId">
-                  </td>
-                  <td>
-                     <label for="semester-addform">학기</label>
-                     <select name="semesters[]">
-                        <option value="" disabled selected>학기를 선택하세요</option>
-                        <option value="FIRST_SEMESTER">1학기</option>
-                        <option value="SECOND_SEMESTER">2학기</option>
-                        <option value="SUMMER">여름학기</option>
-                        <option value="WINTER">겨울학기</option>
-                     </select>
-                  </td>
-                  <td>
-                     <button type="button" onclick="addSubjectFromRow()">추가</button>
-                  </td>
-               </tr>
-
-
-
-               </tbody>
-            </table>
-         </div>
+         <label for="subjectSearch-modify">과목 선택</label>
+         <input
+             type="text"
+             id="subjectSearch-modify"
+             name="subjectName"
+             placeholder="과목명을 입력하세요"
+             list="subjectOptions-modify"
+             oninput="searchSubjects('subjectSearch-modify', 'subjectOptions-modify')">
+         <datalist id="subjectOptions-modify"></datalist>
       </div>
+      <input type="hidden" id="subjectId-modify" name="subjectId">
+      <div class="input-group">
+         <label for="prereqSubjectSearch-modify">선수강 과목 선택</label>
+         <input
+             type="text"
+             id="prereqSubjectSearch-modify"
+             name="prereqSubjectName"
+             placeholder="선수강 과목명을 입력하세요"
+             list="prereqSubjectOptions-modify"
+             oninput="searchSubjects('prereqSubjectSearch-modify', 'prereqSubjectOptions-modify')">
+         <datalist id="prereqSubjectOptions-modify"></datalist>
+      </div>
+      <input type="hidden" id="prereqSubjectId-modify" name="prereqSubjectId">
 
-      <!-- 기본 정보 입력 -->
       <div class="input-group">
          <label for="grade-addform">편성학년</label>
          <select id="grade-addform" name="grade" required>
@@ -182,6 +171,27 @@
          <input type="number" id="gradeCapacity-addform" name="gradeCapacity" placeholder="예: 30" min="1" required>
       </div>
       <div class="input-group">
+         <label for="semester-addform">학기</label>
+         <select id="semester-addform" name="semester" required>
+            <option value="" disabled selected>학기를 선택하세요</option>
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+            <option value="SUMMER">여름학기</option>
+            <option value="WINTER">겨울학기</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="subjectType-addform">이수 구분</label>
+         <select id="subjectType-addform" name="subjectType" required>
+            <option value="" disabled selected>이수 구분을 선택하세요</option>
+            <option value="MAJOR_REQUIRED">전공필수</option>
+            <option value="MAJOR_ELECTIVE">전공선택</option>
+            <option value="GENERAL_REQUIRED">교양필수</option>
+            <option value="GENERAL_ELECTIVE">교양선택</option>
+            <option value="FREE_ELECTIVE">자유선택</option>
+         </select>
+      </div>
+      <div class="input-group">
          <label for="studyTime-addform">주야구분</label>
          <select id="studyTime-addform" name="dayNight" required>
             <option value="" disabled selected>주야구분을 선택하세요</option>
@@ -202,13 +212,11 @@
          <textarea id="reason-addform" name="reason" rows="3" placeholder="사유를 입력해주세요."></textarea>
       </div>
       <div class="button-group">
-         <button type="submit">추가</button>
-         <button type="button" onclick="toggleAddContainer()">취소</button>
+         <button type="submit">수정</button>
+         <button type="button" onclick="toggleModifyContainer()">취소</button>
       </div>
    </form>
 </div>
-
 <script src="/js/curriculum/searchSubject.js"></script>
-<script src="/js/curriculum/toggleAddContainer.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 </body>
 </html>

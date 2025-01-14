@@ -2,6 +2,8 @@ package edu.du.campusflow.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CurriculumDTO {
    private Long deptId;
@@ -10,11 +12,11 @@ public class CurriculumDTO {
    private Integer gradeCapacity;
    private String curriculumStatus; // code_value로 받음
    private String grade;           // code_value로 받음
-   private String semester;        // code_value로 받음 (optional)
-   private String subjectType;     // code_value로 받음 (optional)
-   private String dayNight;        // code_value로 받음 (optional)
-   private String gradingMethod;   // code_value로 받음 (optional)
+   private String dayNight;        // code_value로 받음
+   private String gradingMethod;   // code_value로 받음
    private String reason;          // 사유
-   private Long subjectId;         // optional
-   private Long prereqSubjectId;   // optional
+
+   private List<Long> subjectIds;  // 과목 ID 목록
+   private List<String> semesters; // 학기 목록 (code_value로 받음)
 }
+

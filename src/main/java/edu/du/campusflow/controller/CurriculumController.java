@@ -1,20 +1,16 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.CurriculumDTO;
-import edu.du.campusflow.entity.Curriculum;
 import edu.du.campusflow.entity.Subject;
-import edu.du.campusflow.repository.CommonCodeGroupRepository;
 import edu.du.campusflow.service.CurriculumService;
 import edu.du.campusflow.service.DeptService;
 import edu.du.campusflow.service.SubjectService;
-import edu.du.campusflow.repository.CommonCodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -26,8 +22,6 @@ public class CurriculumController {
    private final CurriculumService curriculumService;
    private final DeptService deptService;
    private final SubjectService subjectService;
-   private final CommonCodeRepository commonCodeRepository; // 공통코드 Repository 추가
-   private final CommonCodeGroupRepository commonCodeGroupRepository;
 
    @GetMapping("/register")
    public String searchCurriculum(
@@ -50,22 +44,35 @@ public class CurriculumController {
    // POST 요청 처리: 등록
    @PostMapping("/register")
    public String createCurriculum(@ModelAttribute CurriculumDTO dto) {
+      log.info("Received Subject IDs: {}", dto.getSubjectIds());
+      log.info("Received Semesters: {}", dto.getSemesters());
+
+      if (dto.getSubjectIds() == null || dto.getSubjectIds().isEmpty()) {
+         throw new IllegalArgumentException("Subject IDs are missing.");
+      }
+
       curriculumService.createCurriculum(dto);
       return "redirect:/iframe/curriculum/register";
    }
+
 
    @PostMapping("/register-subject")
    public String addCurriculumSubject(
        @RequestParam Long curriculumId,
        @RequestParam Long subjectId,
-       @RequestParam(required = false) Long prereqSubjectId,
-       @RequestParam(required = false) String semester,
-       @RequestParam(required = false) String subjectType
+       @RequestParam String semester // 필수 매개변수로 변경
    ) {
-      curriculumService.addCurriculumSubject(curriculumId, subjectId, prereqSubjectId, semester, subjectType);
+      // 유효성 검증
+      if (semester == null || semester.isEmpty()) {
+         throw new IllegalArgumentException("Semester is required");
+      }
+
+      // 서비스 호출
+      curriculumService.addCurriculumSubject(curriculumId, subjectId, semester);
+
+      // 리다이렉트
       return "redirect:/iframe/curriculum/register";
    }
-
 
    @GetMapping("/subjects")
    @ResponseBody

@@ -242,6 +242,66 @@ iframe {
    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
 
+/* 테이블 스타일 */
+.subject-table {
+   width: 100%;
+   border-collapse: collapse;
+   margin-top: 10px;
+}
+
+.subject-table th, .subject-table td {
+   border: 1px solid #ddd;
+   padding: 8px;
+   text-align: left;
+}
+
+.subject-table th {
+   background-color: #f9f9f9;
+   font-weight: bold;
+}
+
+.subject-table input, .subject-table select {
+   width: 100%; /* 셀 크기에 맞춤 */
+   padding: 8px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   box-sizing: border-box;
+}
+
+.subject-table button {
+   background-color: var(--primary-color, #3498db);
+   color: white;
+   border: none;
+   padding: 5px 10px;
+   border-radius: 4px;
+   cursor: pointer;
+}
+
+.subject-table button:hover {
+   background-color: #2980b9;
+}
+
+/* 입력 행 스타일 */
+#add-row input, #add-row select {
+   width: 100%;
+   box-sizing: border-box;
+   padding: 8px;
+}
+
+#add-row button {
+   padding: 5px 10px;
+   background-color: var(--primary-color, #3498db);
+   color: white;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+}
+
+#add-row button:hover {
+   background-color: #2980b9;
+}
+
+
 /* 반응형 스타일 */
 @media (max-width: 768px) {
    .input-group {
