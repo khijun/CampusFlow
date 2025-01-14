@@ -10,9 +10,9 @@
 <div>
     <div id="member-list-option-container">
         <select id="member-type-select">
-            <option th:value="0" th:text="전체" th:selected="${selectedTypeId==null}"></option>
+            <option th:value="0" th:text="전체" th:selected="${filter.memberType==null}"></option>
             <option th:each="memberType : ${typeList}" th:text="${memberType.codeName}"
-                    th:value="${memberType.codeId}" th:selected="${memberType.codeId == selectedTypeId}"></option>
+                    th:value="${memberType.codeId}" th:selected="${memberType.codeId == filter.memberType}"></option>
         </select>
         <input id="member-list-select-btn" type="button" value="조회"/>
 <!--        클릭시 함수를 실행해 리스트를 보여줌. -->
@@ -29,8 +29,24 @@
     let instance = null; // 리스트를 저장해놓기 위한 변수
 
     const memberListSelectButton = document.querySelector("#member-list-select-btn");
-    const memberTypeSelect = document.querySelector("#member-type-select");
     const memberListDiv = document.querySelector('#member-list');
+
+    const memberTypeSelect = document.querySelector("#member-type-select");
+    const nameInput = document.querySelector("#name-input");
+    const telInput = document.querySelector("#tel-input");
+    const activeCheckbox = document.querySelector("#active-checkbox");
+    const deptSelect = document.querySelector("#dept-select");
+    const birthStartInput = document.querySelector("#birth-start-input");
+    const birthEndInput = document.querySelector("#birth-end-input");
+    const createAtStartInput = document.querySelector("#create-at-start-input");
+    const createAtEndInput = document.querySelector("#create-at-end-input");
+    const academicStatusSelect = document.querySelector("#academic-status-select");
+    const gradeSelect = document.querySelector("#grade-select");
+    const startDateStartInput = document.querySelector("#start-date-start-input");
+    const startDateEndInput = document.querySelector("#start-date-end-input");
+    const endDateStartInput = document.querySelector("#end-date-start-input");
+    const endDateEndInput = document.querySelector("#end-date-end-input");
+
 
     memberListSelectButton.addEventListener('click', () => {
         createMemberGrid(memberListDiv);
@@ -56,7 +72,26 @@
             {header: '입학/입사 일자', name: 'startDate', width: 'auto'},
             {header: '졸업 일자', name: 'endDate', width: 'auto'}];
 
-        fetch('/api/members?memberType='+memberTypeSelect.value)
+        // 필터 객체 정의
+        const filter = {
+            memberType: memberTypeSelect && memberTypeSelect.value ? Number(memberTypeSelect.value) : null,
+            name: nameInput && nameInput.value ? nameInput.value : null,
+            tel: telInput && telInput.value ? telInput.value : null,
+            isActive: activeCheckbox && activeCheckbox.checked ? true : null,
+            deptId: deptSelect && deptSelect.value ? Number(deptSelect.value) : null,
+            birthStart: birthStartInput && birthStartInput.value ? birthStartInput.value : null,
+            birthEnd: birthEndInput && birthEndInput.value ? birthEndInput.value : null,
+            createAtStart: createAtStartInput && createAtStartInput.value ? createAtStartInput.value : null,
+            createAtEnd: createAtEndInput && createAtEndInput.value ? createAtEndInput.value : null,
+            academicStatus: academicStatusSelect && academicStatusSelect.value ? Number(academicStatusSelect.value) : null,
+            grade: gradeSelect && gradeSelect.value ? Number(gradeSelect.value) : null,
+            startDateStart: startDateStartInput && startDateStartInput.value ? startDateStartInput.value : null,
+            startDateEnd: startDateEndInput && startDateEndInput.value ? startDateEndInput.value : null,
+            endDateStart: endDateStartInput && endDateStartInput.value ? endDateStartInput.value : null,
+            endDateEnd: endDateEndInput && endDateEndInput.value ? endDateEndInput.value : null,
+        };
+
+        fetch('/api/members?filter='+encodeURIComponent(JSON.stringify(filter)))
             .then(response => { // 응답을 받으면
                 if (!response.ok) { // 응답이 ok인지 확인한다. 아니면 에러를 발생
                     throw new Error('Network response was not ok' + response.statusText);

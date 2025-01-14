@@ -144,21 +144,6 @@ public class HijunTest {
         System.out.println("FILTERS");
         Map<String, Object> filter = new HashMap<>();
 //        filter.put();
-        memberService.findAllWithFilter(null
-                , null
-                ,null
-                ,null
-                ,"1111"
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
-        ).forEach(System.out::println);
+        memberService.findAllWithFilter(null).forEach(System.out::println);
     }
 }
