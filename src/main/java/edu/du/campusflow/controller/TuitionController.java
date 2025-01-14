@@ -6,6 +6,7 @@ import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.TuitionService;
 import edu.du.campusflow.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,10 @@ public class TuitionController {
         tuitionService.updatePaidAmount(member, tuitionDTO.getPaidAmount());
     }
 
+    @GetMapping("/api/tuition")
+    public ResponseEntity<?> getTuition() {
+        return ResponseEntity.ok(tuitionService);
+    }
 
 
 
