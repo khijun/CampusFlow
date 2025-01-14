@@ -13,6 +13,7 @@ import java.time.Year;
 @AllArgsConstructor
 @Table(name = "tuition")
 public class Tuition {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,15 +25,13 @@ public class Tuition {
     private Dept deptId;
 
     @Column(name = "tui_year")
-    private Year tuiYear;
+    private Integer tuiYear;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester")
     private CommonCode semester;
 
     @Column(name = "amount")
-    private Long amount;
+    private Integer amount;
 
-    @Column(name = "payment_status")
-    private boolean paymentStatus;
 } 

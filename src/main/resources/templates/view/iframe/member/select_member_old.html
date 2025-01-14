@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/iframe/member/select_member.css" rel="stylesheet">
+    <title>회원 생성 페이지</title>
+</head>
+<body>
+<div id="member-list-container">
+    <div id="member-list-search-select">
+        <form action="#" method="get">
+            <select name="memberType">
+                <option th:value="0" th:text="전체" th:selected="${selectedTypeId==null}"></option>
+                <option th:each="memberType : ${typeList}" th:text="${memberType.codeName}"
+                        th:value="${memberType.codeId}" th:selected="${memberType.codeId == selectedTypeId}"></option>
+            </select>
+            <input type="submit" value="조회"/>
+        </form>
+    </div>
+    <div id="member-list-table-container">
+        <table id="member-list-table">
+            <thead>
+            <tr>
+                <th>멤버 아이디</th>
+                <th>학과</th>
+                <th>이름</th>
+                <th>전화 번호</th>
+                <th>주소</th>
+                <th>생년월일</th>
+                <th class="center-align">계정 상태</th>
+                <th>생성일</th>
+                <th>최근 수정일</th>
+                <th>개인 이메일</th>
+                <th>증명사진</th>
+                <th>성별</th>
+                <th>학적 상태</th>
+                <th>학년</th>
+                <th>회원 구분</th>
+                <th>입학/입사 일자</th>
+                <th>졸업 일자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${memberDTOList}">
+                <td class="right-align" th:text="${member.memberId}"></td>
+                <td th:text="${member.deptName}"></td>
+                <td th:text="${member.name}"></td>
+                <td th:text="${member.tel}"></td>
+                <td th:text="${member.address}"></td>
+                <td th:text="${member.birthDate}"></td>
+                <td th:text="${member.isActive ? '활성' : '비활성'}"></td>
+                <td th:text="${member.createAt}"></td>
+                <td th:text="${member.updateAt}"></td>
+                <td th:text="${member.email}"></td>
+                <td th:text="${member.fileInfo}"></td>
+                <td th:text="${member.genderStr}"></td>
+                <td th:text="${member.academicStatusStr}"></td>
+                <td th:text="${member.gradeStr}"></td>
+                <td th:text="${member.memberTypeStr}"></td>
+                <td th:text="${member.startDate}"></td>
+                <td th:text="${member.endDate}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
