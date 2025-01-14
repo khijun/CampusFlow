@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>교육과정 등록</title>
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+   <!-- 검색 컨테이너 -->
+   <form class="search-container" th:action="@{/iframe/curriculum/update}" method="get">
+      <div class="input-group">
+         <label for="year">학년도</label>
+         <select id="year" name="year">
+            <option value="">전체</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="grade">편성학년</label>
+         <select id="grade" name="grade">
+            <option value="">전체</option>
+            <option value="GRADE_1">1학년</option>
+            <option value="GRADE_2">2학년</option>
+            <option value="GRADE_3">3학년</option>
+            <option value="GRADE_4">4학년</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="deptName">학과 이름</label>
+         <input type="text" id="deptName" name="deptName" placeholder="예: 컴퓨터공학과">
+      </div>
+      <div class="input-group">
+         <label for="curriculumName">교육과정명</label>
+         <input type="text" id="curriculumName" name="curriculumName" placeholder="예: 프로그래밍 기초">
+      </div>
+      <div class="input-group">
+         <label for="category">교육과정 상태</label>
+         <select id="category" name="category">
+            <option value="">전체</option>
+            <option value="active">운영중(활성화)</option>
+            <option value="inactive">운영중단(비활성화)</option>
+            <option value="deprecated">폐지(사용중단)</option>
+         </select>
+      </div>
+      <div class="button-group">
+         <button type="button">신규</button>
+         <button type="submit">검색</button>
+      </div>
+   </form>
+
+   <!-- 검색 결과 컨테이너 -->
+   <div class="result-container">
+      <div class="result-header">
+         <div>학년도</div>
+         <div>편성학년</div>
+         <div>학과 이름</div>
+         <div>교육과정명</div>
+         <div>교육과정 상태</div>
+      </div>
+      <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row">
+         <div th:text="${curriculum.curriculumYear ?: 'N/A'}"></div>
+         <div th:text="${curriculum.grade?.codeName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.dept?.deptName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.curriculumName ?: 'N/A'}"></div>
+         <div th:text="${curriculum.curriculumStatus?.codeName ?: 'N/A'}"></div>
+      </div>
+      <div th:each="curriculum : ${results}"></div>
+   </div>
+</div>
+<script src="/js/curriculum/searchSubject.js"></script>
+<script src="/js/curriculum/toggleAddContainer.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
+</body>
+</html>
