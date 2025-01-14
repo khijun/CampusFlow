@@ -108,7 +108,7 @@
    <form class="search-container" id="searchForm">
       <div class="input-group">
          <label for="deptSelect">학과</label>
-         <select id="deptSelect" name="deptSelect">
+         <select id="deptSelect" name="deptId">
             <option value="">학과를 선택해주세요</option>
          </select>
       </div>
@@ -153,7 +153,7 @@
       const noResults = document.querySelector('#noResults');
 
       // 학과 목록 가져오기
-      fetch('/api/evaluation/diag/departments')
+      fetch('/iframe/evaluation/diag/departments')  // URL 경로 수정
               .then(response => response.json())
               .then(departments => {
                  const deptSelect = document.querySelector('#deptSelect');
@@ -163,22 +163,33 @@
                     option.textContent = dept.deptName;
                     deptSelect.appendChild(option);
                  });
-              });
+              })
+              .catch(error => console.log('학과 목록 로딩 실패:', error));  // 에러 처리 추가
 
-      // 검색 폼 제출 처리
+      // 검색 폼 제출 처리 부분 수정
       searchForm.addEventListener('submit', function(e) {
          e.preventDefault();
 
-         const formData = new FormData(searchForm);
+         // FormData 생성 시 올바른 파라미터 이름 사용
          const searchParams = new URLSearchParams();
+         const deptId = document.querySelector('#deptSelect').value;
+         const grade = document.querySelector('#grade').value;
+         const lectureName = document.querySelector('#lectureName').value;
+         const studentName = document.querySelector('#studentName').value;
 
-         formData.forEach((value, key) => {
-            if (value) searchParams.append(key, value);
-         });
+         if (deptId) searchParams.append('deptId', deptId);
+         if (grade) searchParams.append('grade', grade);
+         if (lectureName) searchParams.append('lectureName', lectureName);
+         if (studentName) searchParams.append('studentName', studentName);
 
-         fetch(`/api/evaluation/diag/search?${searchParams.toString()}`)
-                 .then(response => response.json())
+         // 검색 URL 수정
+         fetch(`/iframe/evaluation/diag/search?${searchParams.toString()}`)
+                 .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                 })
                  .then(results => {
+                    console.log('Search results:', results);  // 결과 데이터 확인
                     if (results && results.length > 0) {
                        displayResults(results);
                        resultsContainer.style.display = 'block';
@@ -187,6 +198,9 @@
                        resultsContainer.style.display = 'none';
                        noResults.style.display = 'block';
                     }
+                 })
+                 .catch(error => {
+                    console.error('Search error:', error);
                  });
       });
 

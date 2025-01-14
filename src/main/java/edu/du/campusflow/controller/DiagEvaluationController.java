@@ -1,15 +1,15 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
 import edu.du.campusflow.service.DeptService;
 import edu.du.campusflow.service.DiagEvaluationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -80,5 +80,31 @@ public class DiagEvaluationController {
         model.addAttribute("showResults", true);
 
         return "view/iframe/evaluation/diag/admin/diagQuestion";
+    }
+
+    // 학과 목록 조회
+    @GetMapping("/departments")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getDepartments() {
+        return ResponseEntity.ok(diagEvaluationService.getAllDepartments());
+    }
+
+    // 1. 학과/학년 검색
+    @GetMapping("/search")
+    @ResponseBody
+    public ResponseEntity<List<DiagEvaluationDetailDTO>> searchEvaluations(
+            @RequestParam Long deptId,
+            @RequestParam String grade,
+            @RequestParam(required = false) String lectureName,
+            @RequestParam(required = false) String studentName) {
+
+        log.info("Search params - deptId: {}, grade: {}, lectureName: {}, studentName: {}",
+                deptId, grade, lectureName, studentName);
+
+        List<DiagEvaluationDetailDTO> results = diagEvaluationService.searchEvaluations(
+                deptId, grade, lectureName, studentName);
+
+        log.info("Search results size: {}", results.size());
+        return ResponseEntity.ok(results);
     }
 }

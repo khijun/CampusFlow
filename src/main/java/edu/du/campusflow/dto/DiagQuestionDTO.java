@@ -24,21 +24,17 @@ public class DiagQuestionDTO {
     private double score2Percent;
     private double score1Percent;
 
+    // 점수 초기화
     public void initializeScoreCounts() {
         this.score5Count = 0;
         this.score4Count = 0;
         this.score3Count = 0;
         this.score2Count = 0;
         this.score1Count = 0;
-
-        this.score5Percent = 0.0;
-        this.score4Percent = 0.0;
-        this.score3Percent = 0.0;
-        this.score2Percent = 0.0;
-        this.score1Percent = 0.0;
     }
 
-    public void incrementScoreCount(int score) {
+    // 점수 증가
+    public void incrementScoreCount(Integer score) {
         switch (score) {
             case 5: score5Count++; break;
             case 4: score4Count++; break;
@@ -48,20 +44,16 @@ public class DiagQuestionDTO {
         }
     }
 
-    public int calculateTotalResponses() {
-        return score5Count + score4Count + score3Count + score2Count + score1Count;
-    }
-
-    public void calculatePercentages(int totalResponses) {
-        if (totalResponses > 0) {
-            score5Percent = (double) score5Count / totalResponses * 100;
-            score4Percent = (double) score4Count / totalResponses * 100;
-            score3Percent = (double) score3Count / totalResponses * 100;
-            score2Percent = (double) score2Count / totalResponses * 100;
-            score1Percent = (double) score1Count / totalResponses * 100;
-
-            averageScore = (5.0 * score5Count + 4.0 * score4Count + 3.0 * score3Count +
-                    2.0 * score2Count + 1.0 * score1Count) / totalResponses;
+    // 평균 점수 계산
+    public void calculateAverageScore() {
+        long totalCount = score5Count + score4Count + score3Count + score2Count + score1Count;
+        if (totalCount == 0) {
+            this.averageScore = 0.0;
+            return;
         }
+
+        double totalScore = (5 * score5Count) + (4 * score4Count) + (3 * score3Count) +
+                (2 * score2Count) + score1Count;
+        this.averageScore = totalScore / totalCount;
     }
 }

@@ -1,15 +1,17 @@
 package edu.du.campusflow.service;
+
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
-import edu.du.campusflow.entity.*;
-import edu.du.campusflow.repository.DiagQuestionRepository;
-import edu.du.campusflow.repository.OfregistrationRepository;
+import edu.du.campusflow.entity.DiagItem;
+import edu.du.campusflow.entity.DiagQuestion;
+import edu.du.campusflow.entity.Member;
+import edu.du.campusflow.entity.Ofregistration;
+import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,82 +21,63 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class DiagEvaluationService {
+    private final DiagEvaluationRepository diagEvaluationRepository;
     private final OfregistrationRepository ofregistrationRepository;
-    private final AuthService authService;
-    private final DiagItemService diagItemService;
     private final DiagQuestionRepository diagQuestionRepository;
+    private final DiagItemRepository diagItemRepository;
+    private final DeptRepository deptRepository;
+    private final AuthService authService;
 
+    @Transactional
+    public List<DiagEvaluationDetailDTO> searchEvaluationsByDeptAndGrade(Long deptId, String grade) {
+        log.info("학과/학년별 진단평가 조회 시작 - deptId: {}, grade: {}", deptId, grade);
+
+        // 학년에 따른 코드ID 매핑
+        Long gradeCodeId;
+        if ("1".equals(grade)) {
+            gradeCodeId = 97L;  // 1학년
+        } else if ("2".equals(grade)) {
+            gradeCodeId = 98L;  // 2학년
+        } else if ("3".equals(grade)) {
+            gradeCodeId = 99L;  // 3학년
+        } else if ("4".equals(grade)) {
+            gradeCodeId = 100L; // 4학년
+        } else {
+            throw new IllegalArgumentException("Invalid grade: " + grade);
+        }
+
+        // findEvaluationsByDeptAndGrade를 findEvaluations로 변경
+        List<DiagEvaluationDetailDTO> results = diagEvaluationRepository
+                .findEvaluations(deptId, gradeCodeId, null, null);  // lectureName과 studentName은 null
+
+        log.info("조회된 결과 수: {}", results.size());
+        return results;
+    }
+
+
+    // 교수의 강의 목록 조회 메서드 추가
     @Transactional
     public List<Map<String, Object>> getProfessorLectures() {
         Member currentMember = authService.getCurrentMember();
-        log.info("현재 로그인한 교수: {}", currentMember.getName());
+        List<Ofregistration> registrations = ofregistrationRepository
+                .findByLectureId_Member_MemberId(currentMember.getMemberId());
 
-        List<Ofregistration> ofregistrations = ofregistrationRepository.findDistinctByLectureId_Member(currentMember);
-        return convertToLectureMap(ofregistrations);
+        return registrations.stream()
+                .map(reg -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("ofregistrationId", reg.getId());
+                    map.put("lectureName", reg.getLectureId().getLectureName());
+                    map.put("semester", reg.getLectureId().getSemester().getCodeName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public List<Map<String, Object>> getAllLectures() {
-        List<Ofregistration> ofregistrations = ofregistrationRepository.findAll();
-        return convertToLectureMap(ofregistrations);
-    }
+        List<Ofregistration> registrations = ofregistrationRepository.findAll();
 
-    @Transactional
-    public List<DiagQuestionDTO> getDiagnosticResults(Long ofregistrationId) {
-        Ofregistration ofregistration = ofregistrationRepository.findById(ofregistrationId)
-                .orElseThrow(() -> new IllegalArgumentException("수강신청 정보를 찾을 수 없습니다."));
-
-        List<DiagItem> diagItems = diagItemService.getDiagItemsByOfRegistrationId(ofregistrationId);
-
-        if (diagItems.isEmpty()) {
-            List<DiagQuestion> questions = diagQuestionRepository.findAll();
-            return createEmptyResults(questions, ofregistration);
-        }
-
-        return convertToDiagQuestionDTO(diagItems, ofregistration);
-    }
-
-    @Transactional
-    public List<DiagQuestionDTO> searchDiagnosticResults(
-            Long deptId,
-            String grade,
-            String lectureName,
-            String studentName
-    ) {
-        List<DiagEvaluationDetailDTO> evaluations = ofregistrationRepository
-                .findEvaluationsBySearchCriteria(deptId, grade, lectureName, studentName);  // 여기를 변경
-
-        if (evaluations.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        Map<String, DiagQuestionDTO> resultMap = new HashMap<>();
-
-        evaluations.forEach(eval -> {
-            String key = eval.getLectureName() + "_" + eval.getQuestionName();
-            DiagQuestionDTO dto = resultMap.computeIfAbsent(key, k -> {
-                DiagQuestionDTO newDto = new DiagQuestionDTO();
-                newDto.setLectureName(eval.getLectureName());
-                newDto.setQuestionName(eval.getQuestionName());
-                newDto.initializeScoreCounts();
-                return newDto;
-            });
-
-            dto.incrementScoreCount(eval.getScore());
-        });
-
-        resultMap.values().forEach(dto -> {
-            int totalResponses = dto.calculateTotalResponses();
-            if (totalResponses > 0) {
-                dto.calculatePercentages(totalResponses);
-            }
-        });
-
-        return new ArrayList<>(resultMap.values());
-    }
-
-    private List<Map<String, Object>> convertToLectureMap(List<Ofregistration> ofregistrations) {
-        return ofregistrations.stream()
+        return registrations.stream()
                 .map(reg -> {
                     Map<String, Object> map = new HashMap<>();
                     map.put("ofregistrationId", reg.getId());
@@ -106,77 +89,81 @@ public class DiagEvaluationService {
                 .collect(Collectors.toList());
     }
 
-    private List<DiagQuestionDTO> createEmptyResults(List<DiagQuestion> questions, Ofregistration ofregistration) {
-        List<DiagQuestionDTO> results = new ArrayList<>();
-        Lecture lecture = ofregistration.getLectureId();
+    @Transactional
+    public List<DiagQuestionDTO> getDiagnosticResults(Long ofregistrationId) {
+        Ofregistration ofregistration = ofregistrationRepository.findById(ofregistrationId)
+                .orElseThrow(() -> new IllegalArgumentException("수강신청 정보를 찾을 수 없습니다."));
 
-        for (DiagQuestion question : questions) {
-            DiagQuestionDTO dto = new DiagQuestionDTO();
-            dto.setQuestionId(question.getQuestionId());
-            dto.setQuestionName(question.getQuestionName());
-            dto.setLectureName(lecture.getLectureName());
-            dto.setName(lecture.getMember().getName());
-            dto.setSemester(lecture.getSemester().getCodeName());
-            dto.setSubjectId(lecture.getCurriculumSubject().getSubject().getSubjectId());
-            dto.setAverageScore(0.0);
-            dto.initializeScoreCounts();
-            results.add(dto);
+        List<DiagQuestion> questions = diagQuestionRepository.findAll();
+        List<DiagItem> diagItems = diagItemRepository.findByOfRegistration_Id(ofregistrationId);  // diagItemRepository 사용
+
+        return questions.stream()
+                .map(question -> {
+                    DiagQuestionDTO dto = new DiagQuestionDTO();
+                    dto.setQuestionId(question.getQuestionId());
+                    dto.setQuestionName(question.getQuestionName());
+                    dto.setLectureName(ofregistration.getLectureId().getLectureName());
+                    dto.setName(ofregistration.getLectureId().getMember().getName());
+                    dto.setSemester(ofregistration.getLectureId().getSemester().getCodeName());
+                    dto.setSubjectId(ofregistration.getLectureId().getCurriculumSubject().getSubject().getSubjectId());
+
+                    // 점수 초기화
+                    dto.initializeScoreCounts();  // 추가
+
+                    // 해당 문항에 대한 답변들 처리
+                    diagItems.stream()
+                            .filter(item -> item.getDiagQuestion().getQuestionId().equals(question.getQuestionId()))
+                            .forEach(item -> dto.incrementScoreCount(item.getScore()));
+
+                    dto.calculateAverageScore();  // DiagQuestionDTO에 이 메서드가 있어야 함
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<DiagEvaluationDetailDTO> searchEvaluations(
+            Long deptId, String grade, String lectureName, String studentName) {
+
+        Long gradeCodeId = getGradeCodeId(grade);
+
+        List<DiagEvaluationDetailDTO> results = diagEvaluationRepository
+                .findEvaluations(deptId, gradeCodeId, lectureName, studentName);
+
+        return results;
+    }
+
+    private Long getGradeCodeId(String grade) {
+        Long gradeCodeId;
+        switch (grade) {
+            case "1":
+                gradeCodeId = 97L;
+                break;
+            case "2":
+                gradeCodeId = 98L;
+                break;
+            case "3":
+                gradeCodeId = 99L;
+                break;
+            case "4":
+                gradeCodeId = 100L;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid grade: " + grade);
         }
-
-        return results;
+        return gradeCodeId;
     }
 
-    private List<DiagQuestionDTO> convertToDiagQuestionDTO(List<DiagItem> diagItems, Ofregistration ofregistration) {
-        Map<Long, List<DiagItem>> itemsByQuestionId = diagItems.stream()
-                .collect(Collectors.groupingBy(item -> item.getDiagQuestion().getQuestionId()));
-
-        List<DiagQuestionDTO> results = new ArrayList<>();
-
-        itemsByQuestionId.forEach((questionId, items) -> {
-            DiagQuestionDTO dto = new DiagQuestionDTO();
-
-            // 문항 정보 설정
-            DiagQuestion question = items.get(0).getDiagQuestion();
-            dto.setQuestionId(questionId);
-            dto.setQuestionName(question.getQuestionName());
-
-            // 강의 정보 설정
-            Lecture lecture = ofregistration.getLectureId();
-            dto.setLectureName(lecture.getLectureName());
-            dto.setName(lecture.getMember().getName());
-            dto.setSemester(lecture.getSemester().getCodeName());
-            dto.setSubjectId(lecture.getCurriculumSubject().getSubject().getSubjectId());
-
-            // 점수별 응답 수 계산
-            long score5Count = items.stream().filter(item -> item.getScore() == 5).count();
-            long score4Count = items.stream().filter(item -> item.getScore() == 4).count();
-            long score3Count = items.stream().filter(item -> item.getScore() == 3).count();
-            long score2Count = items.stream().filter(item -> item.getScore() == 2).count();
-            long score1Count = items.stream().filter(item -> item.getScore() == 1).count();
-
-            dto.setScore5Count((int) score5Count);
-            dto.setScore4Count((int) score4Count);
-            dto.setScore3Count((int) score3Count);
-            dto.setScore2Count((int) score2Count);
-            dto.setScore1Count((int) score1Count);
-
-            // 평균 점수 계산
-            double totalScore = items.stream()
-                    .mapToInt(DiagItem::getScore)
-                    .sum();
-            dto.setAverageScore(totalScore / items.size());
-
-            // 백분율 계산
-            int totalResponses = items.size();
-            dto.setScore5Percent((double) score5Count / totalResponses * 100);
-            dto.setScore4Percent((double) score4Count / totalResponses * 100);
-            dto.setScore3Percent((double) score3Count / totalResponses * 100);
-            dto.setScore2Percent((double) score2Count / totalResponses * 100);
-            dto.setScore1Percent((double) score1Count / totalResponses * 100);
-
-            results.add(dto);
-        });
-
-        return results;
+    // getAllDepartments는 한 번만 정의
+    public List<Map<String, Object>> getAllDepartments() {
+        return deptRepository.findAll().stream()
+                .map(dept -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("deptId", dept.getDeptId());
+                    map.put("deptName", dept.getDeptName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
+
 }
