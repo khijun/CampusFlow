@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 @SpringBootTest
@@ -134,11 +132,18 @@ public class HijunTest {
     }
 
     @Test
+    @Transactional
     public void memberServiceTest(){
-        memberService.findAllMemberDTOs().forEach(System.out::println);
-        CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
-        memberService.findAllMemberDTOs(student.getCodeId()).forEach(System.out::println);
-        System.out.println("0L");
-        memberService.findAllMemberDTOs(0L).forEach(System.out::println);
+//        memberService.findAllMemberDTOs(0L, null).forEach(System.out::println);
+//        CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
+//        System.out.println("ALL");
+//        memberService.findAllMemberDTOs(0L, true).forEach(System.out::println);
+//        System.out.println("student");
+//        memberService.findAllMemberDTOs(student.getCodeId(), true).forEach(System.out::println);
+
+        System.out.println("FILTERS");
+        Map<String, Object> filter = new HashMap<>();
+//        filter.put();
+        memberService.findAllWithFilter(null).forEach(System.out::println);
     }
 }

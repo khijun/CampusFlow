@@ -1,6 +1,8 @@
 package edu.du.campusflow.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.du.campusflow.dto.MemberDTO;
+import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.repository.CommonCodeGroupRepository;
 import edu.du.campusflow.service.CommonCodeService;
@@ -24,23 +26,23 @@ public class MemberController {
     private final CommonCodeService commonCodeService;
 
     @GetMapping("/iframe/member/select_member")
-    public String selectMember(Model model, @RequestParam(required = false, name = "memberType") Long typeId) {
-        List<MemberDTO> memberDTOList = memberService.findAllMemberDTOs(typeId);
+    public String selectMember(Model model) {
         List<CommonCode> typeList = commonCodeGroupRepository.findByGroupCode("MEMBERTYPE").getCommonCodes();
 
-        model.addAttribute("selectedTypeId", typeId);
-        model.addAttribute("memberDTOList", memberDTOList);
+        model.addAttribute("filter", MemberSearchFilter.builder().build());
         model.addAttribute("typeList", typeList);
         return "view/iframe/member/select_member";
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "select_member";
-    }
-
     @GetMapping("/api/members")
-    public ResponseEntity<?> getMembers(@RequestParam(required = false, name = "memberType") Long typeId) {
-        return ResponseEntity.ok(memberService.findAllMemberDTOs(typeId));
+    public ResponseEntity<?> getMembers(@RequestParam(required = false, name = "filter") String searchURL){
+        ObjectMapper objectMapper = new ObjectMapper();
+        MemberSearchFilter filter;
+        try{
+            filter = objectMapper.readValue(searchURL, MemberSearchFilter.class);
+        }catch (Exception e){
+            filter = MemberSearchFilter.builder().build();
+        }
+        return ResponseEntity.ok(MemberDTO.fromEntityList(memberService.findAllWithFilter(filter)));
     }
 }
