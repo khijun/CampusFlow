@@ -48,7 +48,7 @@ public class ChangeRequestService {
         System.out.println("CodeId: " + codeId);
         if (changeRequest == null || changeRequest.getMember() == null || changeRequest.getMember().getAcademicStatus() == null) {
             throw new IllegalArgumentException("Invalid changeRequest or member information");
-        }
+    }
 
         // 1. ChangeRequest 저장 전에 beforeCode 자동 설정 (현재 상태)
         CommonCode beforeCode = commonCodeRepository.findById(changeRequest.getMember().getAcademicStatus().getCodeId())
