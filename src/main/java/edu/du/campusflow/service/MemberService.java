@@ -9,6 +9,7 @@ import edu.du.campusflow.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,24 +26,27 @@ public class MemberService {
         return memberRepository.findById(memberId).orElse(null);
     };
 
-    // 멤버 타입 공통 코드의 리스트를 받아 조건에 맞는 값을 반환하는 메서드
-    public List<MemberDTO> findAllMemberDTOs(List<Long> typeIds){
-        return MemberDTO.fromEntityList(memberRepository.findAllWithDetailsByIds(typeIds));
-    }
-
-    // 모든 멤버 타입에 해당하는 멤버를 반환하는 메서드
-    public List<MemberDTO> findAllMemberDTOs(){
-        return MemberDTO.fromEntityList(memberRepository.findAllWithDetails());
-    }
-
     // 공통코드 아이디를 받아 멤버 타입으로서 필터링해 반환하는 메서드. null 이거나 0이면 모든 값을 반환하는 메서드
-    public List<MemberDTO> findAllMemberDTOs(Long typeId) {
-        return typeId == null||typeId == 0L?findAllMemberDTOs():findAllMemberDTOs(Collections.singletonList(typeId));
+    public List<MemberDTO> findAllMemberDTOs(Long typeId, Boolean isActive) {
+        if(typeId == null) typeId = 0L;
+        if(isActive == null) isActive = true ;
+        return typeId==0L?findAllMemberDTOs(new ArrayList<>(), isActive):
+                findAllMemberDTOs(Collections.singletonList(typeId), isActive);
     }
 
     // AcademicStatus에 따라 Member 목록을 찾는 메서드
     public List<Member> findByAcademicStatus(CommonCode academicStatus) {
         return memberRepository.findByAcademicStatus(academicStatus); // AcademicStatus로 Member 찾기
+    }
+
+    public List<Member> findAllMembers(List<Long> typeIds, Boolean isActive) {
+        if(isActive==null)  isActive=true;
+        return typeIds==null||typeIds.isEmpty()?memberRepository.findAllWithDetails(isActive):memberRepository.findAllWithDetailsByIds(typeIds, isActive);
+    }
+
+    // 멤버 타입 공통 코드의 리스트를 받아 조건에 맞는 값을 반환하는 메서드
+    public List<MemberDTO> findAllMemberDTOs(List<Long> typeIds, Boolean isActive){
+        return MemberDTO.fromEntityList(findAllMembers(typeIds, isActive));
     }
 
     // 모든 학생을 반환하는 메서드

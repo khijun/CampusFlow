@@ -21,12 +21,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findByAcademicStatus(CommonCode academicStatus); // CommonCode로 Member 찾기
 
-    @Query("select m from Member m where m.memberType.codeId in :typeIds ")
+    @Query("select m from Member m where m.memberType.codeId in :typeIds " +
+            "and m.isActive = :isActive")
     @EntityGraph(attributePaths = {"dept", "gender", "academicStatus", "grade", "memberType"})
-    List<Member> findAllWithDetailsByIds(List<Long> typeIds);
+    List<Member> findAllWithDetailsByIds(List<Long> typeIds, Boolean isActive);
 
-    @Query("select m from Member m")
+    @Query("select m from Member m where m.isActive = :isActive")
     @EntityGraph(attributePaths = {"dept", "gender", "academicStatus", "grade", "memberType"})
-    List<Member> findAllWithDetails();
+    List<Member> findAllWithDetails(Boolean isActive);
 
 }
