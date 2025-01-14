@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>가족 정보</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    .hidden { display: none; }
+    .form-container { margin-top: 20px; }
+    .form-container input { margin-right: 10px; }
+    .add-button { cursor: pointer; color: #007bff; font-size: 18px; }
+  </style>
+</head>
+<body>
+<h2>가족 정보</h2>
+<div class="family-container">
+  <table>
+    <thead>
+    <tr>
+      <th>관계</th>
+      <th>이름</th>
+      <th>생년월일</th>
+      <th>전화번호</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="info : ${familyInfos}">
+      <td th:text="${info.familyRelation.codeName}">관계</td>
+      <td th:text="${info.name}">이름</td>
+      <td th:text="${info.birthDate}">생년월일</td>
+      <td th:text="${info.contact}">전화번호</td>
+      <td>
+      <form th:action="@{/iframe/info/family_student/delete}" method="post"
+            onsubmit="return confirm('정말 삭제하시겠습니까?')">
+        <input type="hidden" name="id" th:value="${info.id}" />
+        <button type="submit" class="cancel-btn">삭제</button>
+      </form>
+      </td>
+    </tr>
+    <tr th:if="${familyInfos.empty}">
+      <td colspan="4">가족 정보가 없습니다.</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 추가 버튼 -->
+<div>
+  <span class="add-button" onclick="toggleForm()">+ 가족 추가</span>
+</div>
+
+<!-- 숨겨진 폼 -->
+<div id="addForm" class="hidden">
+  <form th:action="@{/iframe/info/family_student/insert}" method="post">
+    <label for="familyRelation">관계:</label>
+    <select name="familyRelation" id="familyRelation" required>
+      <option value="41">부</option>
+      <option value="42">모</option>
+    </select>
+
+    <label for="name">이름:</label>
+    <input type="text" name="name" id="name" placeholder="이름" required>
+
+    <label for="birthDate">생년월일:</label>
+    <input type="date" name="birthDate" id="birthDate" required>
+
+    <label for="contact">전화번호:</label>
+    <input type="text" name="contact" id="contact" placeholder="전화번호" required>
+
+    <button type="submit">저장</button>
+  </form>
+</div>
+
+
+<script>
+  function toggleForm() {
+    const form = document.getElementById("addForm");
+    form.classList.toggle("hidden");
+  }
+</script>
+</body>
+</html>

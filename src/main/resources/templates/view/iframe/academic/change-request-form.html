@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>휴학/복학 신청</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+</head>
+<body>
+<h2>휴학/복학 신청</h2>
+<form th:action="@{/iframe/academic/process-change-request}" th:object="${changeRequestDto}" method="post">
+  <input type="hidden" name="memberId" th:value="${changeRequestDto.memberId}">
+
+  <label for="newStatusCodeId">신청</label>
+  <select id="newStatusCodeId" name="newStatusCodeId" th:field="*{newStatusCodeId}">
+    <option value="2">휴학</option>
+    <option value="8">복학</option>
+  </select>
+  <label for="reason">사유:</label>
+  <input type="text" name="reason" id="reason">
+
+
+  <button type="submit">신청</button>
+</form>
+
+</body>
+</html>

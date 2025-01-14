@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학적 조회</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      overflow-y: auto;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+      font-weight: 700;
+    }
+
+    /* 공통 그리드 스타일 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 5개의 열 */
+      /*gap: 10px; !* 셀 간 간격 *!*/
+      width: 90%;
+      overflow-y: auto;   /* 수직 스크롤 추가 */
+      margin: 0 auto;
+    }
+
+    /* 헤더 스타일 */
+    .header-container {
+      background-color: #007BFF;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px 0;
+      /*border-radius: 5px;*/
+    }
+
+    /* 아이템 스타일 */
+    .item-container .item {
+      padding: 10px;
+      text-align: center;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      /*border-radius: 5px;*/
+    }
+
+    .item-container .item:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* 버튼 스타일 */
+    .cancel-btn {
+      color: #dc3545;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .cancel-btn:hover {
+      text-decoration: underline;
+    }
+
+
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 모바일 화면에서 5개의 열 */
+      }
+
+      .header, .item {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+
+
+  </style>
+</head>
+<body>
+<h2>학적 조회</h2>
+
+<!-- 헤더 부분 -->
+<div class="grid-container header-container">
+  <div class="header">변경 전 상태</div>
+  <div class="header">변경 후 상태</div>
+  <div class="header">신청 일자</div>
+  <div class="header">상태</div>
+  <div class="header">사유</div>
+  <div class="header">신청 취소</div>
+</div>
+
+<!-- 아이템 반복 부분 -->
+<div class="grid-container item-container" th:each="request : ${changeRequests}">
+  <div class="item" th:text="${request.beforeCode.codeName}"></div>
+  <div class="item" th:text="${request.afterCode.codeName}"></div>
+  <div class="item" th:text="${#temporals.format(request.requestDate, 'yyyy-MM-dd')}"></div>
+  <div class="item" th:text="${request.applicationStatus.codeName}"></div>
+  <div class="item" th:text="${request.reason}"></div>
+  <div class="item">
+    <form th:action="@{/iframe/academic/delete-change-request}" method="post"
+          onsubmit="return confirm('정말 신청을 취소하시겠습니까?')"
+          th:if="${request.applicationStatus.codeName != '승인'}">
+      <input type="hidden" th:name="applicationId" th:value="${request.id}" />
+      <button type="submit" class="cancel-btn">신청 취소</button>
+    </form>
+  </div>
+</div>
+
+
+</body>
+</html>

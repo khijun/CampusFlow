@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>등록금 정보</title>
+    <link rel="stylesheet" th:href="@{/css/tuition/tuitionTarget.css}">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>등록금 정보</h1>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>학과</th>
+            <th>학번</th>
+            <th>이름</th>
+            <th>등록금액</th>
+            <th>납부금액</th>
+            <th>납부일자</th>
+            <th>납부상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${tuitionTarget.deptName}"></td>
+            <td th:text="${tuitionTarget.memberId}"></td>
+            <td th:text="${tuitionTarget.memberName}"></td>
+            <td th:text="${#numbers.formatDecimal(tuitionTarget.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+            <td th:text="${#numbers.formatDecimal(tuitionTarget.paidAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+            <td th:text="${tuitionTarget.paymentStatus ? #temporals.format(tuitionTarget.paidDate, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+            <td th:text="${tuitionTarget.paymentStatus ? '완납' : '미납'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
