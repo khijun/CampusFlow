@@ -16,24 +16,24 @@ public interface DiagEvaluationRepository extends JpaRepository<Ofregistration, 
             "dq.questionName, " +
             "di.score, " +
             "m.name, " +
-            "m.grade, " +  // semester 대신 member의 grade 사용
-            "cs.subject.subjectId) " +
+            "cc.codeValue, " +
+            "cs.subject.subjectId, " +
+            "m.memberId) " +  // memberId 추가
             "FROM DiagItem di " +
             "JOIN di.ofRegistration o " +
+            "JOIN o.member m " +
             "JOIN o.lectureId l " +
-            "JOIN o.member m " +  // member 조인 추가
             "JOIN di.diagQuestion dq " +
             "JOIN l.curriculumSubject cs " +
-            "JOIN cs.curriculum c " +
-            "WHERE c.dept.deptId = :deptId " +
-            "AND m.grade = :gradeCodeId " +  // semester 대신 member의 grade로 검색
+            "JOIN m.grade cc " +
+            "WHERE m.dept.deptId = :deptId " +
+            "AND m.grade.codeId = :gradeCodeId " +
             "AND (:lectureName IS NULL OR l.lectureName LIKE %:lectureName%) " +
-            "AND (:studentName IS NULL OR m.name LIKE %:studentName%) " +
-            "ORDER BY l.lectureName, dq.questionName")
+            "AND (:name IS NULL OR m.name LIKE %:name%) " +
+            "ORDER BY m.name, l.lectureName, dq.questionName")  // 학생명, 강의명, 문항 순으로 정렬
     List<DiagEvaluationDetailDTO> findEvaluations(
             @Param("deptId") Long deptId,
             @Param("gradeCodeId") Long gradeCodeId,
             @Param("lectureName") String lectureName,
-            @Param("studentName") String studentName
-    );
+            @Param("name") String name);
 }

@@ -24,14 +24,6 @@
          padding-right: 16px;
       }
 
-      .lecture-section {
-         margin-bottom: 30px;
-         padding: 20px;
-         background-color: #f8f9fa;
-         border-radius: 8px;
-         border: 1px solid #e0e0e0;
-      }
-
       .lecture-section h3 {
          color: #2196F3;
          margin-bottom: 20px;
@@ -39,26 +31,6 @@
          border-bottom: 2px solid #e0e0e0;
       }
 
-      .question-item {
-         background-color: white;
-         padding: 20px;
-         margin-bottom: 15px;
-         border-radius: 8px;
-         border: 1px solid #e0e0e0;
-      }
-
-      .average-score {
-         font-size: 1.1em;
-         margin: 10px 0;
-         color: #2196F3;
-         font-weight: bold;
-      }
-
-      .score-distribution {
-         list-style: none;
-         padding: 0;
-         margin: 0;
-      }
 
       .score-distribution li {
          display: flex;
@@ -68,18 +40,28 @@
          background-color: #f8f9fa;
          border-radius: 4px;
       }
-
-      .score-label {
-         flex: 0 0 80px;
-         font-weight: bold;
+      .results-table {
+         width: 100%;
+         border-collapse: collapse;
+         background-color: white;
+         margin-bottom: 20px;
       }
 
-      .score-count {
-         flex: 0 0 100px;
+      .results-table th,
+      .results-table td {
+         padding: 12px;
+         text-align: left;
+         border-bottom: 1px solid #e0e0e0;
       }
 
-      .score-percent {
-         color: #666;
+      .results-table th {
+         background-color: #2196F3;
+         color: white;
+         font-weight: normal;
+      }
+
+      .results-table tr:hover {
+         background-color: #f8f9fa;
       }
 
       /* 스크롤바 스타일링 */
@@ -113,8 +95,8 @@
          </select>
       </div>
       <div class="input-group">
-         <label for="grade">학년</label>
-         <select id="grade" name="grade">
+         <label for="gradeSelect">학년</label>
+         <select id="gradeSelect" name="grade">
             <option value="">학년을 선택해주세요</option>
             <option value="1">1학년</option>
             <option value="2">2학년</option>
@@ -127,8 +109,8 @@
          <input id="lectureName" name="lectureName" type="text">
       </div>
       <div class="input-group">
-         <label for="studentName">학생명</label>
-         <input id="studentName" name="studentName" type="text">
+         <label for="name">학생명</label>
+         <input id="name" name="name" type="text">
       </div>
       <div class="button-group">
          <button type="submit">검색</button>
@@ -153,7 +135,7 @@
       const noResults = document.querySelector('#noResults');
 
       // 학과 목록 가져오기
-      fetch('/iframe/evaluation/diag/departments')  // URL 경로 수정
+      fetch('/iframe/evaluation/diag/departments')
               .then(response => response.json())
               .then(departments => {
                  const deptSelect = document.querySelector('#deptSelect');
@@ -164,32 +146,40 @@
                     deptSelect.appendChild(option);
                  });
               })
-              .catch(error => console.log('학과 목록 로딩 실패:', error));  // 에러 처리 추가
+              .catch(error => console.log('학과 목록 로딩 실패:', error));
 
-      // 검색 폼 제출 처리 부분 수정
+      // 검색 폼 제출 처리
       searchForm.addEventListener('submit', function(e) {
          e.preventDefault();
 
-         // FormData 생성 시 올바른 파라미터 이름 사용
          const searchParams = new URLSearchParams();
          const deptId = document.querySelector('#deptSelect').value;
-         const grade = document.querySelector('#grade').value;
+         const grade = document.querySelector('#gradeSelect').value;
          const lectureName = document.querySelector('#lectureName').value;
-         const studentName = document.querySelector('#studentName').value;
+         const name = document.querySelector('#name').value;  // name으로 수정
+
+         console.log('검색 파라미터:', {
+            deptId,
+            grade,
+            lectureName,
+            name
+         });
 
          if (deptId) searchParams.append('deptId', deptId);
          if (grade) searchParams.append('grade', grade);
          if (lectureName) searchParams.append('lectureName', lectureName);
-         if (studentName) searchParams.append('studentName', studentName);
+         if (name) searchParams.append('name', name);
 
-         // 검색 URL 수정
+         const url = `/iframe/evaluation/diag/search?${searchParams.toString()}`;
+         console.log('요청 URL:', url);
+
          fetch(`/iframe/evaluation/diag/search?${searchParams.toString()}`)
                  .then(response => {
                     console.log('Response status:', response.status);
                     return response.json();
                  })
                  .then(results => {
-                    console.log('Search results:', results);  // 결과 데이터 확인
+                    console.log('Search results:', results);
                     if (results && results.length > 0) {
                        displayResults(results);
                        resultsContainer.style.display = 'block';
@@ -201,43 +191,38 @@
                  })
                  .catch(error => {
                     console.error('Search error:', error);
+                    noResults.style.display = 'block';
+                    resultsContainer.style.display = 'none';
                  });
       });
 
       function displayResults(results) {
-         resultsContainer.innerHTML = '';
-         let currentLecture = '';
-
-         results.forEach(result => {
-            if (currentLecture !== result.lectureName) {
-               currentLecture = result.lectureName;
-               const lectureSection = document.createElement('div');
-               lectureSection.className = 'lecture-section';
-               lectureSection.innerHTML = `<h3>강의명: ${result.lectureName}</h3>`;
-               resultsContainer.appendChild(lectureSection);
-            }
-
-            const questionItem = document.createElement('div');
-            questionItem.className = 'question-item';
-            questionItem.innerHTML = `
-                <h4>${result.questionName}</h4>
-                <p class="average-score">
-                    평균 점수: ${result.averageScore.toFixed(1)}
-                </p>
-                <ul class="score-distribution">
-                    ${[5,4,3,2,1].map(score => `
-                        <li>
-                            <span class="score-label">${score}점:</span>
-                            <span class="score-count">${result['score'+score+'Count']}명</span>
-                            <span class="score-percent">
-                                (${result['score'+score+'Percent'].toFixed(1)}%)
-                            </span>
-                        </li>
+         resultsContainer.innerHTML = `
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>강의명</th>
+                        <th>학번</th>  <!-- 학번 컬럼 추가 -->
+                        <th>이름</th>
+                        <th>학년</th>
+                        <th>문항</th>
+                        <th>점수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${results.map(result => `
+                        <tr>
+                            <td>${result.lectureName}</td>
+                            <td>${result.memberId}</td>  <!-- 학번 데이터 추가 -->
+                            <td>${result.name}</td>
+                            <td>${result.grade}</td>
+                            <td>${result.questionName}</td>
+                            <td>${result.score}</td>
+                        </tr>
                     `).join('')}
-                </ul>
-            `;
-            resultsContainer.lastElementChild.appendChild(questionItem);
-         });
+                </tbody>
+            </table>
+        `;
       }
    });
 </script>

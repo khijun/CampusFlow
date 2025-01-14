@@ -14,15 +14,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 public class DiagEvaluationDetailDTO {
-    private String lectureName;    // 강의명
-    private String questionName;   // 문항명
-    private Integer score;         // 점수
-
-    // 추가 필드
-    private String professorName;  // 교수명
-    private String grade;       // 학년
-    private Long subjectId;        // 과목코드
-    private double averageScore;   // 평균 점수
+    private String lectureName;
+    private String questionName;
+    private Integer score;
+    private String name;
+    private String grade;
+    private Long subjectId;
+    private Long memberId;
+    private Double averageScore;
 
     // 점수별 응답 수
     private long score5Count;
@@ -38,42 +37,22 @@ public class DiagEvaluationDetailDTO {
     private double score2Percent;
     private double score1Percent;
 
-    public DiagEvaluationDetailDTO(
-            String lectureName,
-            String questionName,
-            int score,
-            String professorName,
-            String grade,          // 매개변수 이름도 변경
-            Long subjectId
-    ) {
-        this.lectureName = lectureName;
-        this.questionName = questionName;
-        this.score = score;
-        this.professorName = professorName;
-        this.grade = grade;        // 필드 이름 변경
-        this.subjectId = subjectId;
-    }
 
-    // JPA Constructor 추가
     public DiagEvaluationDetailDTO(
             String lectureName,
             String questionName,
-            int score,
-            String professorName,
+            Integer score,
+            String name,
             String grade,
-            Long count,
-            Double avgScore
-    ) {
+            Long subjectId,
+            Long memberId) {
         this.lectureName = lectureName;
         this.questionName = questionName;
         this.score = score;
-        this.professorName = professorName;
+        this.name = name;
         this.grade = grade;
-        this.averageScore = avgScore;
-
-        initializeScoreCounts();
-        incrementScoreCount(score);
-        calculatePercentages();
+        this.subjectId = subjectId;
+        this.memberId = memberId;
     }
 
     // DiagItem -> DTO 변환 메서드 수정
@@ -82,8 +61,8 @@ public class DiagEvaluationDetailDTO {
                 .lectureName(diagItem.getOfRegistration().getLectureId().getLectureName())
                 .questionName(diagItem.getDiagQuestion().getQuestionName())
                 .score(diagItem.getScore())
-                .professorName(diagItem.getOfRegistration().getLectureId().getMember().getName())
-                .grade(diagItem.getOfRegistration().getLectureId().getSemester().getCodeValue())  // 학기 코드값을 학년으로 사용
+                .name(diagItem.getOfRegistration().getMember().getName())
+                .grade(diagItem.getOfRegistration().getMember().getGrade().getCodeValue())  // CommonCode에서 값 가져오기
                 .subjectId(diagItem.getOfRegistration().getLectureId().getCurriculumSubject().getSubject().getSubjectId())
                 .build();
     }
@@ -101,6 +80,9 @@ public class DiagEvaluationDetailDTO {
                 .lectureName((String) result[0])
                 .questionName((String) result[1])
                 .score((Integer) result[2])
+                .name((String) result[3])      // 추가
+                .grade((String) result[4])     // 추가
+                .subjectId((Long) result[5])   // 추가
                 .build();
     }
 
@@ -111,7 +93,7 @@ public class DiagEvaluationDetailDTO {
                 .collect(Collectors.toList());
     }
 
-    // 점수 카운트 초기화
+    // 점수 관련 메서드들은 그대로 유지
     public void initializeScoreCounts() {
         this.score5Count = 0;
         this.score4Count = 0;
@@ -120,7 +102,6 @@ public class DiagEvaluationDetailDTO {
         this.score1Count = 0;
     }
 
-    // 점수별 카운트 증가
     public void incrementScoreCount(Integer score) {
         switch (score) {
             case 5: score5Count++; break;
@@ -131,12 +112,10 @@ public class DiagEvaluationDetailDTO {
         }
     }
 
-    // 총 응답 수 계산
     public long calculateTotalResponses() {
         return score5Count + score4Count + score3Count + score2Count + score1Count;
     }
 
-    // 비율 계산
     public void calculatePercentages() {
         long total = calculateTotalResponses();
         if (total > 0) {
@@ -148,7 +127,6 @@ public class DiagEvaluationDetailDTO {
         }
     }
 
-    // 평균 점수 계산
     public void calculateAverageScore() {
         long total = calculateTotalResponses();
         if (total > 0) {
@@ -156,6 +134,4 @@ public class DiagEvaluationDetailDTO {
                     2 * score2Count + score1Count) / (double) total;
         }
     }
-
-
 }

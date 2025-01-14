@@ -96,13 +96,13 @@ public class DiagEvaluationController {
             @RequestParam Long deptId,
             @RequestParam String grade,
             @RequestParam(required = false) String lectureName,
-            @RequestParam(required = false) String studentName) {
+            @RequestParam(required = false) String name) {
 
-        log.info("Search params - deptId: {}, grade: {}, lectureName: {}, studentName: {}",
-                deptId, grade, lectureName, studentName);
+        log.info("Search params - deptId: {}, grade: {}, lectureName: {}, name: {}",
+                deptId, grade, lectureName, name);
 
         List<DiagEvaluationDetailDTO> results = diagEvaluationService.searchEvaluations(
-                deptId, grade, lectureName, studentName);
+                deptId, grade, lectureName, name);
 
         log.info("Search results size: {}", results.size());
         return ResponseEntity.ok(results);

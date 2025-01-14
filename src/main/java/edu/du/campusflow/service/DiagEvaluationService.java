@@ -123,35 +123,26 @@ public class DiagEvaluationService {
 
     @Transactional
     public List<DiagEvaluationDetailDTO> searchEvaluations(
-            Long deptId, String grade, String lectureName, String studentName) {
+            Long deptId, String grade, String lectureName, String name) {
 
-        Long gradeCodeId = getGradeCodeId(grade);
+        Long gradeCodeId = getGradeCodeId(grade);  // 학년을 코드 ID로 변환
 
-        List<DiagEvaluationDetailDTO> results = diagEvaluationRepository
-                .findEvaluations(deptId, gradeCodeId, lectureName, studentName);
-
-        return results;
+        return diagEvaluationRepository.findEvaluations(
+                deptId,
+                gradeCodeId,  // 변환된 코드 ID 전달
+                lectureName,
+                name
+        );
     }
 
     private Long getGradeCodeId(String grade) {
-        Long gradeCodeId;
         switch (grade) {
-            case "1":
-                gradeCodeId = 97L;
-                break;
-            case "2":
-                gradeCodeId = 98L;
-                break;
-            case "3":
-                gradeCodeId = 99L;
-                break;
-            case "4":
-                gradeCodeId = 100L;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid grade: " + grade);
+            case "1": return 97L;  // 1학년
+            case "2": return 98L;  // 2학년
+            case "3": return 99L;  // 3학년
+            case "4": return 100L; // 4학년
+            default: throw new IllegalArgumentException("Invalid grade: " + grade);
         }
-        return gradeCodeId;
     }
 
     // getAllDepartments는 한 번만 정의
