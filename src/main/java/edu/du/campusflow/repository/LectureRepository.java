@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface LectureRepository extends JpaRepository<Lecture, Integer> {
+public interface LectureRepository extends JpaRepository<Lecture, Long> {
     @Query("SELECT l.lectureId FROM Lecture l WHERE l.member.memberId = :memberId")
     List<Long> findLectureIdsByMemberId(Long memberId);
 }
