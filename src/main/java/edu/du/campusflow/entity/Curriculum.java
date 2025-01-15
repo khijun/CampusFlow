@@ -61,4 +61,14 @@ public class Curriculum {
    // 사유
    @Column(name = "reason", length = 255)
    private String reason;
+
+   @Column(name = "general_credits")
+   private Integer generalCredits; // 교양 학점
+
+   @Column(name = "major_credits")
+   private Integer majorCredits; // 전공 학점
+
+   @Column(name = "graduation_credits")
+   private Integer graduationCredits; // 졸업 학점
+
 }
