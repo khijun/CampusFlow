@@ -16,6 +16,7 @@ import javax.persistence.*;
 public class LectureTime { //강의 시간 정보를 저장하는 엔티티
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lecture_time_id")
     private Long lectureTimeId; //강의 교시
 

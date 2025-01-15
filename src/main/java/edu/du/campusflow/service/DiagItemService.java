@@ -26,7 +26,7 @@ public class DiagItemService {
      */
     public List<DiagItem> getDiagItemsByQuestionId(Long questionId) {
         return diagItemRepository.findByDiagQuestion_QuestionId(questionId);
-    } // question_Id
+    }
 
     /**
      * 진단평가 제출 여부 확인
