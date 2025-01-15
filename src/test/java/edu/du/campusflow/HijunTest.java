@@ -12,15 +12,14 @@ import edu.du.campusflow.repository.FileInfoRepository;
 import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.CategoryService;
 import edu.du.campusflow.service.CommonCodeService;
+import edu.du.campusflow.service.MemberService;
 import edu.du.campusflow.utils.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 @SpringBootTest
@@ -38,6 +37,8 @@ public class HijunTest {
     private CategoryService categoryService;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private MemberService memberService;
 
 
     @Test
@@ -128,5 +129,21 @@ public class HijunTest {
         System.out.println(FileUtils.getFileName("뚱이.jpg"));
         fileInfoRepository.findByFileTypeIn(Collections.singletonList("jpg")).forEach(System.out::println);
         System.out.println(Arrays.toString(fileInfoRepository.findAll().stream().map(FileInfo::getId).toArray()));
+    }
+
+    @Test
+    @Transactional
+    public void memberServiceTest(){
+//        memberService.findAllMemberDTOs(0L, null).forEach(System.out::println);
+//        CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
+//        System.out.println("ALL");
+//        memberService.findAllMemberDTOs(0L, true).forEach(System.out::println);
+//        System.out.println("student");
+//        memberService.findAllMemberDTOs(student.getCodeId(), true).forEach(System.out::println);
+
+        System.out.println("FILTERS");
+        Map<String, Object> filter = new HashMap<>();
+//        filter.put();
+        memberService.findAllWithFilter(null).forEach(System.out::println);
     }
 }

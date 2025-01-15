@@ -104,7 +104,7 @@
 <div class="grid-container item-container" th:each="request : ${changeRequests}">
   <div class="item" th:text="${request.beforeCode.codeName}"></div>
   <div class="item" th:text="${request.afterCode.codeName}"></div>
-  <div class="item" th:text="${#temporals.format(request.requestDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+  <div class="item" th:text="${#temporals.format(request.requestDate, 'yyyy-MM-dd')}"></div>
   <div class="item" th:text="${request.applicationStatus.codeName}"></div>
   <div class="item" th:text="${request.reason}"></div>
   <div class="item">

@@ -29,7 +29,7 @@ public class Dept {
     @JoinColumn(name = "dept_status", referencedColumnName = "code_id")
     private CommonCode deptStatus;
 
-    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Curriculum> curriculums;
 }

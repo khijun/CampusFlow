@@ -12,7 +12,7 @@
 <body>
 <h2>휴학/복학 신청</h2>
 <form th:action="@{/iframe/academic/process-change-request}" th:object="${changeRequestDto}" method="post">
-  <input type="hidden" name="memberId" th:value="${authService.currentMemberId}"> <!-- 멤버 ID -->
+  <input type="hidden" name="memberId" th:value="${changeRequestDto.memberId}">
 
   <label for="newStatusCodeId">신청</label>
   <select id="newStatusCodeId" name="newStatusCodeId" th:field="*{newStatusCodeId}">
