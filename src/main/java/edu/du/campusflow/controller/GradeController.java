@@ -65,7 +65,7 @@ public class GradeController {
         List<CommonCode> gradeTypes = commonCodeRepository.findAllById(Arrays.asList(67L, 68L, 69L, 70L));
         model.addAttribute("gradeTypes", gradeTypes); // 성적 유형
 
-        List<Ofregistration> ofregistrations = ofregistrationRepository.findByLectureId(memberId);
+        List<Ofregistration> ofregistrations = ofregistrationRepository.findByLectureId_LectureId(memberId);
         model.addAttribute("ofregistrations", ofregistrations);
 
 
