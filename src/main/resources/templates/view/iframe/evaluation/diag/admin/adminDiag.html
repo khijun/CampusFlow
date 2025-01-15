@@ -135,7 +135,7 @@
       const noResults = document.querySelector('#noResults');
 
       // 학과 목록 가져오기
-      fetch('/iframe/evaluation/diag/departments')
+      fetch('/iframe/evaluation/diag/admin/departments')
               .then(response => response.json())
               .then(departments => {
                  const deptSelect = document.querySelector('#deptSelect');
