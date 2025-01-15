@@ -11,9 +11,12 @@
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.web.bind.annotation.*;
+    import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+    import javax.servlet.http.HttpServletRequest;
     import java.util.List;
     import java.util.Map;
+    import java.util.stream.Collectors;
 
     @Slf4j
     @Controller
@@ -147,5 +150,44 @@
             model.addAttribute("selectedOfregistrationId", ofregistrationId);
 
             return "view/iframe/evaluation/diag/student/studentDiagForm";
+        }
+
+        @PostMapping("/submit")
+        public String submitDiagnosticEvaluation(
+                @RequestParam Long id,
+                @RequestParam Map<String, String> scores,  // Integer -> String으로 변경
+                RedirectAttributes redirectAttributes,
+                HttpServletRequest request) {  // 요청 파라미터 확인용
+
+            // 디버깅을 위한 로그 추가
+            log.info("Received parameters: {}", request.getParameterMap());
+            log.info("Scores map: {}", scores);
+
+            try {
+                if (id == null) {
+                    // id가 없는 경우 scores 맵에서 찾아보기
+                    String ofregId = scores.get("ofregistrationId");
+                    if (ofregId != null) {
+                        id = Long.parseLong(ofregId);
+                    } else {
+                        throw new IllegalArgumentException("Missing ofregistration ID");
+                    }
+                }
+
+                Map<Long, Integer> convertedScores = scores.entrySet().stream()
+                        .filter(entry -> entry.getKey().startsWith("scores["))
+                        .collect(Collectors.toMap(
+                                entry -> Long.parseLong(entry.getKey().replace("scores[", "").replace("]", "")),
+                                entry -> Integer.parseInt(entry.getValue())
+                        ));
+
+                diagEvaluationService.saveDiagnosticEvaluation(id, convertedScores);
+                redirectAttributes.addFlashAttribute("message", "진단평가가 성공적으로 제출되었습니다.");
+            } catch (Exception e) {
+                log.error("진단평가 제출 중 오류 발생", e);
+                redirectAttributes.addFlashAttribute("error", "진단평가 제출 중 오류가 발생했습니다.");
+            }
+
+            return "redirect:/iframe/evaluation/diag/student/" + id;
         }
     }

@@ -146,10 +146,10 @@
 
   <!-- 진단평가 폼 (새로운 평가 또는 기존 답변 표시) -->
   <form class="evaluation-form"
-        th:action="@{/evaluation/diag/submit}"
+        th:action="@{/iframe/evaluation/diag/submit}"
         th:if="${showForm}"
         th:method="${evaluated ? 'get' : 'post'}">
-    <input name="ofregistrationId" th:value="${selectedOfregistrationId}" type="hidden">
+    <input name="id" th:value="${selectedOfregistrationId}" type="hidden">
 
     <div class="question-item" th:each="question : ${questions}">
       <h4 th:text="${question.questionName}">문항</h4>

@@ -4,6 +4,7 @@ import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
 import edu.du.campusflow.entity.DiagItem;
 import edu.du.campusflow.entity.Member;
+import edu.du.campusflow.entity.Ofregistration;
 import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,8 +87,7 @@ public class DiagEvaluationService {
     // 진단평가 문항 조회
     public List<DiagQuestionDTO> getDiagQuestions(Long ofregistrationId) {
         log.info("진단평가 문항 조회 - ofregistrationId: {}", ofregistrationId);
-        // findByOfregistration_Id -> findByOfRegistration_Id로 수정
-        return diagQuestionRepository.findByOfRegistration_Id(ofregistrationId)
+        return diagQuestionRepository.findAll()
                 .stream()
                 .map(question -> DiagQuestionDTO.builder()
                         .questionId(question.getQuestionId())
@@ -103,5 +103,20 @@ public class DiagEvaluationService {
                         item -> item.getDiagQuestion().getQuestionId(),
                         DiagItem::getScore
                 ));
+    }
+
+    @Transactional
+    public void saveDiagnosticEvaluation(Long ofregistrationId, Map<Long, Integer> scores) {  // 파라미터 타입 변경
+        Ofregistration ofRegistration = ofregistrationRepository.findById(ofregistrationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid ofregistrationId: " + ofregistrationId));
+
+        scores.forEach((questionId, score) -> {
+            DiagItem diagItem = new DiagItem();
+            diagItem.setOfRegistration(ofRegistration);
+            diagItem.setDiagQuestion(diagQuestionRepository.findById(questionId)  // Long 타입 그대로 사용
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid questionId: " + questionId)));
+            diagItem.setScore(score);
+            diagItemRepository.save(diagItem);
+        });
     }
 }
