@@ -14,10 +14,10 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByDept(Dept dept);
 
-    @EntityGraph(attributePaths = {"memberType"})
+    @EntityGraph(attributePaths = {"memberType", "dept"})
     Optional<Member> findById(Long id);
 
-    @EntityGraph(attributePaths = {"memberType"})
+    @EntityGraph(attributePaths = {"memberType", "dept"})
     List<Member> findAll();
 
     List<Member> findByAcademicStatus(CommonCode academicStatus); // CommonCode로 Member 찾기
