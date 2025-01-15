@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
-    // 과목명에 특정 문자열이 포함된 과목 검색
-    List<Subject> findBySubjectNameContaining(String keyword);
+   // 과목명에 특정 문자열이 포함된 과목 검색
+   List<Subject> findBySubjectNameContaining(String keyword);
 }
