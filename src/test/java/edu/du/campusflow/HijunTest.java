@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 @SpringBootTest
@@ -83,17 +85,17 @@ public class HijunTest {
 
     @Test
     public void dbtest() {
-            commonCodeRepository.findAll().forEach(System.out::println);
+        commonCodeRepository.findAll().forEach(System.out::println);
     }
 
     @Test
     @Transactional
-    public void categoryTest(){
+    public void categoryTest() {
         Category category = categoryRepository.findById(50L).orElse(null);
         System.out.println(category);
         CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
         List<Category> studentCategory = categoryRepository.findByParentIsNullAndMemberTypeOrderByOrderNoAsc(student);
-        studentCategory.forEach(c->System.out.println(c.getName()));
+        studentCategory.forEach(c -> System.out.println(c.getName()));
         List<CategoryDTO> dtos = categoryService.findByType(student);
         Member professor = memberRepository.findById(1001L).orElse(null);
         dtos = categoryService.findByType(professor);
@@ -124,8 +126,9 @@ public class HijunTest {
         System.out.println("메서드 종료시간: " + endTime);
         System.out.println("평균 실행시간 (findByTypeOld): " + (duration / iterations) + " 나노초");
     }
+
     @Test
-    public void fileTest(){
+    public void fileTest() {
         System.out.println(FileUtils.getFileName("뚱이.jpg"));
         fileInfoRepository.findByFileTypeIn(Collections.singletonList("jpg")).forEach(System.out::println);
         System.out.println(Arrays.toString(fileInfoRepository.findAll().stream().map(FileInfo::getId).toArray()));
@@ -133,7 +136,7 @@ public class HijunTest {
 
     @Test
     @Transactional
-    public void memberServiceTest(){
+    public void memberServiceTest() {
 //        memberService.findAllMemberDTOs(0L, null).forEach(System.out::println);
 //        CommonCode student = commonCodeRepository.findByCodeValue("STUDENT");
 //        System.out.println("ALL");
@@ -141,9 +144,9 @@ public class HijunTest {
 //        System.out.println("student");
 //        memberService.findAllMemberDTOs(student.getCodeId(), true).forEach(System.out::println);
 
-        System.out.println("FILTERS");
-        Map<String, Object> filter = new HashMap<>();
-//        filter.put();
-        memberService.findAllWithFilter(null).forEach(System.out::println);
+//        System.out.println("FILTERS");
+//        memberService.findAllWithFilter(null).forEach(System.out::println);
+
+        System.out.println(memberService.createMemberId(1L));
     }
 }

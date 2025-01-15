@@ -40,4 +40,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "AND (:#{#filter.endDateEnd} IS NULL OR m.endDate <= :#{#filter.endDateEnd})")
     @EntityGraph(attributePaths = {"dept", "gender", "academicStatus", "grade", "memberType"})
     List<Member> findAllWithFilter(MemberSearchFilter filter);
+
+    @Query("SELECT MAX(m.memberId) % 100 FROM Member m where m.dept.deptId = :deptId " +
+            "AND m.memberId BETWEEN (:year * 100000) and ((:year + 1) * 100000 - 1) ")
+    Integer getMaxMemberNoFromDeptAndYear(Long deptId, int year);
 }

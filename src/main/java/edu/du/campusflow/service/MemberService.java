@@ -1,5 +1,6 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.define.MemberIdPosition;
 import edu.du.campusflow.dto.MemberCreateDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.entity.CommonCode;
@@ -9,6 +10,7 @@ import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -62,8 +64,19 @@ public class MemberService {
 
     }
 
+    @Transactional
     public void addMember(MemberCreateDTO dto){
+//        Member member = MemberCreateDTO.toEntityFromCreateDTO();
+    }
+
+    public Long createMemberId(Long deptId){
+        if(deptId == null) throw new RuntimeException("학과 아이디가 비어있습니다");
         int year = LocalDate.now().getYear() % 100;
+        Integer maxNo = memberRepository.getMaxMemberNoFromDeptAndYear(deptId, year);
+        if(maxNo==null) maxNo = 0;
+        return (year * MemberIdPosition.YEAR_POSITION) +
+                (deptId * MemberIdPosition.DEPT_POSITION) +
+                (maxNo + 1);
     }
 
 }
