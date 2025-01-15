@@ -4,13 +4,44 @@
   <meta charset="UTF-8">
   <title>문의 상세</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .card {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .card-text {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .card-header h2 {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .container {
+      max-width: 100%;
+      padding: 15px;
+    }
+    @media (min-width: 768px) {
+      .container {
+        max-width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
 <div class="container mt-5">
   <div class="card">
     <div class="card-header">
       <h2 th:text="${inquiry.subject}"></h2>
-      <small th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <span class="text-muted">작성자: </span>
+          <span th:text="${inquiry.member.name}"></span>
+        </div>
+        <small th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+      </div>
     </div>
     <div class="card-body">
       <p class="card-text" th:text="${inquiry.content}"></p>
@@ -29,12 +60,17 @@
   <!-- 답변이 있는 경우 표시 -->
   <div class="card mt-3" th:if="${inquiry.response != null}">
     <div class="card-header bg-light">
-      <h3>답변</h3>
-      <small th:text="${#temporals.format(inquiry.response.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+      <div class="d-flex justify-content-between align-items-center">
+        <h3>답변</h3>
+        <div>
+          <span class="text-muted">답변자: </span>
+          <span th:text="${inquiry.response.member.name}"></span>
+          <small class="ml-3" th:text="${#temporals.format(inquiry.response.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+        </div>
+      </div>
     </div>
     <div class="card-body">
       <p class="card-text" th:text="${inquiry.response.content}"></p>
-      <p class="text-muted">답변자: <span th:text="${inquiry.response.member.name}"></span></p>
     </div>
   </div>
 

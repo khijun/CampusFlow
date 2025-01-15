@@ -38,7 +38,7 @@ public class InquiryController {
     // 모든 문의 조회 페이지
     @GetMapping("/view")
     public String viewInquiries(Model model) {
-        model.addAttribute("inquiries", inquiryService.getAllInquiries()); // 모든 문의를 모델에 추가
+        model.addAttribute("inquiries", inquiryService.getInquiriesByUserRole()); // 사용자 권한에 따른 문의사항 조회
         model.addAttribute("isStaff", inquiryService.isStaff()); // 교직원 여부 추가
         model.addAttribute("isStudent", inquiryService.isStudent()); // 학생 여부 추가
         return "/view/iframe/inquiry/viewInquiries"; // 문의 목록 페이지로 이동

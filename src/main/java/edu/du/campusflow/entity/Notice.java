@@ -5,7 +5,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @Data
 @Entity
 @Builder
@@ -21,7 +20,7 @@ public class Notice {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;; // 공지 작성한 교직원 엔티티
+    private Member member; // 공지 작성한 교직원 엔티티
 
     @Column(name = "subject", length = 100)
     private String subject; // 제목

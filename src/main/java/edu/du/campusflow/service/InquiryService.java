@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,10 +22,26 @@ public class InquiryService {
     @Autowired
     private AuthService authService;
 
-    // 모든 문의 조회
+    // 사용자 권한에 따른 문의 조회
+    public List<Inquiry> getInquiriesByUserRole() {
+        var currentMember = authService.getCurrentMember();
+        if (currentMember == null) {
+            return Collections.emptyList();
+        }
+
+        // 교직원인 경우 모든 문의사항 조회
+        if (isStaff()) {
+            return getAllInquiries();
+        }
+        
+        // 학생인 경우 자신의 문의사항만 조회
+        return inquiryRepository.findByMemberAndRelatedInquiryIsNullOrderByCreatedAtDesc(currentMember);
+    }
+
+    // 모든 문의 조회 (교직원용)
     public List<Inquiry> getAllInquiries() {
         // 원본 문의사항만 조회 (relatedInquiry가 null인 것만)
-        List<Inquiry> inquiries = inquiryRepository.findByRelatedInquiryIsNull();
+        List<Inquiry> inquiries = inquiryRepository.findByRelatedInquiryIsNullOrderByCreatedAtDesc();
 
         // 기본 상태 코드 조회
         CommonCode defaultStatus = commonCodeRepository.findByCodeValue("AWAITING");
