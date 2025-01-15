@@ -31,7 +31,7 @@ public class LecEvaluationController {
             log.info("조회된 강의 수: {}", lectures.size());
             model.addAttribute("lectures", lectures);
             model.addAttribute("showResults", false);
-            return "view/iframe/evaluation/lec/admin/lecQuestion";
+            return "adminLec";
         } catch (Exception e) {
             log.error("강의평가 목록 조회 중 오류 발생", e);
             throw e;
@@ -53,11 +53,11 @@ public class LecEvaluationController {
         model.addAttribute("results", evaluationResults);
         model.addAttribute("showResults", true);
 
-        return "view/iframe/evaluation/lec/admin/lecQuestion";
+        return "adminLec";
     }
 
     @GetMapping("/student/lecture/{ofregistrationId}")
     public String showStudentLectureEvaluation(@PathVariable Long ofregistrationId) {
-        return "view/iframe/evaluation/lec/student/lecQuestion";
+        return "studentLec";
     }
 }

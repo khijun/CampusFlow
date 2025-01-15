@@ -291,13 +291,13 @@ public class LectureService {
             CommonCode pendingStatus = commonCodeRepository.findByCodeValue("APPROVAL_PENDING");
 
             if (professorId != null) {
-                        if(semesterCode != null && !semesterCode.isEmpty()) {
-                            return criteriaBuilder.and(
-                                    criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode),
-                                    criteriaBuilder.equal(root.get("member").get("memberId"), professorId),
-                                    criteriaBuilder.equal(root.get("lectureStatus"), pendingStatus)
-                            );
-                        }
+                if(semesterCode != null && !semesterCode.isEmpty()) {
+                    return criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode),
+                            criteriaBuilder.equal(root.get("member").get("memberId"), professorId),
+                            criteriaBuilder.equal(root.get("lectureStatus"), pendingStatus)
+                    );
+                }
             }
 
             return criteriaBuilder.equal(root.get("lectureStatus"), pendingStatus);
