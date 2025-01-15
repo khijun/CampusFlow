@@ -74,7 +74,9 @@
         </div>
 
         <!-- Iframe for Content -->
-        <iframe src="dashboard.html" th:src="@{/dashboard}" name="contentFrame"></iframe>
+        <div class="iframe-container">
+            <iframe name="contentFrame" ></iframe>
+        </div>
     </div>
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->

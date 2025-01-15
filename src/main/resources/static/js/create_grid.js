@@ -12,7 +12,7 @@ function createGrid(element, columns, data, headerOption) {
         columns: columns,
         data: data,
         scrollX: true,
-        bodyHeight: 400,
-        bodyWidth: 1300
+        maxBodyHeight: 400,
+        maxBodyWidth: 1300,
     })
 }

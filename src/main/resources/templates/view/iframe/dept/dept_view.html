@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>학과 조회</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+</head>
+<body>
+<div id="dept-list-table-container">
+    <div id="dept-list-option-container">
+        <span>학과 코드: </span><input type="text" id="dept-id-input"/>
+        <span>학과명: </span><input type="text" id="dept-name-input"/>
+        <span>인원수: </span><input type="text" id="dept-min-student-value-input"/>
+        <span>~</span> <input type="text" id="dept-max-student-value-input"/>
+        <span>상태: </span>
+        <select id="dept-status-input">
+            <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}" th:text="${commonCode.codeName}"></option>
+        </select>
+        <input type="button" value="조회" id="dept-list-select-btn"/>
+    </div>
+    <div id="dept-list"></div>
+</div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script src="/js/create_grid.js"></script>
+<script src="/js/dept/select_dept.js"></script>
+</body>
+</html>
