@@ -140,7 +140,6 @@ public class GradeService {
 
     @Transactional
     public void assignGrade(GradeForm gradeForm) {
-        // GradeForm에서 데이터 추출
         Long lectureId = gradeForm.getLectureId(); // 강의 ID
 
         for (GradeForm.StudentGrade studentGrade : gradeForm.getStudentGrades()) {
@@ -148,72 +147,55 @@ public class GradeService {
             String gradeType = studentGrade.getGradeType(); // 성적 유형
             int score = studentGrade.getScore(); // 점수
 
-            System.out.println("lectureId: " + lectureId);
-            System.out.println("memberId: " + memberId);
-            System.out.println("gradeType: " + gradeType);
-            System.out.println("score: " + score);
-
             // 회원 정보 조회하여 member_type이 101인 학생만 필터링
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new IllegalArgumentException("학생이 존재하지 않습니다."));
 
             if (member.getMemberType().getCodeId() != 101L) {
-                throw new IllegalArgumentException("학생이 아닙니다."); // member_type이 101이 아닌 경우 예외 발생
+                throw new IllegalArgumentException("학생이 아닙니다.");
             }
 
-            // Ofregistration 조회
-            List<Ofregistration> ofregistrations = ofregistrationRepository.findAllByMember_MemberId(memberId);
+            // Ofregistration 조회 - 선택한 강의에만 성적을 부여
+            List<Ofregistration> ofregistrations = ofregistrationRepository.findByMember_MemberIdAndLectureId(memberId, lectureId);
             if (ofregistrations.isEmpty()) {
-                throw new IllegalStateException("등록된 수업 정보가 없습니다.");
+                throw new IllegalStateException("선택한 강의에 등록되지 않은 학생입니다.");
             }
 
-// 첫 번째 Ofregistration을 선택
-            Ofregistration ofregistration = ofregistrations.get(0);
+            // 강의에 대해 성적 부여
+            for (Ofregistration ofregistration : ofregistrations) {
+                List<Completion> completions = completionRepository.findAllByOfRegistration(ofregistration);
+                Completion completion = completions.isEmpty()
+                        ? createCompletion(ofregistration)
+                        : completions.get(0);
 
-// Completion 조회
-            List<Completion> completions = completionRepository.findAllByOfRegistration(ofregistration);
-            Completion completion = completions.isEmpty()
-                    ? createCompletion(ofregistration) // 없으면 생성
-                    : completions.get(0); // 첫 번째 항목 사용
+                String gradeTypeName = getGradeTypeName(Long.parseLong(gradeType));
+                CommonCode gradeTypeCode = commonCodeRepository.findById(Long.parseLong(gradeType))
+                        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 성적 유형입니다."));
 
-            // gradeType에 맞는 성적 유형 이름 처리
-            String gradeTypeName = getGradeTypeName(Long.parseLong(gradeType));
+                Grade grade = Grade.builder()
+                        .completion(completion)
+                        .gradeType(gradeTypeCode)
+                        .score(score)
+                        .build();
 
-            // 코드 ID로 CommonCode 조회 (findById 사용)
-            CommonCode gradeTypeCode = commonCodeRepository.findById(Long.parseLong(gradeType))
-                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 성적 유형입니다."));
+                gradeRepository.save(grade);
 
-            // 성적 저장
-            Grade grade = Grade.builder()
-                    .completion(completion) // Completion 객체 연결
-                    .gradeType(gradeTypeCode)
-                    .score(score)
-                    .build();
+                List<Grade> grades = gradeRepository.findByCompletion(completion);
+                int totalScore = calculateTotalScore(grades);
 
-            gradeRepository.save(grade);
-            System.out.println("Saved Grade: " + grade);
+                Long finalGradeCodeId = calculateFinalGrade(totalScore);
+                CommonCode finalGrade = commonCodeRepository.findById(finalGradeCodeId)
+                        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 최종 등급입니다."));
 
-            // 총점 계산
-            List<Grade> grades = gradeRepository.findByCompletion(completion); // Completion에 해당하는 모든 성적 가져오기
-            int totalScore = calculateTotalScore(grades);
+                completion.setFinalGrade(finalGrade);
 
-            // 최종 등급 계산
-            Long finalGradeCodeId = calculateFinalGrade(totalScore);
-            CommonCode finalGrade = commonCodeRepository.findById(finalGradeCodeId)
-                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 최종 등급입니다."));
+                Long completionStateCode = (finalGradeCodeId == 50L) ? 30L : 29L;
+                CommonCode completionState = commonCodeRepository.findById(completionStateCode)
+                        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이수 상태 코드입니다."));
 
-            // Completion 상태 업데이트
-            completion.setFinalGrade(finalGrade); // finalGrade 설정
-
-            // finalGrade가 F일 경우 completionState를 30L로 설정, 아니면 29L
-            Long completionStateCode = (finalGradeCodeId == 50L) ? 30L : 29L;
-            CommonCode completionState = commonCodeRepository.findById(completionStateCode)
-                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이수 상태 코드입니다."));
-
-            completion.setCompletionState(completionState); // completionState 설정
-            completionRepository.save(completion); // 업데이트된 Completion 저장
-
-            System.out.println("Updated Completion: " + completion);
+                completion.setCompletionState(completionState);
+                completionRepository.save(completion);
+            }
         }
     }
 
