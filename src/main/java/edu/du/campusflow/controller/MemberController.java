@@ -1,6 +1,5 @@
 package edu.du.campusflow.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.du.campusflow.dto.MemberDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
@@ -36,10 +35,14 @@ public class MemberController {
     }
 
     @GetMapping("/api/members")
-    public ResponseEntity<?> getMembers(@RequestParam String filter) throws JsonProcessingException {
+    public ResponseEntity<?> getMembers(@RequestParam(required = false, name = "filter") String searchURL){
         ObjectMapper objectMapper = new ObjectMapper();
-        MemberSearchFilter memberSearchFilter = objectMapper.readValue(filter, MemberSearchFilter.class);
-        System.out.println(memberSearchFilter);
-        return ResponseEntity.ok(MemberDTO.fromEntityList(memberService.findAllWithFilter(memberSearchFilter)));
+        MemberSearchFilter filter;
+        try{
+            filter = objectMapper.readValue(searchURL, MemberSearchFilter.class);
+        }catch (Exception e){
+            filter = MemberSearchFilter.builder().build();
+        }
+        return ResponseEntity.ok(MemberDTO.fromEntityList(memberService.findAllWithFilter(filter)));
     }
 }
