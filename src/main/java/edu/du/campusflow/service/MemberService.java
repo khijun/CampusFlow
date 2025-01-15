@@ -1,5 +1,6 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.dto.MemberCreateDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Member;
@@ -9,6 +10,7 @@ import edu.du.campusflow.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -48,6 +50,20 @@ public class MemberService {
     // 모든 학생을 반환하는 메서드
     public List<Member> findAll() {
         return memberRepository.findAll();
+    }
+
+    // ----------------------------------------------------------------
+
+    public void deleteSoft(Member member){
+
+    }
+
+    public void updateMember(Member member) {
+
+    }
+
+    public void addMember(MemberCreateDTO dto){
+        int year = LocalDate.now().getYear() % 100;
     }
 
 }
