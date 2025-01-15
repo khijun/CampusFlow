@@ -49,19 +49,20 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.member.dept.deptId = :deptId")
     List<Ofregistration> findByMemberDeptId(@Param("deptId") String deptId);
 
-    @Query("SELECT new map(" +
+    // 학생 진단 평가용 검색
+    @Query(value = "SELECT " +
             "o.id as ofregistrationId, " +
-            "l.lectureName as lectureName, " +
+            "l.lecture_name as lectureName, " +
             "m.name as professorName, " +
-            "s.codeValue as semester, " +  // codeName -> codeValue로 수정
-            "CASE WHEN COUNT(di.answerId) > 0 THEN 'Y' ELSE 'N' END as evalStatus) " +
-            "FROM Ofregistration o " +
-            "JOIN o.lectureId l " +
-            "JOIN l.member m " +
-            "JOIN l.semester s " +  // semester는 CommonCode 타입
-            "LEFT JOIN DiagItem di ON di.ofRegistration = o " +
-            "WHERE o.member.memberId = :studentId " +
-            "GROUP BY o.id, l.lectureName, m.name, s.codeValue")  // codeName -> codeValue로 수정
+            "cc.code_value as semester, " +
+            "CASE WHEN COUNT(di.answer_id) > 0 THEN 'Y' ELSE 'N' END as evalStatus " +
+            "FROM ofregistration o " +
+            "INNER JOIN lecture l ON o.lecture_id = l.lecture_id " +
+            "INNER JOIN member m ON l.member_id = m.member_id " +
+            "INNER JOIN common_code cc ON l.semester = cc.code_id " +
+            "LEFT OUTER JOIN diag_items di ON di.ofregistration_id = o.id " +
+            "WHERE o.member_id = :studentId " +
+            "GROUP BY o.id, l.lecture_name, m.name, cc.code_value",
+            nativeQuery = true)
     List<Map<String, Object>> findLecturesWithEvalStatus(@Param("studentId") Long studentId);
-
 }

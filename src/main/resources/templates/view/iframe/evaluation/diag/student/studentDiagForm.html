@@ -132,16 +132,11 @@
     <select onchange="if(this.value) location.href='/iframe/evaluation/diag/student/' + this.value">
       <option value="">강의를 선택하세요</option>
       <option th:each="lecture : ${lectures}"
-              th:selected="${lecture.ofregistrationId == selectedOfregistrationId}"
-              th:text="${lecture.lectureName + ' (' + lecture.semester + ')'}"
-              th:value="${lecture.ofregistrationId}">
+              th:selected="${lecture.get('ofregistrationId') == selectedOfregistrationId}"
+              th:text="${lecture.get('lectureName')}"
+              th:value="${lecture.get('ofregistrationId')}">
       </option>
     </select>
-  </div>
-
-  <!-- 이미 평가를 완료한 경우 -->
-  <div class="completed-message" th:if="${evaluated}">
-    <p>이미 진단평가를 완료하였습니다.</p>
   </div>
 
   <!-- 강의가 선택되지 않았을 때 -->
@@ -149,11 +144,11 @@
     <p>강의를 선택하면 진단평가 문항이 표시됩니다.</p>
   </div>
 
-  <!-- 진단평가 폼 -->
+  <!-- 진단평가 폼 (새로운 평가 또는 기존 답변 표시) -->
   <form class="evaluation-form"
-        method="post"
         th:action="@{/evaluation/diag/submit}"
-        th:if="${showForm && !evaluated}">
+        th:if="${showForm}"
+        th:method="${evaluated ? 'get' : 'post'}">
     <input name="ofregistrationId" th:value="${selectedOfregistrationId}" type="hidden">
 
     <div class="question-item" th:each="question : ${questions}">
@@ -161,23 +156,25 @@
       <div class="score-options">
         <div class="score-option" th:each="score : ${#numbers.sequence(1, 5)}">
           <input required
+                 th:checked="${previousAnswers != null && previousAnswers[question.questionId] == score}"
                  th:id="${'q' + question.questionId + '_' + score}"
                  th:name="${'scores[' + question.questionId + ']'}"
                  th:value="${score}"
+                 th:disabled="${evaluated}"
                  type="radio">
           <label th:for="${'q' + question.questionId + '_' + score}"
                  th:text="${score + '점'}">점수</label>
         </div>
       </div>
-      <div class="error-message" th:errors="*{scores[__${question.questionId}__]}"
-           th:if="${#fields.hasErrors('scores[' + question.questionId + ']')}">
-        오류 메시지
-      </div>
     </div>
 
-    <button class="submit-button" type="submit">제출하기</button>
+    <button class="submit-button" th:if="${!evaluated}" type="submit">제출하기</button>
   </form>
-</div>
+
+  <!-- 이미 평가를 완료한 경우 -->
+  <div class="completed-message" th:if="${evaluated}">
+    <p>이미 진단평가를 완료하였습니다.</p>
+  </div>
 
 <script>
   // 폼 제출 전 모든 문항이 선택되었는지 확인

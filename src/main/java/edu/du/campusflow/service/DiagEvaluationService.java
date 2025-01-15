@@ -2,6 +2,7 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
+import edu.du.campusflow.entity.DiagItem;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -93,5 +94,14 @@ public class DiagEvaluationService {
                         .questionName(question.getQuestionName())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public Map<Long, Integer> getPreviousAnswers(Long ofregistrationId) {
+        List<DiagItem> diagItems = diagItemRepository.findByOfRegistration_Id(ofregistrationId);
+        return diagItems.stream()
+                .collect(Collectors.toMap(
+                        item -> item.getDiagQuestion().getQuestionId(),
+                        DiagItem::getScore
+                ));
     }
 }

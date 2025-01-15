@@ -111,10 +111,16 @@
                 </ul>
             </li>
             <li>
-                <a href="#" class="menu-item" onclick="toggleSubmenu(event, 'evaluation')"><i class="fas fa-clipboard-check"></i> 평가</a>
+                <a class="menu-item" href="#" onclick="toggleSubmenu(event, 'evaluation')">
+                    <i class="fas fa-clipboard-check"></i> 평가
+                </a>
                 <ul id="evaluation" class="submenu">
-                    <li><a href="#">진단 평가 응시</a></li>
-                    <li><a href="#">강의 평가 설문</a></li>
+                    <li>
+                        <a href="/iframe/evaluation/diag/student" target="contentFrame">진단 평가 응시</a>
+                    </li>
+                    <li>
+                        <a href="/iframe/evaluation/lec/student" target="contentFrame">강의 평가 설문</a>
+                    </li>
                 </ul>
             </li>
             <li>
