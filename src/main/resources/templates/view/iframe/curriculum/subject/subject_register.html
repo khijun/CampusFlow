@@ -4,17 +4,17 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+   <link th:href="@{/css/iframe/curriculum/subject/subject_grid.css}" rel="stylesheet">
    <title>과목 등록</title>
 </head>
 <body>
-<div style="height: 150%;">
-   <h1>과목 등록</h1>
-   <div id="subject-grid-container"></div>
-   <div>
-      <button id="add-row-btn">행 추가</button> <!-- 입력 행 추가 버튼 -->
-      <button id="delete-row-btn">행 삭제</button> <!-- 행 삭제 버튼 -->
+<div>
+   <div id="subject-list-option-container">
+      <button id="add-row-btn">행 추가</button>
+      <button id="delete-row-btn">행 삭제</button>
       <button id="save-subjects-btn">저장</button>
    </div>
+   <div id="subject-grid-container" style="height: 700px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
@@ -24,9 +24,9 @@
         el: document.getElementById('subject-grid-container'),
         data: [], // 초기 데이터 없음
         columns: [
-            {header: '과목명', name: 'subjectName', editor: 'text', align: 'center'},
+            {header: '과목명', name: 'subjectName', editor: 'text', align: 'center', width: 400},
             {header: '과목설명', name: 'subjectDesc', editor: 'text'},
-            {header: '이수학점', name: 'subjectCredits', editor: 'text', align: 'center'}
+            {header: '이수학점', name: 'subjectCredits', editor: 'text', align: 'center', width: 100}
         ],
         bodyHeight: 'fitToParent',
         rowHeaders: ['checkbox'], // 체크박스를 사용하여 행 선택
