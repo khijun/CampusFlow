@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.security.core.AuthenticationException;
+
 import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
@@ -31,22 +31,29 @@ public class NoticeController {
     // 공지 추가 페이지
     @GetMapping("/add")
     public String showAddNoticeForm() {
+
         if (!noticeService.isStaff()) {
             throw new AccessDeniedException("교직원만 접근 가능합니다.");
         }
         return "/view/iframe/notice/addNotice";
+
+
+
     }
 
     // 공지 추가 처리
     @PostMapping
     public String addNotice(Notice notice, @AuthenticationPrincipal Member member) {
+
         if (!noticeService.isStaff()) {
             throw new AccessDeniedException("교직원만 접근 가능합니다.");
         }
-        notice.setMember(member);
-        notice.setCreatedAt(LocalDateTime.now());
-        noticeService.createNotice(notice);
-        return "redirect:/iframe/notice/view";
+
+        notice.setMember(member); // 현재 로그인한 교직원 정보 설정
+        notice.setCreatedAt(LocalDateTime.now()); // 생성 날짜 설정
+        noticeService.createNotice(notice); // 공지 생성
+        return "redirect:/iframe/notice/view"; // 공지 추가 후 목록 페이지로 리다이렉트
+
     }
 
     // 모든 공지 조회 페이지
@@ -84,9 +91,11 @@ public class NoticeController {
     // 공지사항 수정 폼 표시
     @GetMapping("/edit/{id}")
     public String showEditNoticeForm(@PathVariable Long id, Model model) {
+
         if (!noticeService.isStaff()) {
             throw new AccessDeniedException("교직원만 접근 가능합니다.");
         }
+
         Notice notice = noticeService.getNoticeById(id);
         model.addAttribute("notice", notice);
         return "/view/iframe/notice/editNotice";
@@ -95,9 +104,11 @@ public class NoticeController {
     // 공지사항 수정 처리
     @PostMapping("/edit/{id}")
     public String editNotice(@PathVariable Long id, Notice notice) {
+
         if (!noticeService.isStaff()) {
             throw new AccessDeniedException("교직원만 접근 가능합니다.");
         }
+
         noticeService.updateNotice(id, notice);
         return "redirect:/iframe/notice/{id}";
     }
@@ -105,9 +116,11 @@ public class NoticeController {
     // 공지사항 삭제 처리
     @PostMapping("/delete/{id}")
     public String deleteNotice(@PathVariable Long id) {
+
         if (!noticeService.isStaff()) {
             throw new AccessDeniedException("교직원만 접근 가능합니다.");
         }
+
         noticeService.deleteNotice(id);
         return "redirect:/iframe/notice/view";
     }
