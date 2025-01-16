@@ -86,7 +86,7 @@ public class LectureWeekController {
             lectureWeekService.updateLectureStatus(lectureTimeId, classStatus);
             return ResponseEntity.ok("수업 상태가 성공적으로 변경되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("수업 상태 변경에 실패했습니다: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

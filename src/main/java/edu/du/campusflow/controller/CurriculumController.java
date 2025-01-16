@@ -41,6 +41,11 @@ public class CurriculumController {
       return "view/iframe/curriculum/curriculum_register";
    }
 
+   @GetMapping("/update")
+   public String updateCurriculum() {
+      return "view/iframe/curriculum/curriculum_update";
+   }
+
    // POST 요청 처리: 등록
    @PostMapping("/register")
    public String createCurriculum(@ModelAttribute CurriculumDTO dto) {

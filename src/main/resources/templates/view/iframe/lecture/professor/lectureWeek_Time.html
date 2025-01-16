@@ -147,7 +147,7 @@
             .then(response => response.json())
             .then(data => {
                 if(!data || data.length === 0){
-                    alert('검색 결과가 없습니다.');
+                    alert('선택하신 강의의 강의 주차 정보가 없습니다.');
                 }else {
                     grid.resetData(data);
                 }
