@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+   <link th:href="@{/css/iframe/curriculum/subject/subject_grid.css}" rel="stylesheet">
+   <title>과목 조회</title>
+</head>
+<body>
+<div>
+   <div id="subject-list-option-container">
+      <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" />
+      <button id="subject-list-select-btn">조회</button>
+   </div>
+   <div id="subject-list" style="height: 700px;"></div>
+</div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    document.getElementById("subject-list-select-btn").addEventListener("click", () => {
+        const keyword = document.getElementById("subject-name-input").value; // 검색어 가져오기
+
+        // 검색어를 포함한 API 호출
+        fetch(`/api/subjects?keyword=${encodeURIComponent(keyword)}`)
+            .then(response => response.json())
+            .then(data => {
+                // 기존 그리드 초기화
+                if (window.subjectGrid) {
+                    window.subjectGrid.destroy();
+                }
+
+                // 새로운 데이터로 그리드 생성
+                window.subjectGrid = new tui.Grid({
+                    el: document.getElementById('subject-list'),
+                    data: data,
+                    columns: [
+                        {header: '과목ID', name: 'subjectId', align: 'center', width: 100},
+                        {header: '과목명', name: 'subjectName', align: 'center', width: 400},
+                        {header: '과목설명', name: 'subjectDesc'},
+                        {header: '이수학점', name: 'subjectCredits', align: 'center', width: 100}
+                    ]
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching subjects:", error);
+                alert("과목 데이터를 불러오는 데 실패했습니다.");
+            });
+    });
+</script>
+</body>
+</html>
