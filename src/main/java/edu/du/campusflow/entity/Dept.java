@@ -1,19 +1,17 @@
 package edu.du.campusflow.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-import java.util.List;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-@Table(name = "department")
+@Data
+@Table(name = "dept")
 public class Dept {
 
     @Id
@@ -31,7 +29,7 @@ public class Dept {
     @JoinColumn(name = "dept_status", referencedColumnName = "code_id")
     private CommonCode deptStatus;
 
-    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Curriculum> curriculums;
 }

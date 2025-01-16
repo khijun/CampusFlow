@@ -25,30 +25,29 @@ import java.util.List;
 //@EnableWebSecurity(debug = true)
 @Log4j2
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final MemberService memberService;
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username ->{
+        return username -> {
             log.info("사용자: " + username);
             return toUserDetails(memberService.findByMemberId(Long.parseLong(username)));
         };
     }
 
-    public UserDetails toUserDetails(Member member){
+    public UserDetails toUserDetails(Member member) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getRole()));
-        System.out.println("현재 유저의 권한: " + member.getRole());
+        authorities.add(new SimpleGrantedAuthority(member.getMemberType().toString().toUpperCase()));
         return User.builder()
-                .username(member.getId().toString())
+                .username(member.getMemberId().toString())
                 .password(member.getPassword())
                 .authorities(authorities)
                 .build();
@@ -56,27 +55,33 @@ public class SecurityConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
-//                .antMatchers("/login").permitAll() // 로그인 페이지 허용
-//                .anyRequest().authenticated() // 그 외 요청은 인증 필요
-//                .and()
-//                .formLogin() // 폼 로그인 활성화
-////                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
-//                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
-//                .permitAll()
-//                .and()
-//                .logout()
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout")
-//                .permitAll();
-
         http
                 .authorizeRequests()
-                .anyRequest().permitAll() // 모든 요청을 허용
+                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
+//                .antMatchers("/login").permitAll() // 로그인 페이지 허용
+//                .anyRequest().authenticated() // 그 외 요청은 인증 필요
+                .anyRequest().permitAll() // 실험코드
                 .and()
-                .csrf().disable(); // CSRF 보호를 비활성화
+                .headers()
+                .frameOptions().sameOrigin() // X-Frame-Options 설정
+                .and()
+                .formLogin() // 폼 로그인 활성화
+//                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
+                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
+                .permitAll()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .permitAll()
+                .and()
+                .csrf().disable();  // 임시 코드
+
+//        http
+//                .authorizeRequests()
+//                .anyRequest().permitAll() // 모든 요청을 허용
+//                .and()
+//                .csrf().disable(); // CSRF 보호를 비활성화
 
         return http.build();
     }

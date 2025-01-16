@@ -20,7 +20,7 @@ public class Inquiry {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member memberId;
+    private Member member;
 
     @Column(name = "subject", length = 100)
     private String subject;
@@ -28,7 +28,7 @@ public class Inquiry {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "inquiry_status",referencedColumnName = "code_id")
     private CommonCode inquiryStatus;
 
@@ -39,7 +39,7 @@ public class Inquiry {
     private LocalDateTime updatedAt;
 
     @OneToOne
-    @JoinColumn(name = "related_inquiry_id")
+    @JoinColumn(name = "related_inquiry")
     private Inquiry relatedInquiry;        // 이 문의가 답변하는 원본 문의
 
     @OneToOne(mappedBy = "relatedInquiry")

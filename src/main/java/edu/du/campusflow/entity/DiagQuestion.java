@@ -6,12 +6,12 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "diag_questions") // 테이블 이름을 명시
+@Table(name = "diag_questions") // 진단평가 문항
 public class DiagQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id", nullable = false)
+    @Column(name = "question_id")
     private Long questionId; // question_id, BIGINT -> Long으로 매핑
 
     @Column(name = "question_name")

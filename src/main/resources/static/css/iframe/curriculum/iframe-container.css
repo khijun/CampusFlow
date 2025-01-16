@@ -1,0 +1,14 @@
+/* 공통 아이프레임 스타일 */
+.iframe-container {
+   width: 100%;
+   height: calc(100vh - 150px); /* 헤더 및 기타 여백 제외 */
+   overflow: hidden; /* 스크롤바 제거 */
+   box-sizing: border-box;
+   padding: 10px;
+}
+
+iframe {
+   width: 100%;
+   height: 120%;
+   border: none;
+}

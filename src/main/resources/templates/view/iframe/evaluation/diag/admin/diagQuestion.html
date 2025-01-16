@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8">
+   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+   <title>진단평가 조회</title>
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+   <style>
+      .container {
+         margin: 0 auto;
+      }
+
+      .diagnostic-results {
+         max-height: 550px;  /* 최대 높이 설정 */
+         overflow-y: auto;   /* 세로 스크롤 활성화 */
+         background-color: white;
+         border-radius: 8px;
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         margin-top: 20px;
+         padding-top: 20px;
+         padding-left: 16px;
+         padding-right: 16px;
+      }
+
+      .lecture-section h3 {
+         color: #2196F3;
+         margin-bottom: 20px;
+         padding-bottom: 10px;
+         border-bottom: 2px solid #e0e0e0;
+      }
+
+
+      .score-distribution li {
+         display: flex;
+         align-items: center;
+         margin-bottom: 8px;
+         padding: 8px;
+         background-color: #f8f9fa;
+         border-radius: 4px;
+      }
+      .results-table {
+         width: 100%;
+         border-collapse: collapse;
+         background-color: white;
+         margin-bottom: 20px;
+      }
+
+      .results-table th,
+      .results-table td {
+         padding: 12px;
+         text-align: left;
+         border-bottom: 1px solid #e0e0e0;
+      }
+
+      .results-table th {
+         background-color: #2196F3;
+         color: white;
+         font-weight: normal;
+      }
+
+      .results-table tr:hover {
+         background-color: #f8f9fa;
+      }
+
+      /* 스크롤바 스타일링 */
+      .diagnostic-results::-webkit-scrollbar {
+         width: 8px;
+      }
+
+      .diagnostic-results::-webkit-scrollbar-track {
+         background: #f1f1f1;
+         border-radius: 4px;
+      }
+
+      .diagnostic-results::-webkit-scrollbar-thumb {
+         background: #888;
+         border-radius: 4px;
+      }
+
+      .diagnostic-results::-webkit-scrollbar-thumb:hover {
+         background: #555;
+      }
+   </style>
+</head>
+<body>
+<div class="container">
+   <!-- 검색 컨테이너 -->
+   <form class="search-container" id="searchForm">
+      <div class="input-group">
+         <label for="deptSelect">학과</label>
+         <select id="deptSelect" name="deptId">
+            <option value="">학과를 선택해주세요</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="gradeSelect">학년</label>
+         <select id="gradeSelect" name="grade">
+            <option value="">학년을 선택해주세요</option>
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
+            <option value="4">4학년</option>
+         </select>
+      </div>
+      <div class="input-group">
+         <label for="lectureName">강의명</label>
+         <input id="lectureName" name="lectureName" type="text">
+      </div>
+      <div class="input-group">
+         <label for="name">학생명</label>
+         <input id="name" name="name" type="text">
+      </div>
+      <div class="button-group">
+         <button type="submit">검색</button>
+      </div>
+   </form>
+
+   <!-- 검색 결과가 없을 때 -->
+   <div class="no-results" id="noResults">
+      <p>검색 결과가 없습니다.</p>
+   </div>
+
+   <!-- 진단평가 결과 표시 -->
+   <div class="diagnostic-results" id="resultsContainer" style="display: none;">
+      <!-- 결과 내용 -->
+   </div>
+</div>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+      const searchForm = document.querySelector('#searchForm');
+      const resultsContainer = document.querySelector('#resultsContainer');
+      const noResults = document.querySelector('#noResults');
+
+      // 학과 목록 가져오기
+      fetch('/iframe/evaluation/diag/departments')
+              .then(response => response.json())
+              .then(departments => {
+                 const deptSelect = document.querySelector('#deptSelect');
+                 departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.deptId;
+                    option.textContent = dept.deptName;
+                    deptSelect.appendChild(option);
+                 });
+              })
+              .catch(error => console.log('학과 목록 로딩 실패:', error));
+
+      // 검색 폼 제출 처리
+      searchForm.addEventListener('submit', function(e) {
+         e.preventDefault();
+
+         const searchParams = new URLSearchParams();
+         const deptId = document.querySelector('#deptSelect').value;
+         const grade = document.querySelector('#gradeSelect').value;
+         const lectureName = document.querySelector('#lectureName').value;
+         const name = document.querySelector('#name').value;  // name으로 수정
+
+         console.log('검색 파라미터:', {
+            deptId,
+            grade,
+            lectureName,
+            name
+         });
+
+         if (deptId) searchParams.append('deptId', deptId);
+         if (grade) searchParams.append('grade', grade);
+         if (lectureName) searchParams.append('lectureName', lectureName);
+         if (name) searchParams.append('name', name);
+
+         const url = `/iframe/evaluation/diag/search?${searchParams.toString()}`;
+         console.log('요청 URL:', url);
+
+         fetch(`/iframe/evaluation/diag/search?${searchParams.toString()}`)
+                 .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                 })
+                 .then(results => {
+                    console.log('Search results:', results);
+                    if (results && results.length > 0) {
+                       displayResults(results);
+                       resultsContainer.style.display = 'block';
+                       noResults.style.display = 'none';
+                    } else {
+                       resultsContainer.style.display = 'none';
+                       noResults.style.display = 'block';
+                    }
+                 })
+                 .catch(error => {
+                    console.error('Search error:', error);
+                    noResults.style.display = 'block';
+                    resultsContainer.style.display = 'none';
+                 });
+      });
+
+      function displayResults(results) {
+         resultsContainer.innerHTML = `
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>강의명</th>
+                        <th>학번</th>  <!-- 학번 컬럼 추가 -->
+                        <th>이름</th>
+                        <th>학년</th>
+                        <th>문항</th>
+                        <th>점수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${results.map(result => `
+                        <tr>
+                            <td>${result.lectureName}</td>
+                            <td>${result.memberId}</td>  <!-- 학번 데이터 추가 -->
+                            <td>${result.name}</td>
+                            <td>${result.grade}</td>
+                            <td>${result.questionName}</td>
+                            <td>${result.score}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+      }
+   });
+</script>
+</body>
+</html>

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalTime;
 
 @Entity
 @Data
@@ -17,6 +16,7 @@ import java.time.LocalTime;
 public class LectureTime { //강의 시간 정보를 저장하는 엔티티
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lecture_time_id")
     private Long lectureTimeId; //강의 교시
 
@@ -29,17 +29,19 @@ public class LectureTime { //강의 시간 정보를 저장하는 엔티티
     private Facility facility; //강의실 아이디
 
     @ManyToOne
-    @JoinColumn(name = "lecture_day", referencedColumnName = "code_id")
+    @JoinColumn(name = "lecture_day")
     private CommonCode lectureDay; //강의 요일
 
-    @Column(name = "start_time")
-    private LocalTime startTime; //시작 시간
-
-    @Column(name = "end_time")
-    private LocalTime endTime; //종료 시간
+    @ManyToOne
+    @JoinColumn(name = "start_time")
+    private CommonCode startTime; //시작 시간
 
     @ManyToOne
-    @JoinColumn(name = "class_status", referencedColumnName = "code_id")
+    @JoinColumn(name = "end_time")
+    private CommonCode endTime; //종료 시간
+
+    @ManyToOne
+    @JoinColumn(name = "class_status")
     private CommonCode classStatus;  // 수업 상태
 
 }

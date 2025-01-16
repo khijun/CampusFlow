@@ -1,8 +1,5 @@
 package edu.du.campusflow.entity;
 
-import edu.du.campusflow.entity.CommonCode;
-import edu.du.campusflow.entity.Student;
-import edu.du.campusflow.entity.Tuition;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,16 +20,19 @@ public class TuitionTarget{
     private Long targetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tuition_id", nullable = false)
+    @JoinColumn(name = "tuition_id")
     private Tuition tuitionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name = "paid_amount")
-    private Long paidAmount;
+    private Integer paidAmount;
 
     @Column(name = "paid_date")
     private LocalDateTime paidDate;
+
+    @Column(name = "payment_status")
+    private boolean paymentStatus;
 }

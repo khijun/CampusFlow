@@ -6,16 +6,16 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "diag_feedback") // 테이블 이름을 명시
+@Table(name = "diag_feedback") // 진단평가 피드백
 public class DiagFeedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto_increment 사용
-    @Column(name = "feedback_id", nullable = false)
+    @Column(name = "feedback_id")
     private Long feedbackId; // feedback_id, BIGINT -> Long으로 매핑
 
     @ManyToOne
-    @JoinColumn(name = "ofregistration_id", nullable = false)
+    @JoinColumn(name = "ofregistration_id")
     private Ofregistration ofRegistration; // ofregistration_id 외래키
 
     @Column(name = "fd_content")

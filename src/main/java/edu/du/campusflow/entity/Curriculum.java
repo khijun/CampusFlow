@@ -15,28 +15,50 @@ import java.time.LocalDateTime;
 //교육과정엔티티
 public class Curriculum {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "curriculum_id")
-    private Long curriculumId;
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "curriculum_id")
+   private Long curriculumId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dept_id")
-    private Dept dept;
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "dept_id")
+   private Dept dept;
 
-    @Column(name = "curriculum_name", length = 20)
-    private String curriculumName;
+   @Column(name = "curriculum_name", length = 20)
+   private String curriculumName;
 
-    @Column(name = "curriculum_year")
-    private Integer curriculumYear;
+   @Column(name = "curriculum_year")
+   private Integer curriculumYear;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+   //학생정원
+   @Column(name = "grade_capacity")
+   private Integer gradeCapacity;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+   @Column(name = "created_at")
+   private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curriculum_status", referencedColumnName = "code_id")
-    private CommonCode curriculumStatus;
+   @Column(name = "updated_at")
+   private LocalDateTime updatedAt;
+
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "curriculum_status", referencedColumnName = "code_id")
+   private CommonCode curriculumStatus;
+
+   @ManyToOne
+   @JoinColumn(name = "grade")
+   private CommonCode grade;
+
+   // 주야 구분
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "day_night", referencedColumnName = "code_id")
+   private CommonCode dayNight;
+
+   // 성적 평가 (상대평가, 절대평가)
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "grading_method", referencedColumnName = "code_id")
+   private CommonCode gradingMethod;
+
+   // 사유
+   @Column(name = "reason", length = 255)
+   private String reason;
 }

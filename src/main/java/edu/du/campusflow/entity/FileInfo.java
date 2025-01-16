@@ -16,9 +16,10 @@ public class FileInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
-    private Long id;  // 복합키로 FileId 클래스를 사용
+    private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(name = "file_uuid")
@@ -34,7 +35,7 @@ public class FileInfo {
     private String filePath;
 
     @Column(name = "file_size")
-    private String fileSize;
+    private double fileSize;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
