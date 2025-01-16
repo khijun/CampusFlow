@@ -104,10 +104,17 @@ public class OfregistrationService {
         Member member = memberRepository.findById(ofregistrationDTO.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
 
-        // 3. 수강신청 상태 코드 조회 (REQUESTED)
+        // 3. 중복 신청 체크 추가
+        boolean alreadyRegistered = ofregistrationRepository
+                .existsByMemberAndLectureId(member, lecture);
+        if (alreadyRegistered) {
+            throw new IllegalStateException("이미 신청한 강의입니다.");
+        }
+
+        // 4. 수강신청 상태 코드 조회 (REQUESTED)
         CommonCode regStatus = commonCodeRepository.findByCodeValue("REQUESTED");
 
-        // 4. 수강 신청 정보 생성
+        // 5. 수강 신청 정보 생성
         Ofregistration ofregistration = Ofregistration.builder()
                 .lectureId(lecture)
                 .member(member)
@@ -116,10 +123,10 @@ public class OfregistrationService {
                 .retake(false)
                 .build();
 
-        // 5. 저장
+        // 6. 저장
         ofregistrationRepository.save(ofregistration);
 
-        // 6. 강의 현재 수강인원 증가
+        // 7. 강의 현재 수강인원 증가
         lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
         lectureRepository.save(lecture);
     }

@@ -1,5 +1,6 @@
 package edu.du.campusflow.repository;
 
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.Ofregistration;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -70,4 +71,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             "GROUP BY o.id, l.lecture_name, m.name, cc.code_value",
             nativeQuery = true)
     List<Map<String, Object>> findLecturesWithEvalStatus(@Param("studentId") Long studentId);
+
+    // 중복 체크를 위한 메서드 추가
+    boolean existsByMemberAndLectureId(Member member, Lecture lecture);
 }
