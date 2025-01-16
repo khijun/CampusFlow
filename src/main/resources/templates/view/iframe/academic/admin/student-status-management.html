@@ -1,73 +1,86 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
   <title>학생 상태 관리</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
   <style>
-    /* 테이블 외부에 스크롤 적용 */
-    .table-container {
-      max-height: 400px; /* 테이블 높이를 400px로 제한 */
-      overflow-y: auto;  /* 세로 스크롤 */
-      margin-bottom: 20px; /* 아래 여백 */
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    table, th, td {
-      border: 1px solid black;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-
-    button {
-      margin: 5px;
-      padding: 5px 10px;
+    form {
+      display: inline;
     }
   </style>
 </head>
 <body>
-<h1>학생 상태 관리</h1>
-<div class="table-container">
-<table>
-  <thead>
-  <tr>
-    <th>학번</th>
-    <th>이름</th>
-    <th>학적 상태</th>
-    <th>퇴학/제적 처리</th>
-  </tr>
-  </thead>
-  <tbody>
-  <!-- 회원 목록 반복 출력 -->
-  <tr th:each="member : ${members}"
-      th:if="${member.academicStatus.codeName != '퇴학' and member.academicStatus.codeName != '졸업' and member.academicStatus.codeName != '제적'}">
-    <td th:text="${member.memberId}"></td>
-    <td th:text="${member.name}"></td>
-    <td th:text="${member.academicStatus.codeName}"></td>
-    <td>
-      <!-- 퇴학 버튼 -->
-      <form th:action="@{/members/{id}/withdraw(id=${member.memberId})}" method="post" style="display:inline;">
-        <button type="submit">퇴학</button>
-      </form>
-
-      <!-- 제적 버튼 -->
-      <form th:action="@{/members/{id}/expel(id=${member.memberId})}" method="post" style="display:inline;">
-        <button type="submit">제적</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<div>
+  <div id="student-status-select">
+    <input id="student-status-select-btn" type="button" value="학생 상태 조회"/>
+  </div>
 </div>
+
+<div id="student-status-list"></div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+  let gridInstance = null;
+
+  const studentStatusSelectButton = document.querySelector("#student-status-select-btn");
+  const studentStatusDiv = document.querySelector('#student-status-list');
+
+  studentStatusSelectButton.addEventListener('click', () => {
+    createStudentStatusGrid(studentStatusDiv);
+  });
+
+  function createStudentStatusGrid(studentStatusDiv) {
+    const columns = [
+      {header: '학번', name: 'memberId', width: 'auto'},
+      {header: '이름', name: 'name', width: 'auto'},
+      {header: '학적 상태', name: 'academicStatus', width: 'auto'},
+      {
+        header: '퇴학/제적 처리',
+        name: 'actions',
+        width: 'auto',
+        formatter: (cellInfo) => {
+          const id = cellInfo.row.memberId;
+          return `
+            <form action="/members/${id}/withdraw" method="post">
+              <button type="submit">퇴학</button>
+            </form>
+            <form action="/members/${id}/expel" method="post">
+              <button type="submit">제적</button>
+            </form>
+          `;
+        }
+      }
+    ];
+
+    fetch('/api/admin/academic-management')  // API URL 수정
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('네트워크 응답이 실패했습니다.' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              // DTO 형식의 데이터만 사용
+              const filteredData = data.filter(member =>
+                      !['퇴학', '졸업', '제적'].includes(member.academicStatus)
+              );
+
+              if (gridInstance != null) {
+                gridInstance.destroy();
+                gridInstance = null;
+              }
+              gridInstance = new tui.Grid({
+                el: studentStatusDiv,
+                data: filteredData,
+                columns: columns,
+                rowHeaders: ['rowNum'],
+                bodyHeight: 400,
+              });
+            })
+            .catch(error => console.error('Error:', error));
+  }
+</script>
 </body>
 </html>
