@@ -33,11 +33,12 @@ public class CurriculumSubject {
     private Subject prereqSubject; //선 수강 과목
 
     @ManyToOne
-    @JoinColumn(name = "semester", referencedColumnName = "code_id")
-    private CommonCode semester;  //학기
-
-    @ManyToOne
     @JoinColumn(name = "subject_type", referencedColumnName = "code_id")
     private CommonCode subjectType; //이수 구분
+
+    // 성적 평가 (상대평가, 절대평가)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "grading_method", referencedColumnName = "code_id")
+    private CommonCode gradingMethod;
 
 }
