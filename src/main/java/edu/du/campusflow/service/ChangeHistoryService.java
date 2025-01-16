@@ -1,5 +1,6 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.dto.SimpleMemberDTO;
 import edu.du.campusflow.entity.ChangeHistory;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Member;
@@ -73,6 +74,14 @@ public class ChangeHistoryService {
         return memberRepository.findAll()
                 .stream()
                 .filter(member -> member.getMemberType().getCodeId() == 101L) // member_type이 101L인지 확인
+                .collect(Collectors.toList());
+    }
+
+    public List<SimpleMemberDTO> getMembersByType() {
+        // 원하는 memberType을 지정해서 필터링
+        List<Member> members = changeHistoryRepository.findMembersByType(101L); // 예: 101인 경우
+        return members.stream()
+                .map(SimpleMemberDTO::new)  // Member -> SimpleMemberDTO로 변환
                 .collect(Collectors.toList());
     }
 

@@ -60,7 +60,7 @@ public class GradeService {
 
                     // 성적 정보를 scores에 추가 및 가중치 적용
                     for (Grade grade : entry.getValue()) {
-                        scores.put(grade.getGradeType().getCodeName(), grade.getScore());
+                        scores.put(getGradeTypeName(grade.getGradeType().getCodeId()), grade.getScore());  // getGradeTypeName 사용
                     }
 
                     // 총점 계산
