@@ -42,27 +42,30 @@ public class OfregistrationService {
      *
      * @return 수강 가능한 강의 목록 (OfregistrationDTO 형태)
      */
-    public List<OfregistrationDTO> getAllAvailableLectures() {
-        // 모든 강의 정보를 데이터베이스에서 조회
+    public List<OfregistrationDTO> getAllAvailableLectures(String studentDeptName) {
         List<Lecture> lectures = lectureRepository.findAllWithFetch();
         List<OfregistrationDTO> result = new ArrayList<>();
 
-        // 각 강의 정보를 DTO로 변환
         for (Lecture lecture : lectures) {
-            // 강의 기본 정보 추출
             CurriculumSubject curriculumSubject = lecture.getCurriculumSubject();
             Curriculum curriculum = curriculumSubject.getCurriculum();
             Subject subject = curriculumSubject.getSubject();
             Member professor = lecture.getMember();
             List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
 
-            // DTO 생성 및 데이터 설정
-            OfregistrationDTO dto = new OfregistrationDTO();
+            // 다른 학과의 전공 필수 과목인 경우 건너뛰기
+            if (!curriculum.getDept().getDeptName().equals(studentDeptName) && 
+                curriculumSubject.getSubjectType().getCodeValue().equals("MAJOR_REQUIRED")) {
+                continue;
+            }
 
-            // 강의 기본 정보 설정
+            OfregistrationDTO dto = new OfregistrationDTO();
+            
+            // 기존 DTO 설정 코드는 그대로 유지
             dto.setLectureId(lecture.getLectureId());
             dto.setLectureName(lecture.getLectureName());
             dto.setDeptName(curriculum.getDept().getDeptName());
+            dto.setSubjectType(curriculumSubject.getSubjectType().getCodeValue());
             dto.setGrade(curriculum.getGrade().getCodeName());
             dto.setSubjectType(curriculumSubject.getSubjectType().getCodeName());
             dto.setSubjectCredits(subject.getSubjectCredits());
@@ -87,9 +90,24 @@ public class OfregistrationService {
             // 기타 정보 설정
             dto.setDayNight(curriculum.getDayNight().getCodeName());
 
-            // 결과 리스트에 추가
             result.add(dto);
         }
+
+        // 학과명과 과목 유형으로 정렬
+        result.sort((a, b) -> {
+            // 먼저 본인 학과인지 확인
+            if (!a.getDeptName().equals(studentDeptName) && b.getDeptName().equals(studentDeptName)) return 1;
+            if (a.getDeptName().equals(studentDeptName) && !b.getDeptName().equals(studentDeptName)) return -1;
+            
+            // 같은 학과인 경우 전공필수 여부로 정렬
+            if (a.getDeptName().equals(studentDeptName) && b.getDeptName().equals(studentDeptName)) {
+                if (a.getSubjectType().equals("전공 필수") && !b.getSubjectType().equals("전공 필수")) return -1;
+                if (!a.getSubjectType().equals("전공 필수") && b.getSubjectType().equals("전공 필수")) return 1;
+            }
+            
+            // 그 외의 경우 학과명으로 정렬
+            return a.getDeptName().compareTo(b.getDeptName());
+        });
 
         return result;
     }
@@ -111,23 +129,33 @@ public class OfregistrationService {
             throw new IllegalStateException("이미 신청한 강의입니다.");
         }
 
-        // 4. 시간 중복 체크
+        // 5. 시간 중복 체크
         List<Ofregistration> studentLectures = ofregistrationRepository.findByMember(member);
         for (Ofregistration existingReg : studentLectures) {
+            // 학생이 이미 신청한 강의 정보 가져오기
             Lecture existingLecture = existingReg.getLectureId();
+            
+            // 기존 강의와 새로 신청하려는 강의의 시간 정보 조회
             List<LectureTime> existingTimes = lectureTimeRepository.findByLectureWeek_Lecture(existingLecture);
             List<LectureTime> newTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
             
+            // 두 강의 모두 시간 정보가 있는 경우에만 체크
             if (!existingTimes.isEmpty() && !newTimes.isEmpty()) {
+                // 각 강의의 첫 번째 시간표 정보를 가져옴
                 LectureTime existingTime = existingTimes.get(0);
                 LectureTime newTime = newTimes.get(0);
                 
+                // 같은 요일에 진행되는 강의인 경우에만 시간 중복 체크
                 if (existingTime.getLectureDay().getCodeValue().equals(newTime.getLectureDay().getCodeValue())) {
+                    // 교시를 숫자로 변환 (예: PERIOD_FIRST -> 1, PERIOD_SECOND -> 2)
                     int newStart = convertPeriodToNumber(newTime.getStartTime().getCodeValue());
                     int newEnd = convertPeriodToNumber(newTime.getEndTime().getCodeValue());
                     int existingStart = convertPeriodToNumber(existingTime.getStartTime().getCodeValue());
                     int existingEnd = convertPeriodToNumber(existingTime.getEndTime().getCodeValue());
 
+                    // 시간이 겹치는지 확인
+                    // (새 강의 시작 시간이 기존 강의 종료 시간보다 이르고,
+                    //  새 강의 종료 시간이 기존 강의 시작 시간보다 늦은 경우 겹침)
                     if (hasTimeOverlap(newStart, newEnd, existingStart, existingEnd)) {
                         throw new IllegalStateException(
                             String.format("'%s' 강의와 시간이 겹칩니다.", existingLecture.getLectureName())

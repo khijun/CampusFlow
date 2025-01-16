@@ -33,6 +33,7 @@ public class OfregistrationController {
 
     private final OfregistrationService ofregistrationService;
     private final AuthService authService;
+    private final MemberRepository memberRepository;
 
 
 
@@ -41,15 +42,17 @@ public class OfregistrationController {
      */
     @GetMapping("/student/studentOfre")
     public String showAvailableLectures(Model model) {
-        log.info("수강 가능한 강의 목록 조회");
-        try {
-            List<OfregistrationDTO> lectures = ofregistrationService.getAllAvailableLectures();
-            model.addAttribute("lectures", lectures);
-            return "view/iframe/ofregistration/student/studentOfre";
-        } catch (Exception e) {
-            log.error("강의 목록 조회 중 오류 발생", e);
-            throw e;
-        }
+        // 현재 로그인한 학생의 정보 가져오기
+        Member currentStudent = memberRepository.findById(authService.getCurrentMemberId())
+            .orElseThrow(() -> new IllegalStateException("로그인 정보를 찾을 수 없습니다."));
+        
+        // 학생의 학과명과 함께 수강 가능한 강의 목록 조회
+        List<OfregistrationDTO> lectures = ofregistrationService.getAllAvailableLectures(
+            currentStudent.getDept().getDeptName()
+        );
+        
+        model.addAttribute("lectures", lectures);
+        return "view/iframe/ofregistration/student/studentOfre";
     }
 
     /**
