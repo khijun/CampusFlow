@@ -34,4 +34,15 @@ public class SubjectService {
       subjectRepository.saveAll(subjects);
    }
 
+   public void updateSubjects(List<SubjectDTO> updatedSubjects) {
+      List<Subject> subjects = updatedSubjects.stream()
+          .map(dto -> new Subject(dto.getSubjectId(), dto.getSubjectName(), dto.getSubjectDesc(), dto.getSubjectCredits()))
+          .collect(Collectors.toList());
+      subjectRepository.saveAll(subjects);
+   }
+
+   public void deleteSubjects(List<Long> ids) {
+      subjectRepository.deleteAllById(ids); // JPA 메서드로 ID 리스트 기반 삭제
+   }
+
 }

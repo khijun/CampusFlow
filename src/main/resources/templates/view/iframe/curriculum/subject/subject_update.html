@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+   <link th:href="@{/css/iframe/curriculum/subject/subject_grid.css}" rel="stylesheet">
+   <title>과목 수정</title>
+
+</head>
+<body>
+<div>
+   <div id="subject-list-option-container">
+      <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" />
+      <button id="subject-list-select-btn">조회</button>
+      <button id="save-updates-btn">수정 저장</button>
+      <button id="delete-selected-btn">삭제</button>
+   </div>
+   <div id="subject-grid-container" style="height: 700px;"></div>
+   <div>
+   </div>
+</div>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    let grid; // TOAST UI Grid 인스턴스
+
+    // 과목 조회 버튼 클릭 이벤트
+    document.getElementById("subject-list-select-btn").addEventListener("click", () => {
+        const keyword = document.getElementById("subject-name-input").value; // 검색어 가져오기
+
+        // 검색어를 포함한 API 호출
+        fetch(`/api/subjects?keyword=${encodeURIComponent(keyword)}`)
+            .then(response => response.json())
+            .then(data => {
+                // 기존 그리드 초기화
+                if (grid) {
+                    grid.destroy();
+                }
+
+                // 새로운 데이터로 수정 가능한 그리드 생성
+                grid = new tui.Grid({
+                    el: document.getElementById('subject-grid-container'),
+                    data: data,
+                    columns: [
+                        {header: '과목ID', name: 'subjectId', align: 'center', width: 100,  readOnly: true}, // 수정 불가
+                        {header: '과목명', name: 'subjectName', align: 'center', editor: 'text', width: 400}, // 수정 가능
+                        {header: '과목설명', name: 'subjectDesc', editor: 'text'}, // 수정 가능
+                        {header: '이수학점', name: 'subjectCredits', align: 'center', editor: 'text', width: 100} // 수정 가능
+                    ],
+                    bodyHeight: 'fitToParent',
+                    rowHeaders: ['checkbox'], // 체크박스를 사용하여 행 선택
+                    editingEvent: 'click' // 클릭 시 편집 가능
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching subjects:", error);
+                alert("과목 데이터를 불러오는 데 실패했습니다.");
+            });
+    });
+
+    // 수정 저장 버튼 클릭 이벤트
+    document.getElementById("save-updates-btn").addEventListener("click", () => {
+        const updatedRows = grid.getModifiedRows().updatedRows; // 수정된 행 데이터 가져오기
+
+        if (updatedRows.length === 0) {
+            alert("수정된 데이터가 없습니다.");
+            return;
+        }
+
+        // 수정된 데이터 서버로 전송
+        fetch("/api/subjects/update", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedRows)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to update subjects");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("데이터가 수정되었습니다");
+
+                // 서버에서 데이터 다시 로드하여 그리드를 업데이트
+                const keyword = document.getElementById("subject-name-input").value; // 검색어 가져오기
+                return fetch(`/api/subjects?keyword=${encodeURIComponent(keyword)}`);
+            })
+            .then(response => response.json())
+            .then(newData => {
+                grid.resetData(newData); // 새로운 데이터로 그리드 업데이트
+            })
+            .catch(error => {
+                console.error("Error updating subjects:", error);
+                alert("수정 저장 중 오류가 발생했습니다.");
+            });
+    });
+
+    // 삭제 버튼 클릭 이벤트
+    document.getElementById("delete-selected-btn").addEventListener("click", () => {
+        const selectedRows = grid.getCheckedRows(); // 체크된 행 가져오기
+
+        if (selectedRows.length === 0) {
+            alert("삭제할 데이터를 선택하세요.");
+            return;
+        }
+
+        // 서버로 삭제 요청
+        const idsToDelete = selectedRows.map(row => row.subjectId); // 삭제할 ID 리스트 생성
+        fetch("/api/subjects/delete", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(idsToDelete)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to delete subjects");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("데이터가 삭제되었습니다");
+                grid.removeCheckedRows(); // 체크된 행을 그리드에서 삭제
+            })
+            .catch(error => {
+                console.error("Error deleting subjects:", error);
+                alert("데이터 삭제 중 오류가 발생했습니다.");
+            });
+    });
+
+</script>
+</body>
+</html>

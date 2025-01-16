@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,20 +18,22 @@ public class SubjectController {
 
    @GetMapping("/iframe/curriculum/subject/list")
    public String selectSubject(Model model) {
-      // 초기 화면 렌더링 시 필요한 데이터를 설정 (현재는 빈 필터)
       model.addAttribute("filter", null);
-      return "view/iframe/curriculum/subject/subject_list"; // JSP 또는 HTML 파일 경로
+      return "view/iframe/curriculum/subject/subject_list";
    }
 
    @GetMapping("/iframe/curriculum/subject/register")
    public String registerSubject(Model model) {
-      // 추가적으로 필요하면 데이터를 Model에 담아서 뷰로 전달
-      return "view/iframe/curriculum/subject/subject_register"; // 과목 등록 페이지 경로
+      return "view/iframe/curriculum/subject/subject_register";
+   }
+
+   @GetMapping("/iframe/curriculum/subject/update")
+   public String updateSubject(Model model) {
+      return "view/iframe/curriculum/subject/subject_update";
    }
 
    @GetMapping("/api/subjects")
    public ResponseEntity<?> getSubjects(@RequestParam(required = false) String keyword) {
-      // 검색어가 있을 경우 검색어 기반 조회, 없을 경우 전체 조회
       return ResponseEntity.ok(SubjectDTO.fromEntityList(subjectService.findSubjects(keyword)));
    }
 
@@ -44,4 +43,16 @@ public class SubjectController {
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects saved successfully."));
    }
 
+   @PutMapping("/api/subjects/update")
+   public ResponseEntity<?> updateSubjects(@RequestBody List<SubjectDTO> updatedSubjects) {
+      subjectService.updateSubjects(updatedSubjects);
+      return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects updated successfully."));
+   }
+
+   @DeleteMapping("/api/subjects/delete")
+   public ResponseEntity<?> deleteSubjects(@RequestBody List<Long> ids) {
+      // 삭제 요청 처리
+      subjectService.deleteSubjects(ids);
+      return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects deleted successfully."));
+   }
 }
