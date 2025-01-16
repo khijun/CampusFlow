@@ -20,7 +20,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId")
     List<Ofregistration> findByLectureId(Long lectureId);
 
-    // 진단 평가 통합 쿼리
+    // 진단평가 통합 쿼리
     @Query(value = "SELECT " +
             "o.id as ofregistrationId, " +
             "l.lecture_name as lectureName, " +
@@ -38,7 +38,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     List<Map<String, Object>> findDiagLecturesWithEvalStatus(@Param("studentId") Long studentId);
 
 
-    // 강의평가 목록 조회 쿼리
+    // 강의평가 통합 쿼리
     @Query(value = "SELECT " +
             "o.id as ofregistrationId, " +
             "l.lecture_name as lectureName, " +
