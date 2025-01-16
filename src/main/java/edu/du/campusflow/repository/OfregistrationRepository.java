@@ -46,6 +46,11 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.member.memberId = :memberId")
     List<Ofregistration> findByLectureId_Member_MemberId(@Param("memberId") Long memberId);
 
+    @Query("SELECT o FROM Ofregistration o WHERE o.member.memberId = :memberId AND o.lectureId.lectureId = :lectureId")
+    List<Ofregistration> findByMember_MemberIdAndLectureId(@Param("memberId") Long memberId, @Param("lectureId") Long lectureId);
+    @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId")
+    List<Ofregistration> findByLectureId(Long lectureId);
+
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.member.dept.deptId = :deptId")
     List<Ofregistration> findByMemberDeptId(@Param("deptId") String deptId);
 

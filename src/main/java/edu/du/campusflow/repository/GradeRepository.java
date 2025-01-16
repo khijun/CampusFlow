@@ -1,5 +1,7 @@
 package edu.du.campusflow.repository;
 
+import edu.du.campusflow.entity.CommonCode;
+import edu.du.campusflow.entity.Completion;
 import edu.du.campusflow.entity.Grade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +26,7 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
             "WHERE o.lectureId.lectureId IN :lectureIds " +
             "AND g.gradeType.codeId IN :gradeTypeList")
     List<Grade> findByLectureIdsAndGradeTypes(@Param("lectureIds") List<Long> lectureIds, @Param("gradeTypeList") List<Long> gradeTypeList);
+
+
+    List<Grade> findByCompletion(Completion completion);
 }
