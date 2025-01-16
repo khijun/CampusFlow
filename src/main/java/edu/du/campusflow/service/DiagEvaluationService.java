@@ -3,6 +3,7 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
 import edu.du.campusflow.entity.DiagItem;
+import edu.du.campusflow.entity.DiagQuestion;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.Ofregistration;
 import edu.du.campusflow.repository.*;
@@ -42,7 +43,7 @@ public class DiagEvaluationService {
         );
     }
 
-    private Long getGradeCodeId(String grade) {
+    private Long getGradeCodeId(String grade) { // 중복코드 최적화는 나중에
         switch (grade) {
             case "1": return 97L;  // 1학년
             case "2": return 98L;  // 2학년
@@ -76,7 +77,7 @@ public class DiagEvaluationService {
     // 학생의 수강 강의 목록과 진단평가 여부 조회
     public List<Map<String, Object>> getStudentLecturesWithEvalStatus(Long studentId) {
         log.info("학생 수강 강의 목록 조회 - studentId: {}", studentId);
-        return ofregistrationRepository.findLecturesWithEvalStatus(studentId);
+        return ofregistrationRepository.findDiagLecturesWithEvalStatus(studentId);
     }
 
     // 진단평가 여부 확인
@@ -87,8 +88,9 @@ public class DiagEvaluationService {
     // 진단평가 문항 조회
     public List<DiagQuestionDTO> getDiagQuestions(Long ofregistrationId) {
         log.info("진단평가 문항 조회 - ofregistrationId: {}", ofregistrationId);
-        return diagQuestionRepository.findAll()
-                .stream()
+
+        // 모든 진단평가 문항을 조회하여 DTO로 변환
+        return diagQuestionRepository.findAll().stream()
                 .map(question -> DiagQuestionDTO.builder()
                         .questionId(question.getQuestionId())
                         .questionName(question.getQuestionName())
@@ -113,8 +115,10 @@ public class DiagEvaluationService {
         scores.forEach((questionId, score) -> {
             DiagItem diagItem = new DiagItem();
             diagItem.setOfRegistration(ofRegistration);
-            diagItem.setDiagQuestion(diagQuestionRepository.findById(questionId)  // Long 타입 그대로 사용
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid questionId: " + questionId)));
+            DiagQuestion diagQuestion = diagEvaluationRepository.findDiagQuestionById(questionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid questionId: " + questionId));
+
+            diagItem.setDiagQuestion(diagQuestion);
             diagItem.setScore(score);
             diagItemRepository.save(diagItem);
         });

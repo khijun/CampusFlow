@@ -148,7 +148,7 @@
   <form class="evaluation-form"
         th:action="@{/iframe/evaluation/diag/submit}"
         th:if="${showForm}"
-        th:method="${evaluated ? 'get' : 'post'}">
+        th:method="post">
     <input name="id" th:value="${selectedOfregistrationId}" type="hidden">
 
     <div class="question-item" th:each="question : ${questions}">
@@ -156,11 +156,10 @@
       <div class="score-options">
         <div class="score-option" th:each="score : ${#numbers.sequence(1, 5)}">
           <input required
-                 th:checked="${previousAnswers != null && previousAnswers[question.questionId] == score}"
-                 th:id="${'q' + question.questionId + '_' + score}"
-                 th:name="${'scores[' + question.questionId + ']'}"
-                 th:value="${score}"
+                 th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) != null and previousAnswers.get(question.questionId) == score}"
                  th:disabled="${evaluated}"
+                 th:value="${score}"
+                 th:name="'scores[' + ${question.questionId} + ']'"
                  type="radio">
           <label th:for="${'q' + question.questionId + '_' + score}"
                  th:text="${score + '점'}">점수</label>
