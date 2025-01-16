@@ -74,4 +74,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
 
     // 중복 체크를 위한 메서드 추가
     boolean existsByMemberAndLectureId(Member member, Lecture lecture);
+
+    // 학생의 모든 수강신청 내역 조회
+    List<Ofregistration> findByMember(Member member);
 }

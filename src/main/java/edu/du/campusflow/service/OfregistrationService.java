@@ -104,17 +104,43 @@ public class OfregistrationService {
         Member member = memberRepository.findById(ofregistrationDTO.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
 
-        // 3. 중복 신청 체크 추가
+        // 3. 중복 신청 체크
         boolean alreadyRegistered = ofregistrationRepository
                 .existsByMemberAndLectureId(member, lecture);
         if (alreadyRegistered) {
             throw new IllegalStateException("이미 신청한 강의입니다.");
         }
 
-        // 4. 수강신청 상태 코드 조회 (REQUESTED)
+        // 4. 시간 중복 체크
+        List<Ofregistration> studentLectures = ofregistrationRepository.findByMember(member);
+        for (Ofregistration existingReg : studentLectures) {
+            Lecture existingLecture = existingReg.getLectureId();
+            List<LectureTime> existingTimes = lectureTimeRepository.findByLectureWeek_Lecture(existingLecture);
+            List<LectureTime> newTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
+            
+            if (!existingTimes.isEmpty() && !newTimes.isEmpty()) {
+                LectureTime existingTime = existingTimes.get(0);
+                LectureTime newTime = newTimes.get(0);
+                
+                if (existingTime.getLectureDay().getCodeValue().equals(newTime.getLectureDay().getCodeValue())) {
+                    int newStart = convertPeriodToNumber(newTime.getStartTime().getCodeValue());
+                    int newEnd = convertPeriodToNumber(newTime.getEndTime().getCodeValue());
+                    int existingStart = convertPeriodToNumber(existingTime.getStartTime().getCodeValue());
+                    int existingEnd = convertPeriodToNumber(existingTime.getEndTime().getCodeValue());
+
+                    if (hasTimeOverlap(newStart, newEnd, existingStart, existingEnd)) {
+                        throw new IllegalStateException(
+                            String.format("'%s' 강의와 시간이 겹칩니다.", existingLecture.getLectureName())
+                        );
+                    }
+                }
+            }
+        }
+
+        // 5. 수강신청 상태 코드 조회 (REQUESTED)
         CommonCode regStatus = commonCodeRepository.findByCodeValue("REQUESTED");
 
-        // 5. 수강 신청 정보 생성
+        // 6. 수강 신청 정보 생성 및 저장
         Ofregistration ofregistration = Ofregistration.builder()
                 .lectureId(lecture)
                 .member(member)
@@ -123,11 +149,41 @@ public class OfregistrationService {
                 .retake(false)
                 .build();
 
-        // 6. 저장
         ofregistrationRepository.save(ofregistration);
 
         // 7. 강의 현재 수강인원 증가
         lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
         lectureRepository.save(lecture);
+    }
+
+    // 교시를 숫자로 변환하는 메서드
+    private int convertPeriodToNumber(String period) {
+        switch (period) {
+            case "PERIOD_FIRST":
+                return 1;
+            case "PERIOD_SECOND":
+                return 2;
+            case "PERIOD_THIRD":
+                return 3;
+            case "PERIOD_FOURTH":
+                return 4;
+            case "PERIOD_FIFTH":
+                return 5;
+            case "PERIOD_SIXTH":
+                return 6;
+            case "PERIOD_SEVENTH":
+                return 7;
+            case "PERIOD_EIGHTH":
+                return 8;
+            case "PERIOD_NINTH":
+                return 9;
+            default:
+                throw new IllegalArgumentException("Invalid period: " + period);
+        }
+    }
+
+    // 시간 겹침을 확인하는 메서드
+    private boolean hasTimeOverlap(int start1, int end1, int start2, int end2) {
+        return start1 <= end2 && end1 >= start2;
     }
 }
