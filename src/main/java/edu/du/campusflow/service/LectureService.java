@@ -72,7 +72,7 @@ public class LectureService {
         lecture.setMember(professor);
 
         // 학기 정보 설정
-        CommonCode semester = curriculumSubject.getSemester();
+        CommonCode semester = curriculumSubject.getCurriculum().getSemester();
         lecture.setSemester(semester);
 
         CommonCode lectureStatus = commonCodeRepository.findByCodeValue("APPROVAL_PENDING");
