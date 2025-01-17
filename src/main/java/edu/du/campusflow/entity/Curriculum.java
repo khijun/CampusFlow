@@ -36,6 +36,10 @@ public class Curriculum {
    @Column(name = "updated_at")
    private LocalDateTime updatedAt;
 
+   // 사유
+   @Column(name = "reason", length = 255)
+   private String reason;
+
    @ManyToOne
    @JoinColumn(name = "grade")
    private CommonCode grade;
@@ -53,17 +57,16 @@ public class Curriculum {
    @JoinColumn(name = "day_night", referencedColumnName = "code_id")
    private CommonCode dayNight;
 
-   // 사유
-   @Column(name = "reason", length = 255)
-   private String reason;
-
+   // 교양 학점
    @Column(name = "general_credits")
-   private Integer generalCredits; // 교양 학점
+   private Integer generalCredits;
 
+   // 전공 학점
    @Column(name = "major_credits")
-   private Integer majorCredits; // 전공 학점
+   private Integer majorCredits;
 
+   // 졸업 학점
    @Column(name = "graduation_credits")
-   private Integer graduationCredits; // 졸업 학점
+   private Integer graduationCredits;
 
 }

@@ -56,11 +56,11 @@ public class CurriculumService {
       dto.setDeptId(curriculum.getDept().getDeptId());
       dto.setCurriculumName(curriculum.getCurriculumName());
       dto.setYear(curriculum.getCurriculumYear());
-      dto.setGradeCapacity(curriculum.getGradeCapacity());
+//      dto.setGradeCapacity(curriculum.getGradeCapacity());
       dto.setCurriculumStatus(curriculum.getCurriculumStatus().getCodeValue());
       dto.setGrade(curriculum.getGrade().getCodeValue());
       dto.setDayNight(curriculum.getDayNight().getCodeValue());
-      dto.setGradingMethod(curriculum.getGradingMethod().getCodeValue());
+//      dto.setGradingMethod(curriculum.getGradingMethod().getCodeValue());
       dto.setReason(curriculum.getReason());
       return dto;
    }
@@ -85,11 +85,11 @@ public class CurriculumService {
       curriculum.setDept(findDepartmentById(dto.getDeptId()));
       curriculum.setCurriculumName(dto.getCurriculumName());
       curriculum.setCurriculumYear(dto.getYear());
-      curriculum.setGradeCapacity(dto.getGradeCapacity());
+//      curriculum.setGradeCapacity(dto.getGradeCapacity());
       curriculum.setCurriculumStatus(findCommonCode("CURRICULUMSTATUS", dto.getCurriculumStatus()));
       curriculum.setGrade(findCommonCode("GRADE", dto.getGrade()));
       curriculum.setDayNight(findCommonCode("DAY_NIGHT", dto.getDayNight()));
-      curriculum.setGradingMethod(findCommonCode("GRADING_METHOD", dto.getGradingMethod()));
+//      curriculum.setGradingMethod(findCommonCode("GRADING_METHOD", dto.getGradingMethod()));
       curriculum.setReason(dto.getReason());
       curriculum.setCreatedAt(LocalDateTime.now());
       curriculum.setUpdatedAt(LocalDateTime.now());
@@ -101,7 +101,7 @@ public class CurriculumService {
          CurriculumSubject curriculumSubject = new CurriculumSubject();
          curriculumSubject.setCurriculum(curriculum);
          curriculumSubject.setSubject(findSubjectById(dto.getSubjectIds().get(i)));
-         curriculumSubject.setSemester(findCommonCode("SEMESTER", dto.getSemesters().get(i))); // 각 과목별 학기 설정
+//         curriculumSubject.setSemester(findCommonCode("SEMESTER", dto.getSemesters().get(i))); // 각 과목별 학기 설정
          curriculumSubjectRepository.save(curriculumSubject);
       }
 
@@ -126,7 +126,7 @@ public class CurriculumService {
       // 4. 학기 설정 (유효성 확인)
       if (semester != null && !semester.isEmpty()) {
          CommonCode semesterCode = findCommonCode("SEMESTER", semester);
-         curriculumSubject.setSemester(semesterCode);
+//         curriculumSubject.setSemester(semesterCode);
       } else {
          throw new IllegalArgumentException("Semester cannot be null or empty");
       }
