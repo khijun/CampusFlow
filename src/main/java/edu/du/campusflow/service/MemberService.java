@@ -2,6 +2,7 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.define.MemberIdPosition;
 import edu.du.campusflow.dto.MemberCreateDTO;
+import edu.du.campusflow.dto.MemberCreateRequestDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Member;
@@ -76,7 +77,7 @@ public class MemberService {
 
     // ----------------------------------------------------------------
 
-    public Member addMember(MemberCreateDTO dto, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId,LocalDate startDate){
+    public Member addMember(MemberCreateDTO dto, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId,LocalDate startDate) throws RuntimeException {
 
         // 생년월일을 비밀번호로 설정. 생일입력값이 없을 시에 랜덤한 문자열로 비밀번호 작성
         String pw = dto.getBirthday()==null?
@@ -123,10 +124,10 @@ public class MemberService {
     }
 
     @Transactional
-    public List<Member> addMembers(List<MemberCreateDTO> dtos, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId,LocalDate startDate){
-        return dtos.stream().map(dto->{
+    public List<Member> addMembers(MemberCreateRequestDTO dto) throws RuntimeException {
+        return dto.getMemberDTOs().stream().map(cDto->{
             // dto의 값을 각각 addMember한 후 리스트로 만들어 반환
-            return addMember(dto, deptId, isActive, academicStatusId, memberTypeId, startDate);
+            return addMember(cDto, dto.getDeptId(), dto.getIsActive(), dto.getAcademicStatusId(), dto.getMemberTypeId(), dto.getStartDate());
         }).collect(Collectors.toList());
     }
 
