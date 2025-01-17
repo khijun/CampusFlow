@@ -1,15 +1,15 @@
 package edu.du.campusflow.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.du.campusflow.dto.MemberCreateDTO;
+import edu.du.campusflow.dto.MemberCreateRequestDTO;
 import edu.du.campusflow.dto.MemberDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -39,10 +39,16 @@ public class MemberApiController {
     public MemberDTO getMemberById(@PathVariable Long id){
         return MemberDTO.fromEntity(memberService.findByMemberId(id));
     }
-    @PostMapping("/all")
-    public String addMembers(@RequestBody List<MemberCreateDTO> memberDTOs, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId, LocalDate startDate){
-        return memberService.addMembers(memberDTOs, deptId, isActive, academicStatusId, memberTypeId, startDate).isEmpty()?
-                "입력 실패" :
-                "입력 성공";
+    @PostMapping
+    public ResponseEntity<?> addMembers(@RequestBody MemberCreateRequestDTO dto){
+        System.out.println(dto);
+        try {
+            memberService.addMembers(dto);
+        } catch (RuntimeException e) {
+            System.out.println("예외발생");
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        return ResponseEntity.ok().build();
     }
 }
