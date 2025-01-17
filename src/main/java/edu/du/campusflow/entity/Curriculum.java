@@ -57,16 +57,4 @@ public class Curriculum {
    @JoinColumn(name = "day_night", referencedColumnName = "code_id")
    private CommonCode dayNight;
 
-   // 교양 학점
-   @Column(name = "general_credits")
-   private Integer generalCredits;
-
-   // 전공 학점
-   @Column(name = "major_credits")
-   private Integer majorCredits;
-
-   // 졸업 학점
-   @Column(name = "graduation_credits")
-   private Integer graduationCredits;
-
 }
