@@ -25,7 +25,7 @@ public class CurriculumSubjectService {
                     return criteriaBuilder.and(
                             criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%"),
                             criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%"),
-                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode)
+                            criteriaBuilder.equal(root.get("curriculum").get("semester").get("codeValue"), semesterCode)
                     );
                 }
                 return criteriaBuilder.and(
@@ -38,7 +38,7 @@ public class CurriculumSubjectService {
                 if (semesterCode != null && !semesterCode.isEmpty()) {
                     return criteriaBuilder.and(
                             criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%"),
-                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode)
+                            criteriaBuilder.equal(root.get("curriculum").get("semester").get("codeValue"), semesterCode)
                     );
                 }
                 return criteriaBuilder.like(root.get("subject").get("subjectName"), "%" + subjectName + "%");
@@ -48,14 +48,14 @@ public class CurriculumSubjectService {
                 if (semesterCode != null && !semesterCode.isEmpty()) {
                     return criteriaBuilder.and(
                             criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%"),
-                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode)
+                            criteriaBuilder.equal(root.get("curriculum").get("semester").get("codeValue"), semesterCode)
                     );
                 }
                 return criteriaBuilder.like(root.get("curriculum").get("curriculumName"), "%" + curriculumName + "%");
             }
             //학기만으로 검색했을 경우
             if (semesterCode != null && !semesterCode.isEmpty()) {
-                return criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode);
+                return criteriaBuilder.equal(root.get("curriculum").get("semester").get("codeValue"), semesterCode);
             }
             return criteriaBuilder.conjunction(); // 기본 조건
         });
@@ -66,7 +66,7 @@ public class CurriculumSubjectService {
             dto.setSubjectName(curriculumSubject.getSubject().getSubjectName());
             dto.setCurriculumName(curriculumSubject.getCurriculum() != null ? curriculumSubject.getCurriculum().getCurriculumName() : null);
             dto.setSubjectCredits(curriculumSubject.getSubject() != null ? curriculumSubject.getSubject().getSubjectCredits().toString() : null);
-            dto.setSemesterName(curriculumSubject.getSemester() != null ? curriculumSubject.getSemester().getCodeName() : null); // 학기 이름으로 설정
+            dto.setSemesterName(curriculumSubject.getCurriculum().getSemester() != null ? curriculumSubject.getCurriculum().getSemester().getCodeName() : null); // 학기 이름으로 설정
             dto.setSubjectTypeName(curriculumSubject.getSubjectType() != null ? curriculumSubject.getSubjectType().getCodeName() : null); // 코드 이름으로 설정
             return dto;
         }).collect(Collectors.toList());
