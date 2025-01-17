@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ChangeRequestController {
@@ -71,10 +72,15 @@ public class ChangeRequestController {
         return "redirect:/iframe/academic/change-request-list"; // 신청 후 목록으로 리다이렉트
     }
 
-    // 신청 삭제
     @PostMapping("/iframe/academic/delete-change-request")
-    public String deleteChangeRequest(@RequestParam("applicationId") Long applicationId) {
+    public String deleteChangeRequest(@RequestBody Map<String, Long> requestBody) {
+        // 요청 본문에서 applicationId 추출
+        Long applicationId = requestBody.get("applicationId");
+
+        // 현재 로그인한 사용자의 memberId 가져오기
         Long memberId = authService.getCurrentMemberId();
+
+        // 로그인되지 않은 경우 예외 발생
         if (memberId == null) {
             throw new IllegalStateException("Authentication required to perform this action.");
         }
@@ -82,7 +88,8 @@ public class ChangeRequestController {
         // 신청서 삭제 처리
         changeRequestService.deleteChangeRequest(applicationId, memberId);
 
-        return "redirect:/iframe/academic/change-request-list"; // 삭제 후 목록으로 리다이렉트
+        // 삭제 후 change-request-list 페이지로 리다이렉트
+        return "redirect:/iframe/academic/change-request-list";
     }
 
     // 승인 처리

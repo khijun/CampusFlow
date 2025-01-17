@@ -9,8 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
 @ToString
+@Data
 @Table(name = "dept")
 public class Dept {
 
@@ -28,6 +28,18 @@ public class Dept {
     @ManyToOne
     @JoinColumn(name = "dept_status", referencedColumnName = "code_id")
     private CommonCode deptStatus;
+
+    // 교양 학점
+    @Column(name = "general_credits")
+    private Integer generalCredits;
+
+    // 전공 학점
+    @Column(name = "major_credits")
+    private Integer majorCredits;
+
+    // 졸업 학점
+    @Column(name = "graduation_credits")
+    private Integer graduationCredits;
 
     @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude

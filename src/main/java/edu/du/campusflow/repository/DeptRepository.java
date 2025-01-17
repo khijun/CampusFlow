@@ -21,7 +21,7 @@ public interface DeptRepository extends JpaRepository<Dept, Long> {
             "(:#{#filter.deptName} is null or d.deptName like :#{#filter.deptName}) " +
             "and (:#{#filter.minStudentValue} is null or d.maxStudents >= :#{#filter.minStudentValue}) " +
             "and (:#{#filter.maxStudentValue} is null or d.maxStudents <= :#{#filter.maxStudentValue}) " +
-            "and (:#{#filter.deptStatus} is null or d.deptStatus.codeId = :#{#filter.deptStatus})")
+            "and (:#{#filter.deptStatus} is null or d.deptStatus.codeId = :#{#filter.deptStatus}) ")
     @EntityGraph(attributePaths = {"deptStatus"})
     List<Dept> findAllWithFilter(@Param("filter") DeptSearchFilter filter);
 }

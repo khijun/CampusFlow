@@ -72,7 +72,7 @@ public class LectureService {
         lecture.setMember(professor);
 
         // 학기 정보 설정
-        CommonCode semester = curriculumSubject.getSemester();
+        CommonCode semester = curriculumSubject.getCurriculum().getSemester();
         lecture.setSemester(semester);
 
         CommonCode lectureStatus = commonCodeRepository.findByCodeValue("APPROVAL_PENDING");
@@ -187,28 +187,27 @@ public class LectureService {
             }
         }
 
-        // 선택한 주차만큼 강의 주차와 강의 시간 데이터 생성 (1주차부터)
+        List<LectureWeek> weeks = new ArrayList<>();
         for (int i = 1; i <= lectureDTO.getWeek(); i++) {
-            // 강의 주차 생성
             LectureWeek lectureWeek = new LectureWeek();
             lectureWeek.setLecture(lecture);
             lectureWeek.setWeek(i);
             lectureWeek.setLectureWeekName(i+"주차");
-            lectureWeek = lectureWeekRepository.save(lectureWeek);
-
-            // 해당 주차의 강의 시간 생성
-            LectureTime lectureTime = new LectureTime();
-            lectureTime.setLectureWeek(lectureWeek);
-            lectureTime.setLectureDay(commonCodeRepository.findByCodeValue(lectureDTO.getLectureDays()));
-            lectureTime.setStartTime(commonCodeRepository.findByCodeValue(lectureDTO.getStartTime()));
-            lectureTime.setEndTime(commonCodeRepository.findByCodeValue(lectureDTO.getEndTime()));
-            lectureTime.setFacility(facility);
-            lectureTime.setClassStatus(classStatus);
-
-            lectureTimeRepository.save(lectureTime);
+            weeks.add(lectureWeek);
         }
+        lectureWeekRepository.saveAll(weeks);  // 배치로 한번에 저장
 
-        // 강의 상태를 승인으로 변경
+        // 1주차의 강의시간만 생성
+        LectureTime firstWeekTime = new LectureTime();
+        firstWeekTime.setLectureWeek(weeks.get(0));
+        firstWeekTime.setLectureDay(commonCodeRepository.findByCodeValue(lectureDTO.getLectureDays()));
+        firstWeekTime.setStartTime(commonCodeRepository.findByCodeValue(lectureDTO.getStartTime()));
+        firstWeekTime.setEndTime(commonCodeRepository.findByCodeValue(lectureDTO.getEndTime()));
+        firstWeekTime.setFacility(facility);
+        firstWeekTime.setClassStatus(classStatus);
+        lectureTimeRepository.save(firstWeekTime);
+
+        // 강의 상태 업데이트
         CommonCode approvedStatus = commonCodeRepository.findByCodeValue("LECTURE_PENDING");
         if (approvedStatus == null) {
             throw new RuntimeException("승인 상태 코드를 찾을 수 없습니다.");
@@ -224,15 +223,25 @@ public class LectureService {
         CommonCode startTime = commonCodeRepository.findByCodeValue(lectureDTO.getStartTime());
         CommonCode endTime = commonCodeRepository.findByCodeValue(lectureDTO.getEndTime());
 
-        List<LectureTime> lectureTimes = lectureTimeRepository.findByStartTimeAndEndTimeAndLectureWeek_Week(startTime, endTime, week);
+        // CommonCode의 codeName에서 숫자만 추출 (예: "1교시" -> 1)
+        Integer newStartHour = Integer.parseInt(startTime.getCodeName().replaceAll("[^0-9]", ""));
+        Integer newEndHour = Integer.parseInt(endTime.getCodeName().replaceAll("[^0-9]", ""));
+
+        List<LectureTime> lectureTimes = lectureTimeRepository.findOverlappingTimes(week, lectureDTO.getLectureDays(), lectureDTO.getFacilityId());
 
         for (LectureTime lectureTime : lectureTimes) {
             if (lectureTime.getLectureWeek().getLecture().getLectureId().equals(lectureDTO.getLectureId())) {
                 continue;  // 같은 강의는 건너뜀
             }
-            if (lectureTime.getLectureDay().getCodeValue().equals(lectureDTO.getLectureDays())) {
-                if (lectureTime.getFacility().getFacilityId().equals(lectureDTO.getFacilityId())) {
-                    return true;  // 중복
+
+            // 기존 강의 시간을 숫자로 변환
+            Integer existingStartHour = Integer.parseInt(lectureTime.getStartTime().getCodeName().replaceAll("[^0-9]", ""));
+            Integer existingEndHour = Integer.parseInt(lectureTime.getEndTime().getCodeName().replaceAll("[^0-9]", ""));
+
+            if (!(newEndHour < existingStartHour || newStartHour > existingEndHour)) {
+                if (lectureTime.getLectureDay().getCodeValue().equals(lectureDTO.getLectureDays()) &&
+                        lectureTime.getFacility().getFacilityId().equals(lectureDTO.getFacilityId())) {
+                    return true;  // 시간, 요일, 강의실 모두 겹침
                 }
             }
         }
@@ -291,13 +300,13 @@ public class LectureService {
             CommonCode pendingStatus = commonCodeRepository.findByCodeValue("APPROVAL_PENDING");
 
             if (professorId != null) {
-                        if(semesterCode != null && !semesterCode.isEmpty()) {
-                            return criteriaBuilder.and(
-                                    criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode),
-                                    criteriaBuilder.equal(root.get("member").get("memberId"), professorId),
-                                    criteriaBuilder.equal(root.get("lectureStatus"), pendingStatus)
-                            );
-                        }
+                if(semesterCode != null && !semesterCode.isEmpty()) {
+                    return criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("semester").get("codeValue"), semesterCode),
+                            criteriaBuilder.equal(root.get("member").get("memberId"), professorId),
+                            criteriaBuilder.equal(root.get("lectureStatus"), pendingStatus)
+                    );
+                }
             }
 
             return criteriaBuilder.equal(root.get("lectureStatus"), pendingStatus);

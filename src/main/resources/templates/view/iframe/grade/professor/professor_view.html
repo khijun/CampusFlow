@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교수 성적 관리</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+</head>
+<body>
+<div class="container">
+    <h1>성적 관리</h1>
+
+    <section>
+        <h2>강의 선택</h2>
+        <form action="#" method="get" th:action="@{/iframe/grade/professor/professor_view}" th:method="get">
+            <label for="lectureId">강의:</label>
+            <select id="lectureId" name="lectureId" onchange="loadStudents()">
+                <th:block th:each="lecture : ${lectures}">
+                    <option th:value="${lecture.lectureId}" th:text="${lecture.lectureName}">강의명</option>
+                </th:block>
+            </select>
+        </form>
+    </section>
+
+    <section id="studentListSection">
+        <!-- 학생 목록은 AJAX로 불러옴 -->
+    </section>
+
+</div>
+
+<script>
+    // AJAX로 강의에 해당하는 학생 목록을 불러오는 함수
+    function loadStudents() {
+        var lectureId = $("#lectureId").val(); // 선택한 강의 ID
+
+        // 강의가 선택되지 않은 경우는 무시
+        if (!lectureId) {
+            return;
+        }
+
+        // AJAX 요청 보내기
+        $.ajax({
+            url: '/iframe/grade/professor/get_students',  // 학생 목록을 가져오는 서버 API
+            method: 'GET',
+            data: { lectureId: lectureId },  // 선택한 강의 ID를 전달
+            success: function(response) {
+                // 학생 목록을 표시할 섹션 업데이트
+                $('#studentListSection').html(response);
+            },
+            error: function() {
+                alert('학생 목록을 불러오는 데 실패했습니다.');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
