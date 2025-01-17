@@ -1,5 +1,6 @@
 package edu.du.campusflow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class EducationInfo {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "member_id")
     private Member member;            //학번
 
