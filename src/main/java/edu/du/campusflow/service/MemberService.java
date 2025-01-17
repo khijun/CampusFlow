@@ -62,20 +62,26 @@ public class MemberService {
 
     // ----------------------------------------------------------------
 
-    public void deleteSoft(Member member){
-
+    public Member deleteSoft(Member member){
+        member.setIsActive(false);
+        return memberRepository.save(member);
     }
 
-    public void updateMember(Member member) {
+    // ----------------------------------------------------------------
 
+    public Member updateMember(Member member, String oldPw) {
+        if(!checkPassword(oldPw, findByMemberId(member.getMemberId()).getPassword())) throw new RuntimeException("비밀번호가 일치하지 않음");
+        return memberRepository.save(member);
     }
+
+    // ----------------------------------------------------------------
 
     public Member addMember(MemberCreateDTO dto, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId,LocalDate startDate){
 
         // 생년월일을 비밀번호로 설정. 생일입력값이 없을 시에 랜덤한 문자열로 비밀번호 작성
         String pw = dto.getBirthday()==null?
-                PasswordGenerator.generateRandomPassword(8):
-                dto.getBirthday().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                PasswordGenerator.generateRandomPassword(6):
+                dto.getBirthday().format(DateTimeFormatter.ofPattern("yyMMdd"));
 
         // 입력값이 없으면 true
         isActive = isActive == null ? true : isActive;
@@ -135,12 +141,18 @@ public class MemberService {
     }
 
     public Member addMember(Member member){
-        member.setPassword(passwordEncoder.encode(member.getPassword()));;
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         try {
             return memberRepository.save(member);
         }catch (Exception e){
             return null;
         }
+    }
+
+    // ----------------------------------------------------------------
+
+    public boolean checkPassword(String rawPassword, String encodedPassword){
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
 }

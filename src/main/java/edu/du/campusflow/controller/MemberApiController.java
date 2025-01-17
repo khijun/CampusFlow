@@ -39,8 +39,8 @@ public class MemberApiController {
     public MemberDTO getMemberById(@PathVariable Long id){
         return MemberDTO.fromEntity(memberService.findByMemberId(id));
     }
-    @PostMapping
-    public String addMember(@RequestBody List<MemberCreateDTO> memberDTOs, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId, LocalDate startDate){
+    @PostMapping("/all")
+    public String addMembers(@RequestBody List<MemberCreateDTO> memberDTOs, Long deptId, Boolean isActive, Long academicStatusId, Long memberTypeId, LocalDate startDate){
         return memberService.addMembers(memberDTOs, deptId, isActive, academicStatusId, memberTypeId, startDate).isEmpty()?
                 "입력 실패" :
                 "입력 성공";

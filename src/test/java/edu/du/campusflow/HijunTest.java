@@ -1,7 +1,6 @@
 package edu.du.campusflow;
 
 import edu.du.campusflow.dto.CategoryDTO;
-import edu.du.campusflow.dto.MemberCreateDTO;
 import edu.du.campusflow.entity.Category;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.FileInfo;
@@ -20,7 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -148,20 +148,27 @@ public class HijunTest {
 //        System.out.println("FILTERS");
 //        memberService.findAllWithFilter(null).forEach(System.out::println);
 
-        MemberCreateDTO dto = MemberCreateDTO.builder()
-                .name("김희준")
-                .tel("010-9998-1235")
-                .address("서울특별시 강남구 삼성동 123-45")
-                .birthday(LocalDate.of(2000, 8, 24))
-                .email("khijun00@gmail.com")
-                .genderId(commonCodeService.findByCodeGroupAndCodeValue("GENDER", "MALE").getCodeId())
-                .build();
-        Long deptId = 1L;
-        Boolean isActive = null;
-        Long academicStatusId = commonCodeService.findByCodeGroupAndCodeValue("ACADEMICSTATUS", "ENROLLED").getCodeId();
-        Long memberTypeId = commonCodeService.findByCodeGroupAndCodeValue("MEMBERTYPE", "STUDENT").getCodeId();
-        LocalDate startDate = LocalDate.of(2025, 2, 2);
+//        // 멤버 생성
+//        MemberCreateDTO dto = MemberCreateDTO.builder()
+//                .name("김희준")
+//                .tel("010-9998-1235")
+//                .address("서울특별시 강남구 삼성동 123-45")
+//                .birthday(LocalDate.of(2000, 8, 24))
+//                .email("khijun00@gmail.com")
+//                .genderId(commonCodeService.findByCodeGroupAndCodeValue("GENDER", "MALE").getCodeId())
+//                .build();
+//        Long deptId = 1L;
+//        Boolean isActive = null;
+//        Long academicStatusId = commonCodeService.findByCodeGroupAndCodeValue("ACADEMICSTATUS", "ENROLLED").getCodeId();
+//        Long memberTypeId = commonCodeService.findByCodeGroupAndCodeValue("MEMBERTYPE", "STUDENT").getCodeId();
+//        LocalDate startDate = LocalDate.of(2025, 2, 2);
+//
+//        System.out.println(memberService.addMember(dto, deptId, isActive, memberTypeId, academicStatusId, startDate));
 
-        System.out.println(memberService.addMember(dto, deptId, isActive, memberTypeId, academicStatusId, startDate));
+
+        String pw = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+        System.out.println(pw);
+
+        System.out.println(memberService.checkPassword("1224", memberService.findByMemberId(1001L).getPassword()));
     }
 }
