@@ -58,8 +58,8 @@ public class SecurityConfig {
         http
                 .authorizeRequests()
                 .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
-//                .antMatchers("/login").permitAll() // 로그인 페이지 허용
-//                .anyRequest().authenticated() // 그 외 요청은 인증 필요
+                .antMatchers("/iframe/notice/add", "/iframe/notice/edit/**", "/iframe/notice/delete/**").hasAuthority("ADMIN")
+                .antMatchers("/iframe/notice/view", "/iframe/notice/{id}").authenticated()
                 .anyRequest().permitAll() // 실험코드
                 .and()
                 .headers()

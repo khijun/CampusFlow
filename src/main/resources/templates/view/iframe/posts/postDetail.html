@@ -102,15 +102,6 @@
 </head>
 <body>
 <div class="container mt-3">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">학사</li>
-      <li class="breadcrumb-item">학생게시판</li>
-      <li class="breadcrumb-item"><a th:href="@{/iframe/posts/view}">학과 게시판</a></li>
-      <li class="breadcrumb-item active">게시물 상세</li>
-    </ol>
-  </nav>
-
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>게시물 상세</h2>
     <a th:href="@{/iframe/posts/view}" class="btn btn-secondary">목록으로</a>
@@ -178,20 +169,35 @@
     submitButton.disabled = true;
     submitButton.textContent = '등록 중...';
 
-    // 입력 필드 초기화
-    commentInput.value = '';
-
-    // 폼 제출
-    commentForm.submit();
+    // 폼 데이터 생성
+    const formData = new FormData(commentForm);
     
-    // 3초 후에 버튼 상태 복구 (서버 응답 실패 대비)
-    setTimeout(() => {
+    // fetch를 사용하여 데이터 전송
+    fetch(commentForm.action, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        // 성공적으로 전송된 후에 입력 필드 초기화
+        commentInput.value = '';
+        // 페이지 새로고침
+        window.location.reload();
+      } else {
+        throw new Error('댓글 등록 실패');
+      }
+    })
+    .catch(error => {
+      alert('댓글 등록에 실패했습니다.');
+      console.error('Error:', error);
+    })
+    .finally(() => {
       isSubmitting = false;
       submitButton.disabled = false;
       submitButton.textContent = '댓글 등록';
-    }, 3000);
+    });
 
-    return true;
+    return false;
   }
   
   commentInput.addEventListener('keydown', function(event) {
@@ -207,7 +213,25 @@
     if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
       if (!isSubmitting) {
         isSubmitting = true;
-        form.submit();
+        
+        // fetch를 사용하여 삭제 요청
+        fetch(form.action, {
+          method: 'POST'
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            throw new Error('댓글 삭제 실패');
+          }
+        })
+        .catch(error => {
+          alert('댓글 삭제에 실패했습니다.');
+          console.error('Error:', error);
+        })
+        .finally(() => {
+          isSubmitting = false;
+        });
       }
     }
   }

@@ -31,7 +31,7 @@
     <div class="notice-header">
         <h2 th:text="${notice.subject}"></h2>
         <p>
-            <span th:text="|번호: ${notice.noticeId}|"></span> |
+            <span th:text="|번호: ${noticeNumber}|"></span> |
             <span th:text="|작성자: ${notice.member.name}|"></span> |
             <span th:text="|등록일: ${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}|"></span>
         </p>

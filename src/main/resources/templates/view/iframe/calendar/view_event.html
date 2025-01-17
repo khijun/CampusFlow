@@ -54,12 +54,11 @@
       header: {
         left: 'prev,next today',
         center: 'title',
-
       },
       defaultView: 'month',
       allDayDefault: true,
       displayEventEnd: true,
-      locale: 'ko' ,
+      locale: 'ko',
 
       events: function(start, end, timezone, callback) {
         $.ajax({
@@ -67,11 +66,15 @@
           type: 'GET',
           success: function(response) {
             var events = response.map(function(event) {
+              // endDate가 null이거나 유효하지 않은 경우 startDate를 사용
+              var endDate = moment(event.endDate).isValid() ? 
+                  moment(event.endDate) : moment(event.startDate);
+              
               return {
                 id: event.calendarId,
                 title: event.title.replace(/^\d+a\s*/, ''),
-                start: moment(event.startDate).format('YYYY-MM-DD'),
-                end: moment(event.endDate).format('YYYY-MM-DD'),
+                start: moment(event.startDate).startOf('day').format('YYYY-MM-DD'),
+                end: endDate.startOf('day').format('YYYY-MM-DD'),
                 description: event.description,
                 allDay: true
               };
@@ -92,7 +95,11 @@
         // 일정 클릭 시 모달에 정보 표시
         $('#eventTitle').text(event.title);
         $('#eventStart').text(moment(event.start).format('YYYY년 MM월 DD일'));
-        $('#eventEnd').text(moment(event.end).format('YYYY년 MM월 DD일'));
+        // 종료일이 유효한 경우에만 표시
+        var endDate = moment(event.end).isValid() ? 
+            moment(event.end).format('YYYY년 MM월 DD일') : 
+            moment(event.start).format('YYYY년 MM월 DD일');
+        $('#eventEnd').text(endDate);
         $('#eventDescription').text(event.description || '설명 없음');
         $('#eventModal').modal('show');
       },
