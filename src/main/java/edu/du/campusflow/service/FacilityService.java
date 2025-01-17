@@ -11,6 +11,7 @@ import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.FacilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,18 @@ public class FacilityService {
                 System.out.println("Code: " + code.getCodeValue() + " - " + code.getCodeName())
         );
         return buildingCodes;
+    }
+
+    public List<Facility> getClassrooms(String buildingCode) {
+        CommonCode building = commonCodeRepository.findByCodeValue(buildingCode);
+        if (building == null) {
+            throw new RuntimeException("해당 건물을 찾을 수 없습니다.");
+        }
+        CommonCode availableStatus = commonCodeRepository.findByCodeValue("AVAILABLE");
+        if (availableStatus == null) {
+            throw new RuntimeException("사용 가능 상태 코드를 찾을 수 없습니다.");
+        }
+        return facilityRepository.findByBuildingAndFacilityStatus(building, availableStatus);
     }
 
     //강의실 상태 드롭다운에 데이터 불러오는 서비스
@@ -96,6 +109,21 @@ public class FacilityService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    //강의실 상태를 변경하는 서비스
+    @Transactional
+    public void updateFacilityStatus(Long facilityId, String facilityStatus) {
+        Facility facility = facilityRepository.findById(facilityId)
+                .orElseThrow(() -> new RuntimeException("해당 강의실을 찾을 수 없습니다."));
+
+        CommonCode status = commonCodeRepository.findByCodeValue(facilityStatus);
+        if (status == null) {
+            throw new RuntimeException("유효하지 않은 상태 코드입니다.");
+        }
+
+        facility.setFacilityStatus(status);
+        facilityRepository.save(facility);
     }
 
 }
