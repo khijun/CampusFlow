@@ -1,22 +1,19 @@
 package edu.du.campusflow.dto;
 
 import lombok.Data;
-
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 public class CurriculumDTO {
-   private Long deptId;
-   private String curriculumName;
-   private Integer year;
-   private Integer gradeCapacity;
-   private String curriculumStatus; // code_value로 받음
-   private String grade;           // code_value로 받음
-   private String dayNight;        // code_value로 받음
-   private String gradingMethod;   // code_value로 받음
+   private Long curriculumId;      // 교육과정 ID
+   private Long deptId;            // 학과 ID
+   private String curriculumName;  // 교육과정명
+   private Integer curriculumYear; // 교육과정 연도
+   private LocalDateTime createdAt; // 생성일
+   private LocalDateTime updatedAt; // 수정일
+   private String grade;           // 학년 (`code_name`으로 변경)
+   private String curriculumStatus; // 교육과정 상태 (`code_name`으로 변경)
+   private String semester;        // 학기 (`code_name`으로 변경)
+   private String dayNight;        // 주야 구분 (`code_name`으로 변경)
    private String reason;          // 사유
-
-   private List<Long> subjectIds;  // 과목 ID 목록
-   private List<String> semesters; // 학기 목록 (code_value로 받음)
 }
-

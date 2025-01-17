@@ -1,166 +1,74 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.CurriculumDTO;
-import edu.du.campusflow.entity.*;
-import edu.du.campusflow.repository.*;
+import edu.du.campusflow.entity.Curriculum;
+import edu.du.campusflow.entity.Dept;
+import edu.du.campusflow.repository.CurriculumRepository;
+import edu.du.campusflow.repository.DeptRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CurriculumService {
-
    private final CurriculumRepository curriculumRepository;
-   private final CurriculumSubjectRepository curriculumSubjectRepository;
-   private final SubjectRepository subjectRepository;
-   private final CommonCodeGroupRepository commonCodeGroupRepository;
    private final DeptRepository deptRepository;
 
-   // 검색 메서드
-   public List<Curriculum> searchCurriculum(String year, String grade, String deptName, String curriculumName, String category) {
-      Specification<Curriculum> spec = Specification.where(null);
+   // 교육과정 전체 조회 또는 검색 조회
+   public List<CurriculumDTO> getCurriculums(String keyword) {
+      List<Curriculum> curriculums = (keyword != null && !keyword.trim().isEmpty()) ?
+          curriculumRepository.findByCurriculumNameContaining(keyword) :
+          curriculumRepository.findAll();
 
-      if (year != null && !year.isEmpty()) {
-         spec = spec.and((root, query, cb) -> cb.equal(root.get("curriculumYear"), Integer.parseInt(year)));
-      }
-      if (grade != null && !grade.isEmpty()) {
-         spec = spec.and((root, query, cb) -> cb.equal(root.get("grade").get("codeValue"), grade));
-      }
-      if (deptName != null && !deptName.isEmpty()) {
-         spec = spec.and((root, query, cb) -> cb.like(root.get("dept").get("deptName"), "%" + deptName + "%"));
-      }
-      if (curriculumName != null && !curriculumName.isEmpty()) {
-         spec = spec.and((root, query, cb) -> cb.like(root.get("curriculumName"), "%" + curriculumName + "%"));
-      }
-      if (category != null && !category.isEmpty()) {
-         spec = spec.and((root, query, cb) -> cb.equal(root.get("curriculumStatus").get("codeValue"), category));
-      }
-
-      return curriculumRepository.findAll(spec);
+      return curriculums.stream()
+          .map(this::convertToDTO)
+          .collect(Collectors.toList());
    }
 
-   // ID로 Curriculum 조회
-   @Transactional
-   public CurriculumDTO getCurriculumById(Long id) {
-      Curriculum curriculum = curriculumRepository.findById(id)
-          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 ID: " + id));
+   // 교육과정 저장
+   public void saveCurriculums(List<CurriculumDTO> curriculumDTOs) {
+      List<Curriculum> curriculums = curriculumDTOs.stream()
+          .map(this::convertToEntity)
+          .collect(Collectors.toList());
+      curriculumRepository.saveAll(curriculums);
+   }
 
+   // Curriculum -> CurriculumDTO 변환
+   private CurriculumDTO convertToDTO(Curriculum curriculum) {
       CurriculumDTO dto = new CurriculumDTO();
+      dto.setCurriculumId(curriculum.getCurriculumId());
       dto.setDeptId(curriculum.getDept().getDeptId());
       dto.setCurriculumName(curriculum.getCurriculumName());
-      dto.setYear(curriculum.getCurriculumYear());
-//      dto.setGradeCapacity(curriculum.getGradeCapacity());
-      dto.setCurriculumStatus(curriculum.getCurriculumStatus().getCodeValue());
-      dto.setGrade(curriculum.getGrade().getCodeValue());
-      dto.setDayNight(curriculum.getDayNight().getCodeValue());
-//      dto.setGradingMethod(curriculum.getGradingMethod().getCodeValue());
+      dto.setCurriculumYear(curriculum.getCurriculumYear());
+      dto.setCreatedAt(curriculum.getCreatedAt());
+      dto.setUpdatedAt(curriculum.getUpdatedAt());
+
+      // ✅ 공통 코드: CodeName으로 변경
+      dto.setGrade(curriculum.getGrade() != null ? curriculum.getGrade().getCodeName() : null);
+      dto.setCurriculumStatus(curriculum.getCurriculumStatus() != null ? curriculum.getCurriculumStatus().getCodeName() : null);
+      dto.setSemester(curriculum.getSemester() != null ? curriculum.getSemester().getCodeName() : null);
+      dto.setDayNight(curriculum.getDayNight() != null ? curriculum.getDayNight().getCodeName() : null);
+
       dto.setReason(curriculum.getReason());
       return dto;
    }
 
-   @Transactional
-   public Curriculum createCurriculum(CurriculumDTO dto) {
-      if (dto.getSubjectIds() == null || dto.getSubjectIds().isEmpty()) {
-         throw new IllegalArgumentException("Subject IDs are missing.");
-      }
+   // CurriculumDTO -> Curriculum 변환
+   private Curriculum convertToEntity(CurriculumDTO dto) {
+      Dept dept = deptRepository.findById(dto.getDeptId()).orElseThrow(() ->
+          new IllegalArgumentException("학과 ID를 찾을 수 없습니다: " + dto.getDeptId()));
 
-      // null 값을 제거
-      List<Long> filteredSubjectIds = dto.getSubjectIds().stream()
-          .filter(Objects::nonNull)
-          .collect(Collectors.toList());
-
-      if (filteredSubjectIds.isEmpty()) {
-         throw new IllegalArgumentException("All provided Subject IDs are null.");
-      }
-
-      // Curriculum 생성
-      Curriculum curriculum = new Curriculum();
-      curriculum.setDept(findDepartmentById(dto.getDeptId()));
-      curriculum.setCurriculumName(dto.getCurriculumName());
-      curriculum.setCurriculumYear(dto.getYear());
-//      curriculum.setGradeCapacity(dto.getGradeCapacity());
-      curriculum.setCurriculumStatus(findCommonCode("CURRICULUMSTATUS", dto.getCurriculumStatus()));
-      curriculum.setGrade(findCommonCode("GRADE", dto.getGrade()));
-      curriculum.setDayNight(findCommonCode("DAY_NIGHT", dto.getDayNight()));
-//      curriculum.setGradingMethod(findCommonCode("GRADING_METHOD", dto.getGradingMethod()));
-      curriculum.setReason(dto.getReason());
-      curriculum.setCreatedAt(LocalDateTime.now());
-      curriculum.setUpdatedAt(LocalDateTime.now());
-
-      curriculumRepository.save(curriculum);
-
-      // CurriculumSubject 생성
-      for (int i = 0; i < dto.getSubjectIds().size(); i++) {
-         CurriculumSubject curriculumSubject = new CurriculumSubject();
-         curriculumSubject.setCurriculum(curriculum);
-         curriculumSubject.setSubject(findSubjectById(dto.getSubjectIds().get(i)));
-//         curriculumSubject.setSemester(findCommonCode("SEMESTER", dto.getSemesters().get(i))); // 각 과목별 학기 설정
-         curriculumSubjectRepository.save(curriculumSubject);
-      }
-
-      return curriculum;
+      return Curriculum.builder()
+          .dept(dept)
+          .curriculumName(dto.getCurriculumName())
+          .curriculumYear(dto.getCurriculumYear())
+          .createdAt(LocalDateTime.now()) // 생성 시간 현재 시간으로 설정
+          .updatedAt(LocalDateTime.now())
+          .reason(dto.getReason())
+          .build();
    }
-
-
-   @Transactional
-   public void addCurriculumSubject(Long curriculumId, Long subjectId, String semester) {
-      // 1. Curriculum 검증
-      Curriculum curriculum = curriculumRepository.findById(curriculumId)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid curriculum ID: " + curriculumId));
-
-      // 2. Subject 검증
-      Subject subject = findSubjectById(subjectId);
-
-      // 3. CurriculumSubject 생성
-      CurriculumSubject curriculumSubject = new CurriculumSubject();
-      curriculumSubject.setCurriculum(curriculum);
-      curriculumSubject.setSubject(subject);
-
-      // 4. 학기 설정 (유효성 확인)
-      if (semester != null && !semester.isEmpty()) {
-         CommonCode semesterCode = findCommonCode("SEMESTER", semester);
-//         curriculumSubject.setSemester(semesterCode);
-      } else {
-         throw new IllegalArgumentException("Semester cannot be null or empty");
-      }
-
-      // 5. 저장
-      curriculumSubjectRepository.save(curriculumSubject);
-   }
-
-   private Dept findDepartmentById(Long id) {
-      return deptRepository.findById(id)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid deptId: " + id));
-   }
-
-   private Subject findSubjectById(Long id) {
-      return subjectRepository.findById(id)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid subjectId: " + id));
-   }
-
-   public CommonCode findCommonCode(String groupCode, String codeValue) {
-      if (codeValue == null || codeValue.isEmpty()) {
-         throw new IllegalArgumentException("Code value is missing for group: " + groupCode);
-      }
-
-      CommonCodeGroup group = commonCodeGroupRepository.findByGroupCode(groupCode);
-      if (group == null) {
-         throw new IllegalArgumentException("Invalid group code: " + groupCode);
-      }
-
-      return group.getCommonCodes().stream()
-          .filter(code -> code.getCodeValue().equals(codeValue))
-          .findFirst()
-          .orElseThrow(() -> new IllegalArgumentException("Invalid code value: " + codeValue));
-   }
-
-
-
 }
