@@ -53,6 +53,11 @@ public class OfregistrationService {
             Member professor = lecture.getMember();
             List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
 
+            // 강의 상태가 대기 상태가 아닌 경우 건너뛰기
+            if (!lecture.getLectureStatus().getCodeValue().equals("LECTURE_PENDING")) {
+                continue;
+            }
+
             // 다른 학과의 전공 필수 과목인 경우 건너뛰기
             if (!curriculum.getDept().getDeptName().equals(studentDeptName) && 
                 curriculumSubject.getSubjectType().getCodeValue().equals("MAJOR_REQUIRED")) {
