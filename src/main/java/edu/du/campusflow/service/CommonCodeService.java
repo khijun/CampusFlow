@@ -42,4 +42,16 @@ public class CommonCodeService {
             commonCodeRepository.save(commonCode);
         }
     }
+
+    public CommonCode findById(Long id){
+        return commonCodeRepository.findById(id).orElse(null);
+    }
+
+    public CommonCode findByCodeValue(String codeValue){
+        return commonCodeRepository.findByCodeValue(codeValue);
+    }
+
+    public CommonCode findByCodeGroupAndCodeValue(String codeGroup, String codeValue){
+        return commonCodeRepository.findByCodeGroupAndCodeValue(codeGroup, codeValue);
+    }
 } 
