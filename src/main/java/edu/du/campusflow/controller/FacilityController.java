@@ -1,8 +1,10 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.FacilityDTO;
+import edu.du.campusflow.dto.LectureTimeDTO;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Facility;
+import edu.du.campusflow.entity.LectureTime;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.FacilityRepository;
 import edu.du.campusflow.service.FacilityService;
@@ -66,4 +68,26 @@ public class FacilityController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/iframe/facility/facilityLecture_List")
+    public String facilityLectureList(Model model) {
+        model.addAttribute("building", facilityService.getFacilityBuilding());
+        model.addAttribute("facility", facilityService.getFacilityStatus());
+        return "view/iframe/facility/facilityLecture_List";
+    }
+
+    @GetMapping("/api/facility/lectures/{facilityId}")
+    @ResponseBody
+    public ResponseEntity<List<LectureTimeDTO>> getFacilityLectures(@PathVariable Long facilityId) {
+        try {
+            List<LectureTimeDTO> lectures = facilityService.getFacilityLectures(facilityId);
+            // 디버깅을 위한 로그
+            System.out.println("Controller - Found lectures: " + lectures.size());
+            return ResponseEntity.ok(lectures);
+        } catch (Exception e) {
+            System.err.println("Error in getFacilityLectures: " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }
