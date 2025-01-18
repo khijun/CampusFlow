@@ -4,40 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
     <title>회원 생성 페이지</title>
     <style>
-        #member-input-container {
-            width: 1300px;
-        }
     </style>
 </head>
 <body>
 <div id="member-input-container">
-    <input type="text" id="dept-id-input" placeholder="학과 입력" required>
-    <input type="date" id="start-date-input" required>
-    <select id="member-type-input" required>
-        <option th:each="memberType : ${memberTypes}" th:value="${memberType.codeId}" th:text="${memberType.codeName}"></option>
-    </select>
+    <div id="members-option-input-container" class="search-container">
+        <div class="input-group">
+            <label for="dept-id-input">학과</label>
+            <select id="dept-id-input" required>
+                <option th:each="dept : ${depts}" th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="start-date-input">입학/입사일</label>
+            <input type="date" id="start-date-input" required>
+        </div>
+        <div class="input-group">
+            <label for="member-type-input">멤버 타입</label>
+            <select id="member-type-input" required>
+                <option th:each="memberType : ${memberTypes}" th:value="${memberType.codeId}" th:text="${memberType.codeName}"></option>
+            </select>
+        </div>
+    </div>
     <div id="member-input-grid"></div>
-    <input type="button" id="grid-add-row-button" value="열 추가"/>
-    <input type="button" id="grid-add-student-button" value="계정 생성"/>
+    <input type="button" id="add-row-button" value="열 추가"/>
+    <input type="button" id="delete-row-button" value="열 삭제"/>
+    <input type="button" id="grid-add-member-button" value="계정 생성"/>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 <script>
-    const addRowBtn = document.querySelector("#grid-add-row-button");
-    const inputGrid = document.querySelector("#member-input-grid");
-
     const columns = [
-        {header: "번호", name: "id"},
-        {header: "이름", name: "name", editor: 'text'},
-        {header: "전화번호", name: "tel", editor: 'text'},
-        {header: "주소", name: "address", editor: 'text'},
-        {header: "생년월일", name: "birthday", editor: 'text'},
-        {header: "이메일", name: "email", editor: 'text'},
+        {header: "이름", name: "name"},
+        {header: "전화번호", name: "tel"},
+        {header: "주소", name: "address"},
+        {header: "생년월일", name: "birthday"},
+        {header: "이메일", name: "email"},
         {
-            header: "성별", name: "gender", width: '200',
+            header: "성별", name: "gender",
             editor: {
+                customStyle: false, // 기본 스타일 제거 (적용 가능한 경우)
                 type: 'select',
                 options: {
                     listItems: [
@@ -49,50 +59,75 @@
         }
     ]
 
-    let grid;
-    let nextId = 1;
-
-    const headerOption = {
-        height: 500,
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        grid = createGrid(inputGrid, columns, null, headerOption);
-        addEmptyRow(grid);
+    let grid = new tui.Grid({
+        el: document.getElementById('member-input-grid'),
+        data: [], // 초기 데이터 없음
+        columns: columns,
+        columnOptions: {
+          width: 'auto',
+        },
+        bodyHeight: 400,
+        bodyWidth: 1300,
+        scrollY: true,
+        rowHeaders: ['checkbox'], // 체크박스를 사용하여 행 선택
+        editingEvent: 'click'
     });
 
-    addRowBtn.addEventListener('click', () => {
-        addEmptyRow(grid)
+    // 입력 행 추가 버튼 동작
+    document.getElementById("add-row-button").addEventListener("click", () => {
+        grid.appendRow({});
     });
 
-    // 빈 행을 추가하는 메서드
-    function addEmptyRow(grid) {
-        // 새 행 데이터
-        const newRow = {
-            id: nextId,
-        };
-        // 행 추가
-        grid.appendRow(newRow);
-        // ID 증가
-        nextId++;
-        console.log(grid.getData());  // 데이터가 추가된 후 확인
-    }
+    // 행 삭제 버튼 동작
+    document.getElementById("delete-row-button").addEventListener("click", () => {
+        const checkedRows = grid.getCheckedRows(); // 체크된 행 가져오기
 
-    // ---------------------
+        if (checkedRows.length === 0) {
+            alert("삭제할 행을 선택하세요."); // 체크된 행이 없으면 경고
+            return;
+        }
 
-    const postBtn = document.querySelector("#grid-add-student-button");
+        // 데이터가 있는지 확인 (빈 행인지 판단)
+        const hasData = checkedRows.some(row =>
+            row.name?.trim() !== "" ||
+            row.subjectDesc?.trim() !== "" ||
+            row.subjectCredits
+        );
 
-    postBtn.addEventListener('click', ()=>{
-        addMember(grid.getData());
-    })
+        if (hasData) {
+            const confirmDelete = confirm("정말 삭제하시겠습니까?");
+            if (!confirmDelete) {
+                return; // 사용자가 삭제를 취소하면 종료
+            }
+        }
 
-    function addMember(data){
+        grid.removeCheckedRows(); // 체크된 행 삭제
+    });
+
+    const postBtn = document.getElementById("grid-add-member-button");
+
+    // 데이터 저장
+    postBtn.addEventListener("click", () => {
+        // 체크된 행만 가져오기
+        const rows = grid.getCheckedRows();
+
+        if (rows.length === 0) {
+            alert("저장할 행을 선택하세요."); // 체크된 행이 없으면 경고
+            return;
+        }
+
+        const emptyNameRows = rows.filter(row => !row.name || row.name.trim() === "");
+
+        if (emptyNameRows.length > 0) {
+            alert("비어 있는 행이 존재합니다");
+            return;
+        }
+
         postBtn.disabled = true;
 
         const deptId = document.querySelector("#dept-id-input").value||null;
         const startDate = document.querySelector("#start-date-input").value||null;
         const memberTypeId = document.querySelector("#member-type-input").value||null;
-        console.log(JSON.stringify(data));
 
         fetch(`/api/member`, {
             method: 'post',
@@ -100,7 +135,7 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                memberDTOs : data,
+                memberDTOs : grid.getCheckedRows(),
                 deptId: deptId,
                 isActive: null,
                 academicStatusId: null,
@@ -117,7 +152,7 @@
                 alert("멤버 추가 성공");
                 location.reload();
             })
-    }
+    })
 </script>
 </body>
 </html>

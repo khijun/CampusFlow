@@ -3,6 +3,7 @@ package edu.du.campusflow.controller;
 import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.service.CommonCodeGroupService;
+import edu.du.campusflow.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/iframe/member")
 public class MemberController {
     private final CommonCodeGroupService commonCodeGroupService;
+    private final DeptService deptService;
 
     @GetMapping("/select_member")
     public String selectMember(Model model) {
@@ -29,6 +31,12 @@ public class MemberController {
     @GetMapping("/create_member")
     public String createMember(Model model) {
         model.addAttribute("memberTypes", commonCodeGroupService.findByGroupCode("MEMBERTYPE").getCommonCodes());
+        model.addAttribute("depts", deptService.findAll());
         return "view/iframe/member/management/create_member";
+    }
+
+    @GetMapping("/member_update")
+    public String memberInfo() {
+        return "view/iframe/member/student/member_update";
     }
 }
