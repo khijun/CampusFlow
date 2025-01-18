@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.du.campusflow.dto.MemberCreateRequestDTO;
 import edu.du.campusflow.dto.MemberDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
+import edu.du.campusflow.dto.MemberUpdateDTO;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,15 @@ public class MemberApiController {
         }
 
         return ResponseEntity.ok().build();
+    }
+    @PutMapping
+    public ResponseEntity<?> updateMember(@RequestBody MemberUpdateDTO memberUpdateDTO) {
+        // 기존 멤버 업데이트
+        try{
+            MemberDTO updatedMember = memberService.updateMember(authService.getCurrentMember(), memberUpdateDTO);
+            return ResponseEntity.ok(updatedMember);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
