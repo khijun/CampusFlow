@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface FacilityRepository extends JpaRepository<Facility, Long> , JpaSpecificationExecutor<Facility> {
     List<Facility> findByBuilding(CommonCode building);
+    List<Facility> findByBuildingAndFacilityStatus(CommonCode building, CommonCode facilityStatus);
 }

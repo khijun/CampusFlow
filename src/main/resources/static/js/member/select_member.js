@@ -66,7 +66,7 @@ function createMemberGrid(memberListDiv) {
         endDateEnd: endDateEndInput && endDateEndInput.value ? endDateEndInput.value : null,
     };
 
-    fetch('/api/members?filter='+encodeURIComponent(JSON.stringify(filter)))
+    fetch('/api/member/all?filter='+encodeURIComponent(JSON.stringify(filter)))
         .then(response => { // 응답을 받으면
             if (!response.ok) { // 응답이 ok인지 확인한다. 아니면 에러를 발생
                 throw new Error('Network response was not ok' + response.statusText);
