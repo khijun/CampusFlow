@@ -152,10 +152,10 @@ public class DiagEvaluationController {
         return "view/iframe/evaluation/diag/student/studentDiagForm";
     }
 
-    @PostMapping("/submit")
+    @PostMapping("/student/submit")
     public String submitDiagnosticEvaluation(
             @RequestParam Long id,
-            @RequestParam Map<String, String> scores,  // Integer -> String으로 변경
+            @RequestParam Map<String, String> scores,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request) {  // 요청 파라미터 확인용
 

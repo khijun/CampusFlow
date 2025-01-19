@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface LecQuestionRepository extends JpaRepository<LecQuestion, Long> {
+
     @Query("SELECT new edu.du.campusflow.dto.LecQuestionDTO(" +
             "l.lectureName, " +
             "lq.questionName, " +

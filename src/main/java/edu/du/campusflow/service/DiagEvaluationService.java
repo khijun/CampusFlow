@@ -18,16 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class DiagEvaluationService {
-    private final DiagEvaluationRepository diagEvaluationRepository;
     private final DeptRepository deptRepository;
     private final AuthService authService;
     private final OfregistrationRepository ofregistrationRepository;
     private final DiagItemRepository diagItemRepository;
     private final DiagQuestionRepository diagQuestionRepository;
+    private final DiagEvaluationRepository diagEvaluationRepository;
 
     @Transactional
     public List<DiagEvaluationDetailDTO> searchEvaluations(
