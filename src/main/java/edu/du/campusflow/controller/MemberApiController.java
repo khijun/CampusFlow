@@ -31,7 +31,7 @@ public class MemberApiController {
         }
         return MemberDTO.fromEntityList(memberService.findAllWithFilter(filter));
     }
-    @GetMapping
+    @GetMapping("/me")
     public MemberDTO getMember(){
         return MemberDTO.fromEntity(authService.getCurrentMember());
     }

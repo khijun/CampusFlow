@@ -87,6 +87,7 @@ public class MemberService {
     }
 
     public Member updateMember(Member member) {
+        member.setUpdateAt(LocalDateTime.now());
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member);
     }
