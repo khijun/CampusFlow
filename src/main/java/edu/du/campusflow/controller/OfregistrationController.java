@@ -105,4 +105,32 @@ public class OfregistrationController {
         model.addAttribute("registrations", registrations);
         return "view/iframe/ofregistration/student/stuViewOfre";
     }
+
+    /**
+     * 관리자용 수강신청 관리 페이지
+     */
+    @GetMapping("/admin/adminOfre")
+    public String showAdminOfregistrations(Model model) {
+        // 수강신청 대기 상태인 강의 목록 조회
+        List<OfregistrationDTO> registrations = ofregistrationService.getPendingRegistrations();
+        model.addAttribute("registrations", registrations);
+        return "view/iframe/ofregistration/admin/adminOfre";
+    }
+
+    /**
+     * 수강신청 상태 업데이트 처리
+     */
+    @PostMapping("/admin/update-status")
+    public ResponseEntity<?> updateRegistrationStatus(@RequestBody OfregistrationDTO ofregistrationDTO) {
+        try {
+            ofregistrationService.updateRegistrationStatus(
+                ofregistrationDTO.getLectureId(),
+                ofregistrationDTO.getMemberId(),
+                ofregistrationDTO.getRegStatus()
+            );
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
