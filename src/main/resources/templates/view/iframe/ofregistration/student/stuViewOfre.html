@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- 수강신청 내역 조회 페이지 -->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>수강신청 내역</title>
+    <!-- 테이블 스타일 -->
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <!-- 페이지 제목 -->
+    <h2>수강신청 내역</h2>
+    
+    <!-- 수강신청 내역 테이블 -->
+    <table>
+        <!-- 테이블 헤더 -->
+        <thead>
+            <tr>
+                <th>강의명</th>
+                <th>담당교수</th>
+                <th>학과</th>
+                <th>이수구분</th>
+                <th>학점</th>
+                <th>강의시간</th>
+                <th>강의실</th>
+                <th>신청상태</th>
+            </tr>
+        </thead>
+        <!-- 테이블 본문: 수강신청 내역 목록 -->
+        <tbody>
+            <tr th:each="reg : ${registrations}">
+                <td th:text="${reg.lectureName}"></td>
+                <td th:text="${reg.name}"></td>
+                <td th:text="${reg.deptName}"></td>
+                <td th:text="${reg.subjectType}"></td>
+                <td th:text="${reg.subjectCredits}"></td>
+                <td th:text="${reg.lectureDay + ' ' + reg.startTime + '-' + reg.endTime}"></td>
+                <td th:text="${reg.facilityName}"></td>
+                <td th:text="${reg.regStatus}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

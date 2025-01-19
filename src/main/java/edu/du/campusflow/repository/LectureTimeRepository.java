@@ -33,4 +33,7 @@ public interface LectureTimeRepository extends JpaRepository<LectureTime, Long> 
 
     @EntityGraph(attributePaths = {"lectureWeek", "facility", "lectureDay", "startTime", "endTime"})
     List<LectureTime> findByLectureWeek_Lecture(Lecture lecture);
+
+    @EntityGraph(attributePaths = {"lectureWeek.lecture.member.name", "lectureDay", "startTime", "endTime"})
+    List<LectureTime> findByFacility(Facility facility);
 }

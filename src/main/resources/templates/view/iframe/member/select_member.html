@@ -4,18 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+    th:href="@{/css/iframe/curriculum/search-container.css}"/>
     <title>사용자 정보 조회</title>
 </head>
 <body>
 <div>
-    <div id="member-list-option-container">
-        <select id="member-type-select">
-            <option th:value="0" th:text="전체" th:selected="${filter.memberType==null}"></option>
-            <option th:each="memberType : ${typeList}" th:text="${memberType.codeName}"
-                    th:value="${memberType.codeId}" th:selected="${memberType.codeId == filter.memberType}"></option>
-        </select>
-        <input id="member-list-select-btn" type="button" value="조회"/>
-<!--        클릭시 함수를 실행해 리스트를 보여줌. -->
+    <div id="member-list-option-container" class="search-container">
+        <div class="input-group">
+            <label for="member-type-select">
+                멤버 구분 선택 :
+            </label>
+            <select id="member-type-select">
+                <option th:value="0" th:text="전체" th:selected="${filter.memberType==null}"></option>
+                <option th:each="memberType : ${typeList}" th:text="${memberType.codeName}"
+                        th:value="${memberType.codeId}"
+                        th:selected="${memberType.codeId == filter.memberType}"></option>
+            </select>
+        </div>
+<!--        <div class="input-group"></div>-->
+            <button id="member-list-select-btn">조회</button>
+            <!--        클릭시 함수를 실행해 리스트를 보여줌. -->
     </div>
     <div id="member-list"></div>
 </div>

@@ -32,14 +32,16 @@
 
   function createGradeGrid(gradeListDiv) {
     const columns = [
-      {header: '교수', name: 'professorName'},
-      {header: '강의', name: 'lectureName'},
-      {header: '중간', name: 'scores.중간'},
-      {header: '기말', name: 'scores.기말'},
-      {header: '과제', name: 'scores.과제'},
-      {header: '출석', name: 'scores.출석'},
-      {header: '총점', name: 'totalScore'},
-      {header: '등급', name: 'finalGrade'}
+      {header: '교수', name: 'professorName',align:'center'},
+      {header: '강의', name: 'lectureName',align:'center'},
+      {header: '학점', name: 'subjectCredits',align:'center'},
+      {header: '중간', name: 'scores.중간',align:'center'},
+      {header: '기말', name: 'scores.기말',align:'center'},
+      {header: '과제', name: 'scores.과제',align:'center'},
+      {header: '출석', name: 'scores.출석',align:'center'},
+      {header: '총점', name: 'totalScore',align:'center'},
+      {header: '등급', name: 'finalGrade',align:'center'},
+      {header: '취득학점',name: 'earnedCredits',align: 'center'}
     ];
 
     fetch('/api/grade/student-grade')
@@ -54,12 +56,14 @@
               const mappedData = data.map(item => ({
                 professorName: item.professorName,
                 lectureName: item.lectureName,
+                subjectCredits: item.subjectCredits,
                 'scores.중간': item.scores['중간'],
                 'scores.기말': item.scores['기말'],
                 'scores.과제': item.scores['과제'],
                 'scores.출석': item.scores['출석'],
                 totalScore: item.totalScore,
-                finalGrade: item.finalGrade
+                finalGrade: item.finalGrade,
+                earnedCredits: item.earnedCredits
               }));
 
               if (instance != null) {
