@@ -110,6 +110,46 @@
       facilityStatusSelect.value = matchingOption.value;
     }
   });
+
+  // 상태 변경 버튼 클릭 이벤트
+  document.getElementById('updateButton').addEventListener('click', function() {
+    if (!selectedFacilityId) {
+      alert('변경할 강의실을 선택해주세요.');
+      return;
+    }
+
+    const newStatus = document.getElementById('newStatus').value;
+    if (!newStatus && newStatus === "") {
+      alert('변경할 상태를 선택해주세요.');
+      return;
+    }
+
+    // 상태 변경 확인
+    if (!confirm('선택한 강의실의 상태를 변경하시겠습니까?')) {
+      return;
+    }
+
+    // API 호출
+    fetch('/api/facility/update-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `facilityId=${selectedFacilityId}&facilityStatus=${newStatus}`
+    })
+            .then(response => response.text())
+            .then(message => {
+              alert(message);
+              if (message.includes('성공')) {
+                // 성공 시 그리드 데이터 갱신
+                document.getElementById('searchButton').click();
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('상태 변경 중 오류가 발생했습니다.');
+            });
+  });
 </script>
 </body>
 </html>

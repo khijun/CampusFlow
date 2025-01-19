@@ -49,7 +49,9 @@
               return response.json();
             })
             .then(data => {
-              return data.map(request => ({
+              return data
+                      .filter(request => request.applicationStatus === '대기중')
+                      .map(request => ({
                 memberId: request.memberId, // ChangeRequestListDTO에서 memberId (Long)
                 beforeState: request.beforeState, // ChangeRequestListDTO에서 beforeState
                 afterState: request.afterState, // ChangeRequestListDTO에서 afterState

@@ -15,7 +15,8 @@
         <span>~</span> <input type="text" id="dept-max-student-value-input"/>
         <span>상태: </span>
         <select id="dept-status-input">
-            <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}" th:text="${commonCode.codeName}"></option>
+            <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}" th:text="${commonCode.codeName}"
+                    th:selected="${commonCode.codeId == selectedDeptStatus}" ></option>
         </select>
         <input type="button" value="조회" id="dept-list-select-btn"/>
     </div>
