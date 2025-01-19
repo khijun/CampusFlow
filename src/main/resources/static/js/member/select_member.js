@@ -9,7 +9,7 @@ const memberListDiv = document.querySelector('#member-list');
 const memberTypeSelect = document.querySelector("#member-type-select");
 const nameInput = document.querySelector("#name-input");
 const telInput = document.querySelector("#tel-input");
-const activeCheckbox = document.querySelector("#active-checkbox");
+const activeSelect = document.querySelector("#active-select");
 const deptSelect = document.querySelector("#dept-select");
 const birthStartInput = document.querySelector("#birth-start-input");
 const birthEndInput = document.querySelector("#birth-end-input");
@@ -52,7 +52,7 @@ function createMemberGrid(memberListDiv) {
         memberType: memberTypeSelect && memberTypeSelect.value ? Number(memberTypeSelect.value) : null,
         name: nameInput && nameInput.value ? nameInput.value : null,
         tel: telInput && telInput.value ? telInput.value : null,
-        isActive: activeCheckbox && activeCheckbox.checked ? true : null,
+        isActive: activeSelect && activeSelect.value ? activeSelect.value : null,
         deptId: deptSelect && deptSelect.value ? Number(deptSelect.value) : null,
         birthStart: birthStartInput && birthStartInput.value ? birthStartInput.value : null,
         birthEnd: birthEndInput && birthEndInput.value ? birthEndInput.value : null,
@@ -87,4 +87,24 @@ function createMemberGrid(memberListDiv) {
             }
             instance = createGrid(memberListDiv, columns, mappedData, null);
         })
+            if (grid != null) { // 리스트가 이미 있으면, 그 전껄 지우고 새로운걸 띄우기 위함
+                grid.destroy();
+                grid = null;
+            }
+            grid = new tui.Grid({
+                el: memberListDiv,
+                columnOptions: {
+                    resizable: true,
+                    minWidth: 100,
+            },
+                columns: columns,
+                data: mappedData,
+                scrollX: true,
+                bodyHeight: 400,
+                maxBodyWidth: 1300,
+                editingEvent: 'click',
+                rowHeaders: ['checkbox'], // 체크박스를 사용하여 행 선택
+            })
+        })
+}
 }
