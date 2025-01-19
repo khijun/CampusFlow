@@ -183,10 +183,6 @@ public class OfregistrationService {
                 .build();
 
         ofregistrationRepository.save(ofregistration);
-
-        // 7. 강의 현재 수강인원 증가
-        lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
-        lectureRepository.save(lecture);
     }
 
     // 교시를 숫자로 변환하는 메서드
@@ -279,5 +275,79 @@ public class OfregistrationService {
         }
 
         return result;
+    }
+
+    /**
+     * 수강신청 대기 상태인 강의 목록 조회
+     */
+    public List<OfregistrationDTO> getPendingRegistrations() {
+        // LECTURE_PENDING 상태인 강의의 수강신청 목록 조회
+        List<Ofregistration> registrations = ofregistrationRepository.findByLectureStatus("LECTURE_PENDING");
+        List<OfregistrationDTO> result = new ArrayList<>();
+
+        for (Ofregistration registration : registrations) {
+            Lecture lecture = registration.getLectureId();
+            CurriculumSubject curriculumSubject = lecture.getCurriculumSubject();
+            Curriculum curriculum = curriculumSubject.getCurriculum();
+            Subject subject = curriculumSubject.getSubject();
+            Member student = registration.getMember();
+            List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
+
+            OfregistrationDTO dto = new OfregistrationDTO();
+            
+            // 기본 강의 정보 설정
+            dto.setLectureId(lecture.getLectureId());
+            dto.setLectureName(lecture.getLectureName());
+            dto.setDeptName(curriculum.getDept().getDeptName());
+            dto.setSubjectType(curriculumSubject.getSubjectType().getCodeName());
+            dto.setGrade(curriculum.getGrade().getCodeName());
+            dto.setSubjectCredits(subject.getSubjectCredits());
+
+            // 학생 정보 설정
+            dto.setMemberId(student.getMemberId());
+            dto.setName(student.getName());
+
+            // 강의 시간 및 장소 정보 설정
+            if (!lectureTimes.isEmpty()) {
+                LectureTime lectureTime = lectureTimes.get(0);
+                dto.setLectureDay(lectureTime.getLectureDay().getCodeName());
+                dto.setStartTime(lectureTime.getStartTime().getCodeName());
+                dto.setEndTime(lectureTime.getEndTime().getCodeName());
+                dto.setFacilityName(lectureTime.getFacility().getFacilityName());
+            }
+
+            // 수강신청 상태 정보 설정
+            dto.setRegStatus(registration.getRegStatus().getCodeName());
+
+            result.add(dto);
+        }
+
+        return result;
+    }
+
+    /**
+     * 수강신청 상태 업데이트
+     */
+    @Transactional
+    public void updateRegistrationStatus(Long lectureId, Long memberId, String status) {
+        // 수강신청 정보 조회
+        Ofregistration registration = ofregistrationRepository
+            .findByLectureIdAndMemberId(lectureId, memberId)
+            .orElseThrow(() -> new IllegalArgumentException("수강신청 정보를 찾을 수 없습니다."));
+
+        // 상태 코드 조회
+        CommonCode statusCode = commonCodeRepository.findByCodeValue(status);
+
+        // 상태 업데이트
+        registration.setRegStatus(statusCode);
+        
+        // 승인 상태일 경우 수강인원 증가
+        if (status.equals("APPROVED")) {
+            Lecture lecture = registration.getLectureId();
+            lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
+            lectureRepository.save(lecture);
+        }
+        
+        ofregistrationRepository.save(registration);
     }
 }
