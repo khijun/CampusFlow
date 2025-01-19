@@ -83,7 +83,7 @@ public class MemberService {
         member.setBirthDate(memberUpdateDTO.getBirthDate());
         member.setEmail(memberUpdateDTO.getEmail());
         if (!memberUpdateDTO.getNewPassword().isEmpty()) member.setPassword(memberUpdateDTO.getNewPassword());
-        return MemberDTO.fromEntity(updateMember(member));
+        return MemberDTO.fromEntity(updateMember(member,true));
     }
 
     public MemberDTO updateMember(MemberDTO memberDTO) {
@@ -120,12 +120,14 @@ public class MemberService {
         member.setStartDate(memberDTO.getStartDate());
         member.setEndDate(memberDTO.getEndDate());
 
-        return MemberDTO.fromEntity(updateMember(member));
+        return MemberDTO.fromEntity(updateMember(member, false));
     }
 
-    public Member updateMember(Member member) {
+    public Member updateMember(Member member, boolean passwordEncoding) {
         member.setUpdateAt(LocalDateTime.now());
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        if(passwordEncoding) {
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
         return memberRepository.save(member);
     }
 
