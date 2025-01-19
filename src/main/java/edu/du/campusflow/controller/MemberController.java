@@ -5,6 +5,7 @@ import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.service.CommonCodeGroupService;
 import edu.du.campusflow.service.DeptService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ public class MemberController {
     private final DeptService deptService;
 
     @GetMapping("/select_member")
+    @PreAuthorize("hasRole({'STAFF', 'PROFESSOR'})")
     public String selectMember(Model model) {
         List<CommonCode> typeList = commonCodeGroupService.findByGroupCode("MEMBERTYPE").getCommonCodes();
 
@@ -29,6 +31,7 @@ public class MemberController {
     }
 
     @GetMapping("/create_member")
+    @PreAuthorize("hasRole('STAFF')")
     public String createMember(Model model) {
         model.addAttribute("memberTypes", commonCodeGroupService.findByGroupCode("MEMBERTYPE").getCommonCodes());
         model.addAttribute("depts", deptService.findAll());
@@ -36,6 +39,7 @@ public class MemberController {
     }
 
     @GetMapping("/member_update")
+    @PreAuthorize("isAuthenticated()")
     public String memberInfo() {
         return "view/iframe/member/student/member_update";
     }

@@ -9,6 +9,7 @@ import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class MemberApiController {
     private final MemberService memberService;
     private final AuthService authService;
 
+    @PreAuthorize("hasRole({'STAFF', 'PROFESSOR'})")
     @GetMapping("/all")
     public List<MemberDTO> getMembers(@RequestParam(required = false, name = "filter") String searchURL){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -31,16 +33,21 @@ public class MemberApiController {
         }
         return MemberDTO.fromEntityList(memberService.findAllWithFilter(filter));
     }
+
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public MemberDTO getMember(){
         return MemberDTO.fromEntity(authService.getCurrentMember());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF', 'PROFESSOR'})")
     public MemberDTO getMemberById(@PathVariable Long id){
         return MemberDTO.fromEntity(memberService.findByMemberId(id));
     }
+
     @PostMapping
+    @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<?> addMembers(@RequestBody MemberCreateRequestDTO dto){
         System.out.println(dto);
         try {
@@ -53,6 +60,7 @@ public class MemberApiController {
         return ResponseEntity.ok().build();
     }
     @PutMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateMember(@RequestBody MemberUpdateDTO memberUpdateDTO) {
         // 기존 멤버 업데이트
         try{
