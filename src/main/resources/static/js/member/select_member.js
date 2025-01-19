@@ -1,4 +1,4 @@
-let instance = null; // 리스트를 저장해놓기 위한 변수
+let grid = null; // 리스트를 저장해놓기 위한 변수
 
 // 조회 버튼
 const memberListSelectButton = document.querySelector("#member-list-select-btn");
@@ -31,21 +31,30 @@ function createMemberGrid(memberListDiv) {
     const columns = [
         {header: '아이디', name: 'memberId', width: 'auto'},
         {header: '학과', name: 'deptName', width: 'auto'},
-        {header: '이름', name: 'name', width: 'auto'},
-        {header: '전화 번호', name: 'tel', width: 'auto'},
-        {header: '주소', name: 'address', width: 'auto'},
-        {header: '생년월일', name: 'birthDate', width: 'auto'},
-        {header: '계정 상태', name: 'isActive', width: 'auto'},
+        {header: '이름', name: 'name', width: 'auto', editor: 'text'},
+        {header: '전화 번호', name: 'tel', width: 'auto', editor: 'text'},
+        {header: '주소', name: 'address', width: 'auto', editor: 'text'},
+        {header: '생년월일', name: 'birthDate', width: 'auto', editor: 'text'},
+        {header: '계정 상태', name: 'isActive', width: 'auto', editor: {
+                customStyle: false, // 기본 스타일 제거 (적용 가능한 경우)
+                type: 'select',
+                options: {
+                    listItems: [
+                        {text: '활성화', value: '활성화'},
+                        {text: '비활성화', value: '비활성화'},
+                    ]
+                }
+            }},
         {header: '생성일', name: 'createAt', width: 'auto'},
         {header: '최근 수정일', name: 'updateAt', width: 'auto'},
-        {header: '개인 이메일', name: 'email', width: 'auto'},
+        {header: '개인 이메일', name: 'email', width: 'auto', editor: 'text'},
         {header: '증명사진', name: 'fileInfo', width: 'auto'},
         {header: '성별', name: 'genderStr', width: 'auto'},
         {header: '학적 상태', name: 'academicStatusStr', width: 'auto'},
         {header: '학년', name: 'gradeStr', width: 'auto'},
         {header: '회원 구분', name: 'memberTypeStr', width: 'auto'},
-        {header: '입학/입사 일자', name: 'startDate', width: 'auto'},
-        {header: '졸업 일자', name: 'endDate', width: 'auto'}];
+        {header: '입학/입사 일자', name: 'startDate', width: 'auto', editor: 'text'},
+        {header: '졸업 일자', name: 'endDate', width: 'auto', editor: 'text'}];
 
     // 필터 객체 정의
     const filter = {
@@ -81,12 +90,6 @@ function createMemberGrid(memberListDiv) {
             }));
         })
         .then(mappedData => {
-            if (instance != null) { // 리스트가 이미 있으면, 그 전껄 지우고 새로운걸 띄우기 위함
-                instance.destroy();
-                instance = null;
-            }
-            instance = createGrid(memberListDiv, columns, mappedData, null);
-        })
             if (grid != null) { // 리스트가 이미 있으면, 그 전껄 지우고 새로운걸 띄우기 위함
                 grid.destroy();
                 grid = null;
@@ -107,4 +110,55 @@ function createMemberGrid(memberListDiv) {
             })
         })
 }
+
+const memberUpdateBtn = document.querySelector("#member-update-btn");
+memberUpdateBtn.addEventListener('click', ()=>{
+    updateMember();
+})
+
+function updateMember(){
+    // 버튼 비활성화 코드
+    memberUpdateBtn.disabled = true;
+
+    const checkedRows = grid.getCheckedRows(); // 체크된 행 가져오기
+
+    if (checkedRows.length === 0) {
+        alert("수정할 행을 선택하세요."); // 체크된 행이 없으면 경고
+        memberUpdateBtn.disabled = false;
+        return;
+    }
+
+    checkedRows.forEach(row=>{
+        row.isActive = row.isActive==="활성화"?true:false;
+        row.updateAt = row.updateAt.trim().replace(' ','T');
+        row.createAt = row.createAt.trim().replace(' ','T');
+    })
+
+    // API 호출
+    fetch("/api/member/all", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(checkedRows) // 체크된 행만 서버로 전송
+    })
+        .then(response => {
+            console.log(checkedRows);
+            if (!response.ok) {
+                throw new Error("Failed to save subjects");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("수정 완료되었습니다");
+            createMemberGrid(memberListDiv);
+        })
+        .catch(error => {
+            console.error("Error saving subjects:", error);
+            alert("오류가 발생했습니다");
+        })
+        .finally(data=>{
+            memberUpdateBtn.disabled = false;
+        });
+
 }
