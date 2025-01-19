@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     public UserDetails toUserDetails(Member member) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getMemberType().toString().toUpperCase()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getMemberType().toString().toUpperCase()));
         return User.builder()
                 .username(member.getMemberId().toString())
                 .password(member.getPassword())
@@ -75,6 +75,9 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/access-denied") // 403 접근 거부 시 리다이렉트 설정
                 .and()
                 .csrf().disable();  // 임시 코드
 
