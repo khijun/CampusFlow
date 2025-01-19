@@ -1,117 +1,86 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="ko">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
   <title>변동 신청 승인</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      color: #333;
-      overflow-y: auto;
-      height: 100vh;
-      box-sizing: border-box;
-    }
-    /* 공통 그리드 스타일 */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr); /* 6열 */
-      overflow-y: auto;   /* 수직 스크롤 추가 */
-      /*gap: 10px;*/
-      width: 80%;
-      margin: 0 auto;
-    }
-
-    /* 헤더 스타일 */
-    .header-container {
-      background-color: #4CAF50;
-      color: white;
-      font-weight: bold;
-      text-align: center;
-      padding: 12px 0;
-      /*border-radius: 5px;*/
-    }
-
-    /* 데이터 스타일 */
-    .data-container .data {
-      padding: 12px;
-      text-align: center;
-      border: 1px solid #ddd;
-      font-size: 14px;
-      background-color: #fff;
-      /*border-radius: 5px;*/
-    }
-
-    .data-container .data:hover {
-      background-color: #f1f1f1;
-    }
-
-    /* 버튼 스타일 */
-    button {
-      padding: 8px 16px;
-      margin: 5px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      border-radius: 5px;
-    }
-
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    button[type="submit"]:not(:disabled):first-of-type {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    button[type="submit"]:not(:disabled):last-of-type {
-      background-color: #f44336;
-      color: white;
+    form {
+      display: inline;
     }
   </style>
 </head>
 <body>
-<h1>변동 신청 목록</h1>
-
-<!-- 메시지 표시 -->
-<div th:if="${message != null}">
-  <p style="color: #e74c3c; font-weight: bold;" th:text="${message}"></p>
-</div>
-
-<!-- 헤더 부분 -->
-<div class="grid-container header-container">
-  <div>학번</div>
-  <div>변경 전 상태</div>
-  <div>변경 후 상태</div>
-  <div>신청 상태</div>
-  <div>사유</div>
-  <div>승인</div>
-</div>
-
-<!-- 데이터 반복 부분 -->
-<div class="grid-container data-container"
-     th:each="request : ${changeRequests}"
-     th:if="${request.applicationStatus.codeName != '거절' and request.applicationStatus.codeName != '승인'}">
-  <div class="data" th:text="${request.member.memberId}"></div>
-  <div class="data" th:text="${request.beforeCode.codeName}"></div>
-  <div class="data" th:text="${request.afterCode.codeName}"></div>
-  <div class="data" th:text="${request.applicationStatus.codeName}"></div>
-  <div class="data" th:text="${request.reason}"></div>
-  <div class="data">
-    <form th:action="@{/iframe/admin/academic/approve-change-request/{applicationId}(applicationId=${request.id})}" method="post">
-      <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">승인</button>
-    </form>
-    <form th:action="@{/iframe/admin/academic/reject-change-request/{applicationId}(applicationId=${request.id})}" method="post">
-      <button type="submit" th:disabled="${request.applicationStatus.codeName != '대기중'}">거절</button>
-    </form>
+<div>
+  <div id="change-request-select">
+    <input id="change-request-select-btn" type="button" value="변동 신청 조회"/>
   </div>
 </div>
+
+<div id="change-request-list"></div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+  let instance = null; // 그리드 인스턴스를 저장하기 위한 변수
+
+  const changeRequestSelectButton = document.querySelector("#change-request-select-btn");
+  const changeRequestListDiv = document.querySelector('#change-request-list');
+
+  changeRequestSelectButton.addEventListener('click', () => {
+    createChangeRequestGrid(changeRequestListDiv);
+  });
+
+  function createChangeRequestGrid(changeRequestListDiv) {
+    const columns = [
+      {header: '학번', name: 'memberId', align: 'center'},
+      {header: '변경 전 상태', name: 'beforeState', align: 'center'},
+      {header: '변경 후 상태', name: 'afterState', align: 'center'},
+      {header: '신청 상태', name: 'applicationStatus', align: 'center'},
+      {header: '사유', name: 'reason', align: 'center'},
+      {header: '승인/거절', name: 'actions', align: 'center'}
+    ];
+
+    fetch('/api/admin/academic-change-request')
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('네트워크 응답이 실패했습니다.' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              return data
+                      .filter(request => request.applicationStatus === '대기중')
+                      .map(request => ({
+                memberId: request.memberId, // ChangeRequestListDTO에서 memberId (Long)
+                beforeState: request.beforeState, // ChangeRequestListDTO에서 beforeState
+                afterState: request.afterState, // ChangeRequestListDTO에서 afterState
+                applicationStatus: request.applicationStatus, // ChangeRequestListDTO에서 applicationStatus
+                reason: request.reason, // ChangeRequestListDTO에서 reason
+                actions: `
+            <form action="/iframe/admin/academic/approve-change-request/${request.applicationId}" method="post">
+                <button type="submit" ${request.applicationStatus !== '대기중' ? 'disabled' : ''}>승인</button>
+            </form>
+            <form action="/iframe/admin/academic/reject-change-request/${request.applicationId}" method="post">
+                <button type="submit" ${request.applicationStatus !== '대기중' ? 'disabled' : ''}>거절</button>
+            </form>`
+              }));
+            })
+            .then(mappedData => {
+              if (instance != null) {
+                instance.destroy();
+                instance = null;
+              }
+              instance = new tui.Grid({
+                el: changeRequestListDiv,
+                columns: columns,
+                data: mappedData
+              });
+            })
+            .catch(error => {
+              console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
+            });
+  }
+</script>
 </body>
 </html>

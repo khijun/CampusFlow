@@ -3,10 +3,11 @@ package edu.du.campusflow.config;
 
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.service.MemberService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,10 +25,11 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 //@EnableWebSecurity(debug = true)
 @Log4j2
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final MemberService memberService;
+    @Autowired
+    @Lazy
+    private MemberService memberService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,7 +59,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-//                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
+                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
 //                .antMatchers("/login").permitAll() // 로그인 페이지 허용
 //                .anyRequest().authenticated() // 그 외 요청은 인증 필요
                 .anyRequest().permitAll() // 실험코드

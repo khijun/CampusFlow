@@ -1,122 +1,140 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>학적 조회</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <title>사용자 정보 조회</title>
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      color: #333;
-      overflow-y: auto;
-      height: 100vh;
-      box-sizing: border-box;
+    #change-request-list {
+      width: 100%;
+      margin-top: 20px;
     }
 
-    h2 {
-      text-align: center;
-      margin: 20px 0;
-      font-weight: 700;
-    }
-
-    /* 공통 그리드 스타일 */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr); /* 5개의 열 */
-      /*gap: 10px; !* 셀 간 간격 *!*/
-      width: 90%;
-      overflow-y: auto;   /* 수직 스크롤 추가 */
-      margin: 0 auto;
-    }
-
-    /* 헤더 스타일 */
-    .header-container {
-      background-color: #007BFF;
-      color: white;
-      font-weight: bold;
-      text-align: center;
-      padding: 10px 0;
-      /*border-radius: 5px;*/
-    }
-
-    /* 아이템 스타일 */
-    .item-container .item {
-      padding: 10px;
-      text-align: center;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      /*border-radius: 5px;*/
-    }
-
-    .item-container .item:hover {
-      background-color: #f1f1f1;
-    }
-
-    /* 버튼 스타일 */
     .cancel-btn {
-      color: #dc3545;
+      background-color: red;
+      color: white;
       border: none;
-      background: none;
+      padding: 5px 10px;
       cursor: pointer;
-      font-size: 14px;
     }
 
     .cancel-btn:hover {
-      text-decoration: underline;
+      background-color: darkred;
     }
-
-
-    @media (max-width: 768px) {
-      .grid-container {
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 모바일 화면에서 5개의 열 */
-      }
-
-      .header, .item {
-        font-size: 14px;
-        padding: 8px;
-      }
-    }
-
-
   </style>
 </head>
 <body>
 <h2>학적 조회</h2>
 
-<!-- 헤더 부분 -->
-<div class="grid-container header-container">
-  <div class="header">변경 전 상태</div>
-  <div class="header">변경 후 상태</div>
-  <div class="header">신청 일자</div>
-  <div class="header">상태</div>
-  <div class="header">사유</div>
-  <div class="header">신청 취소</div>
-</div>
-
-<!-- 아이템 반복 부분 -->
-<div class="grid-container item-container" th:each="request : ${changeRequests}">
-  <div class="item" th:text="${request.beforeCode.codeName}"></div>
-  <div class="item" th:text="${request.afterCode.codeName}"></div>
-  <div class="item" th:text="${#temporals.format(request.requestDate, 'yyyy-MM-dd')}"></div>
-  <div class="item" th:text="${request.applicationStatus.codeName}"></div>
-  <div class="item" th:text="${request.reason}"></div>
-  <div class="item">
-    <form th:action="@{/iframe/academic/delete-change-request}" method="post"
-          onsubmit="return confirm('정말 신청을 취소하시겠습니까?')"
-          th:if="${request.applicationStatus.codeName != '승인'}">
-      <input type="hidden" th:name="applicationId" th:value="${request.id}" />
-      <button type="submit" class="cancel-btn">신청 취소</button>
-    </form>
+<div>
+  <div id="change-request-select">
+    <input id="change-request-select-btn" type="button" value="조회"/>
+    <!-- 클릭 시 함수를 실행해서 리스트를 보여줌 -->
   </div>
 </div>
 
+<div id="change-request-list"></div>
+<!-- TOAST UI Grid를 표시할 요소 -->
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script src="/js/create_grid.js"></script>
+<script>
+  let instance = null; // Grid 인스턴스를 저장해둘 변수
+
+  const changeRequestSelectButton = document.querySelector("#change-request-select-btn");
+  const changeRequestListDiv = document.querySelector('#change-request-list');
+
+  changeRequestSelectButton.addEventListener('click', () => {
+    createChangeRequestGrid(changeRequestListDiv);
+  });
+
+  function createChangeRequestGrid(targetDiv) {
+    const columns = [
+      { header: '변경 전 상태', name: 'beforeCodeName', align: 'center' },
+      { header: '변경 후 상태', name: 'afterCodeName', align: 'center' },
+      { header: '신청 일자', name: 'requestDate', align: 'center' },
+      { header: '상태', name: 'applicationStatus', align: 'center' },
+      { header: '사유', name: 'reason', align: 'center' },
+      {
+        header: '신청 취소',
+        name: 'cancel',
+        align: 'center',
+        formatter: ({ row }) => {
+          return row.applicationStatus !== '승인'
+                  ? `<button data-id="${row.id}" class="cancel-btn">신청 취소</button>`
+                  : '';
+        },
+      },
+    ];
+
+    fetch('/api/academic-change-request')
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              return data.map(request => ({
+                id: request.id,
+                beforeCodeName: request.beforeCode.codeName,
+                afterCodeName: request.afterCode.codeName,
+                requestDate: new Date(request.requestDate).toISOString().split('T')[0], // 날짜 형식 변환
+                applicationStatus: request.applicationStatus.codeName,
+                reason: request.reason,
+              }));
+            })
+            .then(mappedData => {
+              if (instance != null) {
+                instance.destroy();
+                instance = null;
+              }
+              instance = new tui.Grid({
+                el: targetDiv,
+                data: mappedData,
+                columns: columns,
+                bodyHeight: 400,
+              });
+
+              // 신청 취소 버튼 클릭 이벤트 위임
+              targetDiv.addEventListener('click', event => {
+                if (event.target.classList.contains('cancel-btn')) {
+                  const applicationId = event.target.getAttribute('data-id');
+                  cancelChangeRequest(applicationId);
+                }
+              });
+            })
+            .catch(error => {
+              console.error('Error fetching change requests:', error);
+            });
+  }
+  window.cancelChangeRequest = function(applicationId) {
+    console.log('신청 취소 시도:', applicationId);
+    if (confirm('정말 신청을 취소하시겠습니까?')) {
+      fetch('/iframe/academic/delete-change-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ applicationId }),
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                alert('신청이 취소되었습니다.');
+                createChangeRequestGrid(changeRequestListDiv); // 갱신
+              })
+              .catch(error => {
+                console.error('Error cancelling request:', error);
+                alert('신청 취소에 실패했습니다.');
+              });
+    }
+  };
+</script>
+
 
 </body>
+
 </html>
