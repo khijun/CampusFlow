@@ -22,8 +22,8 @@ public class MemberApiController {
     private final MemberService memberService;
     private final AuthService authService;
 
-    @PreAuthorize("hasRole({'STAFF', 'PROFESSOR'})")
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public List<MemberDTO> getMembers(@RequestParam(required = false, name = "filter") String searchURL){
         ObjectMapper objectMapper = new ObjectMapper();
         MemberSearchFilter filter;
@@ -41,7 +41,7 @@ public class MemberApiController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF', 'PROFESSOR'})")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public MemberDTO getMemberById(@PathVariable Long id){
         return MemberDTO.fromEntity(memberService.findByMemberId(id));
     }
@@ -71,6 +71,7 @@ public class MemberApiController {
     }
 
     @PutMapping("/all")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public ResponseEntity<?> updateMembers(@RequestBody List<MemberDTO> memberDTOList) {
         System.out.println(memberDTOList);
         try{

@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     public UserDetails toUserDetails(Member member) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getMemberType().toString().toUpperCase()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getMemberType().getCodeValue().toUpperCase()));
         return User.builder()
                 .username(member.getMemberId().toString())
                 .password(member.getPassword())
