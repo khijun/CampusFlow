@@ -263,13 +263,13 @@ public class OfregistrationService {
             String regStatus = registration.getRegStatus().getCodeValue();
             switch (regStatus) {
                 case "REQUESTED":
-                    dto.setRegStatus("신청상태");
+                    dto.setRegStatus("신청");
                     break;
                 case "APPROVED":
-                    dto.setRegStatus("승인상태");
+                    dto.setRegStatus("승인");
                     break;
                 case "REJECTED":
-                    dto.setRegStatus("거절상태");
+                    dto.setRegStatus("거절");
                     break;
                 default:
                     dto.setRegStatus("알 수 없음");

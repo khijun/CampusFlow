@@ -60,7 +60,6 @@ public class OfregistrationController {
      */
     @GetMapping("/my-lectures")
     public String showMyLectures(Model model) {
-        // TODO: 현재 로그인한 사용자의 수강신청 목록 조회 로직 구현
         return "view/iframe/ofregistration/my_lectures";
     }
 
