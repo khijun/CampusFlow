@@ -161,7 +161,7 @@
             birthDate: birthDateInput.value, // Date input은 그대로 사용
             email: emailInput.value.trim(),
             currentPassword: currentPasswordInput.value.trim(),
-            newPassword: newPasswordInput.value,
+            newPassword: newPasswordInput.value === '' ? null : newPasswordInput.value,
         };
 
         // 값이 비어있는지 확인
@@ -176,7 +176,7 @@
         try {
             saveButton.disabled = true; // 버튼 비활성화
             // fetch로 PUT 요청 보내기
-            const response = await fetch(`/api/member/`, {
+            const response = await fetch(`/api/member`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
