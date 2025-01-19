@@ -12,6 +12,21 @@
             background-color: #f5f5f5 !important; /* 연한 회색 배경 */
             color: #333; /* 글자색 */
         }
+        #member-input-grid{
+            margin-bottom: 20px;
+        }
+        /* button 태그 크기 조정 */
+        .submit-button {
+            font-size: 1.0rem; /* 글자 크기 조정 */
+            height: 2.3rem; /* 높이 조정 */
+            cursor: pointer; /* 커서 변경 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 2px; /* 모서리 둥글게 */
+        }
+        /* 버튼 호버 효과 */
+        .submit-button button:hover {
+            background-color: #f5f5f5; /* 호버 시 색상 변경 */
+        }
     </style>
 </head>
 <body>
@@ -35,9 +50,9 @@
         </div>
     </div>
     <div id="member-input-grid"></div>
-    <input type="button" id="add-row-button" value="열 추가"/>
-    <input type="button" id="delete-row-button" value="열 삭제"/>
-    <input type="button" id="grid-add-member-button" value="계정 생성"/>
+    <input type="button" id="add-row-button" class="submit-button" value="열 추가"/>
+    <input type="button" id="delete-row-button" class="submit-button" value="열 삭제"/>
+    <input type="button" id="grid-add-member-button" class="submit-button" value="계정 생성"/>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
