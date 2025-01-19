@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface LecQuestionRepository extends JpaRepository<LecQuestion, Long> {
 
+    // lec 강의평가 결과 통계 쿼리
     @Query("SELECT new edu.du.campusflow.dto.LecQuestionDTO(" +
             "l.lectureName, " +
             "lq.questionName, " +

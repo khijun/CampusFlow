@@ -3,7 +3,6 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.dto.LecQuestionDTO;
 import edu.du.campusflow.entity.LecItem;
 import edu.du.campusflow.entity.LecQuestion;
-import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.Ofregistration;
 import edu.du.campusflow.repository.DeptRepository;
 import edu.du.campusflow.repository.LecItemRepository;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LecQuestionService {
     private final DeptRepository deptRepository;
-    private final AuthService authService;
     private final OfregistrationRepository ofregistrationRepository;
     private final LecQuestionRepository lecQuestionRepository;
     private final LecItemRepository lecItemRepository;
@@ -66,16 +63,6 @@ public class LecQuestionService {
                     return map;
                 })
                 .collect(Collectors.toList());
-    }
-
-    public List<Map<String, Object>> getProfessorDepartment() {
-        Member professor = authService.getCurrentMember();
-
-        Map<String, Object> deptMap = new HashMap<>();
-        deptMap.put("deptId", professor.getDept().getDeptId());
-        deptMap.put("deptName", professor.getDept().getDeptName());
-
-        return Collections.singletonList(deptMap);
     }
 
     // 학생의 수강 강의 목록과 강의평가 여부 조회
