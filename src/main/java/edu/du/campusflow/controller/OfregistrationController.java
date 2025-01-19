@@ -60,7 +60,6 @@ public class OfregistrationController {
      */
     @GetMapping("/my-lectures")
     public String showMyLectures(Model model) {
-        // TODO: 현재 로그인한 사용자의 수강신청 목록 조회 로직 구현
         return "view/iframe/ofregistration/my_lectures";
     }
 
@@ -87,5 +86,23 @@ public class OfregistrationController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    /**
+     * 수강신청 내역 조회 페이지
+     */
+    @GetMapping("/student/stuViewOfre")
+    public String viewStudentRegistrations(Model model) {
+        // 현재 로그인한 학생의 정보 가져오기
+        Member currentStudent = memberRepository.findById(authService.getCurrentMemberId())
+                .orElseThrow(() -> new IllegalStateException("로그인 정보를 찾을 수 없습니다."));
+        
+        // 학생의 수강신청 내역 조회
+        List<OfregistrationDTO> registrations = ofregistrationService.getStudentRegistrations(
+                currentStudent.getMemberId()
+        );
+        
+        model.addAttribute("registrations", registrations);
+        return "view/iframe/ofregistration/student/stuViewOfre";
     }
 }

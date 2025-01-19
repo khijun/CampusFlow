@@ -53,6 +53,11 @@ public class OfregistrationService {
             Member professor = lecture.getMember();
             List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
 
+            // 강의 상태가 대기 상태가 아닌 경우 건너뛰기
+            if (!lecture.getLectureStatus().getCodeValue().equals("LECTURE_PENDING")) {
+                continue;
+            }
+
             // 다른 학과의 전공 필수 과목인 경우 건너뛰기
             if (!curriculum.getDept().getDeptName().equals(studentDeptName) && 
                 curriculumSubject.getSubjectType().getCodeValue().equals("MAJOR_REQUIRED")) {
@@ -213,5 +218,66 @@ public class OfregistrationService {
     // 시간 겹침을 확인하는 메서드
     private boolean hasTimeOverlap(int start1, int end1, int start2, int end2) {
         return start1 <= end2 && end1 >= start2;
+    }
+
+    public List<OfregistrationDTO> getStudentRegistrations(Long memberId) {
+        // 회원 정보 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+
+        List<Ofregistration> registrations = ofregistrationRepository.findByMember(member);
+        List<OfregistrationDTO> result = new ArrayList<>();
+
+        for (Ofregistration registration : registrations) {
+            Lecture lecture = registration.getLectureId();
+            CurriculumSubject curriculumSubject = lecture.getCurriculumSubject();
+            Curriculum curriculum = curriculumSubject.getCurriculum();
+            Subject subject = curriculumSubject.getSubject();
+            Member professor = lecture.getMember();
+            List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
+
+            OfregistrationDTO dto = new OfregistrationDTO();
+
+            // 기본 강의 정보
+            dto.setLectureId(lecture.getLectureId());
+            dto.setLectureName(lecture.getLectureName());
+            dto.setDeptName(curriculum.getDept().getDeptName());
+            dto.setSubjectType(curriculumSubject.getSubjectType().getCodeName());
+            dto.setGrade(curriculum.getGrade().getCodeName());
+            dto.setSubjectCredits(subject.getSubjectCredits());
+
+            // 교수 정보
+            dto.setMemberId(professor.getMemberId());
+            dto.setName(professor.getName());
+
+            // 강의 시간 및 장소 정보
+            if (!lectureTimes.isEmpty()) {
+                LectureTime lectureTime = lectureTimes.get(0);
+                dto.setLectureDay(lectureTime.getLectureDay().getCodeName());
+                dto.setStartTime(lectureTime.getStartTime().getCodeName());
+                dto.setEndTime(lectureTime.getEndTime().getCodeName());
+                dto.setFacilityName(lectureTime.getFacility().getFacilityName());
+            }
+
+            // 수강신청 상태 정보
+            String regStatus = registration.getRegStatus().getCodeValue();
+            switch (regStatus) {
+                case "REQUESTED":
+                    dto.setRegStatus("신청");
+                    break;
+                case "APPROVED":
+                    dto.setRegStatus("승인");
+                    break;
+                case "REJECTED":
+                    dto.setRegStatus("거절");
+                    break;
+                default:
+                    dto.setRegStatus("알 수 없음");
+            }
+
+            result.add(dto);
+        }
+
+        return result;
     }
 }
