@@ -215,7 +215,7 @@
                             <td>${result.lectureName}</td>
                             <td>${result.memberId}</td>  <!-- 학번 데이터 추가 -->
                             <td>${result.name}</td>
-                            <td>${result.grade}</td>
+                            <td>${result.grade ? result.grade + '학년' : '-'}</td>
                             <td>${result.questionName}</td>
                             <td>${result.score}</td>
                         </tr>

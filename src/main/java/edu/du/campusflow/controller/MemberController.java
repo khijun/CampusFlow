@@ -1,5 +1,6 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.DeptDTO;
 import edu.du.campusflow.dto.MemberSearchFilter;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.service.CommonCodeGroupService;
@@ -26,6 +27,8 @@ public class MemberController {
         List<CommonCode> typeList = commonCodeGroupService.findByGroupCode("MEMBERTYPE").getCommonCodes();
 
         model.addAttribute("filter", MemberSearchFilter.builder().build());
+        model.addAttribute("deptList", DeptDTO.fromEntityList(deptService.findAll()));
+        model.addAttribute("academicStatusList", commonCodeGroupService.findByGroupCode("ACADEMICSTATUS").getCommonCodes());
         model.addAttribute("typeList", typeList);
         return "view/iframe/member/select_member";
     }

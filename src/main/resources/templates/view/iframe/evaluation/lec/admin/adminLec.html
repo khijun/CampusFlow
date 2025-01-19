@@ -1,133 +1,219 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>강의평가 결과</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>강의평가 조회</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/iframe/evaluation/search-container.css}">
   <style>
-    .lecture-select {
+    .container {
+      margin: 0 auto;
+    }
+
+    .lecture-results {
+      max-height: 550px;
+      overflow-y: auto;
       background-color: white;
-      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      margin-top: 20px;
+      padding-top: 20px;
+      padding-left: 16px;
+      padding-right: 16px;
     }
 
-
-    .lecture-select {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1em;
-      background-color: white;
-    }
-
-    .question-item {
-      margin-bottom: 40px;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background-color: #fff;
-    }
-
-    .chart-container {
-      width: 100%;
-      max-width: 800px;
-      height: 300px;  /* 차트 높이 지정 */
-      margin: 20px auto;
-    }
-
-    .average-score {
-      font-size: 1.2em;
-      margin: 15px 0;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-radius: 5px;
-    }
-
-    h2 {
-      margin-bottom: 30px;
-      color: #333;
-    }
-
-    h3 {
-      color: #444;
+    .lecture-section h3 {
+      color: #2196F3;
       margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      margin-bottom: 20px;
+    }
+
+    .results-table th,
+    .results-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .results-table th {
+      background-color: #2196F3;
+      color: white;
+      font-weight: normal;
+    }
+
+    .results-table tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .lecture-results::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .lecture-results::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .lecture-results::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    .lecture-results::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
   </style>
 </head>
 <body>
-<h2>강의 평가 결과</h2>
-<div class="lecture-select">
-  <h3>강의 선택</h3>
-  <select onchange="if(this.value) location.href='/iframe/evaluation/lec/admin/' + this.value">
-    <option value="">강의를 선택하세요</option>
-    <option th:each="lecture : ${lectures}"
-            th:selected="${lecture.ofregistrationId == selectedOfregistrationId}"
-            th:text="${lecture.lectureName + ' (' + lecture.semester + ')'}"
-            th:value="${lecture.ofregistrationId}">
-    </option>
-  </select>
-</div>
-
-<div th:if="${not #lists.isEmpty(results)}">
-  <div class="question-item" th:each="result : ${results}">
-    <h3 th:text="${result.questionId + '. ' + result.questionName}"></h3>
-
-    <div class="score-summary">
-      <div class="average-score">
-        평균 점수: <span th:text="${#numbers.formatDecimal(result.averageScore, 1, 1)}">0.0</span>
-      </div>
-
-      <div class="chart-container">
-        <canvas th:id="'chart-' + ${result.questionId}"></canvas>
-      </div>
+<div class="container">
+  <!-- 검색 컨테이너 -->
+  <form class="search-container" id="searchForm">
+    <div class="input-group">
+      <label for="deptSelect">학과</label>
+      <select id="deptSelect" name="deptId">
+        <option value="">학과를 선택해주세요</option>
+      </select>
     </div>
+    <div class="input-group">
+      <label for="gradeSelect">학년</label>
+      <select id="gradeSelect" name="grade">
+        <option value="">학년을 선택해주세요</option>
+        <option value="1">1학년</option>
+        <option value="2">2학년</option>
+        <option value="3">3학년</option>
+        <option value="4">4학년</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="lectureName">강의명</label>
+      <input id="lectureName" name="lectureName" type="text">
+    </div>
+    <div class="input-group">
+      <label for="name">학생명</label>
+      <input id="name" name="name" type="text">
+    </div>
+    <div class="button-group">
+      <button type="submit">검색</button>
+    </div>
+  </form>
+
+  <!-- 검색 결과가 없을 때 -->
+  <div class="no-results" id="noResults">
+    <p>검색 결과가 없습니다.</p>
+  </div>
+
+  <!-- 강의평가 결과 표시 -->
+  <div class="lecture-results" id="resultsContainer" style="display: none;">
+    <!-- 결과 내용 -->
   </div>
 </div>
 
-<script th:inline="javascript">
-  const results = /*[[${results}]]*/ [];
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.querySelector('#searchForm');
+    const resultsContainer = document.querySelector('#resultsContainer');
+    const noResults = document.querySelector('#noResults');
 
-  results.forEach(result => {
-    const ctx = document.getElementById('chart-' + result.questionId);
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['1점', '2점', '3점', '4점', '5점'],
-        datasets: [{
-          label: '응답 수',
-          data: [
-            result.score1Count,
-            result.score2Count,
-            result.score3Count,
-            result.score4Count,
-            result.score5Count
-          ],
-          backgroundColor: 'rgba(54, 162, 235, 0.5)'
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            }
-          }
-        }
-      }
+    // 학과 목록 가져오기
+    fetch('/iframe/evaluation/lec/admin/departments')
+            .then(response => response.json())
+            .then(departments => {
+              const deptSelect = document.querySelector('#deptSelect');
+              departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.deptId;
+                option.textContent = dept.deptName;
+                deptSelect.appendChild(option);
+              });
+            })
+            .catch(error => console.log('학과 목록 로딩 실패:', error));
+
+    // 검색 폼 제출 처리
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const searchParams = new URLSearchParams();
+      const deptId = document.querySelector('#deptSelect').value;
+      const grade = document.querySelector('#gradeSelect').value;
+      const lectureName = document.querySelector('#lectureName').value;
+      const name = document.querySelector('#name').value;  // name으로 수정
+
+      console.log('검색 파라미터:', {
+        deptId,
+        grade,
+        lectureName,
+        name
+      });
+
+      if (deptId) searchParams.append('deptId', deptId);
+      if (grade) searchParams.append('grade', grade);
+      if (lectureName) searchParams.append('lectureName', lectureName);
+      if (name) searchParams.append('name', name);
+
+      const url = `/iframe/evaluation/lec/search?${searchParams.toString()}`;
+      console.log('요청 URL:', url);
+
+      fetch(`/iframe/evaluation/lec/admin/search?${searchParams.toString()}`)
+              .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+              })
+              .then(results => {
+                console.log('Search results:', results);
+                if (results && results.length > 0) {
+                  displayResults(results);
+                  resultsContainer.style.display = 'block';
+                  noResults.style.display = 'none';
+                } else {
+                  resultsContainer.style.display = 'none';
+                  noResults.style.display = 'block';
+                }
+              })
+              .catch(error => {
+                console.error('Search error:', error);
+                noResults.style.display = 'block';
+                resultsContainer.style.display = 'none';
+              });
     });
+
+    function displayResults(results) {
+      resultsContainer.innerHTML = `
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>강의명</th>
+                        <th>학번</th>  <!-- 학번 컬럼 추가 -->
+                        <th>이름</th>
+                        <th>학년</th>
+                        <th>문항</th>
+                        <th>점수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${results.map(result => `
+                        <tr>
+                            <td>${result.lectureName}</td>
+                            <td>${result.memberId}</td>  <!-- 학번 데이터 추가 -->
+                            <td>${result.name}</td>
+                            <td>${result.grade ? result.grade + '학년' : '-'}</td>
+                            <td>${result.questionName}</td>
+                            <td>${result.score}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
   });
 </script>
 </body>

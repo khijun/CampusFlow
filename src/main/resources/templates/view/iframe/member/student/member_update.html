@@ -169,7 +169,7 @@
         try {
             saveButton.disabled = true; // 버튼 비활성화
             // fetch로 PUT 요청 보내기
-            const response = await fetch(`/api/member`, {
+            const response = await fetch(`/api/member/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

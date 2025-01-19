@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class DiagEvaluationDetailDTO {
     private String lectureName;
     private String questionName;
+    private Long questionId;
     private Integer score;
     private String name;
     private String grade;
