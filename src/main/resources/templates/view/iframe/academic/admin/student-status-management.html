@@ -8,6 +8,7 @@
   <style>
     form {
       display: inline;
+      align-content: center;
     }
   </style>
 </head>
@@ -33,9 +34,9 @@
 
   function createStudentStatusGrid(studentStatusDiv) {
     const columns = [
-      {header: '학번', name: 'memberId', width: 'auto'},
-      {header: '이름', name: 'name', width: 'auto'},
-      {header: '학적 상태', name: 'academicStatus', width: 'auto'},
+      {header: '학번', name: 'memberId', align: 'center'},
+      {header: '이름', name: 'name', align: 'center'},
+      {header: '학적 상태', name: 'academicStatus', align: 'center'},
       {
         header: '퇴학/제적 처리',
         name: 'actions',
