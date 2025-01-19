@@ -21,4 +21,7 @@ public interface CommonCodeRepository extends JpaRepository<CommonCode, Long> {
             "AND c.codeValue LIKE :codeValue ")
     CommonCode findByCodeGroupAndCodeValue(String codeGroup, String codeValue);
 
+    // `codeName`이 아닌 `codeValue`를 기준으로 조회하도록 변경
+    @Query("SELECT c FROM CommonCode c WHERE c.codeGroup.groupId = :groupId AND c.codeValue = :codeValue")
+    CommonCode findByGroupIdAndCodeValue(@Param("groupId") Long groupId, @Param("codeValue") String codeValue);
 } 
