@@ -48,13 +48,17 @@
             text-align: right;
         }
 
-        #btn-container button {
+        .submit-button {
             font-size: 1.0rem; /* 글자 크기 조정 */
             height: 2.3rem; /* 높이 조정 */
             cursor: pointer; /* 커서 변경 */
             border: 1px solid #ccc; /* 테두리 */
             border-radius: 2px; /* 모서리 둥글게 */
             margin: 5px;
+        }
+
+        .submit-button:hover {
+            background-color: #f5f5f5; /* 호버 시 색상 변경 */
         }
     </style>
 </head>
@@ -100,7 +104,7 @@
     </div>
     <div>
         <div id="btn-container">
-            <button id="member-info-save">저장</button>
+            <button id="member-info-save" class="submit-button">저장</button>
         </div>
     </div>
 </div>
