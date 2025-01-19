@@ -154,7 +154,7 @@
 
     async function updateMemberData() {
         // 입력된 데이터 읽기
-        const updatedMemberData = {
+        const memberData = {
             name: nameInput.value.trim(),
             tel: telInput.value.trim(),
             address: addressInput.value.trim(),
@@ -165,8 +165,11 @@
         };
 
         // 값이 비어있는지 확인
-        if (!updatedMemberData.name || !updatedMemberData.tel || !updatedMemberData.address || !updatedMemberData.birthDate || !updatedMemberData.email || !updatedMemberData.currentPassword) {
+        if (!memberData.name || !memberData.tel || !memberData.address || !memberData.birthDate || !memberData.email) {
             alert('빈 값이 있습니다.');
+            return;
+        }else if(!memberData.currentPassword){
+            alert('비밀번호를 입력해야 합니다.');
             return;
         }
 
@@ -178,7 +181,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(updatedMemberData),
+                body: JSON.stringify(`memberData`),
             });
 
             if (!response.ok) {
