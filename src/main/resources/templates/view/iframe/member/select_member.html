@@ -6,14 +6,39 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
     th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <style>
+        #member-list-container{
+            margin: 20px;
+        }
+        #member-list-option-container{
+            margin: 0 0 20px 0;
+        }
+        .tui-grid-cell {
+            background-color: #f5f5f5 !important; /* 연한 회색 배경 */
+            color: #333; /* 글자색 */
+        }
+        /* button 태그 크기 조정 */
+        .submit-button {
+            font-size: 1.0rem; /* 글자 크기 조정 */
+            height: 2.3rem; /* 높이 조정 */
+            cursor: pointer; /* 커서 변경 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 2px; /* 모서리 둥글게 */
+        }
+
+        /* 버튼 호버 효과 */
+        .submit-button button:hover {
+            background-color: #f5f5f5; /* 호버 시 색상 변경 */
+        }
+    </style>
     <title>사용자 정보 조회</title>
 </head>
 <body>
-<div>
+<div id="member-list-container">
     <div id="member-list-option-container" class="search-container">
         <div class="input-group">
             <label for="member-type-select">
-                멤버 구분 선택 :
+                멤버 :
             </label>
             <select id="member-type-select">
                 <option th:value="0" th:text="전체" th:selected="${filter.memberType==null}"></option>
@@ -22,11 +47,52 @@
                         th:selected="${memberType.codeId == filter.memberType}"></option>
             </select>
         </div>
+        <div class="input-group">
+            <label for="dept-select">
+                학과 :
+            </label>
+            <select id="dept-select">
+                <option th:value="null" th:text="전체" th:selected="${filter.deptId==null}"></option>
+                <option th:each="dept : ${deptList}" th:text="${dept.deptName}"
+                        th:value="${dept.deptId}"
+                        th:selected="${dept.deptId == filter.deptId}"></option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="active-select">
+                멤버 상태 :
+            </label>
+            <select id="active-select">
+                <option th:value="true">
+                    활성화
+                </option>
+                <option th:value="false">
+                    비활성화
+                </option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="name-input">
+                이름 :
+            </label><input type="text" id="name-input"/>
+        </div>
+        <div class="input-group">
+            <label for="academic-status-select">
+                학적 상태 :
+            </label>
+            <select id="academic-status-select">
+                <option th:value="null" th:text="전체" th:selected="${filter.academicStatus==null}"></option>
+                <option th:each="academicStatus : ${academicStatusList}" th:text="${academicStatus.codeName}"
+                        th:value="${academicStatus.codeId}"
+                        th:selected="${academicStatus.codeId == filter.academicStatus}"></option>
+            </select>
+        </div>
 <!--        <div class="input-group"></div>-->
             <button id="member-list-select-btn">조회</button>
             <!--        클릭시 함수를 실행해 리스트를 보여줌. -->
     </div>
     <div id="member-list"></div>
+    <button id="member-update-btn" class="submit-button">멤버 수정</button>
 </div>
 
 <!--리스트를 보여줄 요소-->

@@ -124,7 +124,7 @@
     // API에서 MemberDTO 데이터 가져오기
     async function fetchMemberData() {
         try {
-            const response = await fetch('/api/member');
+            const response = await fetch('/api/member/me');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -169,7 +169,7 @@
         try {
             saveButton.disabled = true; // 버튼 비활성화
             // fetch로 PUT 요청 보내기
-            const response = await fetch(`/api/member`, {
+            const response = await fetch(`/api/member/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

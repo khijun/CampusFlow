@@ -83,11 +83,51 @@ public class MemberService {
         member.setBirthDate(memberUpdateDTO.getBirthDate());
         member.setEmail(memberUpdateDTO.getEmail());
         if (!memberUpdateDTO.getNewPassword().isEmpty()) member.setPassword(memberUpdateDTO.getNewPassword());
-        return MemberDTO.fromEntity(updateMember(member));
+        return MemberDTO.fromEntity(updateMember(member,true));
     }
 
-    public Member updateMember(Member member) {
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
+    public MemberDTO updateMember(MemberDTO memberDTO) {
+        // 멤버 아이디를 사용하여 기존 Member 객체 가져오기
+        Member member = findByMemberId(memberDTO.getMemberId());
+
+        // MemberDTO의 내용을 Member 객체에 설정
+        // 아이디
+        // 학과
+        // 이름
+        member.setName(memberDTO.getName());
+        // 전번
+        member.setTel(memberDTO.getTel());
+        // 주소
+        member.setAddress(memberDTO.getAddress());
+        // 생년월일
+        member.setBirthDate(memberDTO.getBirthDate());
+        // 계정상태
+        member.setIsActive(memberDTO.getIsActive());
+        // 생성일
+        // 수정일
+        // 이메일
+        member.setEmail(memberDTO.getEmail());
+        // 파일정보
+        // 성별
+        // 학적상태
+        // 학년
+        // 회원구분
+        // 입학날짜
+        // 졸업날짜
+
+
+        // 입학, 퇴직 날짜 설정
+        member.setStartDate(memberDTO.getStartDate());
+        member.setEndDate(memberDTO.getEndDate());
+
+        return MemberDTO.fromEntity(updateMember(member, false));
+    }
+
+    public Member updateMember(Member member, boolean passwordEncoding) {
+        member.setUpdateAt(LocalDateTime.now());
+        if(passwordEncoding) {
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
         return memberRepository.save(member);
     }
 
