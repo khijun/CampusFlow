@@ -37,28 +37,7 @@ public class CurriculumService {
    public void saveCurriculums(List<CurriculumDTO> curriculumDTOs) {
       List<Curriculum> curriculums = curriculumDTOs.stream()
               .map(dto -> {
-                 // ✅ 디버깅 로그 추가
-                 log.info("저장할 DTO: {}", dto);
-
                  Curriculum curriculum = convertToEntity(dto);
-
-                 // ✅ 각 필드가 NULL인지 확인
-                 if (curriculum.getDept() == null) {
-                    log.error("❌ Dept가 NULL입니다!");
-                 }
-                 if (curriculum.getGrade() == null) {
-                    log.error("❌ Grade가 NULL입니다!");
-                 }
-                 if (curriculum.getCurriculumStatus() == null) {
-                    log.error("❌ CurriculumStatus가 NULL입니다!");
-                 }
-                 if (curriculum.getSemester() == null) {
-                    log.error("❌ Semester가 NULL입니다!");
-                 }
-                 if (curriculum.getDayNight() == null) {
-                    log.error("❌ DayNight가 NULL입니다!");
-                 }
-
                  return curriculum;
               })
               .collect(Collectors.toList());
@@ -71,7 +50,6 @@ public class CurriculumService {
       CurriculumDTO dto = new CurriculumDTO();
       dto.setCurriculumId(curriculum.getCurriculumId());
 
-      // ✅ dept가 null인지 확인 후 처리
       if (curriculum.getDept() != null) {
          dto.setDeptId(curriculum.getDept().getDeptId());
          dto.setDeptName(curriculum.getDept().getDeptName());
@@ -82,8 +60,19 @@ public class CurriculumService {
 
       dto.setCurriculumName(curriculum.getCurriculumName());
       dto.setCurriculumYear(curriculum.getCurriculumYear());
-      dto.setCreatedAt(curriculum.getCreatedAt());
-      dto.setUpdatedAt(curriculum.getUpdatedAt());
+
+      // createdAt, updatedAt이 null인지 확인
+      if (curriculum.getCreatedAt() != null) {
+         dto.setCreatedAt(curriculum.getCreatedAt());
+      } else {
+         dto.setCreatedAt(LocalDateTime.now()); // 기본값 설정
+      }
+
+      if (curriculum.getUpdatedAt() != null) {
+         dto.setUpdatedAt(curriculum.getUpdatedAt());
+      } else {
+         dto.setUpdatedAt(LocalDateTime.now()); // 기본값 설정
+      }
 
       // 공통 코드: CodeName으로 변경
       dto.setGrade(curriculum.getGrade() != null ? curriculum.getGrade().getCodeName() : "미정");
@@ -112,5 +101,4 @@ public class CurriculumService {
               .reason(dto.getReason())
               .build();
    }
-
 }

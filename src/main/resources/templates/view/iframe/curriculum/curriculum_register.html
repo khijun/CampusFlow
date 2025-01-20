@@ -5,33 +5,34 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>교육과정 등록</title>
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
 </head>
 <body>
-
 <div id="container">
-   <!-- 1. 상단: 학과 조회 -->
    <div id="dept-list-table-container">
-      <h3>학과 조회</h3>
-      <div id="dept-list-option-container">
-         <span>학과 코드: </span><input type="text" id="dept-id-input"/>
-         <span>학과명: </span><input type="text" id="dept-name-input"/>
-         <input type="button" value="조회" id="dept-list-select-btn"/>
+      <h2>학과 조회</h2>
+      <hr class="divider">
+      <div class="list-option-container">
+         <label for="dept-id-input">학과 코드:</label>
+         <input type="text" id="dept-id-input" class="input-field"/>
+         <label for="dept-name-input">학과명:</label>
+         <input type="text" id="dept-name-input" class="input-field"/>
+         <button id="dept-list-select-btn" class="btn">조회</button>
       </div>
-      <div id="dept-list-grid"></div>
-   </div>
 
-   <!-- 2. 하단: 교육과정 등록 -->
-   <div id="curriculum-register-container">
-      <h3>교육과정 등록</h3>
-      <div>
-         <button id="add-row-btn">행 추가</button>
-         <button id="delete-row-btn">행 삭제</button>
-         <button id="save-curriculums-btn">저장</button>
+      <div id="dept-list-grid" style="height: 300px;"></div>
+   </div>
+   <div id="curriculum-register-container" style="margin-top: 60px;">
+      <h2>교육과정 추가</h2>
+      <hr class="divider">
+      <div id="curriculum-button-container" class="list-option-container">
+         <button id="add-row-btn" class="btn">행 추가</button>
+         <button id="delete-row-btn" class="btn">행 삭제</button>
+         <button id="save-curriculums-btn" class="btn">저장</button>
       </div>
-      <div id="curriculum-grid-container" style="height: 400px;"></div>
+      <div id="curriculum-grid-container" style="height: 500px;"></div>
    </div>
 </div>
-
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
    document.addEventListener("DOMContentLoaded", async function () {
@@ -72,34 +73,38 @@
          el: document.getElementById("dept-list-grid"),
          data: [],
          columns: [
-            { header: "학과 ID", name: "deptId", width: 100, align: "center" },
-            { header: "학과명", name: "deptName", width: 200 },
-            { header: "학생 수", name: "maxStudents", width: 150, align: "center" },
-            { header: "상태", name: "deptStatus", width: 150, align: "center" }
+            { header: "학과 ID", name: "deptId", width: 250, align: "center" },
+            { header: "학과명", name: "deptName", width: 500 },
+            { header: "학생 수", name: "maxStudents", width: 400, align: "center" },
+            { header: "상태", name: "deptStatus", width: 400, align: "center" }
          ],
          bodyHeight: 300,
          rowHeaders: ["rowNum"]
       });
 
-      // 학과 조회 버튼 클릭 이벤트
-      document.getElementById("dept-list-select-btn").addEventListener("click", function () {
-         const deptId = document.getElementById("dept-id-input").value.trim();
-         const deptName = document.getElementById("dept-name-input").value.trim();
-         const query = { deptId, deptName };
+       document.getElementById("dept-list-select-btn").addEventListener("click", function () {
+           const deptId = document.getElementById("dept-id-input").value.trim();
+           const deptName = document.getElementById("dept-name-input").value.trim();
 
-         fetch(`/api/dept?filter=${encodeURIComponent(JSON.stringify(query))}`)
-                 .then(response => response.json())
-                 .then(data => {
-                    deptGrid.resetData(data);
-                 })
-                 .catch(error => console.error("Error fetching departments:", error));
-      });
+           let queryParams = [];
+           if (deptId) queryParams.push(`deptId=${deptId}`);
+           if (deptName) queryParams.push(`deptName=${encodeURIComponent(deptName)}`);
 
-      // 학과 클릭 시, 선택한 학과 정보를 교육과정 등록 테이블에 자동 입력
+           const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+
+           fetch(`/api/dept/search${queryString}`)
+               .then(response => response.json())
+               .then(data => {
+                   console.log("📌 검색된 학과 목록:", data);
+                   deptGrid.resetData(data);
+               })
+               .catch(error => console.error("Error fetching departments:", error));
+       });
+
+       // 학과 클릭 시, 선택한 학과 정보를 교육과정 등록 테이블에 자동 입력
       deptGrid.on("click", function (ev) {
          if (ev.rowKey !== null) {
             selectedDept = deptGrid.getRow(ev.rowKey);
-            console.log("선택된 학과:", selectedDept);
             alert(`학과 선택됨: ${selectedDept.deptName}`);
          }
       });
@@ -109,20 +114,20 @@
          el: document.getElementById("curriculum-grid-container"),
          data: [],
          columns: [
-            { header: "학과명", name: "deptName", align: "center", width: 120 },
-            { header: "교육과정명", name: "curriculumName", editor: "text", width: 200 },
-            { header: "연도", name: "curriculumYear", editor: "text", align: "center", width: 50 },
+            { header: "학과명", name: "deptName", align: "center", width: 200 },
+            { header: "교육과정명", name: "curriculumName", editor: "text", width: 300 },
+            { header: "연도", name: "curriculumYear", editor: "text", align: "center", width: 100 },
             {
                header: "학년", name: "grade",
                formatter: (item) => gradeList.find(opt => opt.value === item.value)?.text || item.value,
                editor: { type: "select", options: { listItems: gradeList } },
-               align: "center", width: 50
+               align: "center", width: 100
             },
             {
                header: "상태", name: "curriculumStatus",
                formatter: (item) => statusList.find(opt => opt.value === item.value)?.text || item.value,
                editor: { type: "select", options: { listItems: statusList } },
-               align: "center", width: 150
+               align: "center", width: 200
             },
             {
                header: "학기", name: "semester",
@@ -134,9 +139,9 @@
                header: "주야 구분", name: "dayNight",
                formatter: (item) => dayNightList.find(opt => opt.value === item.value)?.text || item.value,
                editor: { type: "select", options: { listItems: dayNightList } },
-               align: "center", width: 100
+               align: "center", width: 150
             },
-            { header: "사유", name: "reason", editor: "text", width: 250 }
+            { header: "사유", name: "reason", editor: "text", width: 400 }
          ],
          bodyHeight: 400,
          rowHeaders: ["checkbox"],
@@ -180,7 +185,7 @@
             return;
          }
 
-         // ✅ 변환 시 `codeValue`가 null이 아닌지 확인
+         // 변환 시 `codeValue`가 null이 아닌지 확인
          function getCodeValue(codeList, codeValue) {
             if (!codeValue) {
                console.warn("⚠ `codeValue`가 비어있음! 확인 필요:", codeList);
@@ -198,34 +203,37 @@
             deptId: row.deptId || null,
             curriculumName: row.curriculumName || "미정",
             curriculumYear: row.curriculumYear || new Date().getFullYear(),
-            grade: getCodeValue(gradeList, row.grade),  // ✅ `row.grade`가 `codeValue`인지 확인
+            grade: getCodeValue(gradeList, row.grade),  // `row.grade`가 `codeValue`인지 확인
             curriculumStatus: getCodeValue(statusList, row.curriculumStatus),
             semester: getCodeValue(semesterList, row.semester),
             dayNight: getCodeValue(dayNightList, row.dayNight),
             reason: row.reason || "기본값"
          }));
 
-         // ✅ JSON 확인 로그 추가
-         console.log("📌 변환된 데이터(JSON):", JSON.stringify(filteredData, null, 2));
+         // JSON 확인 로그 추가
+         console.log("변환된 데이터(JSON):", JSON.stringify(filteredData, null, 2));
 
-         fetch("/api/curriculums", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(filteredData)
-         })
-                 .then(response => response.json())
-                 .then(() => {
-                    alert("교육과정이 등록되었습니다!");
-                    curriculumGrid.clear();
-                 })
-                 .catch(error => {
-                    console.error("❌ Error saving curriculums:", error);
-                    alert("교육과정 등록 중 오류 발생.");
-                 });
+          fetch("/api/curriculums", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(filteredData)
+          })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error("서버 오류 발생!");
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  alert(data.message);  // JSON 응답에서 메시지 추출
+                  curriculumGrid.clear();
+              })
+              .catch(error => {
+                  console.error("Error saving curriculums:", error);
+                  alert("교육과정 등록 중 오류 발생.");
+              });
       });
-
    });
-
 </script>
 </body>
 </html>

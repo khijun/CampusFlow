@@ -1,9 +1,9 @@
 package edu.du.campusflow.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.du.campusflow.dto.DeptApiDTO;
 import edu.du.campusflow.dto.DeptDTO;
 import edu.du.campusflow.dto.DeptSearchFilter;
+import edu.du.campusflow.entity.Dept;
 import edu.du.campusflow.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,4 +34,27 @@ public class DeptApiController {
         return DeptDTO.fromEntityList(deptService.findAllWithFilter(filter));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<DeptDTO>> searchDept(
+        @RequestParam(required = false) Long deptId,
+        @RequestParam(required = false) String deptName) {
+
+        // 학과 검색 로직
+        List<Dept> depts;
+        if (deptId != null && deptName != null) {
+            depts = deptService.findByDeptIdAndDeptName(deptId, deptName);
+        } else if (deptId != null) {
+            depts = deptService.findByDeptId(deptId);
+        } else if (deptName != null) {
+            depts = deptService.findByDeptNameContaining(deptName);
+        } else {
+            depts = deptService.findAll(); // 전체 조회
+        }
+
+        List<DeptDTO> deptList = depts.stream()
+            .map(DeptDTO::fromEntity)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(deptList);
+    }
 }

@@ -1,6 +1,5 @@
 package edu.du.campusflow.service;
 
-import edu.du.campusflow.dto.DeptApiDTO;
 import edu.du.campusflow.dto.DeptSearchFilter;
 import edu.du.campusflow.entity.Dept;
 import edu.du.campusflow.repository.DeptRepository;
@@ -8,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +29,15 @@ public class DeptService {
         return deptRepository.findAllWithFilter(filter);
     }
 
-   // 특정 학과 조회
-   public Dept getDepartmentById(Long deptId) {
-      return deptRepository.findById(deptId)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid Dept ID: " + deptId));
+   public List<Dept> findByDeptId(Long deptId) {
+      return deptRepository.findByDeptId(deptId);
+   }
+
+   public List<Dept> findByDeptNameContaining(String deptName) {
+      return deptRepository.findByDeptNameContaining(deptName);
+   }
+
+   public List<Dept> findByDeptIdAndDeptName(Long deptId, String deptName) {
+      return deptRepository.findByDeptIdAndDeptName(deptId, deptName);
    }
 }

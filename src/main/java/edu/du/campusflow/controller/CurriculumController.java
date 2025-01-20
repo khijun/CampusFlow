@@ -17,13 +17,13 @@ public class CurriculumController {
 
    // 교육과정 목록 페이지 연결
    @GetMapping("/iframe/curriculum/list")
-   public String getCurriculumListPage(Model model) {
+   public String getCurriculumListPage() {
       return "view/iframe/curriculum/curriculum_list";
    }
 
    // 교육과정 등록 페이지 연결
    @GetMapping("/iframe/curriculum/register")
-   public String getCurriculumRegisterPage(Model model) {
+   public String getCurriculumRegisterPage() {
       return "view/iframe/curriculum/curriculum_register";
    }
 
@@ -36,8 +36,8 @@ public class CurriculumController {
 
    // 교육과정 등록 API
    @PostMapping("/api/curriculums")
-   public ResponseEntity<String> registerCurriculums(@RequestBody List<CurriculumDTO> curriculums) {
+   public ResponseEntity<?> registerCurriculums(@RequestBody List<CurriculumDTO> curriculums) {
       curriculumService.saveCurriculums(curriculums);
-      return ResponseEntity.ok("교육과정이 성공적으로 등록되었습니다.");
+      return ResponseEntity.ok().body("{\"message\": \"교육과정이 성공적으로 등록되었습니다.\"}");
    }
 }
