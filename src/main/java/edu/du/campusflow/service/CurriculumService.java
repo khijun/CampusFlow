@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,11 +95,43 @@ public class CurriculumService {
               .curriculumYear(dto.getCurriculumYear())
               .createdAt(LocalDateTime.now())
               .updatedAt(LocalDateTime.now())
-              .grade(commonCodeService.getCodeByValue(24L, dto.getGrade())) // GRADE (group_id: 24)
-              .curriculumStatus(commonCodeService.getCodeByValue(7L, dto.getCurriculumStatus())) // CURRICULUMSTATUS (group_id: 7)
-              .semester(commonCodeService.getCodeByValue(22L, dto.getSemester())) // SEMESTER (group_id: 22)
-              .dayNight(commonCodeService.getCodeByValue(28L, dto.getDayNight())) // DAY_NIGHT (group_id: 28)
+              .grade(commonCodeService.getCodeByValue(24L, dto.getGrade()))
+              .curriculumStatus(commonCodeService.getCodeByValue(7L, dto.getCurriculumStatus()))
+              .semester(commonCodeService.getCodeByValue(22L, dto.getSemester()))
+              .dayNight(commonCodeService.getCodeByValue(28L, dto.getDayNight()))
               .reason(dto.getReason())
               .build();
    }
+
+   @Transactional
+   public void updateCurriculums(List<CurriculumDTO> updatedCurriculums) {
+      for (CurriculumDTO dto : updatedCurriculums) {
+         Curriculum curriculum = curriculumRepository.findById(dto.getCurriculumId())
+                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 ID: " + dto.getCurriculumId()));
+
+         curriculum.setCurriculumName(dto.getCurriculumName());
+         curriculum.setCurriculumYear(dto.getCurriculumYear());
+
+         // 공통 코드 매칭 (codeName → codeValue 변환)
+         String gradeValue = dto.getGrade() != null ? dto.getGrade() : "GRADE_1"; // 기본값 설정
+         String statusValue = dto.getCurriculumStatus() != null ? dto.getCurriculumStatus() : "ACTIVE";
+         String semesterValue = dto.getSemester() != null ? dto.getSemester() : "FIRST_SEMESTER";
+         String dayNightValue = dto.getDayNight() != null ? dto.getDayNight() : "DAY";
+
+         curriculum.setGrade(commonCodeService.getCodeByValue(24L, gradeValue));
+         curriculum.setCurriculumStatus(commonCodeService.getCodeByValue(7L, statusValue));
+         curriculum.setSemester(commonCodeService.getCodeByValue(22L, semesterValue));
+         curriculum.setDayNight(commonCodeService.getCodeByValue(28L, dayNightValue));
+
+         curriculum.setReason(dto.getReason());
+
+         curriculumRepository.save(curriculum);
+      }
+   }
+
+   @Transactional
+   public void deleteCurriculums(List<Long> curriculumIds) {
+      curriculumRepository.deleteAllById(curriculumIds);
+   }
+
 }
