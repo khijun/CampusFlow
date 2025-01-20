@@ -24,4 +24,13 @@ public interface DeptRepository extends JpaRepository<Dept, Long> {
             "and (:#{#filter.deptStatus} is null or d.deptStatus.codeId = :#{#filter.deptStatus}) ")
     @EntityGraph(attributePaths = {"deptStatus"})
     List<Dept> findAllWithFilter(@Param("filter") DeptSearchFilter filter);
+
+    @Query("SELECT d FROM Dept d WHERE d.deptId = :deptId")
+    List<Dept> findByDeptId(@Param("deptId") Long deptId);
+
+    @Query("SELECT d FROM Dept d WHERE LOWER(d.deptName) LIKE LOWER(CONCAT('%', :deptName, '%'))")
+    List<Dept> findByDeptNameContaining(@Param("deptName") String deptName);
+
+    @Query("SELECT d FROM Dept d WHERE d.deptId = :deptId AND LOWER(d.deptName) LIKE LOWER(CONCAT('%', :deptName, '%'))")
+    List<Dept> findByDeptIdAndDeptName(@Param("deptId") Long deptId, @Param("deptName") String deptName);
 }
