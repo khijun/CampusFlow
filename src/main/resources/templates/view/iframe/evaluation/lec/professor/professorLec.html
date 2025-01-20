@@ -106,8 +106,14 @@
       </select>
     </div>
     <div class="input-group">
-      <label for="lectureName">강의명</label>
-      <input id="lectureName" name="lectureName" type="text">
+      <label for="lectureSelect">강의명</label>
+      <select id="lectureSelect" name="lectureName">
+        <option value="">강의를 선택해주세요</option>
+        <option th:each="lecture : ${lectures}"
+                th:text="${lecture.lectureName}"
+                th:value="${lecture.lectureName}">
+        </option>
+      </select>
     </div>
     <div class="button-group">
       <button type="submit">검색</button>
@@ -157,7 +163,7 @@
       const searchParams = new URLSearchParams();
       const deptId = document.querySelector('#deptSelect').value;
       const grade = document.querySelector('#gradeSelect').value;
-      const lectureName = document.querySelector('#lectureName').value;
+      const lectureName = document.querySelector('#lectureSelect').value;
 
       if (deptId) searchParams.append('deptId', deptId);
       if (grade) searchParams.append('grade', grade);

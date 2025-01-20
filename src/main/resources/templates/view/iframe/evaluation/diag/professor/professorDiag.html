@@ -105,8 +105,14 @@
       </select>
     </div>
     <div class="input-group">
-      <label for="lectureName">강의명</label>
-      <input id="lectureName" name="lectureName" type="text">
+      <label for="lectureSelect">강의명</label>
+      <select id="lectureSelect" name="lectureName">
+        <option value="">강의를 선택해주세요</option>
+        <option th:each="lecture : ${lectures}"
+                th:text="${lecture.lectureName}"
+                th:value="${lecture.lectureName}">
+        </option>
+      </select>
     </div>
     <div class="input-group">
       <label for="name">학생명</label>
@@ -145,10 +151,9 @@
                 option.textContent = dept.deptName;
                 deptSelect.appendChild(option);
               });
-              // 교수는 학과가 하나뿐이므로 자동 선택 및 비활성화
               if (departments.length === 1) {
                 deptSelect.value = departments[0].deptId;
-                deptSelect.disabled = true;  // 선택 변경 불가능하게 설정
+                deptSelect.disabled = true;
               }
             })
             .catch(error => console.log('학과 목록 로딩 실패:', error));
@@ -160,7 +165,7 @@
       const searchParams = new URLSearchParams();
       const deptId = document.querySelector('#deptSelect').value;
       const grade = document.querySelector('#gradeSelect').value;
-      const lectureName = document.querySelector('#lectureName').value;
+      const lectureName = document.querySelector('#lectureSelect').value;
       const name = document.querySelector('#name').value;
 
       if (deptId) searchParams.append('deptId', deptId);
@@ -207,7 +212,7 @@
                             <td>${result.lectureName}</td>
                             <td>${result.memberId}</td>
                             <td>${result.name}</td>
-                            <td>${result.grade}</td>
+                            <td>${result.grade ? result.grade + '학년' : '-'}</td>
                             <td>${result.questionName}</td>
                             <td>${result.score}</td>
                         </tr>

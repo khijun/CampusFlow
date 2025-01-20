@@ -6,6 +6,121 @@
     <title>교수 성적 관리</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+    <style>
+        /* styles.css */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #ffffff;
+        }
+
+        /* 제목 스타일 */
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        /* 폼 스타일 */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #555;
+        }
+
+        select, input {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        /* 학생 목록 스타일 */
+        #studentListSection {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            min-height: 150px;
+            text-align: left;
+        }
+
+        /* 버튼 스타일 */
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 테이블 스타일 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            select, input {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -19,6 +134,14 @@
                 <th:block th:each="lecture : ${lectures}">
                     <option th:value="${lecture.lectureId}" th:text="${lecture.lectureName}">강의명</option>
                 </th:block>
+            </select>
+            <!-- 성적 유형 선택 -->
+            <label for="gradeTypeSelect">성적 유형:</label>
+            <select id="gradeTypeSelect" onchange="updateGradeTypeForAllStudents()">
+                <option value="67">중간</option>
+                <option value="68">기말</option>
+                <option value="69">과제</option>
+                <option value="70">출석</option>
             </select>
         </form>
     </section>
@@ -51,6 +174,22 @@
             error: function() {
                 alert('학생 목록을 불러오는 데 실패했습니다.');
             }
+        });
+    }
+    // 성적 유형이 선택되었을 때, 학생 목록에서 해당 성적 유형을 업데이트하는 함수
+    function updateGradeTypeForAllStudents() {
+        var selectedGradeType = document.getElementById('gradeTypeSelect').value;
+
+        // 모든 학생의 성적 유형 select box와 hidden 값을 변경
+        var gradeTypeInputs = document.querySelectorAll('.gradeTypeForAll');
+        gradeTypeInputs.forEach(function(input) {
+            input.value = selectedGradeType;
+        });
+
+        // 각 학생의 성적 유형 select box도 변경
+        var studentSelects = document.querySelectorAll('.individualGradeType');
+        studentSelects.forEach(function(select) {
+            select.value = selectedGradeType;
         });
     }
 </script>

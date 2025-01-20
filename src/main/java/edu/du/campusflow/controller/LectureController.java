@@ -1,14 +1,21 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.LectureDTO;
+import edu.du.campusflow.entity.FileInfo;
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
 import java.util.List;
 
 @Controller
@@ -84,4 +91,63 @@ public class LectureController {
         return lectureService.getPendingLectures(semesterCode, professorId);
     }
 
+    @GetMapping("/iframe/lecture/lectureUploadFile")
+    public String lectureFile(Model model) {
+        model.addAttribute("member", authService.getCurrentMember());
+        return "/view/iframe/lecture/professor/lecture_File";
+    }
+
+    @GetMapping("/api/lecture/lectureSearch")
+    @ResponseBody
+    public List<LectureDTO> searchLecturesForFile(
+            @RequestParam String semesterCode,
+            @RequestParam String professorId) {
+        return lectureService.getApprovedLectures(semesterCode, professorId);
+    }
+
+    @PostMapping("/api/lecture/upload-file")
+    @ResponseBody
+    public ResponseEntity<String> uploadLectureFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("lectureId") Long lectureId) {
+        try {
+            // LectureService의 uploadLectureFile 메서드 호출
+            lectureService.uploadLectureFile(file, lectureId);
+            return ResponseEntity.ok("강의계획서가 성공적으로 업로드되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/iframe/lecture/lectureFile_List")
+    public String lectureFileList(Model model) {
+        model.addAttribute("member", authService.getCurrentMember());
+        return "/view/iframe/lecture/professor/lectureFile_List";
+    }
+
+    //강의 계획서 조회 페이지 에서 사용할 검색
+    @GetMapping("/api/lecture/file-search")
+    @ResponseBody
+    public List<LectureDTO> searchLecturesForUpLoadFile(
+            @RequestParam String semesterCode,
+            @RequestParam String professorId) {
+        return lectureService.getApprovedLectures(semesterCode, professorId);
+    }
+
+    //강의계획서 조회
+    @GetMapping("/api/file/view/{fileId}")
+    public ResponseEntity<Resource> viewFile(@PathVariable Long fileId) {
+        try {
+            FileInfo fileInfo = lectureService.getFileInfo(fileId);
+            Resource resource = lectureService.getFileResource(fileId);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" + URLEncoder.encode(fileInfo.getFileName(), "UTF-8") + ".pdf\"")
+                    .body(resource);
+        } catch (Exception e) {
+            throw new RuntimeException("파일을 불러오는데 실패했습니다.");
+        }
+    }
 }

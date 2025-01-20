@@ -40,8 +40,8 @@ public class Curriculum {
    @Column(name = "reason", length = 255)
    private String reason;
 
-   @ManyToOne
-   @JoinColumn(name = "grade")
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "grade", referencedColumnName = "code_id")
    private CommonCode grade;
 
    @ManyToOne(fetch = FetchType.LAZY)
