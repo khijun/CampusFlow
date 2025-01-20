@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class DeptController {
@@ -21,5 +23,4 @@ public class DeptController {
         model.addAttribute("selectedDeptStatus", commonCodeService.findByCodeGroupAndCodeValue("DEPTSTATUS", "ACTIVE").getCodeId());
         return "view/iframe/dept/dept_view";
     }
-
 }

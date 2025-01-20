@@ -24,7 +24,6 @@ public class GradeService {
     private final CompletionRepository completionRepository;
 
 
-
     public List<GradeDTO> getGroupedGradesByRole(Long memberId, List<Long> gradeTypeList) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
@@ -57,6 +56,7 @@ public class GradeService {
 
                     Map<String, Integer> scores = new HashMap<>();
                     int totalScore = 0;
+                    int subjectCredits = 0;  // 학점 초기화
 
                     // 성적 정보를 scores에 추가 및 가중치 적용
                     for (Grade grade : entry.getValue()) {
@@ -80,12 +80,20 @@ public class GradeService {
                     // Completion 엔티티 저장 (필요시 DB에 반영)
                     completionRepository.save(completion);  // DB에 반영 // finalGrade 코드로 성적 이름을 얻어옴
 
-                    return new GradeDTO(professorName, lectureName, scores, finalGrade.getCodeName(), finalTotalScore);
+                    // CurriculumSubject에서 Subject를 통해 subjectCredits 조회
+                    subjectCredits = completion.getOfRegistration().getLectureId().getCurriculumSubject().getSubject().getSubjectCredits();  // subject_credits
+
+                    // 미이수 상태일 경우 취득 학점만 0으로 설정
+                    int earnedCredits = (completion.getCompletionState().getCodeId() == 30) ? 0 : subjectCredits;
+
+                    return new GradeDTO(professorName, lectureName, scores, finalGrade.getCodeName(), finalTotalScore, subjectCredits,earnedCredits);
                 })
                 .collect(Collectors.toList());
 
         return result;
     }
+
+
 
     private int calculateTotalScore(List<Grade> grades) {
         int totalScore = 0;

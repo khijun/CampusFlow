@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class CurriculumDTO {
    private Long curriculumId;      // 교육과정 ID
    private Long deptId;            // 학과 ID
+   private String deptName;        // 학과 이름
    private String curriculumName;  // 교육과정명
    private Integer curriculumYear; // 교육과정 연도
    private LocalDateTime createdAt; // 생성일

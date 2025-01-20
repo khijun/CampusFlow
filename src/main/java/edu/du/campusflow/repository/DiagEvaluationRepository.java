@@ -1,6 +1,7 @@
 package edu.du.campusflow.repository;
 
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
+import edu.du.campusflow.entity.DiagQuestion;
 import edu.du.campusflow.entity.Ofregistration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DiagEvaluationRepository extends JpaRepository<Ofregistration, Long> {
@@ -36,4 +38,7 @@ public interface DiagEvaluationRepository extends JpaRepository<Ofregistration, 
             @Param("gradeCodeId") Long gradeCodeId,
             @Param("lectureName") String lectureName,
             @Param("name") String name);
+
+    @Query("SELECT dq FROM DiagQuestion dq WHERE dq.questionId = :questionId")
+    Optional<DiagQuestion> findDiagQuestionById(@Param("questionId") Long questionId);
 }

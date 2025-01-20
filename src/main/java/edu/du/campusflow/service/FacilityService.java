@@ -2,13 +2,12 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.FacilityDTO;
 import edu.du.campusflow.dto.LectureDTO;
-import edu.du.campusflow.entity.CommonCode;
-import edu.du.campusflow.entity.CommonCodeGroup;
-import edu.du.campusflow.entity.Facility;
-import edu.du.campusflow.entity.Lecture;
+import edu.du.campusflow.dto.LectureTimeDTO;
+import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.CommonCodeGroupRepository;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.FacilityRepository;
+import edu.du.campusflow.repository.LectureTimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +27,9 @@ public class FacilityService {
 
     @Autowired
     CommonCodeGroupRepository commonCodeGroupRepository;
+
+    @Autowired
+    LectureTimeRepository lectureTimeRepository;
 
 
     //건물명 드롭다운에 건물 데이터 불러오는 서비스
@@ -125,5 +127,29 @@ public class FacilityService {
         facility.setFacilityStatus(status);
         facilityRepository.save(facility);
     }
+
+    public List<LectureTimeDTO> getFacilityLectures(Long facilityId) {
+        // 강의실 조회
+        Facility facility = facilityRepository.findById(facilityId)
+                .orElseThrow(() -> new RuntimeException("해당 강의실을 찾을 수 없습니다."));
+
+        // 해당 강의실의 강의 시간 정보 조회
+        List<LectureTime> lectureTimes = lectureTimeRepository.findByFacility(facility);
+
+        // DTO로 변환
+        return lectureTimes.stream()
+                .map(lectureTime -> {
+                    LectureTimeDTO dto = new LectureTimeDTO();
+                    dto.setLectureTimeId(lectureTime.getLectureTimeId());
+                    dto.setLectureName(lectureTime.getLectureWeek().getLecture().getLectureName());
+                    dto.setProfessorName(lectureTime.getLectureWeek().getLecture().getMember().getName());
+                    dto.setLectureDay(lectureTime.getLectureDay().getCodeName());
+                    dto.setStartTime(lectureTime.getStartTime().getCodeName());
+                    dto.setEndTime(lectureTime.getEndTime().getCodeName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
 
 }

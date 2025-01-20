@@ -17,7 +17,4 @@ public class DeptApiDTO {
       return new DeptApiDTO(dept.getDeptId(), dept.getDeptName());
    }
 
-   public static List<DeptApiDTO> fromEntityList(List<Dept> deptList) {
-      return deptList.stream().map(DeptApiDTO::fromEntity).collect(Collectors.toList());
-   }
 }

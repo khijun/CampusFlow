@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>진단평가</title>
+  <title>강의평가</title>
   <style>
     * {
       margin: 0;
@@ -129,7 +129,7 @@
   <!-- 강의 선택 드롭다운 -->
   <div class="lecture-select">
     <h3>강의 선택</h3>
-    <select onchange="if(this.value) location.href='/iframe/evaluation/diag/student/' + this.value">
+    <select onchange="if(this.value) location.href='/iframe/evaluation/lec/student/' + this.value">
       <option value="">강의를 선택하세요</option>
       <option th:each="lecture : ${lectures}"
               th:selected="${lecture.get('ofregistrationId') == selectedOfregistrationId}"
@@ -141,53 +141,102 @@
 
   <!-- 강의가 선택되지 않았을 때 -->
   <div class="no-results" th:if="${!showForm}">
-    <p>강의를 선택하면 진단평가 문항이 표시됩니다.</p>
+    <p>강의를 선택하면 강의평가 문항이 표시됩니다.</p>
   </div>
 
-  <!-- 진단평가 폼 (새로운 평가 또는 기존 답변 표시) -->
+  <!-- 강의평가 폼 -->
   <form class="evaluation-form"
-        th:action="@{/iframe/evaluation/diag/student/submit}"
-        th:if="${showForm}"
-        th:method="post">
+        method="post"
+        th:action="@{/iframe/evaluation/lec/student/submit}"
+        th:if="${showForm}">
     <input name="id" th:value="${selectedOfregistrationId}" type="hidden">
 
     <div class="question-item" th:each="question : ${questions}">
       <h4 th:text="${question.questionName}">문항</h4>
       <div class="score-options">
-        <div class="score-option" th:each="score : ${#numbers.sequence(1, 5)}">
-          <input required
-                 th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) != null and previousAnswers.get(question.questionId) == score}"
+        <div class="score-option">
+          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 1}"
                  th:disabled="${evaluated}"
-                 th:value="${score}"
                  th:name="'scores[' + ${question.questionId} + ']'"
-                 type="radio">
-          <label th:for="${'q' + question.questionId + '_' + score}"
-                 th:text="${score + '점'}">점수</label>
+                 type="radio"
+                 value="1">
+          <label>매우 그렇지 않다(1)</label>
+        </div>
+        <div class="score-option">
+          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 2}"
+                 th:disabled="${evaluated}"
+                 th:name="'scores[' + ${question.questionId} + ']'"
+                 type="radio"
+                 value="2">
+          <label>그렇지 않다(2)</label>
+        </div>
+        <div class="score-option">
+          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 3}"
+                 th:disabled="${evaluated}"
+                 th:name="'scores[' + ${question.questionId} + ']'"
+                 type="radio"
+                 value="3">
+          <label>보통이다(3)</label>
+        </div>
+        <div class="score-option">
+          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 4}"
+                 th:disabled="${evaluated}"
+                 th:name="'scores[' + ${question.questionId} + ']'"
+                 type="radio"
+                 value="4">
+          <label>그렇다(4)</label>
+        </div>
+        <div class="score-option">
+          <input required
+                 th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 5}"
+                 th:disabled="${evaluated}"
+                 th:name="'scores[' + ${question.questionId} + ']'"
+                 type="radio"
+                 value="5">
+          <label>매우 그렇다(5)</label>
         </div>
       </div>
     </div>
-
     <button class="submit-button" th:if="${!evaluated}" type="submit">제출하기</button>
   </form>
 
+
   <!-- 이미 평가를 완료한 경우 -->
   <div class="completed-message" th:if="${evaluated}">
-    <p>이미 진단평가를 완료하였습니다.</p>
+    <p>이미 강의평가를 완료하였습니다.</p>
   </div>
 </div>
+
 <script>
-  // 폼 제출 전 모든 문항이 선택되었는지 확인
-  document.querySelector('form')?.addEventListener('submit', function(e) {
-    const questions = document.querySelectorAll('.question-item');
-    for (let question of questions) {
-      const checked = question.querySelector('input[type="radio"]:checked');
-      if (!checked) {
-        e.preventDefault();
-        alert('모든 문항에 답변해주세요.');
-        return;
+  function validateAndLog(form) {
+    // 폼 데이터 로깅
+    const formData = new FormData(form);
+    console.log('=== Form Data ===');
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
+
+    // 폼 데이터 검증
+    if (!formData.get('id')) {
+      console.error('Error: ID is missing');
+      return false;
+    }
+
+    let hasScores = false;
+    for (let pair of formData.entries()) {
+      if (pair[0].startsWith('scores[')) {
+        hasScores = true;
+        console.log('Found score:', pair[0], pair[1]);
       }
     }
-  });
+
+    if (!hasScores) {
+      console.error('Error: No scores found');
+      return false;
+    }
+
+    return true;
+  }
 </script>
 </body>
 </html>

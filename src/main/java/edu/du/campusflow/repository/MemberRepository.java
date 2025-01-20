@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByDept(Dept dept);
 
-    @EntityGraph(attributePaths = {"memberType", "dept"})
+    @EntityGraph(attributePaths = {"memberType", "dept", "gender", "academicStatus", "grade"})
     Optional<Member> findById(Long id);
 
     @EntityGraph(attributePaths = {"memberType", "dept"})

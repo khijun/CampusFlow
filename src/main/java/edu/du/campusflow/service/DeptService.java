@@ -1,5 +1,6 @@
 package edu.du.campusflow.service;
 
+import edu.du.campusflow.dto.DeptApiDTO;
 import edu.du.campusflow.dto.DeptSearchFilter;
 import edu.du.campusflow.entity.Dept;
 import edu.du.campusflow.repository.DeptRepository;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -14,10 +16,6 @@ public class DeptService {
     private final DeptRepository deptRepository;
 
     public List<Dept> findAll() {
-        return deptRepository.findAll();
-    }
-
-    public List<Dept> getAllDepartments() {
         return deptRepository.findAll();
     }
 
