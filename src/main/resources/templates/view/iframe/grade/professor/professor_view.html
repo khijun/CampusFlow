@@ -135,6 +135,14 @@
                     <option th:value="${lecture.lectureId}" th:text="${lecture.lectureName}">강의명</option>
                 </th:block>
             </select>
+            <!-- 성적 유형 선택 -->
+            <label for="gradeTypeSelect">성적 유형:</label>
+            <select id="gradeTypeSelect" onchange="updateGradeTypeForAllStudents()">
+                <option value="67">중간</option>
+                <option value="68">기말</option>
+                <option value="69">과제</option>
+                <option value="70">출석</option>
+            </select>
         </form>
     </section>
 
@@ -166,6 +174,22 @@
             error: function() {
                 alert('학생 목록을 불러오는 데 실패했습니다.');
             }
+        });
+    }
+    // 성적 유형이 선택되었을 때, 학생 목록에서 해당 성적 유형을 업데이트하는 함수
+    function updateGradeTypeForAllStudents() {
+        var selectedGradeType = document.getElementById('gradeTypeSelect').value;
+
+        // 모든 학생의 성적 유형 select box와 hidden 값을 변경
+        var gradeTypeInputs = document.querySelectorAll('.gradeTypeForAll');
+        gradeTypeInputs.forEach(function(input) {
+            input.value = selectedGradeType;
+        });
+
+        // 각 학생의 성적 유형 select box도 변경
+        var studentSelects = document.querySelectorAll('.individualGradeType');
+        studentSelects.forEach(function(select) {
+            select.value = selectedGradeType;
         });
     }
 </script>

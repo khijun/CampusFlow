@@ -1,11 +1,13 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.DeptDTO;
 import edu.du.campusflow.dto.SimpleMemberDTO;
 import edu.du.campusflow.entity.ChangeHistory;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.repository.ChangeHistoryRepository;
 import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.ChangeHistoryService;
+import edu.du.campusflow.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,12 +23,14 @@ import java.util.List;
 public class ChangeHistoryController {
     private final ChangeHistoryService changeHistoryService;
     private final MemberRepository memberRepository;
+    private final DeptService deptService;
 
 
     @GetMapping("/iframe/academic/admin/history_view")
     public String historyView(Model model) {
         List<ChangeHistory> changeHistoryList = changeHistoryService.findAll();
         model.addAttribute("changeHistoryList", changeHistoryList);
+        model.addAttribute("deptList", DeptDTO.fromEntityList(deptService.findAll()));
         return "view/iframe/academic/admin/admin-change-history-list";
     }
 
@@ -34,6 +38,7 @@ public class ChangeHistoryController {
     public String studentStatusManagement(Model model) {
         List<Member> members = changeHistoryService.getMembersWithType101();
         model.addAttribute("members", members);
+        model.addAttribute("deptList", DeptDTO.fromEntityList(deptService.findAll()));
         return "view/iframe/academic/admin/student-status-management";
     }
 

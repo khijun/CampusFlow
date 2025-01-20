@@ -13,11 +13,7 @@
   </style>
 </head>
 <body>
-<div>
-  <div id="student-status-select">
-    <input id="student-status-select-btn" type="button" value="학생 상태 조회"/>
-  </div>
-</div>
+
 
 <div id="student-status-list"></div>
 
@@ -25,10 +21,9 @@
 <script>
   let gridInstance = null;
 
-  const studentStatusSelectButton = document.querySelector("#student-status-select-btn");
   const studentStatusDiv = document.querySelector('#student-status-list');
 
-  studentStatusSelectButton.addEventListener('click', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     createStudentStatusGrid(studentStatusDiv);
   });
 
@@ -40,7 +35,7 @@
       {
         header: '퇴학/제적 처리',
         name: 'actions',
-        width: 'auto',
+        align: 'center',
         formatter: (cellInfo) => {
           const id = cellInfo.row.memberId;
           return `
