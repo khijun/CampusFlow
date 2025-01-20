@@ -98,6 +98,7 @@ public class DiagEvaluationService {
                 .collect(Collectors.toList());
     }
 
+    // 기존 답변 조회
     public Map<Long, Integer> getPreviousAnswers(Long ofregistrationId) {
         List<DiagItem> diagItems = diagItemRepository.findByOfRegistration_Id(ofregistrationId);
         return diagItems.stream()
@@ -107,6 +108,7 @@ public class DiagEvaluationService {
                 ));
     }
 
+    // 강의평가 저장
     @Transactional
     public void saveDiagnosticEvaluation(Long ofregistrationId, Map<Long, Integer> scores) {  // 파라미터 타입 변경
         Ofregistration ofRegistration = ofregistrationRepository.findById(ofregistrationId)
@@ -122,5 +124,18 @@ public class DiagEvaluationService {
             diagItem.setScore(score);
             diagItemRepository.save(diagItem);
         });
+    }
+
+    // 교수가 담당하는 과목 불러오기
+    public List<Map<String, Object>> getProfessorLectures(Long professorId) {
+        return diagEvaluationRepository.findDiagLecturesByProfessorId(professorId)
+                .stream()
+                .map(lecture -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("lectureId", lecture.getLectureId());
+                    map.put("lectureName", lecture.getLectureName());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 }

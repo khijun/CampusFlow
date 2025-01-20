@@ -62,7 +62,13 @@ public class LecEvaluationController {
 
     // 교수용 강의평가 페이지 이동
     @GetMapping("/professor")
-    public String showProfessorDiagnosticList() {
+    public String showProfessorLecturesList(Model model) {
+        Member professor = authService.getCurrentMember();  // 현재 로그인한 교수 정보 가져오기
+
+        // 교수의 강의 목록 조회
+        List<Map<String, Object>> lectures = lecQuestionService.getProfessorLectures(professor.getMemberId());
+        model.addAttribute("lectures", lectures);
+
         return "view/iframe/evaluation/lec/professor/professorLec";
     }
 

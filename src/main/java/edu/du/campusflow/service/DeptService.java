@@ -32,10 +32,4 @@ public class DeptService {
         }
         return deptRepository.findAllWithFilter(filter);
     }
-
-   // 특정 학과 조회
-   public Dept getDepartmentById(Long deptId) {
-      return deptRepository.findById(deptId)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid Dept ID: " + deptId));
-   }
 }
