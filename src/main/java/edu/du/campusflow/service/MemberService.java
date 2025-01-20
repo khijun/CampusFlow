@@ -66,7 +66,7 @@ public class MemberService {
         member.setAddress(memberUpdateDTO.getAddress());
         member.setBirthDate(memberUpdateDTO.getBirthDate());
         member.setEmail(memberUpdateDTO.getEmail());
-        if (!memberUpdateDTO.getNewPassword().isEmpty()) member.setPassword(memberUpdateDTO.getNewPassword());
+        if (!(memberUpdateDTO.getNewPassword()==null||memberUpdateDTO.getNewPassword().isEmpty())) member.setPassword(memberUpdateDTO.getNewPassword());
         return MemberDTO.fromEntity(updateMember(member, true));
     }
 
