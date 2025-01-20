@@ -1,6 +1,7 @@
 package edu.du.campusflow.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.du.campusflow.dto.DeptCreateRequest;
 import edu.du.campusflow.dto.DeptDTO;
 import edu.du.campusflow.dto.DeptSearchFilter;
 import edu.du.campusflow.entity.Dept;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,5 +58,14 @@ public class DeptApiController {
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(deptList);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> postDept(@RequestBody DeptCreateRequest deptCreateRequest) {
+        try{
+            return ResponseEntity.ok(deptService.create(deptCreateRequest));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

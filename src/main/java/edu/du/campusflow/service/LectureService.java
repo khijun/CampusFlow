@@ -4,11 +4,17 @@ import edu.du.campusflow.dto.LectureDTO;
 import edu.du.campusflow.entity.*;
 import edu.du.campusflow.enums.LectureStatus;
 import edu.du.campusflow.repository.*;
+import edu.du.campusflow.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +44,12 @@ public class LectureService {
 
     @Autowired
     FacilityRepository facilityRepository;
+
+    @Autowired
+    FileUploadService fileUploadService;
+
+    @Autowired
+    FileInfoRepository fileInfoRepository;
 
     //강의 개설
     public void createLecture(LectureDTO request) {
@@ -290,6 +302,7 @@ public class LectureService {
                     dto.setMaxStudents(lecture.getMaxStudents());
                     dto.setCurrentStudents(lecture.getCurrentStudents());
                     dto.setSemesterName(lecture.getSemester().getCodeName());
+                    dto.setFileInfo(lecture.getFileInfo() != null ? lecture.getFileInfo().getId() : null);
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -324,6 +337,50 @@ public class LectureService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void uploadLectureFile(MultipartFile file, Long lectureId) {
+        // 파일이 비어있는지 확인
+        if (file.isEmpty()) {
+            throw new RuntimeException("파일이 비어있습니다.");
+        }
+
+        try {
+            // 강의 조회
+            Lecture lecture = lectureRepository.findById(lectureId)
+                    .orElseThrow(() -> new RuntimeException("해당 강의를 찾을 수 없습니다."));
+
+            // 파일 저장
+            FileInfo fileInfo = fileUploadService.saveFile(file);
+
+            // 강의 정보 업데이트
+            lecture.setFileInfo(fileInfo);
+            lectureRepository.save(lecture);
+        } catch (Exception e) {
+            throw new RuntimeException("강의계획서 업로드 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    // 파일 조회 메서드 추가
+    public Resource getFileResource(Long fileId) {
+        try {
+            // FileInfo 조회
+            FileInfo fileInfo = fileInfoRepository.findById(fileId)
+                    .orElseThrow(() -> new RuntimeException("파일을 찾을 수 없습니다."));
+
+            // 파일 경로 생성
+            Path filePath = Paths.get(fileInfo.getFilePath(), FileUtils.getSaveName(fileInfo));
+            return new UrlResource(filePath.toUri());
+        } catch (Exception e) {
+            throw new RuntimeException("파일을 불러오는데 실패했습니다.");
+        }
+    }
+
+    // 파일 정보 조회 메서드 추가
+    public FileInfo getFileInfo(Long fileId) {
+        return fileInfoRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("파일을 찾을 수 없습니다."));
     }
 
 }

@@ -44,7 +44,7 @@ public class FileUploadService {
     }
 
     @Transactional
-    public void saveFile(MultipartFile file){
+    public FileInfo saveFile(MultipartFile file){
         if (file.isEmpty()) throw new EmptyFileException("저장할 파일이 비어있습니다");
         try {
             String uuid = String.valueOf(System.nanoTime()); // 파일이 저장될 이름 생성
@@ -72,6 +72,7 @@ public class FileUploadService {
                 throw new Exception("파일 저장에 실패함.");
             }
             fileInfoRepository.save(fileInfo);
+            return fileInfo;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
