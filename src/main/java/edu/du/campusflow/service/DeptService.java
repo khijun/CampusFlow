@@ -42,12 +42,6 @@ public class DeptService {
         return deptRepository.save(dept);
     }
 
-   // 특정 학과 조회
-   public Dept getDepartmentById(Long deptId) {
-      return deptRepository.findById(deptId)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid Dept ID: " + deptId));
-   }
-
    @Transactional
    public DeptCreateRequest create(DeptCreateRequest deptCreateRequest) {
 
