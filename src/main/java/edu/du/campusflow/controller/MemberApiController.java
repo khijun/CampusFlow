@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class MemberApiController {
         }
         return MemberDTO.fromEntityList(memberService.findAllWithFilter(filter));
     }
-    @GetMapping
+    @GetMapping("/me")
     public MemberDTO getMember(){
         return MemberDTO.fromEntity(authService.getCurrentMember());
     }
@@ -58,6 +59,18 @@ public class MemberApiController {
         try{
             MemberDTO updatedMember = memberService.updateMember(authService.getCurrentMember(), memberUpdateDTO);
             return ResponseEntity.ok(updatedMember);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/all")
+    public ResponseEntity<?> updateMembers(@RequestBody List<MemberDTO> memberDTOList) {
+        System.out.println(memberDTOList);
+        try{
+            return ResponseEntity.ok(
+                    memberDTOList.stream().map(memberService::updateMember).collect(Collectors.toList())
+                    );
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

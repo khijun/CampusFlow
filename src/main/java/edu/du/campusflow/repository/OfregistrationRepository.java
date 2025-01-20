@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface OfregistrationRepository extends JpaRepository<Ofregistration, Long> {
@@ -60,4 +61,12 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
 
     // 학생의 모든 수강신청 내역 조회
     List<Ofregistration> findByMember(Member member);
+
+    // LECTURE_PENDING 상태인 강의의 수강신청 목록 조회
+    @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureStatus.codeValue = :status")
+    List<Ofregistration> findByLectureStatus(@Param("status") String status);
+
+    // 특정 강의와 학생의 수강신청 정보 조회
+    @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId AND o.member.memberId = :memberId")
+    Optional<Ofregistration> findByLectureIdAndMemberId(@Param("lectureId") Long lectureId, @Param("memberId") Long memberId);
 }
