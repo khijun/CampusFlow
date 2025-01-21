@@ -98,13 +98,45 @@
       padding: 0.25rem 0.5rem;
       font-size: 0.875rem;
     }
+    .post-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-outline-danger {
+      color: #dc3545;
+      border-color: #dc3545;
+    }
+    
+    .btn-outline-danger:hover {
+      color: #fff;
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+    
+    .btn-outline-primary {
+      color: #007bff;
+      border-color: #007bff;
+    }
+    
+    .btn-outline-primary:hover {
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
   </style>
 </head>
 <body>
 <div class="container mt-3">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>게시물 상세</h2>
-    <a th:href="@{/iframe/posts/view}" class="btn btn-secondary">목록으로</a>
+    <div class="post-actions">
+      <div th:if="${@postService.isPostAuthor(post)}">
+        <a th:href="@{/iframe/posts/{id}/edit(id=${post.postId})}" class="btn btn-outline-primary">수정</a>
+        <button type="button" class="btn btn-outline-danger" th:onclick="|confirmPostDelete(${post.postId})|">삭제</button>
+      </div>
+      <a th:href="@{/iframe/posts/view}" class="btn btn-secondary">목록으로</a>
+    </div>
   </div>
 
   <div class="card">
@@ -233,6 +265,32 @@
           isSubmitting = false;
         });
       }
+    }
+  }
+
+  function confirmPostDelete(postId) {
+    if (confirm('정말 삭제하시겠습니까?')) {
+        const deleteBtn = document.querySelector('.btn-outline-danger');
+        // 버튼 비활성화 및 로딩 표시
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 삭제중...';
+        
+        fetch(`/iframe/posts/${postId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/iframe/posts/view';
+            } else {
+                throw new Error('삭제 실패');
+            }
+        })
+        .catch(error => {
+            alert('삭제 중 오류가 발생했습니다.');
+            // 오류 발생 시 버튼 상태 복구
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = '삭제';
+        });
     }
   }
 

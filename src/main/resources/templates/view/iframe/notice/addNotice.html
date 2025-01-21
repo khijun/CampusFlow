@@ -2,52 +2,68 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>공지사항 추가</title>
+  <title>공지사항 작성</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .form-group label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .form-control {
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+    }
+    .form-control:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      padding: 0.5rem 2rem;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h1 class="text-center">공지사항 추가</h1>
-  <form th:action="@{/iframe/notice}" method="post" onsubmit="return handleSubmit(event)">
+<div class="container mt-3">
+  <h1>공지사항 작성</h1>
+  <form th:action="@{/iframe/notice/add}" method="post" onsubmit="return handleSubmit(this)">
     <div class="form-group">
       <label for="subject">제목</label>
       <input type="text" class="form-control" id="subject" name="subject" required>
     </div>
     <div class="form-group">
       <label for="content">내용</label>
-      <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+      <textarea class="form-control" id="content" name="content" rows="15" required></textarea>
     </div>
-    <button type="submit" class="btn btn-primary" id="submitBtn">추가</button>
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary" id="submitBtn">작성</button>
+      <a th:href="@{/iframe/notice/view}" class="btn btn-secondary ml-2" id="cancelBtn">취소</a>
+    </div>
   </form>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <script>
-  let isSubmitting = false;
+function handleSubmit(form) {
+  const submitBtn = document.getElementById('submitBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
   
-  function handleSubmit(event) {
-    if (isSubmitting) {
-      event.preventDefault();
-      return false;
-    }
-    
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 처리중...';
-    isSubmitting = true;
-    
-    // 3초 후에도 응답이 없으면 버튼 상태 복구
-    setTimeout(function() {
-      if (isSubmitting) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '추가';
-        isSubmitting = false;
-      }
-    }, 3000);
-    
-    return true;
-  }
+  // 버튼 비활성화 및 로딩 표시
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 처리중...';
+  cancelBtn.style.display = 'none';
+  
+  // 폼 제출
+  form.submit();
+  return false;
+}
 </script>
 </body>
 </html>

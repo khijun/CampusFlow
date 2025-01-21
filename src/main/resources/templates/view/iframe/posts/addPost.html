@@ -4,9 +4,35 @@
   <meta charset="UTF-8">
   <title>게시물 작성</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .form-group label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .form-control {
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+    }
+    .form-control:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn-primary {
+      padding: 0.5rem 2rem;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
+<div class="container mt-3">
   <h1>게시물 작성</h1>
   <form th:action="@{/iframe/posts}" method="post" th:object="${post}" onsubmit="return handleSubmit(event)">
     <div class="form-group">
@@ -15,9 +41,11 @@
     </div>
     <div class="form-group">
       <label for="content">내용</label>
-      <textarea class="form-control" id="content" name="content" th:field="*{content}" rows="5" required></textarea>
+      <textarea class="form-control" id="content" name="content" th:field="*{content}" rows="15" required></textarea>
     </div>
-    <button type="submit" class="btn btn-primary" id="submitBtn">작성</button>
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary" id="submitBtn">작성</button>
+    </div>
   </form>
 </div>
 
