@@ -1,104 +1,148 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>수강신청</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .full {
-            color: red;
-        }
-        .available {
-            color: green;
+        .page-title {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
         }
     </style>
+    <title>수강신청</title>
 </head>
 <body>
-    <h2>수강신청 가능 강의 목록</h2>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>강의명</th>
-                <th>담당교수</th>
-                <th>학과</th>
-                <th>이수구분</th>
-                <th>학점</th>
-                <th>강의시간</th>
-                <th>강의실</th>
-                <th>수강인원</th>
-                <th>신청</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="lecture : ${lectures}">
-                <td th:text="${lecture.lectureName}"></td>
-                <td th:text="${lecture.name}"></td>
-                <td th:text="${lecture.deptName}"></td>
-                <td th:text="${lecture.subjectType}"></td>
-                <td th:text="${lecture.subjectCredits}"></td>
-                <td th:text="${lecture.lectureDay + ' ' + lecture.startTime + '-' + lecture.endTime}"></td>
-                <td th:text="${lecture.facilityName}"></td>
-                <td>
-                    <span th:text="${lecture.currentStudents + '/' + lecture.maxStudents}"></span>
-                    <span th:class="${lecture.currentStudents >= lecture.maxStudents ? 'full' : 'available'}">
-                        [(${lecture.currentStudents >= lecture.maxStudents ? '(마감)' : '(신청가능)'})]
-                    </span>
-                </td>
-                <td>
-                    <button th:if="${lecture.currentStudents < lecture.maxStudents}"
-                            th:onclick="'registerLecture(' + ${lecture.lectureId} + ')'">
-                        신청
-                    </button>
-                    <span th:if="${lecture.currentStudents >= lecture.maxStudents}">마감</span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<h2 class="page-title">수강신청 가능 강의 목록</h2>
 
-    <script>
-        function registerLecture(lectureId) {
-            if (confirm('이 강의를 수강신청 하시겠습니까?')) {
-                // 신청 상태를 REQUESTED로 설정하기 위한 데이터
-                const data = {
-                    lectureId: lectureId,
-                    regStatus: 'REQUESTED' // 공통 코드의 신청 상태
-                };
+<div id="lecture-list"></div>
 
-                fetch('/iframe/ofregistration/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)  // 수정된 데이터 전송
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('수강신청이 완료되었습니다.');
-                            location.reload();
-                        } else {
-                            return response.text().then(text => {
-                                throw new Error(text);
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        alert('수강신청 실패: ' + error.message);
-                    });
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    let instance = null;
+    const lectureListDiv = document.querySelector('#lecture-list');
+
+    // 페이지 로드시 자동으로 강의 목록 조회
+    document.addEventListener('DOMContentLoaded', () => {
+        createLectureGrid(lectureListDiv);
+    });
+
+    function createLectureGrid(lectureListDiv) {
+        const columns = [
+            {header: '강의명', name: 'lectureName', align:'center'},
+            {header: '담당교수', name: 'name', align:'center'},
+            {header: '학과', name: 'deptName', align:'center'},
+            {header: '이수구분', name: 'subjectType', align:'center'},
+            {header: '학점', name: 'subjectCredits', align:'center'},
+            {header: '강의요일', name: 'lectureDay', align:'center'},
+            {header: '강의시간', name: 'lectureTime', align:'center'},
+            {header: '강의실', name: 'facilityName', align:'center'},
+            {header: '수강인원', name: 'studentCount', align:'center'},
+            {
+                header: '신청',
+                name: 'registerButton',
+                align:'center',
+                renderer: {
+                    type: CustomButtonRenderer
+                }
             }
+        ];
+
+        fetch('/api/ofregistration/available-lectures')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                return data.map(lecture => ({
+                    ...lecture,
+                    lectureTime: `${lecture.startTime} - ${lecture.endTime}`,
+                    studentCount: `${lecture.currentStudents}/${lecture.maxStudents}`,
+                    registerButton: {
+                        lectureId: lecture.lectureId,
+                        isFull: lecture.currentStudents >= lecture.maxStudents
+                    }
+                }));
+            })
+            .then(mappedData => {
+                if (instance != null) {
+                    instance.destroy();
+                    instance = null;
+                }
+                instance = new tui.Grid({
+                    el: lectureListDiv,
+                    columns: columns,
+                    data: mappedData,
+                    bodyHeight: 400,
+                    minBodyHeight: 400,
+                    rowHeight: 40,
+                    columnOptions: {
+                        resizable: true
+                    }
+                });
+            });
+    }
+
+    // 커스텀 버튼 렌더러 정의
+    class CustomButtonRenderer {
+        constructor(props) {
+            const el = document.createElement('div');
+            const { lectureId, isFull } = props.value;
+
+            if (isFull) {
+                el.innerHTML = '<span style="color: #ff4444;">마감</span>';
+            } else {
+                const button = document.createElement('button');
+                button.innerHTML = '신청';
+                button.style.cssText = 'width: 50px; padding: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                button.onclick = () => registerLecture(lectureId);
+                el.appendChild(button);
+            }
+
+            this.el = el;
         }
-    </script>
+
+        getElement() {
+            return this.el;
+        }
+    }
+
+    function registerLecture(lectureId) {
+        if (confirm('이 강의를 수강신청 하시겠습니까?')) {
+            const data = {
+                lectureId: lectureId,
+                regStatus: 'REQUESTED'
+            };
+
+            fetch('/api/ofregistration/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('수강신청이 완료되었습니다.');
+                        createLectureGrid(lectureListDiv);
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    alert('수강신청 실패: ' + error.message);
+                });
+        }
+    }
+</script>
 </body>
 </html>

@@ -41,7 +41,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @EntityGraph(attributePaths = {"dept", "gender", "academicStatus", "grade", "memberType"})
     List<Member> findAllWithFilter(MemberSearchFilter filter);
 
+    @Query("SELECT MAX(m.memberId) % 1000 FROM Member m where m.dept.deptId = :deptId " +
+            "AND m.memberId BETWEEN (:year * 100000) and ((:year + 1) * 100000 - 1) " +
+            "AND m.memberType.codeId = :memberType ")
+    Integer getMaxStudentNoFromDeptAndYear(Long deptId, int year, Long memberType);
+
     @Query("SELECT MAX(m.memberId) % 100 FROM Member m where m.dept.deptId = :deptId " +
-            "AND m.memberId BETWEEN (:year * 100000) and ((:year + 1) * 100000 - 1) ")
-    Integer getMaxMemberNoFromDeptAndYear(Long deptId, int year);
+            "AND m.memberType.codeId = :memberType ")
+    Integer getMaxProfessorNoFromDept(Long deptId, Long memberType);
+
+    @Query("SELECT MAX(m.memberId) % 100 FROM Member m where m.dept.deptId = :deptId " +
+            "AND m.memberType.codeId = :memberType ")
+    Integer getMaxStaffNoFromDept(Long deptId, Long memberType);
 }
