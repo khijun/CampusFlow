@@ -15,7 +15,7 @@ public class DeptDTO {
     private Long deptId;
     private String deptName;
     private Integer maxStudents;
-    private String deptStatus;
+    private Long deptStatus;
     private Integer generalCredits;
     private Integer majorCredits;
     private Integer graduationCredits;
@@ -25,7 +25,7 @@ public class DeptDTO {
                 .deptId(dept.getDeptId())
                 .deptName(dept.getDeptName())
                 .maxStudents(dept.getMaxStudents())
-                .deptStatus(dept.getDeptStatus().getCodeName())
+                .deptStatus(dept.getDeptStatus().getCodeId())
                 .generalCredits(dept.getGeneralCredits())
                 .majorCredits(dept.getMajorCredits())
                 .graduationCredits(dept.getGraduationCredits())
