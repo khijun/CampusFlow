@@ -44,17 +44,33 @@
 /* 기본 탭 스타일 (비활성화 상태) */
 .tab-item {
    padding: 5px 10px;
-   background-color: gray; /* 비활성 탭 색상 */
+   background-color: gray;
    color: white;
    margin-right: 5px;
    border-radius: 4px;
-   cursor: pointer;
+   cursor: grab;
    display: flex;
    align-items: center;
-   justify-content: space-between; /* 내용물 사이 간격 조절 */
+   justify-content: space-between;
    position: relative;
    min-width: 100px;
    max-width: 150px;
+   user-select: none;
+}
+
+/* 드래그 중인 탭 스타일 */
+.tab-item.dragging {
+   opacity: 0.4;
+   border: 2px dashed #666;
+}
+
+/* 드롭 타겟 표시 스타일 */
+.tab-item.drop-target-left {
+   border-left: 2px solid #000;
+}
+
+.tab-item.drop-target-right {
+   border-right: 2px solid #000;
 }
 
 /* 활성화된 탭 스타일 */
@@ -64,15 +80,24 @@
 
 /* 탭 내부 텍스트 영역 */
 .tab-item span {
+   pointer-events: none;
+   flex-grow: 1;
    overflow: hidden;
    text-overflow: ellipsis;
    white-space: nowrap;
-   max-width: calc(100% - 25px); /* 닫기 버튼 공간 확보 */
-   margin-right: 5px; /* 닫기 버튼과의 간격 */
+   margin-right: 5px;
+}
+
+/* 드래그 중일 때 */
+.tab-item:active {
+   cursor: grabbing;
 }
 
 /* 닫기 버튼 */
 .close-tab {
+   pointer-events: auto;
+   margin-left: 8px;
+   padding: 0 5px;
    background: none;
    border: none;
    color: white;
@@ -86,7 +111,7 @@
 }
 
 .close-tab:hover {
-   color: #ff4444;
+   color: #666;
 }
 
 /* 탭 컨트롤 영역 */
