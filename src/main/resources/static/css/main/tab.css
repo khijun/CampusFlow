@@ -4,16 +4,32 @@
    align-items: center;
    justify-content: space-between;
    background-color: whitesmoke;
-   padding: 7px 10px; /* 좌우 패딩 조정 */
+   padding: 7px 30px;
    color: black;
-   margin-top: -10px;
-   margin-bottom: 10px;
-   width: calc(100% - 60px); /* main-content와 동일한 너비 */
-   border: 1px solid #ddd; /* 확인용 테두리 */
+   margin-top: -30px; /* 상단 여백 수정 */
+   width: calc(100% - 60px);
+   border: 1px solid #ddd;
    border-radius: 2px;
-   box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
-   overflow: hidden; /* 탭이 너무 길어질 경우 스크롤 방지 */
+   box-sizing: border-box;
+   overflow: hidden;
    min-width: 1024px;
+   position: relative;
+   left: 50%;
+   transform: translateX(-50%);
+}
+
+/* Iframe Container */
+.iframe-container {
+   width: 100%;
+   height: calc(100vh - 110px); /* 상단 여백 조정 */
+   margin-top: 10px; /* 탭과의 간격 */
+   overflow: hidden;
+}
+
+.iframe-container iframe {
+   width: 100%;
+   height: 100%;
+   border: none;
 }
 
 #tabs {
@@ -25,9 +41,10 @@
    overflow-x: auto;
 }
 
+/* 기본 탭 스타일 (비활성화 상태) */
 .tab-item {
    padding: 5px 10px;
-   background-color: var(--secondary-color);
+   background-color: #a8a8a8; /* 비활성화된 탭의 더 연한 색상 */
    color: white;
    margin-right: 5px;
    border-radius: 4px;
@@ -38,10 +55,18 @@
    white-space: nowrap; /* 탭 텍스트 줄바꿈 방지 */
    position: relative;
    min-width: 100px;
+   transition: background-color 0.3s ease; /* 부드러운 색상 전환 효과 */
 }
 
+/* 활성화된 탭 스타일 */
 .tab-item.active {
-   background-color: gray;
+   background-color: #4a4a4a; /* 활성화된 탭의 더 진한 색상 */
+   font-weight: 500; /* 활성 탭 글자를 약간 더 굵게 */
+}
+
+/* 탭 호버 효과 */
+.tab-item:hover:not(.active) {
+   background-color: #8a8a8a; /* 호버 시의 중간 톤 색상 */
 }
 
 .close-tab {
