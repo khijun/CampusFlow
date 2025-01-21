@@ -13,6 +13,7 @@
     <link href="css/main/tab.css" rel="stylesheet">
     <link href="css/main/mainStyle.css" rel="stylesheet">
     <link href="css/main/sidebar-menu.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 <div class="container">
@@ -47,7 +48,7 @@
                 <span th:text="${memberDTO.name}">박 두 인</span>
             </li>
             <li>
-                <a th:if="${memberDTO != null}" th:href="@{/logout}">로그아웃</a>
+                <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
                 <a th:if="${memberDTO == null}" th:href="@{/login}">로그인</a>
             </li>
         </ul>
@@ -64,24 +65,30 @@
     <div class="main-content">
         <!-- Tab Container -->
         <div class="tab-container">
-            <ul id="tabs">
-                <!-- 기본 탭 -->
-                <li class="tab-item active" onclick="switchTab('dashboard.html')">
-                    대시보드
-                    <button class="close-tab" onclick="closeTab(this)">×</button>
-                </li>
-            </ul>
-            <button class="close-all" onclick="closeAllTabs()">모두 닫기</button>
+            <ul id="tabs"></ul>
+            <div class="tab-controls">
+                <button class="close-all" onclick="closeAllTabs()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
         </div>
 
-        <!-- Iframe for Content -->
+        <!-- Iframe Container -->
         <div class="iframe-container">
-            <iframe name="contentFrame" ></iframe>
+            <!-- iframe은 JavaScript에서 동적으로 생성됩니다 -->
         </div>
     </div>
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
-<script src="/js/sidebar_category.js"></script>
 <script src="/js/session_timer.js"></script>
+<script src="/js/sidebar_category.js"></script>
+<script>
+function handleLogout() {
+    // 탭 상태 초기화
+    clearTabState();
+    // 시큐리티 로그아웃 URL로 이동
+    window.location.href = '/logout';
+}
+</script>
 </body>
 </html>
