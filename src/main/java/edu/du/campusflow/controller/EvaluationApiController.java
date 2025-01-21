@@ -35,13 +35,7 @@ public class EvaluationApiController {
 
         return Map.of(
                 "result", true,
-                "data", Map.of(
-                        "contents", results,
-                        "pagination", Map.of(
-                                "page", 1,
-                                "totalCount", results.size()
-                        )
-                )
+                "data", results
         );
     }
 
