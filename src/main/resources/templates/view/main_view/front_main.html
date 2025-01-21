@@ -46,7 +46,7 @@
                 <span th:text="${memberDTO.name}">박 두 인</span>
             </li>
             <li>
-                <a th:if="${memberDTO != null}" th:href="@{/logout}">로그아웃</a>
+                <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
                 <a th:if="${memberDTO == null}" th:href="@{/login}">로그인</a>
             </li>
         </ul>
@@ -81,5 +81,13 @@
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 <script src="/js/sidebar_category.js"></script>
+<script>
+function handleLogout() {
+    // 탭 상태 초기화
+    clearTabState();
+    // 시큐리티 로그아웃 URL로 이동
+    window.location.href = '/logout';
+}
+</script>
 </body>
 </html>

@@ -225,5 +225,25 @@ document.addEventListener('DOMContentLoaded', () => {
     restoreTabState();
 });
 
+/**
+ * 로그아웃 시 탭 상태 초기화 함수
+ */
+function clearTabState() {
+    // 세션 스토리지에서 탭 상태 제거
+    sessionStorage.removeItem('tabState');
+    
+    // 모든 탭 제거
+    const tabs = document.getElementById('tabs');
+    if (tabs) {
+        tabs.innerHTML = '';
+    }
+    
+    // 모든 캐시된 iframe 제거
+    iframeCache.forEach((frame, url) => {
+        frame.remove();
+    });
+    iframeCache.clear();
+}
+
 
 
