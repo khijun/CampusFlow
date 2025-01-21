@@ -70,4 +70,13 @@ public class DeptApiController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/all")
+    public ResponseEntity<?> putDept(@RequestBody List<DeptDTO> deptDTOList) {
+        try{
+            return ResponseEntity.ok(deptService.update(deptDTOList));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
