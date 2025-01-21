@@ -5,6 +5,7 @@ import edu.du.campusflow.dto.CurriculumSubjectDetailDTO;
 import edu.du.campusflow.entity.CurriculumSubject;
 import edu.du.campusflow.entity.Subject;
 import edu.du.campusflow.repository.CurriculumSubjectRepository;
+import edu.du.campusflow.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class CurriculumSubjectService {
 
     @Autowired
     CurriculumSubjectRepository curriculumSubjectRepository;
+
+    @Autowired
+    SubjectRepository subjectRepository;
 
     //강좌 개설에서 사용할 교육과정 교과목 검색
     public List<CurriculumSubjectDTO> searchCurriculumSubjectBySubjectName(String subjectName, String curriculumName, String semesterCode) {
@@ -93,9 +97,8 @@ public class CurriculumSubjectService {
     public void updateCurriculumSubjects(List<CurriculumSubjectDetailDTO> updatedSubjects) {
         for (CurriculumSubjectDetailDTO dto : updatedSubjects) {
             CurriculumSubject subject = curriculumSubjectRepository.findById(dto.getCurriculumSubjectId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 교과목 ID: " + dto.getCurriculumSubjectId()));
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 교과목 ID: " + dto.getCurriculumSubjectId()));
 
-            subject.setPrereqSubject(dto.getPrereqSubjectName() != null ? new Subject(null, dto.getPrereqSubjectName(), null, null) : null);
             subject.setSubjectType(null);
             subject.setGradingMethod(null);
 
@@ -125,4 +128,5 @@ public class CurriculumSubjectService {
         dto.setCurriculumStatus(subject.getCurriculum().getCurriculumStatus() != null ? subject.getCurriculum().getCurriculumStatus().getCodeName() : "미정");
         return dto;
     }
+
 }

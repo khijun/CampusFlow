@@ -1,6 +1,7 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.SubjectDTO;
+import edu.du.campusflow.entity.Subject;
 import edu.du.campusflow.service.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,6 +37,12 @@ public class SubjectController {
    @GetMapping("/api/subjects")
    public ResponseEntity<?> getSubjects(@RequestParam(required = false) String keyword) {
       return ResponseEntity.ok(SubjectDTO.fromEntityList(subjectService.findSubjects(keyword)));
+   }
+
+   @GetMapping("/api/subjects/search")
+   public ResponseEntity<List<SubjectDTO>> searchSubjects(@RequestParam String keyword) {
+      List<SubjectDTO> subjects = SubjectDTO.fromEntityList(subjectService.searchSubjects(keyword));
+      return ResponseEntity.ok(subjects);
    }
 
    @PostMapping("/api/subjects")

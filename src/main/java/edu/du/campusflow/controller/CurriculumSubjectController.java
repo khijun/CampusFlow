@@ -56,4 +56,5 @@ public class CurriculumSubjectController {
         curriculumSubjectService.deleteCurriculumSubjects(curriculumSubjectIds);
         return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 삭제되었습니다.\"}");
     }
+
 }
