@@ -29,18 +29,19 @@
         </div>
 
         <!-- Navigation Bar -->
-        <ul class="nav-list">
-            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>
-            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>
-            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i> 메인</a></li>
-            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i> 학생 페이지</a></li>
-            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i> 교수 페이지</a></li>
-            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i> 관리자 페이지</a></li>
-        </ul>
+<!--        <ul class="nav-list">-->
+<!--            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>-->
+<!--            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>-->
+<!--            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i> 메인</a></li>-->
+<!--            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i> 학생 페이지</a></li>-->
+<!--            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i> 교수 페이지</a></li>-->
+<!--            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i> 관리자 페이지</a></li>-->
+<!--        </ul>-->
 
         <ul class="header-list">
             <li th:if="${memberDTO != null}" class="header-member-info-li">
-                <span th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
+                <span id="session-timer" th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
+                <button id="session-extension-btn" class="session-button">세션 연장</button>
                 <span th:text="${memberDTO.deptName}">학과</span>
                 <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
                 <span th:text="${memberDTO.name}">박 두 인</span>
@@ -81,5 +82,6 @@
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 <script src="/js/sidebar_category.js"></script>
+<script src="/js/session_timer.js"></script>
 </body>
 </html>
