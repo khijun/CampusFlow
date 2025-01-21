@@ -96,7 +96,7 @@ function addTab(title, url, saveState = true) {
     newTab.className = 'tab-item';
     newTab.setAttribute('data-url', url);
     newTab.innerHTML = `
-        ${title}
+        <span>${title}</span>
         <button class="close-tab" onclick="closeTab(this)">×</button>
     `;
     newTab.onclick = () => switchTab(url);
@@ -159,12 +159,6 @@ function closeTab(button) {
         const lastUrl = lastTab.getAttribute('data-url');
         switchTab(lastUrl);
     }
-    
-    // 모든 탭이 닫힌 경우 대시보드 탭 생성
-    if (tabs.children.length === 0) {
-        openNewPage('대시보드', 'dashboard.html');
-    }
-    
     // 탭 상태 저장
     saveTabState();
 }
@@ -183,7 +177,6 @@ function closeAllTabs() {
     iframeCache.clear();
     
     sessionStorage.removeItem('tabState');
-    openNewPage('대시보드', 'dashboard.html');
 }
 
 /**

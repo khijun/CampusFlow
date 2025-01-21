@@ -38,63 +38,85 @@
    margin: 0;
    padding: 0;
    flex-wrap: nowrap;
-   overflow-x: auto;
+   overflow: hidden; /* 스크롤 제거 */
 }
 
 /* 기본 탭 스타일 (비활성화 상태) */
 .tab-item {
    padding: 5px 10px;
-   background-color: #a8a8a8; /* 비활성화된 탭의 더 연한 색상 */
+   background-color: gray; /* 비활성 탭 색상 */
    color: white;
    margin-right: 5px;
    border-radius: 4px;
    cursor: pointer;
    display: flex;
    align-items: center;
-   gap: 5px;
-   white-space: nowrap; /* 탭 텍스트 줄바꿈 방지 */
+   justify-content: space-between; /* 내용물 사이 간격 조절 */
    position: relative;
    min-width: 100px;
-   transition: background-color 0.3s ease; /* 부드러운 색상 전환 효과 */
+   max-width: 150px;
 }
 
 /* 활성화된 탭 스타일 */
 .tab-item.active {
-   background-color: #4a4a4a; /* 활성화된 탭의 더 진한 색상 */
-   font-weight: 500; /* 활성 탭 글자를 약간 더 굵게 */
+   background-color: var(--secondary-color); /* 활성 탭 색상 */
 }
 
-/* 탭 호버 효과 */
-.tab-item:hover:not(.active) {
-   background-color: #8a8a8a; /* 호버 시의 중간 톤 색상 */
+/* 탭 내부 텍스트 영역 */
+.tab-item span {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   max-width: calc(100% - 25px); /* 닫기 버튼 공간 확보 */
+   margin-right: 5px; /* 닫기 버튼과의 간격 */
 }
 
+/* 닫기 버튼 */
 .close-tab {
    background: none;
    border: none;
    color: white;
    cursor: pointer;
-   font-size: 12px;
-   position: absolute;
-   right: 5px;
-   top: 50%;
-   transform: translateY(-50%);
+   padding: 0 5px;
+   font-size: 14px;
+   min-width: 20px; /* 최소 너비 설정 */
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }
 
 .close-tab:hover {
-   color: #ddd;
+   color: #ff4444;
 }
 
+/* 탭 컨트롤 영역 */
+.tab-controls {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    border-left: 2px solid #ddd; /* 세로 구분선 하나만 유지 */
+    margin-left: 15px;
+    padding-left: 15px;
+}
+
+/* 모두 닫기 버튼 */
 .close-all {
-   background-color: gray;
-   border: none;
-   color: white;
-   padding: 5px 10px;
-   border-radius: 4px;
-   cursor: pointer;
-   margin-left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 20px;
+    color: #bebebe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
 }
 
 .close-all:hover {
-   background-color: #666;
+    color: #666;
+}
+
+.close-all i {
+    font-size: 20px;
 }
