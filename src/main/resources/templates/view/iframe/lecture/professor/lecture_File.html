@@ -5,11 +5,17 @@
   <title>강의계획서 업로드</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 </head>
 <body>
 <!-- 검색 조건 -->
+<hr style="border: none; margin: 20px 0;">
+<div class="d-flex align-items-center mb-3">
+  <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+  <span class="h6 mb-0">강의 검색</span>
+</div>
 <div class="search-container">
   <div class="input-group">
     <label for="Semester">학기</label>
@@ -26,9 +32,19 @@
 </div>
 
 <!-- 검색 결과 그리드 -->
+<hr style="border: none; margin: 20px 0;">
+<div class="d-flex align-items-center mb-3">
+  <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+  <span class="h6 mb-0">강의 목록</span>
+</div>
 <div id="lectureGrid"></div>
 
 <!-- 파일 업로드 폼 -->
+<hr style="border: none; margin: 20px 0;">
+<div class="d-flex align-items-center mb-3">
+  <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
+  <span class="h6 mb-0">강의 계획서 등록</span>
+</div>
 <div class="search-container">
   <div class="input-group">
     <label for="selectedLecture">강의명</label>
@@ -62,6 +78,8 @@
 
     if (currentMonth >= 8 || currentMonth <= 1) {
       semesterSelect.value = 'SECOND_SEMESTER';
+    }else{
+      semesterSelect.value = 'FIRST_SEMESTER';
     }
     // 초기 데이터 로드
     const semesterCode = semesterSelect.value;

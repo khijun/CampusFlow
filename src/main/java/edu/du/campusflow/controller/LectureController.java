@@ -150,4 +150,13 @@ public class LectureController {
             throw new RuntimeException("파일을 불러오는데 실패했습니다.");
         }
     }
+
+    //강의 계획서 조회 페이지 에서 사용할 검색
+    @GetMapping("/api/lecture/professorId")
+    @ResponseBody
+    public List<LectureDTO> searchLectureAssignment(
+            @RequestParam String semesterCode,
+            @RequestParam String professorId) {
+        return lectureService.getApprovedLectures(semesterCode, professorId);
+    }
 }

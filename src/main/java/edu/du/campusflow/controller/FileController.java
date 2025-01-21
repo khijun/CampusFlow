@@ -13,6 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.core.io.UrlResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import edu.du.campusflow.service.FileLoadService;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +28,7 @@ import java.nio.file.Path;
 public class FileController {
     private final FileInfoRepository fileInfoRepository;
     private final FileUploadService fileUploadService;
+    private final FileLoadService fileLoadService;
 
     // id값으로 파일의 주소를 반환하는 메서드
     @GetMapping("/{id}")

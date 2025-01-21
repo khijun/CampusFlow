@@ -6,6 +6,7 @@
     <title>강의계획서 목록</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
     <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 </head>
@@ -20,7 +21,7 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0, 0, 0, 0.4);
     }
 
     .modal-content {
@@ -47,6 +48,11 @@
 
 <body>
     <!-- 검색 조건 -->
+    <hr style="border: none; margin: 20px 0;">
+    <div class="d-flex align-items-center mb-3">
+        <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+        <span class="h6 mb-0">강의 검색</span>
+    </div>
     <div class="search-container">
         <div class="input-group">
             <label for="Semester">학기</label>
@@ -63,6 +69,11 @@
     </div>
 
     <!-- 검색 결과 그리드 -->
+    <hr style="border: none; margin: 20px 0;">
+    <div class="d-flex align-items-center mb-3">
+        <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+        <span class="h6 mb-0">강의 목록</span>
+    </div>
     <div id="lectureGrid"></div>
 
     <!-- PDF 뷰어 모달 추가 -->
@@ -104,6 +115,8 @@
 
             if (currentMonth >= 8 || currentMonth <= 1) {
                 semesterSelect.value = 'SECOND_SEMESTER';
+            }else{
+                semesterSelect.value = 'FIRST_SEMESTER';
             }
 
             loadLectureList(semesterSelect.value, professorId);
@@ -150,13 +163,13 @@
         });
 
         // 모달 닫기 버튼
-        closeBtn.onclick = function() {
+        closeBtn.onclick = function () {
             modal.style.display = "none";
             pdfViewer.src = "";  // iframe 초기화
         }
 
         // 모달 외부 클릭시 닫기
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
                 pdfViewer.src = "";  // iframe 초기화
