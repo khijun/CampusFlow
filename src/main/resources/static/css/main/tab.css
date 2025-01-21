@@ -13,6 +13,7 @@
    border-radius: 2px;
    box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
    overflow: hidden; /* 탭이 너무 길어질 경우 스크롤 방지 */
+   min-width: 1024px;
 }
 
 #tabs {
@@ -20,6 +21,8 @@
    display: flex;
    margin: 0;
    padding: 0;
+   flex-wrap: nowrap;
+   overflow-x: auto;
 }
 
 .tab-item {
@@ -33,22 +36,28 @@
    align-items: center;
    gap: 5px;
    white-space: nowrap; /* 탭 텍스트 줄바꿈 방지 */
+   position: relative;
+   min-width: 100px;
 }
 
 .tab-item.active {
    background-color: gray;
 }
 
-.tab-item .close-tab {
+.close-tab {
    background: none;
    border: none;
    color: white;
    cursor: pointer;
    font-size: 12px;
+   position: absolute;
+   right: 5px;
+   top: 50%;
+   transform: translateY(-50%);
 }
 
-.tab-item .close-tab:hover {
-   color: gray;
+.close-tab:hover {
+   color: #ddd;
 }
 
 .close-all {
@@ -58,8 +67,9 @@
    padding: 5px 10px;
    border-radius: 4px;
    cursor: pointer;
+   margin-left: 10px;
 }
 
 .close-all:hover {
-   background-color: dimgray;
+   background-color: #666;
 }
