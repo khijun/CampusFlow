@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     public UserDetails toUserDetails(Member member) {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getMemberType().toString().toUpperCase()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getMemberType().getCodeValue().toUpperCase()));
         return User.builder()
                 .username(member.getMemberId().toString())
                 .password(member.getPassword())
@@ -59,10 +59,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/js/**", "/css/**").permitAll() // 정적 리소스 허용
+                .antMatchers("/js/**", "/css/**", "/assets/**").permitAll() // 정적 리소스 허용
 //                .antMatchers("/login").permitAll() // 로그인 페이지 허용
-//                .anyRequest().authenticated() // 그 외 요청은 인증 필요
-                .anyRequest().permitAll() // 실험코드
+                .anyRequest().authenticated() // 그 외 요청은 인증 필요
+//                .anyRequest().permitAll() // 실험코드
                 .and()
                 .headers()
                 .frameOptions().sameOrigin() // X-Frame-Options 설정
@@ -75,7 +75,9 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
-                .permitAll()
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/access-denied") // 403 접근 거부 시 리다이렉트 설정
                 .and()
                 .csrf().disable();  // 임시 코드
 
