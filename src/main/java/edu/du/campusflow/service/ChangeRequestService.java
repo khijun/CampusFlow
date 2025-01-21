@@ -36,6 +36,8 @@ public class ChangeRequestService {
         ChangeRequest changeRequest = new ChangeRequest();
         changeRequest.setMember(member);
         changeRequest.setReason(dto.getReason());
+        changeRequest.setLeaveStartDate(dto.getLeaveStartDate());
+        changeRequest.setLeaveEndDate(dto.getLeaveEndDate());
 
         // 기존 로직 활용
         processChangeRequest(changeRequest, dto.getNewStatusCodeId());
@@ -81,7 +83,14 @@ public class ChangeRequestService {
 
 
     }
-
+    public ChangeRequest getLastChangeRequest(Long memberId) {
+        List<ChangeRequest> changeRequests = changeRequestRepository.findByMember_MemberId(memberId);
+        // 변경 일자 기준으로 내림차순 정렬 후 첫 번째 데이터 반환
+        return changeRequests.stream()
+                .sorted((r1, r2) -> r2.getRequestDate().compareTo(r1.getRequestDate()))
+                .findFirst()
+                .orElse(null);
+    }
 
     // 로그인한 사용자의 변동 신청 내역 조회
     public List<ChangeRequest> getChangeRequestsByMemberId(Long memberId) {

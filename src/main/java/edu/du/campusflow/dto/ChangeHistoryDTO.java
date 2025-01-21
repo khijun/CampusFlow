@@ -11,6 +11,8 @@ public class ChangeHistoryDTO {
     private String name;
     private String grade;
     private String beforeState;
+    private Long deptId; // 학과 필드 추가
+    private String deptName;
     private String afterState;
     private String approvalDate;
 
@@ -23,5 +25,7 @@ public class ChangeHistoryDTO {
         this.beforeState = history.getBeforeCode() != null ? history.getBeforeCode().getCodeName() : null;
         this.afterState = history.getAfterCode() != null ? history.getAfterCode().getCodeName() : null;
         this.approvalDate = history.getApprovalDate() != null ? history.getApprovalDate().toString() : null;
+        this.deptId = history.getMember() != null ? history.getMember().getDept().getDeptId() : null;
+        this.deptName = history.getMember() != null ? history.getMember().getDept().getDeptName() : null;
     }
 }
