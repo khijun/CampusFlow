@@ -22,14 +22,14 @@ public class DeptDTO {
 
     public static DeptDTO fromEntity(Dept dept) {
         return DeptDTO.builder()
-                .deptId(dept.getDeptId())
-                .deptName(dept.getDeptName())
-                .maxStudents(dept.getMaxStudents())
-                .deptStatus(dept.getDeptStatus().getCodeName())
-                .generalCredits(dept.getGeneralCredits())
-                .majorCredits(dept.getMajorCredits())
-                .graduationCredits(dept.getGraduationCredits())
-                .build();
+            .deptId(dept.getDeptId())
+            .deptName(dept.getDeptName())
+            .maxStudents(dept.getMaxStudents())
+            .deptStatus(dept.getDeptStatus().getCodeName())
+            .generalCredits(dept.getGeneralCredits())
+            .majorCredits(dept.getMajorCredits())
+            .graduationCredits(dept.getGraduationCredits())
+            .build();
     }
 
     public static List<DeptDTO> fromEntityList(List<Dept> deptList) {

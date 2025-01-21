@@ -22,50 +22,50 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/dept")
 public class DeptApiController {
 
-    private final DeptService deptService;
+   private final DeptService deptService;
 
-    @GetMapping
-    public List<DeptDTO> getDept(@RequestParam(required = false, name = "filter") String searchURL) {
-        ObjectMapper mapper = new ObjectMapper();
-        DeptSearchFilter filter = null;
-        try {
-            filter = mapper.readValue(searchURL, DeptSearchFilter.class);
-        }catch(Exception e){
-            filter = DeptSearchFilter.builder().build();
-        }
-        return DeptDTO.fromEntityList(deptService.findAllWithFilter(filter));
-    }
+   @GetMapping
+   public List<DeptDTO> getDept(@RequestParam(required = false, name = "filter") String searchURL) {
+      ObjectMapper mapper = new ObjectMapper();
+      DeptSearchFilter filter = null;
+      try {
+         filter = mapper.readValue(searchURL, DeptSearchFilter.class);
+      }catch(Exception e){
+         filter = DeptSearchFilter.builder().build();
+      }
+      return DeptDTO.fromEntityList(deptService.findAllWithFilter(filter));
+   }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<DeptDTO>> searchDept(
-        @RequestParam(required = false) Long deptId,
-        @RequestParam(required = false) String deptName) {
+   @GetMapping("/search")
+   public ResponseEntity<List<DeptDTO>> searchDept(
+       @RequestParam(required = false) Long deptId,
+       @RequestParam(required = false) String deptName) {
 
-        // 학과 검색 로직
-        List<Dept> depts;
-        if (deptId != null && deptName != null) {
-            depts = deptService.findByDeptIdAndDeptName(deptId, deptName);
-        } else if (deptId != null) {
-            depts = deptService.findByDeptId(deptId);
-        } else if (deptName != null) {
-            depts = deptService.findByDeptNameContaining(deptName);
-        } else {
-            depts = deptService.findAll(); // 전체 조회
-        }
+      // 학과 검색 로직
+      List<Dept> depts;
+      if (deptId != null && deptName != null) {
+         depts = deptService.findByDeptIdAndDeptName(deptId, deptName);
+      } else if (deptId != null) {
+         depts = deptService.findByDeptId(deptId);
+      } else if (deptName != null) {
+         depts = deptService.findByDeptNameContaining(deptName);
+      } else {
+         depts = deptService.findAll(); // 전체 조회
+      }
 
-        List<DeptDTO> deptList = depts.stream()
-            .map(DeptDTO::fromEntity)
-            .collect(Collectors.toList());
+      List<DeptDTO> deptList = depts.stream()
+          .map(DeptDTO::fromEntity)
+          .collect(Collectors.toList());
 
-        return ResponseEntity.ok(deptList);
-    }
+      return ResponseEntity.ok(deptList);
+   }
 
-    @PostMapping
-    public ResponseEntity<?> postDept(@RequestBody DeptCreateRequest deptCreateRequest) {
-        try{
-            return ResponseEntity.ok(deptService.create(deptCreateRequest));
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+   @PostMapping
+   public ResponseEntity<?> postDept(@RequestBody DeptCreateRequest deptCreateRequest) {
+      try{
+         return ResponseEntity.ok(deptService.create(deptCreateRequest));
+      }catch(Exception e){
+         return ResponseEntity.badRequest().body(e.getMessage());
+      }
+   }
 }
