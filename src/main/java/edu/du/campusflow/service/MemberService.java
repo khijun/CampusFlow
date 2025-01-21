@@ -31,7 +31,7 @@ public class MemberService {
 
     public Member findByMemberId(Long memberId) {
         return memberRepository.findById(memberId).orElse(null);
-    };
+    }
 
     // AcademicStatus에 따라 Member 목록을 찾는 메서드
     public List<Member> findByAcademicStatus(CommonCode academicStatus) {
@@ -50,28 +50,12 @@ public class MemberService {
         return memberRepository.findAllWithFilter(filter);
     }
 
-//    public List<Member> findAllByMemberType(Long memberType) {
-//        return findAllWithFilter();
-//    }
-
     // 모든 학생을 반환하는 메서드
     public List<Member> findAll() {
         return memberRepository.findAll();
     }
 
     // ----------------------------------------------------------------
-
-    public Member deleteSoft(Member member) {
-        member.setIsActive(false);
-        return memberRepository.save(member);
-    }
-
-    // ----------------------------------------------------------------
-
-    //    public Member updateMember(Member member, String oldPw) {
-//        if(!checkPassword(oldPw, findByMemberId(member.getMemberId()).getPassword())) throw new RuntimeException("비밀번호가 일치하지 않음");
-//        return memberRepository.save(member);
-//    }
 
     public MemberDTO updateMember(Member member, MemberUpdateDTO memberUpdateDTO) throws RuntimeException {
         if (!checkPassword(memberUpdateDTO.getCurrentPassword(), member.getPassword())) {
@@ -82,8 +66,12 @@ public class MemberService {
         member.setAddress(memberUpdateDTO.getAddress());
         member.setBirthDate(memberUpdateDTO.getBirthDate());
         member.setEmail(memberUpdateDTO.getEmail());
-        if (!memberUpdateDTO.getNewPassword().isEmpty()) member.setPassword(memberUpdateDTO.getNewPassword());
-        return MemberDTO.fromEntity(updateMember(member,true));
+        boolean passwordEncoding = false;
+        if (!(memberUpdateDTO.getNewPassword()==null||memberUpdateDTO.getNewPassword().isEmpty())){
+            member.setPassword(memberUpdateDTO.getNewPassword());
+            passwordEncoding = true;
+        }
+        return MemberDTO.fromEntity(updateMember(member, passwordEncoding));
     }
 
     public MemberDTO updateMember(MemberDTO memberDTO) {
@@ -125,7 +113,7 @@ public class MemberService {
 
     public Member updateMember(Member member, boolean passwordEncoding) {
         member.setUpdateAt(LocalDateTime.now());
-        if(passwordEncoding) {
+        if (passwordEncoding) {
             member.setPassword(passwordEncoder.encode(member.getPassword()));
         }
         return memberRepository.save(member);
@@ -139,23 +127,23 @@ public class MemberService {
         String pw = dto.getBirthday() == null ?
                 PasswordGenerator.generateRandomPassword(6) :
                 dto.getBirthday().format(DateTimeFormatter.ofPattern("yyMMdd"));
-
         // 입력값이 없으면 true
         isActive = isActive == null ? true : isActive;
-
         CommonCode gender = commonCodeService.findById(dto.getGenderId());
 
-        CommonCode academicStatus = academicStatusId == null ? commonCodeService.findByCodeGroupAndCodeValue("ACADEMICSTATUS", "ENROLLED") : commonCodeService.findById(academicStatusId);
+        if (memberTypeId == null)
+            throw new RuntimeException("멤버 타입이 지정되지 않음");
+        CommonCode memberType = commonCodeService.findById(memberTypeId);
 
-        CommonCode grade = commonCodeService.findByCodeGroupAndCodeValue("GRADE", "GRADE_1");
-
-        if (memberTypeId == null) throw new RuntimeException("멤버 타입이 지정되지 않음");
-
-        CommonCode studentMemberType = commonCodeService.findById(memberTypeId);
-
+        CommonCode academicStatus = null;
+        CommonCode grade = null;
+        if (memberType.getCodeValue().equals("STUDENT")){
+            academicStatus = academicStatusId == null ? commonCodeService.findByCodeGroupAndCodeValue("ACADEMICSTATUS", "ENROLLED") : commonCodeService.findById(academicStatusId);
+            grade = commonCodeService.findByCodeGroupAndCodeValue("GRADE", "GRADE_1");
+        }
 
         Member member = Member.builder()
-                .memberId(createMemberId(deptId))
+                .memberId(createMemberId(deptId, memberType))
                 .dept(deptService.findById(deptId))
                 .password(pw)
                 .name(dto.getName())
@@ -172,7 +160,7 @@ public class MemberService {
                 // 학년 그룹에서 1학년을 갖고옴
                 .grade(grade)
                 // 멤버타입 그룹에서 학생을 갖고옴
-                .memberType(studentMemberType)
+                .memberType(memberType)
                 .startDate(startDate)
                 .endDate(null)
                 .build();
@@ -187,14 +175,30 @@ public class MemberService {
         }).collect(Collectors.toList());
     }
 
-    public Long createMemberId(Long deptId) {
+    public Long createMemberId(Long deptId, CommonCode memberType) {
         if (deptId == null) throw new RuntimeException("학과 아이디가 비어있습니다");
         int year = LocalDate.now().getYear() % 100;
-        Integer maxNo = memberRepository.getMaxMemberNoFromDeptAndYear(deptId, year);
-        if (maxNo == null) maxNo = 0;
-        return (year * MemberIdPosition.YEAR_POSITION) +
-                (deptId * MemberIdPosition.DEPT_POSITION) +
-                (maxNo + 1);
+        switch (memberType.getCodeValue()) {
+            case "STUDENT":
+                Integer studentMaxNo = memberRepository.getMaxStudentNoFromDeptAndYear(deptId, year, memberType.getCodeId());
+                if (studentMaxNo == null) studentMaxNo = 0;
+                return (year * MemberIdPosition.YEAR_POSITION) +
+                        (deptId * MemberIdPosition.STUDENT_DEPT_POSITION) +
+                        (studentMaxNo + 1);
+            case "PROFESSOR":
+                Integer professorMaxNo = memberRepository.getMaxProfessorNoFromDept(deptId, memberType.getCodeId());
+                if (professorMaxNo == null) professorMaxNo = 0;
+                return (deptId * MemberIdPosition.PROFESSOR_DEPT_POSITION) +
+                        (professorMaxNo + 1);
+            case "STAFF":
+                Integer staffMaxNo = memberRepository.getMaxStaffNoFromDept(deptId, memberType.getCodeId());
+                if (staffMaxNo == null) staffMaxNo = 0;
+                return (MemberIdPosition.STAFF_NUMBER * MemberIdPosition.STAFF_NO_POSITION) +
+                        (deptId * MemberIdPosition.STAFF_DEPT_POSITION) +
+                        (staffMaxNo + 1);
+            default:
+                throw new RuntimeException("멤버 타입이 올바르지 않음");
+        }
     }
 
     public Member addMember(Member member) {

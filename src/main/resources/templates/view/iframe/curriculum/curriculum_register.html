@@ -1,214 +1,239 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
    <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>교육과정 등록</title>
-   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-   <!-- 검색 컨테이너 -->
-   <form class="search-container" th:action="@{/iframe/curriculum/register}" method="get">
-      <div class="input-group">
-         <label for="year">학년도</label>
-         <select id="year" name="year">
-            <option value="">전체</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-         </select>
+<div id="container">
+   <div id="dept-list-table-container">
+      <h2>학과 조회</h2>
+      <hr class="divider">
+      <div class="list-option-container">
+         <label for="dept-id-input">학과 코드:</label>
+         <input type="text" id="dept-id-input" class="input-field"/>
+         <label for="dept-name-input">학과명:</label>
+         <input type="text" id="dept-name-input" class="input-field"/>
+         <button id="dept-list-select-btn" class="btn">조회</button>
       </div>
-      <div class="input-group">
-         <label for="grade">편성학년</label>
-         <select id="grade" name="grade">
-            <option value="">전체</option>
-            <option value="GRADE_1">1학년</option>
-            <option value="GRADE_2">2학년</option>
-            <option value="GRADE_3">3학년</option>
-            <option value="GRADE_4">4학년</option>
-         </select>
-      </div>
-      <div class="input-group">
-         <label for="deptName">학과 이름</label>
-         <input type="text" id="deptName" name="deptName" placeholder="예: 컴퓨터공학과">
-      </div>
-      <div class="input-group">
-         <label for="curriculumName">교육과정명</label>
-         <input type="text" id="curriculumName" name="curriculumName" placeholder="예: 프로그래밍 기초">
-      </div>
-      <div class="input-group">
-         <label for="category">교육과정 상태</label>
-         <select id="category" name="category">
-            <option value="">전체</option>
-            <option value="active">운영중(활성화)</option>
-            <option value="inactive">운영중단(비활성화)</option>
-            <option value="deprecated">폐지(사용중단)</option>
-         </select>
-      </div>
-      <div class="button-group">
-         <button type="button">신규</button>
-         <button type="submit">검색</button>
-      </div>
-   </form>
 
-   <!-- 검색 결과 컨테이너 -->
-   <div class="result-container">
-      <div class="result-header">
-         <div>학년도</div>
-         <div>편성학년</div>
-         <div>학과 이름</div>
-         <div>교육과정명</div>
-         <div>교육과정 상태</div>
+      <div id="dept-list-grid" style="height: 300px;"></div>
+   </div>
+   <div id="curriculum-register-container" style="margin-top: 60px;">
+      <h2>교육과정 추가</h2>
+      <hr class="divider">
+      <div id="curriculum-button-container" class="list-option-container">
+         <button id="add-row-btn" class="btn">행 추가</button>
+         <button id="delete-row-btn" class="btn">행 삭제</button>
+         <button id="save-curriculums-btn" class="btn">저장</button>
       </div>
-      <div th:if="${results != null}" th:each="curriculum : ${results}" class="result-row">
-         <div th:text="${curriculum.curriculumYear ?: 'N/A'}"></div>
-         <div th:text="${curriculum.grade?.codeName ?: 'N/A'}"></div>
-         <div th:text="${curriculum.dept?.deptName ?: 'N/A'}"></div>
-         <div th:text="${curriculum.curriculumName ?: 'N/A'}"></div>
-         <div th:text="${curriculum.curriculumStatus?.codeName ?: 'N/A'}"></div>
-      </div>
-      <div th:each="curriculum : ${results}"></div>
+      <div id="curriculum-grid-container" style="height: 500px;"></div>
    </div>
 </div>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+   document.addEventListener("DOMContentLoaded", async function () {
+      let selectedDept = null; // 선택한 학과 정보 저장용
 
-<!-- 교육과정 개설 컨테이너 -->
-<div class="add-container" style="display: none;">
-   <h3>교육과정 개설</h3>
-   <form class="add-form" th:action="@{/iframe/curriculum/register}" method="post">
-      <!-- 학과 선택 -->
-      <div class="input-group">
-         <label for="deptName-addform">학과 이름</label>
-         <select id="deptName-addform" name="deptId" required>
-            <option value="" disabled selected>학과를 선택하세요</option>
-            <th:block th:each="dept : ${departments}">
-               <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
-            </th:block>
-         </select>
-      </div>
+      // 공통 코드 데이터를 비동기 호출 후 한번에 로드
+      async function fetchCommonCodes(groupCode) {
+         try {
+            const response = await fetch(`/api/common-codes/${groupCode}`);
+            if (!response.ok) throw new Error(`Failed to fetch ${groupCode} codes`);
+            return await response.json();
+         } catch (error) {
+            console.error(`Error fetching ${groupCode} codes:`, error);
+            return [];
+         }
+      }
 
-      <!-- 학년도 선택 -->
-      <div class="input-group">
-         <label for="year">학년도</label>
-         <select id="year-curriculum" name="year" required>
-            <option value="" disabled selected>학년도를 선택하세요</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-         </select>
-      </div>
+      // 공통 코드 데이터를 병렬로 가져오기
+      const [gradeOptions, statusOptions, semesterOptions, dayNightOptions] = await Promise.all([
+         fetchCommonCodes("GRADE"),
+         fetchCommonCodes("CURRICULUMSTATUS"),
+         fetchCommonCodes("SEMESTER"),
+         fetchCommonCodes("DAY_NIGHT")
+      ]);
 
-      <!-- 과목 추가 -->
-      <div class="input-group">
-         <label>과목 추가</label>
-         <div id="subject-container">
-            <!-- 과목 추가 테이블 -->
-            <table id="subject-table" class="subject-table">
-               <thead>
-               <tr>
-                  <th>과목명</th>
-                  <th>학기</th>
-                  <th>삭제</th>
-               </tr>
-               </thead>
-               <tbody>
-               <!-- 행 추가를 위한 입력 필드 -->
-               <tr id="add-row">
-                  <td>
-                     <label for="subjectSearch">과목명</label>
-                     <input
-                         type="text"
-                         id="subjectSearch"
-                         placeholder="과목명을 입력하세요"
-                         list="subjectOptions"
-                         oninput="searchSubjects(this, 'subjectOptions')"
-                     />
-                     <datalist id="subjectOptions">
-                        <!-- JavaScript로 동적으로 옵션 추가 -->
-                     </datalist>
-                     <!-- 숨겨진 필드: subjectIds[] -->
-                     <input type="hidden" name="subjectIds[]" id="subjectId">
-                  </td>
-                  <td>
-                     <label for="semester-addform">학기</label>
-                     <select name="semesters[]">
-                        <option value="" disabled selected>학기를 선택하세요</option>
-                        <option value="FIRST_SEMESTER">1학기</option>
-                        <option value="SECOND_SEMESTER">2학기</option>
-                        <option value="SUMMER">여름학기</option>
-                        <option value="WINTER">겨울학기</option>
-                     </select>
-                  </td>
-                  <td>
-                     <button type="button" onclick="addSubjectFromRow()">추가</button>
-                  </td>
-               </tr>
+      // 공통 코드 데이터를 Grid의 Select 옵션에 맞게 변환
+      function transformOptions(options) {
+         return (options ?? []).map(opt => ({ text: opt.codeName, value: opt.codeValue }));
+      }
 
+      const gradeList = transformOptions(gradeOptions);
+      const statusList = transformOptions(statusOptions);
+      const semesterList = transformOptions(semesterOptions);
+      const dayNightList = transformOptions(dayNightOptions);
 
+      // 학과 조회 Grid 설정
+      const deptGrid = new tui.Grid({
+         el: document.getElementById("dept-list-grid"),
+         data: [],
+         columns: [
+            { header: "학과 ID", name: "deptId", width: 250, align: "center" },
+            { header: "학과명", name: "deptName", width: 500 },
+            { header: "학생 수", name: "maxStudents", width: 400, align: "center" },
+            { header: "상태", name: "deptStatus", width: 400, align: "center" }
+         ],
+         bodyHeight: 300,
+         rowHeaders: ["rowNum"]
+      });
 
-               </tbody>
-            </table>
-         </div>
-      </div>
+       document.getElementById("dept-list-select-btn").addEventListener("click", function () {
+           const deptId = document.getElementById("dept-id-input").value.trim();
+           const deptName = document.getElementById("dept-name-input").value.trim();
 
-      <!-- 기본 정보 입력 -->
-      <div class="input-group">
-         <label for="grade-addform">편성학년</label>
-         <select id="grade-addform" name="grade" required>
-            <option value="" disabled selected>학년을 선택하세요</option>
-            <option value="GRADE_1">1학년</option>
-            <option value="GRADE_2">2학년</option>
-            <option value="GRADE_3">3학년</option>
-            <option value="GRADE_4">4학년</option>
-         </select>
-      </div>
-      <div class="input-group">
-         <label for="curriculumName-addform">교육과정명</label>
-         <input type="text" id="curriculumName-addform" name="curriculumName" placeholder="예: 프로그래밍 기초" required>
-      </div>
-      <div class="input-group">
-         <label for="curriculumStatus-addform">교육과정 상태</label>
-         <select id="curriculumStatus-addform" name="curriculumStatus" required>
-            <option value="" disabled selected>상태를 선택하세요</option>
-            <option value="ACTIVE">운영중(활성화)</option>
-            <option value="INACTIVE">운영중단(비활성화)</option>
-            <option value="DEPRECATED">폐지(사용중단)</option>
-         </select>
-      </div>
-      <div class="input-group">
-         <label for="gradeCapacity-addform">정원</label>
-         <input type="number" id="gradeCapacity-addform" name="gradeCapacity" placeholder="예: 30" min="1" required>
-      </div>
-      <div class="input-group">
-         <label for="studyTime-addform">주야구분</label>
-         <select id="studyTime-addform" name="dayNight" required>
-            <option value="" disabled selected>주야구분을 선택하세요</option>
-            <option value="DAY">주간</option>
-            <option value="NIGHT">야간</option>
-         </select>
-      </div>
-      <div class="input-group">
-         <label for="evaluationMethod-addform">성적평가방법</label>
-         <select id="evaluationMethod-addform" name="gradingMethod" required>
-            <option value="" disabled selected>평가방법을 선택하세요</option>
-            <option value="RELATIVE">상대평가</option>
-            <option value="ABSOLUTE">절대평가</option>
-         </select>
-      </div>
-      <div class="input-group">
-         <label for="reason-addform">사유</label>
-         <textarea id="reason-addform" name="reason" rows="3" placeholder="사유를 입력해주세요."></textarea>
-      </div>
-      <div class="button-group">
-         <button type="submit">추가</button>
-         <button type="button" onclick="toggleAddContainer()">취소</button>
-      </div>
-   </form>
-</div>
+           let queryParams = [];
+           if (deptId) queryParams.push(`deptId=${deptId}`);
+           if (deptName) queryParams.push(`deptName=${encodeURIComponent(deptName)}`);
 
-<script src="/js/curriculum/searchSubject.js"></script>
-<script src="/js/curriculum/toggleAddContainer.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
+           const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+
+           fetch(`/api/dept/search${queryString}`)
+               .then(response => response.json())
+               .then(data => {
+                   console.log("📌 검색된 학과 목록:", data);
+                   deptGrid.resetData(data);
+               })
+               .catch(error => console.error("Error fetching departments:", error));
+       });
+
+       // 학과 클릭 시, 선택한 학과 정보를 교육과정 등록 테이블에 자동 입력
+      deptGrid.on("click", function (ev) {
+         if (ev.rowKey !== null) {
+            selectedDept = deptGrid.getRow(ev.rowKey);
+            alert(`학과 선택됨: ${selectedDept.deptName}`);
+         }
+      });
+
+      // 교육과정 등록 Grid 설정
+      const curriculumGrid = new tui.Grid({
+         el: document.getElementById("curriculum-grid-container"),
+         data: [],
+         columns: [
+            { header: "학과명", name: "deptName", align: "center", width: 200 },
+            { header: "교육과정명", name: "curriculumName", editor: "text", width: 300 },
+            { header: "연도", name: "curriculumYear", editor: "text", align: "center", width: 100 },
+            {
+               header: "학년", name: "grade",
+               formatter: (item) => gradeList.find(opt => opt.value === item.value)?.text || item.value,
+               editor: { type: "select", options: { listItems: gradeList } },
+               align: "center", width: 100
+            },
+            {
+               header: "상태", name: "curriculumStatus",
+               formatter: (item) => statusList.find(opt => opt.value === item.value)?.text || item.value,
+               editor: { type: "select", options: { listItems: statusList } },
+               align: "center", width: 200
+            },
+            {
+               header: "학기", name: "semester",
+               formatter: (item) => semesterList.find(opt => opt.value === item.value)?.text || item.value,
+               editor: { type: "select", options: { listItems: semesterList } },
+               align: "center", width: 100
+            },
+            {
+               header: "주야 구분", name: "dayNight",
+               formatter: (item) => dayNightList.find(opt => opt.value === item.value)?.text || item.value,
+               editor: { type: "select", options: { listItems: dayNightList } },
+               align: "center", width: 150
+            },
+            { header: "사유", name: "reason", editor: "text", width: 400 }
+         ],
+         bodyHeight: 400,
+         rowHeaders: ["checkbox"],
+         editingEvent: "click"
+      });
+
+      // 행 추가 버튼 클릭 이벤트
+      document.getElementById("add-row-btn").addEventListener("click", function () {
+         if (!selectedDept || !selectedDept.deptName) {
+            alert("먼저 학과를 선택하세요.");
+            return;
+         }
+
+         curriculumGrid.appendRow({
+            deptId: selectedDept.deptId,  // 학과 ID 추가
+            deptName: selectedDept.deptName,
+            curriculumName: "",
+            curriculumYear: new Date().getFullYear(),
+            grade: gradeList[0]?.value || "GRADE_1",
+            curriculumStatus: statusList[0]?.value || "ACTIVE",
+            semester: semesterList[0]?.value || "FIRST_SEMESTER",
+            dayNight: dayNightList[0]?.value || "DAY",
+            reason: ""
+         });
+      });
+
+      // 행 삭제 버튼 클릭 이벤트
+      document.getElementById("delete-row-btn").addEventListener("click", function () {
+         const checkedRows = curriculumGrid.getCheckedRows();
+         if (checkedRows.length === 0) {
+            alert("삭제할 행을 선택하세요.");
+            return;
+         }
+         curriculumGrid.removeCheckedRows();
+      });
+
+      document.getElementById("save-curriculums-btn").addEventListener("click", function () {
+         const rows = curriculumGrid.getCheckedRows();
+         if (rows.length === 0) {
+            alert("저장할 행을 선택하세요.");
+            return;
+         }
+
+         // 변환 시 `codeValue`가 null이 아닌지 확인
+         function getCodeValue(codeList, codeValue) {
+            if (!codeValue) {
+               console.warn("⚠ `codeValue`가 비어있음! 확인 필요:", codeList);
+               return null;
+            }
+
+            const code = (codeList ?? []).find(opt => opt.value === codeValue);
+            if (!code) {
+               console.warn(`⚠ 코드 매칭 실패: group=${JSON.stringify(codeList)}, value=${codeValue}`);
+            }
+            return code ? code.value : null;
+         }
+
+         const filteredData = rows.map(row => ({
+            deptId: row.deptId || null,
+            curriculumName: row.curriculumName || "미정",
+            curriculumYear: row.curriculumYear || new Date().getFullYear(),
+            grade: getCodeValue(gradeList, row.grade),  // `row.grade`가 `codeValue`인지 확인
+            curriculumStatus: getCodeValue(statusList, row.curriculumStatus),
+            semester: getCodeValue(semesterList, row.semester),
+            dayNight: getCodeValue(dayNightList, row.dayNight),
+            reason: row.reason || "기본값"
+         }));
+
+         // JSON 확인 로그 추가
+         console.log("변환된 데이터(JSON):", JSON.stringify(filteredData, null, 2));
+
+          fetch("/api/curriculums", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(filteredData)
+          })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error("서버 오류 발생!");
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  alert(data.message);  // JSON 응답에서 메시지 추출
+                  curriculumGrid.clear();
+              })
+              .catch(error => {
+                  console.error("Error saving curriculums:", error);
+                  alert("교육과정 등록 중 오류 발생.");
+              });
+      });
+   });
+</script>
 </body>
 </html>

@@ -3,8 +3,9 @@
    background-color: #f5f5f5 !important; /* 연한 회색 배경 */
    color: #333; /* 글자색 */
 }
+
 /* input 태그 크기 조정 */
-#subject-list-option-container input {
+.list-option-container input {
    font-size: 1.0rem; /* 글자 크기 조정 */
    height: 2.0rem; /* 높이 조정 */
    border: 1px solid #ccc; /* 테두리 */
@@ -12,22 +13,42 @@
 }
 
 /* button 태그 크기 조정 */
-#subject-list-option-container button {
+.list-option-container button {
    font-size: 1.0rem; /* 글자 크기 조정 */
-   height: 2.3rem; /* 높이 조정 */
+   height: 2.25rem; /* 높이 조정 */
    cursor: pointer; /* 커서 변경 */
    border: 1px solid #ccc; /* 테두리 */
    border-radius: 2px; /* 모서리 둥글게 */
 }
 
 /* 버튼 호버 효과 */
-#subject-list-option-container button:hover {
+.list-option-container button:hover {
    background-color: #f5f5f5; /* 호버 시 색상 변경 */
 }
 
 /* 컨테이너 정렬 */
-#subject-list-option-container {
+.list-option-container {
    display: flex;
    gap: 5px; /* 요소 간 간격 */
    align-items: center; /* 세로 정렬 */
+}
+
+/* 구분선 */
+.divider {
+   border: none;
+   height: 1px;         /* 선의 두께 */
+   background-color: #ccc;  /* 선 색상 (연한 회색) */
+   margin: 10px 0;      /* 위아래 여백 */
+}
+
+/* 부모 컨테이너 높이 맞추기 */
+#dept-list-grid, #curriculum-grid-container {
+   width: 100%;
+   height: 100%;
+}
+
+/* 전체 페이지 크기 고정 */
+body {
+   width: 100%;
+   overflow-x: hidden; /* ✅ 전체 페이지에서 가로 스크롤 제거 */
 }

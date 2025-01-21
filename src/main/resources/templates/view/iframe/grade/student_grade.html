@@ -7,12 +7,7 @@
   <title>성적 조회</title>
 </head>
 <body>
-<div>
-  <div id="grade-list-select">
-    <input id="grade-list-select-btn" type="button" value="성적 조회"/>
-    <!-- 클릭 시 함수를 실행해 성적 리스트를 보여줌 -->
-  </div>
-</div>
+
 
 <div id="grade-list"></div>
 <!-- 성적 리스트를 보여줄 요소 -->
@@ -23,10 +18,10 @@
 <script>
   let instance = null; // 리스트를 저장해놓기 위한 변수
 
-  const gradeListSelectButton = document.querySelector("#grade-list-select-btn");
+
   const gradeListDiv = document.querySelector('#grade-list');
 
-  gradeListSelectButton.addEventListener('click', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     createGradeGrid(gradeListDiv);
   })
 

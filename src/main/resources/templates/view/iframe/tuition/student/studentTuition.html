@@ -1,40 +1,87 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <style>
+        .page-title {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+    </style>
     <title>등록금 정보</title>
-    <link rel="stylesheet" th:href="@{/css/tuition/tuitionTarget.css}">
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>등록금 정보</h1>
-    </div>
+<h2 class="page-title">등록금 정보</h2>
 
-    <table>
-        <thead>
-        <tr>
-            <th>학과</th>
-            <th>학번</th>
-            <th>이름</th>
-            <th>등록금액</th>
-            <th>납부금액</th>
-            <th>납부일자</th>
-            <th>납부상태</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td th:text="${tuitionTarget.deptName}"></td>
-            <td th:text="${tuitionTarget.memberId}"></td>
-            <td th:text="${tuitionTarget.memberName}"></td>
-            <td th:text="${#numbers.formatDecimal(tuitionTarget.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-            <td th:text="${#numbers.formatDecimal(tuitionTarget.paidAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-            <td th:text="${tuitionTarget.paymentStatus ? #temporals.format(tuitionTarget.paidDate, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
-            <td th:text="${tuitionTarget.paymentStatus ? '완납' : '미납'}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<div id="tuition-grid"></div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    let instance = null;
+    const tuitionGridDiv = document.querySelector('#tuition-grid');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        createTuitionGrid();
+    });
+
+    function createTuitionGrid() {
+        const columns = [
+            {header: '학과', name: 'deptName', align: 'center'},
+            {header: '학번', name: 'memberId', align: 'center'},
+            {header: '이름', name: 'memberName', align: 'center'},
+            {
+                header: '등록금액',
+                name: 'amount',
+                align: 'right',
+                formatter: ({value}) => value.toLocaleString() + '원'
+            },
+            {
+                header: '납부금액',
+                name: 'paidAmount',
+                align: 'right',
+                formatter: ({value}) => value ? value.toLocaleString() + '원' : '0원'
+            },
+            {
+                header: '납부일자',
+                name: 'paidDate',
+                align: 'center',
+                formatter: ({row}) => row.paymentStatus ? new Date(row.paidDate).toLocaleString() : '-'
+            },
+            {
+                header: '납부상태',
+                name: 'paymentStatus',
+                align: 'center',
+                formatter: ({value}) => value ? '완납' : '미납'
+            }
+        ];
+
+        fetch('/api/tuition/student/info')
+            .then(response => response.json())
+            .then(data => {
+                if (instance) {
+                    instance.destroy();
+                }
+
+                instance = new tui.Grid({
+                    el: tuitionGridDiv,
+                    columns: columns,
+                    data: [data], // 단일 데이터를 배열로 변환
+                    bodyHeight: 'auto',
+                    minBodyHeight: 40,
+                    rowHeight: 40,
+                    columnOptions: {
+                        resizable: true
+                    }
+                });
+            });
+    }
+</script>
 </body>
 </html>

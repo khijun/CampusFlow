@@ -27,12 +27,7 @@
 <body>
 <h2>학적 조회</h2>
 
-<div>
-  <div id="change-request-select">
-    <input id="change-request-select-btn" type="button" value="조회"/>
-    <!-- 클릭 시 함수를 실행해서 리스트를 보여줌 -->
-  </div>
-</div>
+
 
 <div id="change-request-list"></div>
 <!-- TOAST UI Grid를 표시할 요소 -->
@@ -42,10 +37,10 @@
 <script>
   let instance = null; // Grid 인스턴스를 저장해둘 변수
 
-  const changeRequestSelectButton = document.querySelector("#change-request-select-btn");
+
   const changeRequestListDiv = document.querySelector('#change-request-list');
 
-  changeRequestSelectButton.addEventListener('click', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     createChangeRequestGrid(changeRequestListDiv);
   });
 

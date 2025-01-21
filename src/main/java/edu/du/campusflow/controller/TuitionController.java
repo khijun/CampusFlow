@@ -26,19 +26,15 @@ public class TuitionController {
      * 등록금 대상자 관리 페이지를 보여줍니다.
      */
     @GetMapping("/admin/tuitionTarget")
-    public String showTuitionTargetPage(Model model, Member student) {
-        List<TuitionDTO> tuitionDTO = tuitionService.findAllTuitionDTO();
-        model.addAttribute("tuitionTarget", tuitionDTO);  // 등록금 대상자 정보
-        return "view/iframe/tuition/admin/tuitionTarget";  // Thymeleaf 템플릿 이름 // "tuitionTargets"라는 이름으로 데이터 추가
-
+    public String showTuitionTargetPage() {
+        return "view/iframe/tuition/admin/tuitionTarget";
     }
 
+    /**
+     * 학생 등록금 조회 페이지를 보여줍니다.
+     */
     @GetMapping("/student/studentTuition")
-    public String showStudentTuitionTargetPage(Model model) {
-        Member member = authService.getCurrentMember();
-
-        TuitionDTO tuitionDTO = tuitionService.getTuitionInfo(member);
-        model.addAttribute("tuitionTarget", tuitionDTO);
+    public String showStudentTuitionPage() {
         return "view/iframe/tuition/student/studentTuition";
     }
 
@@ -67,7 +63,4 @@ public class TuitionController {
     public ResponseEntity<?> getTuition() {
         return ResponseEntity.ok(tuitionService);
     }
-
-
-
 }

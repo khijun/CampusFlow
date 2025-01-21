@@ -61,7 +61,13 @@ public class DiagEvaluationController {
 
     // 교수용 진단평가 페이지 이동
     @GetMapping("/professor")
-    public String showProfessorDiagnosticList() {
+    public String showProfessorDiagnosticList(Model model) {
+        Member professor = authService.getCurrentMember();  // 현재 로그인한 교수 정보 가져오기
+
+        // 교수의 강의 목록 조회
+        List<Map<String, Object>> lectures = diagEvaluationService.getProfessorLectures(professor.getMemberId());
+        model.addAttribute("lectures", lectures);
+
         return "view/iframe/evaluation/diag/professor/professorDiag";
     }
 
@@ -90,7 +96,6 @@ public class DiagEvaluationController {
         log.info("Professor Search results size: {}", results.size());
         return ResponseEntity.ok(results);
     }
-
 
     // 학생용 진단평가 페이지 이동
     @GetMapping("/student")
@@ -190,4 +195,5 @@ public class DiagEvaluationController {
 
         return "redirect:/iframe/evaluation/diag/student/" + id;
     }
+
 }

@@ -1,10 +1,12 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.ChangeRequestDTO;
+import edu.du.campusflow.dto.DeptDTO;
 import edu.du.campusflow.entity.ChangeRequest;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.ChangeRequestService;
+import edu.du.campusflow.service.DeptService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +19,12 @@ public class ChangeRequestController {
 
     private final ChangeRequestService changeRequestService;
     private final AuthService authService;
+    private final DeptService deptService;
 
-    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService) {
+    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService, DeptService deptService) {
         this.changeRequestService = changeRequestService;
         this.authService = authService;
+        this.deptService = deptService;
     }
 
     // 관리자용 - 모든 학생의 신청서 조회
@@ -29,6 +33,7 @@ public class ChangeRequestController {
         List<ChangeRequest> changeRequests = changeRequestService.getALlChangeRequests();  // 모든 학생의 신청서 조회
         model.addAttribute("changeRequests", changeRequests);
         model.addAttribute("changeRequestDto", changeRequestDto);
+        model.addAttribute("deptList", DeptDTO.fromEntityList(deptService.findAll()));
         return "view/iframe/academic/admin/admin-change-request-list"; // 관리자용 변동 신청 목록 페이지
     }
     // 학적 조회
