@@ -1,6 +1,7 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.CurriculumSubjectDTO;
+import edu.du.campusflow.dto.CurriculumSubjectDetailDTO;
 import edu.du.campusflow.service.CurriculumSubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,11 @@ public class CurriculumSubjectController {
     @Autowired
     CurriculumSubjectService curriculumSubjectService;
 
+    @GetMapping("/iframe/curriculum/curriculum-subject/list")
+    public String getCurriculumSubjectListPage() {
+        return "view/iframe/curriculum/curriculum-subject/curriculumSubject_list";  // curriculumSubject_list.html 반환
+    }
+
     //강의 개설 페이지에서 사용할 검색
     @GetMapping("/api/curriculum-subjects/search")
     public ResponseEntity<List<CurriculumSubjectDTO>> searchCurriculumSubjects(
@@ -27,4 +33,11 @@ public class CurriculumSubjectController {
         return ResponseEntity.ok(subjects);
     }
 
+    // 새롭게 추가된 교육과정 교과목 조회
+    @GetMapping("/api/curriculum-subjects")
+    public ResponseEntity<List<CurriculumSubjectDetailDTO>> getCurriculumSubjects(
+        @RequestParam(required = false) String keyword) {
+        List<CurriculumSubjectDetailDTO> subjects = curriculumSubjectService.getCurriculumSubjects(keyword);
+        return ResponseEntity.ok(subjects);
+    }
 }

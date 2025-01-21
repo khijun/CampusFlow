@@ -1,6 +1,7 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.CurriculumSubjectDTO;
+import edu.du.campusflow.dto.CurriculumSubjectDetailDTO;
 import edu.du.campusflow.entity.CurriculumSubject;
 import edu.du.campusflow.repository.CurriculumSubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,4 +73,30 @@ public class CurriculumSubjectService {
         }).collect(Collectors.toList());
     }
 
+    public List<CurriculumSubjectDetailDTO> getCurriculumSubjects(String keyword) {
+        List<CurriculumSubject> subjects = curriculumSubjectRepository.findAll();
+
+        // 교육과정 이름으로 필터링 (옵션)
+        if (keyword != null && !keyword.isEmpty()) {
+            subjects = subjects.stream()
+                .filter(subject -> subject.getCurriculum().getCurriculumName().contains(keyword))
+                .collect(Collectors.toList());
+        }
+
+        return subjects.stream().map(subject -> {
+            CurriculumSubjectDetailDTO dto = new CurriculumSubjectDetailDTO();
+            dto.setCurriculumSubjectId(subject.getCurriculumSubjectId());
+            dto.setCurriculumName(subject.getCurriculum().getCurriculumName());
+            dto.setSubjectName(subject.getSubject().getSubjectName());
+            dto.setPrereqSubjectName(subject.getPrereqSubject() != null ? subject.getPrereqSubject().getSubjectName() : "미정");
+            dto.setSubjectCredits(subject.getSubject().getSubjectCredits() != null ? subject.getSubject().getSubjectCredits().toString() : "미정");
+            dto.setSubjectTypeName(subject.getSubjectType() != null ? subject.getSubjectType().getCodeName() : "미정");
+            dto.setGradingMethod(subject.getGradingMethod() != null ? subject.getGradingMethod().getCodeName() : "미정");
+            dto.setGrade(subject.getCurriculum().getGrade() != null ? subject.getCurriculum().getGrade().getCodeName() : "미정");
+            dto.setSemester(subject.getCurriculum().getSemester() != null ? subject.getCurriculum().getSemester().getCodeName() : "미정");
+            dto.setDayNight(subject.getCurriculum().getDayNight() != null ? subject.getCurriculum().getDayNight().getCodeName() : "미정");
+            dto.setCurriculumStatus(subject.getCurriculum().getCurriculumStatus() != null ? subject.getCurriculum().getCurriculumStatus().getCodeName() : "미정");
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }
