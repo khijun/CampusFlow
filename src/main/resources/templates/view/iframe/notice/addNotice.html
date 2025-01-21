@@ -8,7 +8,7 @@
 <body>
 <div class="container mt-5">
   <h1 class="text-center">공지사항 추가</h1>
-  <form th:action="@{/iframe/notice}" method="post">
+  <form th:action="@{/iframe/notice}" method="post" onsubmit="return handleSubmit(event)">
     <div class="form-group">
       <label for="subject">제목</label>
       <input type="text" class="form-control" id="subject" name="subject" required>
@@ -17,11 +17,37 @@
       <label for="content">내용</label>
       <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">추가</button>
+    <button type="submit" class="btn btn-primary" id="submitBtn">추가</button>
   </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  let isSubmitting = false;
+  
+  function handleSubmit(event) {
+    if (isSubmitting) {
+      event.preventDefault();
+      return false;
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 처리중...';
+    isSubmitting = true;
+    
+    // 3초 후에도 응답이 없으면 버튼 상태 복구
+    setTimeout(function() {
+      if (isSubmitting) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '추가';
+        isSubmitting = false;
+      }
+    }, 3000);
+    
+    return true;
+  }
+</script>
 </body>
 </html>

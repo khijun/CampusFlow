@@ -171,7 +171,7 @@
 
     // 폼 데이터 생성
     const formData = new FormData(commentForm);
-    
+
     // fetch를 사용하여 데이터 전송
     fetch(commentForm.action, {
       method: 'POST',
@@ -213,7 +213,7 @@
     if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
       if (!isSubmitting) {
         isSubmitting = true;
-        
+
         // fetch를 사용하여 삭제 요청
         fetch(form.action, {
           method: 'POST'

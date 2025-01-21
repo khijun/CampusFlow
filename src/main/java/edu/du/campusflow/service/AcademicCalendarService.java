@@ -27,7 +27,7 @@ public class AcademicCalendarService {
     public ResponseEntity<Void> addAcademicCalendar(AcademicCalendar academicCalendar) {
         try {
             var currentMember = authService.getCurrentMember();
-            if (currentMember == null || !"ADMIN".equals(currentMember.getMemberType().getCodeValue())) {
+            if (currentMember == null || !"STAFF".equals(currentMember.getMemberType().getCodeValue())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             
@@ -42,7 +42,7 @@ public class AcademicCalendarService {
     public ResponseEntity<?> updateAcademicCalendar(AcademicCalendar academicCalendar) {
         try {
             var currentMember = authService.getCurrentMember();
-            if (currentMember == null || !"ADMIN".equals(currentMember.getMemberType().getCodeValue())) {
+            if (currentMember == null || !"STAFF".equals(currentMember.getMemberType().getCodeValue())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -70,7 +70,7 @@ public class AcademicCalendarService {
     public ResponseEntity<?> deleteCalendar(Long id) {
         try {
             var currentMember = authService.getCurrentMember();
-            if (currentMember == null || !"ADMIN".equals(currentMember.getMemberType().getCodeValue())) {
+            if (currentMember == null || !"STAFF".equals(currentMember.getMemberType().getCodeValue())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 

@@ -66,7 +66,6 @@
         $('#calendar').fullCalendar({
             selectable: true,
             selectHelper: true,
-            height: 500,
             select: function(start, end) {
                 // 시작 날짜와 종료 날짜를 동일하게 설정 (시간은 00:00:00으로 고정)
                 $('#startDate').val(moment(start).startOf('day').format('YYYY-MM-DD'));

@@ -22,9 +22,6 @@ import java.util.List;
 public class InfoController {
     private final InfoService infoService;
     private final AuthService authService;
-    private final EducationInfoRepository educationInfoRepository;
-    private final FamilyInfoRepository familyInfoRepository;
-    private final MilitaryInfoRepository militaryInfoRepository;
 
     @GetMapping("/iframe/info/education_student")
     public String edu_infoStudent(Model model) {

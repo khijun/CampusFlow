@@ -16,6 +16,9 @@ public class DeptDTO {
     private String deptName;
     private Integer maxStudents;
     private String deptStatus;
+    private Integer generalCredits;
+    private Integer majorCredits;
+    private Integer graduationCredits;
 
     public static DeptDTO fromEntity(Dept dept) {
         return DeptDTO.builder()
@@ -23,6 +26,9 @@ public class DeptDTO {
                 .deptName(dept.getDeptName())
                 .maxStudents(dept.getMaxStudents())
                 .deptStatus(dept.getDeptStatus().getCodeName())
+                .generalCredits(dept.getGeneralCredits())
+                .majorCredits(dept.getMajorCredits())
+                .graduationCredits(dept.getGraduationCredits())
                 .build();
     }
 

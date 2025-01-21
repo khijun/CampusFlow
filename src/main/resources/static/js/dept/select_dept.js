@@ -17,10 +17,14 @@ listSelectButton.addEventListener('click', () => {
 
 function createDeptGrid(listDiv) {
     const columns = [
-        {header: '학과 코드', name: 'deptId', width: 'auto'},
-        {header: '학과 이름', name: 'deptName', width: 'auto'},
-        {header: '최대 수용 인원', name: 'maxStudents', width: 'auto'},
-        {header: '학과 상태', name: 'deptStatus', width: 'auto'},
+        {header: '학과 코드', name: 'deptId'},
+        {header: '학과 이름', name: 'deptName'},
+        {header: '최대 수용 인원', name: 'maxStudents'},
+        {header: '학과 상태', name: 'deptStatus'},
+        {header: '전공 학점', name: 'generalCredits'},
+        {header: '교양 학점', name: 'majorCredits'},
+        {header: '졸업 학점', name: 'graduationCredits'},
+
     ];
 
     // 필터 객체 정의

@@ -94,14 +94,14 @@ public class NoticeController {
         return "/view/iframe/notice/viewNotice";
     }
 
-    // 특정 공지사항 상세 조회 (모든 사용자 접근 가능)
+    // 특정 공지사항 상세 조회
     @GetMapping("/{id}")
     public String viewNoticeDetail(@PathVariable Long id, Model model) {
         Notice notice = noticeService.getNoticeById(id);
-        
+
         // 게시물 번호 계산
         long noticeNumber = noticeService.calculateNoticeNumber(notice.getNoticeId());
-        
+
         model.addAttribute("notice", notice);
         model.addAttribute("noticeNumber", noticeNumber);
         model.addAttribute("isStaff", noticeService.isStaff());

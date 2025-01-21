@@ -8,7 +8,7 @@
 <body>
 <div class="container mt-5">
   <h1>게시물 작성</h1>
-  <form th:action="@{/iframe/posts}" method="post" th:object="${post}">
+  <form th:action="@{/iframe/posts}" method="post" th:object="${post}" onsubmit="return handleSubmit(event)">
     <div class="form-group">
       <label for="title">제목</label>
       <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
@@ -17,8 +17,36 @@
       <label for="content">내용</label>
       <textarea class="form-control" id="content" name="content" th:field="*{content}" rows="5" required></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">작성</button>
+    <button type="submit" class="btn btn-primary" id="submitBtn">작성</button>
   </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+let isSubmitting = false;
+
+function handleSubmit(event) {
+    if (isSubmitting) {
+        event.preventDefault();
+        return false;
+    }
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 처리중...';
+    isSubmitting = true;
+    
+    // 3초 후에도 응답이 없으면 버튼 상태 복구
+    setTimeout(() => {
+        if (isSubmitting) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '작성';
+            isSubmitting = false;
+        }
+    }, 3000);
+    
+    return true;
+}
+</script>
 </body>
 </html>

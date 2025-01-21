@@ -59,7 +59,7 @@ public class NoticeService {
         if (currentMember == null || currentMember.getMemberType() == null) {
             return false;
         }
-        return "ADMIN".equals(currentMember.getMemberType().getCodeValue());
+        return "STAFF".equals(currentMember.getMemberType().getCodeValue());
     }
 
     // 공지 삭제

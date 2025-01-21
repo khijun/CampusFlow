@@ -1,5 +1,6 @@
 package edu.du.campusflow.controller;
 
+import edu.du.campusflow.dto.SimpleMemberDTO;
 import edu.du.campusflow.entity.ChangeHistory;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.repository.ChangeHistoryRepository;
@@ -36,15 +37,15 @@ public class ChangeHistoryController {
         return "view/iframe/academic/admin/student-status-management";
     }
 
-    @PostMapping("/members/{id}/expel")
-    public String withdrawMember(@PathVariable Long id) {
-        changeHistoryService.processExpulsionOrWithdrawal(id, false); // 제적 처리
+    @PostMapping("/members/{memberId}/expel")
+    public String withdrawMember(@PathVariable Long memberId) {
+        changeHistoryService.processExpulsionOrWithdrawal(memberId, false); // 제적 처리
         return "redirect:/iframe/academic/admin/student_status_management";
     }
 
-    @PostMapping("/members/{id}/withdraw")
-    public String expelMember(@PathVariable Long id) {
-        changeHistoryService.processExpulsionOrWithdrawal(id, true); // 퇴학 처리
+    @PostMapping("/members/{memberId}/withdraw")
+    public String expelMember(@PathVariable Long memberId) {
+        changeHistoryService.processExpulsionOrWithdrawal(memberId, true); // 퇴학 처리
         return "redirect:/iframe/academic/admin/student_status_management";
     }
 }

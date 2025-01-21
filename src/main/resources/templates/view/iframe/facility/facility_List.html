@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>강의실 관리</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+</head>
+<body>
+<!-- 검색 조건 -->
+<div class="search-container">
+  <div class="input-group">
+    <label for="buildingName">건물명</label>
+    <select id="buildingName">
+      <option value="">선택</option>
+      <option th:each="building : ${building}" th:value="${building.codeValue}" th:text="${building.codeName}"></option>
+    </select>
+  </div>
+  <div class="input-group">
+    <label for="facilityStatus">강의실 상태</label>
+    <select id="facilityStatus">
+      <option value="">전체</option>
+      <option th:each="facility : ${facilityStatus}" th:value="${facility.codeValue}" th:text="${facility.codeName}"></option>
+    </select>
+  </div>
+  <div class="input-group"></div>
+  <button type="button" id="searchButton">조회</button>
+</div>
+
+<!-- 강의실 목록 그리드 -->
+<div id="facilityGrid">
+
+</div>
+
+<!-- 상태 변경 폼 -->
+<div class="search-container">
+  <div class="input-group">
+    <label for="selectedFacility">선택된 강의실</label>
+    <input type="text" id="selectedFacility" readonly>
+  </div>
+  <div class="input-group">
+    <label for="facilityCapacity">수용 인원</label>
+    <input type="number" id="facilityCapacity">
+  </div>
+  <div class="input-group">
+    <label for="newStatus">변경할 상태</label>
+    <select id="newStatus">
+      <option value="">전체</option>
+      <option th:each="facility : ${facilityStatus}" th:value="${facility.codeValue}" th:text="${facility.codeName}"></option>
+    </select>
+  </div>
+  <button type="button" id="updateButton">상태 변경</button>
+</div>
+
+<script>
+
+  const facilityGrid = new tui.Grid({
+    el: document.getElementById('facilityGrid'),
+    columns: [
+      { header: '강의실 코드', name: 'facilityId', sortable: false },
+      { header: '강의실 명', name: 'facilityName', sortable: false },
+      { header: '건물명', name: 'building', sortable: false },
+      { header: '층수', name: 'floor', sortable: false },
+      { header: '수용 인원', name: 'capacity', sortable: false },
+      { header: '강의실 상태', name: 'facilityStatus', sortable: false }
+    ],
+    bodyHeight: 300
+  });
+
+  document.getElementById('searchButton').addEventListener('click', function() {
+    const buildingCode = document.getElementById('buildingName').value;
+    const facilityStatus = document.getElementById('facilityStatus').value;
+
+    // 검색 조건 조합
+    const params = new URLSearchParams();
+    if (buildingCode) params.append('building', buildingCode);
+    if (facilityStatus) params.append('facilityStatus', facilityStatus);
+
+    // API 호출
+    fetch(`/api/facility/search?${params.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+              if(data.length === 0){
+                alert('검색하신 강의실 정보가 없습니다.')
+              }
+              facilityGrid.resetData(data);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('강의실 목록을 불러오는데 실패했습니다.');
+            });
+  });
+
+  let selectedFacilityId = null;
+
+  facilityGrid.on('click', (ev) => {
+    if (ev.rowKey === undefined) return;
+    const rowData = facilityGrid.getRow(ev.rowKey);
+
+    selectedFacilityId = rowData.facilityId;
+    document.getElementById('selectedFacility').value = rowData.facilityName;
+    document.getElementById('facilityCapacity').value = rowData.capacity;
+
+    const facilityStatusSelect = document.getElementById('newStatus');
+    const options = Array.from(facilityStatusSelect.options);
+    const matchingOption = options.find(option => option.text === rowData.facilityStatus);
+    if (matchingOption) {
+      facilityStatusSelect.value = matchingOption.value;
+    }
+  });
+
+  // 상태 변경 버튼 클릭 이벤트
+  document.getElementById('updateButton').addEventListener('click', function() {
+    if (!selectedFacilityId) {
+      alert('변경할 강의실을 선택해주세요.');
+      return;
+    }
+
+    const newStatus = document.getElementById('newStatus').value;
+    if (!newStatus && newStatus === "") {
+      alert('변경할 상태를 선택해주세요.');
+      return;
+    }
+
+    // 상태 변경 확인
+    if (!confirm('선택한 강의실의 상태를 변경하시겠습니까?')) {
+      return;
+    }
+
+    // API 호출
+    fetch('/api/facility/update-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `facilityId=${selectedFacilityId}&facilityStatus=${newStatus}`
+    })
+            .then(response => response.text())
+            .then(message => {
+              alert(message);
+              if (message.includes('성공')) {
+                // 성공 시 그리드 데이터 갱신
+                document.getElementById('searchButton').click();
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('상태 변경 중 오류가 발생했습니다.');
+            });
+  });
+</script>
+</body>
+</html>

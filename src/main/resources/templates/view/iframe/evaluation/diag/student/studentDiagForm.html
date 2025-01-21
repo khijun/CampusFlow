@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>진단평가</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    .lecture-select {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .lecture-select h3 {
+      color: #2196F3;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1em;
+      background-color: white;
+    }
+
+    .evaluation-form {
+      background-color: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .question-item {
+      background-color: #f8f9fa;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .question-item h4 {
+      color: #1976D2;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .score-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .score-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .score-option input[type="radio"] {
+      margin-right: 5px;
+    }
+
+    .submit-button {
+      background-color: #2196F3;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .submit-button:hover {
+      background-color: #1976D2;
+    }
+
+    .error-message {
+      color: #f44336;
+      margin-top: 5px;
+      font-size: 0.9em;
+    }
+
+    .completed-message {
+      text-align: center;
+      padding: 30px;
+      background-color: #e8f5e9;
+      border-radius: 8px;
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- 강의 선택 드롭다운 -->
+  <div class="lecture-select">
+    <h3>강의 선택</h3>
+    <select onchange="if(this.value) location.href='/iframe/evaluation/diag/student/' + this.value">
+      <option value="">강의를 선택하세요</option>
+      <option th:each="lecture : ${lectures}"
+              th:selected="${lecture.get('ofregistrationId') == selectedOfregistrationId}"
+              th:text="${lecture.get('lectureName')}"
+              th:value="${lecture.get('ofregistrationId')}">
+      </option>
+    </select>
+  </div>
+
+  <!-- 강의가 선택되지 않았을 때 -->
+  <div class="no-results" th:if="${!showForm}">
+    <p>강의를 선택하면 진단평가 문항이 표시됩니다.</p>
+  </div>
+
+  <!-- 진단평가 폼 (새로운 평가 또는 기존 답변 표시) -->
+  <form class="evaluation-form"
+        th:action="@{/iframe/evaluation/diag/student/submit}"
+        th:if="${showForm}"
+        th:method="post">
+    <input name="id" th:value="${selectedOfregistrationId}" type="hidden">
+
+    <div class="question-item" th:each="question : ${questions}">
+      <h4 th:text="${question.questionName}">문항</h4>
+      <div class="score-options">
+        <div class="score-option" th:each="score : ${#numbers.sequence(1, 5)}">
+          <input required
+                 th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) != null and previousAnswers.get(question.questionId) == score}"
+                 th:disabled="${evaluated}"
+                 th:value="${score}"
+                 th:name="'scores[' + ${question.questionId} + ']'"
+                 type="radio">
+          <label th:for="${'q' + question.questionId + '_' + score}"
+                 th:text="${score + '점'}">점수</label>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-button" th:if="${!evaluated}" type="submit">제출하기</button>
+  </form>
+
+  <!-- 이미 평가를 완료한 경우 -->
+  <div class="completed-message" th:if="${evaluated}">
+    <p>이미 진단평가를 완료하였습니다.</p>
+  </div>
+</div>
+<script>
+  // 폼 제출 전 모든 문항이 선택되었는지 확인
+  document.querySelector('form')?.addEventListener('submit', function(e) {
+    const questions = document.querySelectorAll('.question-item');
+    for (let question of questions) {
+      const checked = question.querySelector('input[type="radio"]:checked');
+      if (!checked) {
+        e.preventDefault();
+        alert('모든 문항에 답변해주세요.');
+        return;
+      }
+    }
+  });
+</script>
+</body>
+</html>
