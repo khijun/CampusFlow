@@ -4,84 +4,31 @@
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>강의평가 조회</title>
+  <link href="https://uicdn.toast.com/grid/latest/tui-grid.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/iframe/evaluation/search-container.css}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .container {
       margin: 0 auto;
+      padding: 20px;
     }
-
-    .diagnostic-results {
-      max-height: 550px;  /* 최대 높이 설정 */
-      overflow-y: auto;   /* 세로 스크롤 활성화 */
+    #evaluation-grid {
+      margin-top: 20px;
+      width: 100%;
+      height: 550px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .no-results {
+      text-align: center;
+      padding: 20px;
       background-color: white;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-top: 20px;
-      padding-top: 20px;
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-
-    .lecture-section h3 {
-      color: #2196F3;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-
-    .score-distribution li {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      padding: 8px;
-      background-color: #f8f9fa;
-      border-radius: 4px;
-    }
-    .results-table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-      margin-bottom: 20px;
-    }
-
-    .results-table th,
-    .results-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .results-table th {
-      background-color: #2196F3;
-      color: white;
-      font-weight: normal;
-    }
-
-    .results-table tr:hover {
-      background-color: #f8f9fa;
-    }
-
-    /* 스크롤바 스타일링 */
-    .diagnostic-results::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .diagnostic-results::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 4px;
-    }
-
-    .diagnostic-results::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 4px;
-    }
-
-    .diagnostic-results::-webkit-scrollbar-thumb:hover {
-      background: #555;
+      display: none;
     }
   </style>
 </head>
@@ -122,20 +69,58 @@
 
   <!-- 검색 결과가 없을 때 -->
   <div class="no-results" id="noResults">
-    <p>검색 결과가 없습니다.</p>
+    <p>학년 선택은 필수입니다.</p>
   </div>
 
-  <!-- 진단평가 결과 표시 -->
-  <div class="diagnostic-results" id="resultsContainer" style="display: none;">
-    <!-- 결과 내용 -->
-  </div>
+  <!-- TOAST UI Grid가 렌더링될 컨테이너 -->
+  <div id="evaluation-grid"></div>
 </div>
 
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const searchForm = document.querySelector('#searchForm');
-    const resultsContainer = document.querySelector('#resultsContainer');
-    const noResults = document.querySelector('#noResults');
+    const grid = new tui.Grid({
+      el: document.getElementById('evaluation-grid'),
+      data: [],
+      columns: [
+        {
+          header: '강의명',
+          name: 'lectureName',
+          align: 'center',
+          width: 200
+        },
+        {
+          header: '문항',
+          name: 'questionName',
+          align: 'left',
+          width: 'auto'
+        },
+        {
+          header: '평균 점수',
+          name: 'averageScore',
+          align: 'center',
+          width: 100,
+          formatter: ({value}) => {
+            return value ? value.toFixed(2) : '0.00';
+          }
+        },
+        {
+          header: '응답자 수',
+          name: 'respondentCount',
+          align: 'center',
+          width: 100,
+          formatter: ({value}) => {
+            return `${value || 0}명`;
+          }
+        }
+      ],
+      scrollX: false,
+      scrollY: true,
+      bodyHeight: 500,
+      minBodyHeight: 400,
+      rowHeaders: ['rowNum'],
+      sortable: true
+    });
 
     // 교수의 학과 정보 가져오기
     fetch('/iframe/evaluation/lec/professor/departments')
@@ -148,7 +133,6 @@
                 option.textContent = dept.deptName;
                 deptSelect.appendChild(option);
               });
-              // 교수는 학과가 하나뿐이므로 자동 선택 및 비활성화
               if (departments.length === 1) {
                 deptSelect.value = departments[0].deptId;
                 deptSelect.disabled = true;
@@ -157,7 +141,7 @@
             .catch(error => console.error('학과 목록 로딩 실패:', error));
 
     // 검색 폼 제출 처리
-    searchForm.addEventListener('submit', function(e) {
+    document.getElementById('searchForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
       const searchParams = new URLSearchParams();
@@ -169,44 +153,39 @@
       if (grade) searchParams.append('grade', grade);
       if (lectureName) searchParams.append('lectureName', lectureName);
 
-      fetch(`/iframe/evaluation/lec/professor/search?${searchParams.toString()}`)
+      fetch(`/api/evaluation/lec/search?${searchParams.toString()}`)
               .then(response => response.json())
-              .then(results => {
-                console.log('Raw results:', results);  // 결과 데이터 확인
-                if (results && results.length > 0) {
-                  // 결과가 있을 때만 테이블 표시
-                  resultsContainer.innerHTML = `
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>강의명</th>
-                            <th>문항</th>
-                            <th>평균 점수</th>
-                            <th>응답자 수</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${results.map(result => {
-                    console.log('Processing result:', result);  // 각 결과 항목 확인
-                    return `
-                                <tr>
-                                    <td>${result.lectureName}</td>
-                                    <td>${result.questionName}</td>
-                                    <td>${result.averageScore || result.score}</td>
-                                    <td>1명</td>
-                                </tr>
-                            `;
-                  }).join('')}
-                    </tbody>
-                </table>
-            `;
-                  resultsContainer.style.display = 'block';
-                  noResults.style.display = 'none';
+              .then(result => {
+                if (result.result && result.data.contents.length > 0) {
+                  // 데이터 가공
+                  const processedData = result.data.contents.map(item => {
+                    // 전체 응답자 수 계산
+                    const totalRespondents = item.score1Count +
+                            item.score2Count +
+                            item.score3Count +
+                            item.score4Count +
+                            item.score5Count;
+
+                    return {
+                      lectureName: item.lectureName,
+                      questionName: item.questionName,
+                      averageScore: item.averageScore || item.score || 0,
+                      respondentCount: totalRespondents
+                    };
+                  });
+
+                  grid.resetData(processedData);
+                  document.getElementById('noResults').style.display = 'none';
                 } else {
-                  resultsContainer.style.display = 'none';
-                  noResults.style.display = 'block';
+                  grid.resetData([]);
+                  document.getElementById('noResults').style.display = 'block';
                 }
               })
+              .catch(error => {
+                console.error('Search error:', error);
+                grid.resetData([]);
+                document.getElementById('noResults').style.display = 'block';
+              });
     });
   });
 </script>
