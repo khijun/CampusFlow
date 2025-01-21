@@ -22,7 +22,7 @@ public class MemberController {
     private final DeptService deptService;
 
     @GetMapping("/select_member")
-    @PreAuthorize("hasRole({'STAFF', 'PROFESSOR'})")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String selectMember(Model model) {
         List<CommonCode> typeList = commonCodeGroupService.findByGroupCode("MEMBERTYPE").getCommonCodes();
 
@@ -34,7 +34,7 @@ public class MemberController {
     }
 
     @GetMapping("/create_member")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String createMember(Model model) {
         model.addAttribute("memberTypes", commonCodeGroupService.findByGroupCode("MEMBERTYPE").getCommonCodes());
         model.addAttribute("depts", deptService.findAll());
