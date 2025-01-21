@@ -28,7 +28,7 @@
             .then(response => response.json())
             .then(data => {
                 if (grid) {
-                    grid.destroy();
+                    grid.destroy()
                 }
 
                 grid = new tui.Grid({

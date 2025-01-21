@@ -6,9 +6,7 @@ import edu.du.campusflow.service.CurriculumSubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +20,10 @@ public class CurriculumSubjectController {
     public String getCurriculumSubjectListPage() {
         return "view/iframe/curriculum/curriculum-subject/curriculumSubject_list";  // curriculumSubject_list.html 반환
     }
+    @GetMapping("/iframe/curriculum/curriculum-subject/update")
+    public String getCurriculumSubjectUpdatePage() {
+        return "view/iframe/curriculum/curriculum-subject/curriculumSubject_update";  // curriculumSubject_update.html 반환
+    }
 
     //강의 개설 페이지에서 사용할 검색
     @GetMapping("/api/curriculum-subjects/search")
@@ -33,11 +35,25 @@ public class CurriculumSubjectController {
         return ResponseEntity.ok(subjects);
     }
 
-    // 새롭게 추가된 교육과정 교과목 조회
+    // 교육과정 교과목 조회
     @GetMapping("/api/curriculum-subjects")
     public ResponseEntity<List<CurriculumSubjectDetailDTO>> getCurriculumSubjects(
         @RequestParam(required = false) String keyword) {
         List<CurriculumSubjectDetailDTO> subjects = curriculumSubjectService.getCurriculumSubjects(keyword);
         return ResponseEntity.ok(subjects);
+    }
+
+    // 교육과정 교과목 수정
+    @PutMapping("/api/curriculum-subjects/update")
+    public ResponseEntity<?> updateCurriculumSubjects(@RequestBody List<CurriculumSubjectDetailDTO> updatedSubjects) {
+        curriculumSubjectService.updateCurriculumSubjects(updatedSubjects);
+        return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 수정되었습니다.\"}");
+    }
+
+    // 교육과정 교과목 삭제
+    @DeleteMapping("/api/curriculum-subjects/delete")
+    public ResponseEntity<?> deleteCurriculumSubjects(@RequestBody List<Long> curriculumSubjectIds) {
+        curriculumSubjectService.deleteCurriculumSubjects(curriculumSubjectIds);
+        return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 삭제되었습니다.\"}");
     }
 }
