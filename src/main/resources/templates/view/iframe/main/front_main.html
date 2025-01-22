@@ -74,7 +74,7 @@
             <div class="notice-section">
                 <div class="section-title">공지사항</div>
                 <ul class="info-list">
-                    <li>
+                    <li th:if="${memberDTO != null && memberDTO.memberTypeStr == '학생'}">
                         <a href="#" onclick="openNewPage('수강신청', '/iframe/ofregistration/student/studentOfre')">
                             <span>2025학년도 1학기 수강신청 안내</span>
                             <span class="date">2025.01.21</span>
