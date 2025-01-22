@@ -74,4 +74,19 @@ public class DeptService {
    public List<Dept> findByDeptIdAndDeptName(Long deptId, String deptName) {
       return deptRepository.findByDeptIdAndDeptName(deptId, deptName);
    }
+
+   public List<DeptDTO> update(List<DeptDTO> deptDTOList) {
+       return deptDTOList.stream().map(
+         dto ->{
+             Dept dept = findById(dto.getDeptId());
+             dept.setDeptName(dto.getDeptName());
+             dept.setMaxStudents(dto.getMaxStudents());
+             dept.setDeptStatus(commonCodeService.findById(dto.getDeptStatus()));
+             dept.setGeneralCredits(dto.getGeneralCredits());
+             dept.setMajorCredits(dto.getMajorCredits());
+             dept.setGraduationCredits(dto.getGraduationCredits());
+             return DeptDTO.fromEntity(save(dept));
+         }
+       ).collect(Collectors.toList());
+   }
 }

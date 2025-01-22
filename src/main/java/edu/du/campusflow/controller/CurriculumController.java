@@ -27,6 +27,9 @@ public class CurriculumController {
       return "view/iframe/curriculum/curriculum_register";
    }
 
+   @GetMapping("/iframe/curriculum/update")
+   public String getCurriculumUpdatePage() { return "view/iframe/curriculum/curriculum_update"; }
+
    // 교육과정 리스트 조회 (검색 포함)
    @GetMapping("/api/curriculums")
    public ResponseEntity<List<CurriculumDTO>> getCurriculums(@RequestParam(required = false) String keyword) {
@@ -40,4 +43,17 @@ public class CurriculumController {
       curriculumService.saveCurriculums(curriculums);
       return ResponseEntity.ok().body("{\"message\": \"교육과정이 성공적으로 등록되었습니다.\"}");
    }
+
+   @PutMapping("/api/curriculums/update")
+   public ResponseEntity<?> updateCurriculums(@RequestBody List<CurriculumDTO> updatedCurriculums) {
+      curriculumService.updateCurriculums(updatedCurriculums);
+      return ResponseEntity.ok().body("{\"message\": \"교육과정이 성공적으로 수정되었습니다.\"}");
+   }
+
+   @DeleteMapping("/api/curriculums/delete")
+   public ResponseEntity<?> deleteCurriculums(@RequestBody List<Long> curriculumIds) {
+      curriculumService.deleteCurriculums(curriculumIds);
+      return ResponseEntity.ok().body("{\"message\": \"교육과정이 성공적으로 삭제되었습니다.\"}");
+   }
+
 }

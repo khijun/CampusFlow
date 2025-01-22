@@ -164,7 +164,7 @@
 
       if (currentMonth >= 8 || currentMonth <= 1) {
         semesterSelect.value = 'SECOND_SEMESTER';
-      }else{
+      } else {
         semesterSelect.value = 'FIRST_SEMESTER';
       }
 
@@ -204,7 +204,7 @@
       fetch(`/api/lecture/search?semesterCode=${semesterCode}&deptName=${encodeURIComponent(deptName)}&professorName=${encodeURIComponent(professorName)}`)
         .then(response => response.json())
         .then(lectures => {
-          if(lectures.length === 0){
+          if (lectures.length === 0) {
             alert('개설 신청한 강의가 없습니다.')
           }
           grid.resetData(lectures);

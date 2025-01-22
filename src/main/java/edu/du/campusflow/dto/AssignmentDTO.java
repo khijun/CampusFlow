@@ -13,6 +13,9 @@ public class AssignmentDTO {
     private String assignmentName;       // 과제 명
     private String description;          // 과제 설명
 
+    private String lectureName;          //강의 명
+    private String professorName;        //교수 명
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 

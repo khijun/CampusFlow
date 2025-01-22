@@ -2,14 +2,14 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <title>과제 생성</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-    <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <meta charset="UTF-8">
+  <title>과제 생성</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <style>
     .form-container {
       padding: 20px;
@@ -29,231 +29,219 @@
       margin: 15px 0;
     }
 
-    .btn-create {
-      background-color: #4CAF50;
-      color: white;
-      padding: 8px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .btn-create:hover {
-      background-color: #45a049;
-    }
   </style>
 </head>
 
 <body>
-    <!-- 1. 강의 검색 영역 -->
-    <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-      <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-      <span class="h6 mb-0">강의 검색</span>
+  <!-- 1. 강의 검색 영역 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 검색</span>
+  </div>
+  <div class="search-container">
+    <div class="input-group">
+      <label for="Semester">학기</label>
+      <select id="Semester">
+        <option value="FIRST_SEMESTER">1학기</option>
+        <option value="SECOND_SEMESTER">2학기</option>
+      </select>
     </div>
-    <div class="search-container">
-      <div class="input-group">
-        <label for="Semester">학기</label>
-        <select id="Semester">
-          <option value="FIRST_SEMESTER">1학기</option>
-          <option value="SECOND_SEMESTER">2학기</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="professorId">교번</label>
-        <input type="text" id="professorId" name="professorId" th:value="${member.memberId}" readonly>
-      </div>
-      <div class="input-group">
-      </div>
-      <button type="button" id="searchButton">조회</button>
+    <div class="input-group">
+      <label for="professorId">교번</label>
+      <input type="text" id="professorId" name="professorId" th:value="${member.memberId}" readonly>
     </div>
-
-    <!-- 2. 강의 검색 결과 그리드 -->
-    <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-      <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
-      <span class="h6 mb-0">강의 목록</span>
+    <div class="input-group">
     </div>
-    <div id="lectureGrid"></div>
+    <button type="button" id="searchButton">조회</button>
+  </div>
 
-    <!-- 3. 과제 입력 폼 -->
-    <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-      <i class="fas fa-plus-circle mr-2" style="margin-left: 10px"></i>
-      <span class="h6 mb-0">과제 등록</span>
+  <!-- 2. 강의 검색 결과 그리드 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 목록</span>
+  </div>
+  <div id="lectureGrid"></div>
+
+  <!-- 3. 과제 입력 폼 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-plus-circle mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">과제 등록</span>
+  </div>
+  <div class="form-container">
+    <div class="form-group">
+      <label for="selectedLecture">선택된 강의</label>
+      <input type="text" class="form-control" id="selectedLecture" readonly>
     </div>
-    <div class="form-container">
-      <div class="form-group">
-        <label for="selectedLecture">선택된 강의</label>
-        <input type="text" class="form-control" id="selectedLecture" readonly>
-      </div>
-      <div class="form-group">
-        <label for="assignmentName">과제명</label>
-        <input type="text" class="form-control" id="assignmentName" placeholder="과제명을 입력하세요">
-      </div>
-      <div class="form-group">
-        <label for="assignmentDescription">과제 설명</label>
-        <textarea class="form-control" id="assignmentDescription" rows="3" placeholder="과제 설명을 입력하세요"></textarea>
-      </div>
-        <div class="form-group">
-            <label for="deadlineDate">제출 기한</label>
-            <div class="deadline-container">
-                <input type="date" class="form-control" id="deadlineDate">
-            </div>
-        </div>
-      <div class="file-input-container">
-        <label for="assignmentFile">첨부 파일</label>
-        <input type="file" class="form-control-file" id="assignmentFile">
-      </div>
-      <button type="button" class="btn-create" id="createButton">과제 생성</button>
+    <div class="form-group">
+      <label for="assignmentName">과제명</label>
+      <input type="text" class="form-control" id="assignmentName" placeholder="과제명을 입력하세요">
     </div>
+    <div class="form-group">
+      <label for="assignmentDescription">과제 설명</label>
+      <textarea class="form-control" id="assignmentDescription" rows="3" placeholder="과제 설명을 입력하세요"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="deadlineDate">제출 기한</label>
+      <div class="deadline-container">
+        <input type="date" class="form-control" id="deadlineDate">
+      </div>
+    </div>
+    <div class="file-input-container">
+      <label for="assignmentFile">첨부 파일</label>
+      <input type="file" class="form-control-file" id="assignmentFile">
+    </div>
+    <button type="button" class="btn btn-primary" id="createButton">과제 생성</button>
+  </div>
 
-    <script>
-        // Toast UI Grid 초기화
-        const lectureGrid = new tui.Grid({
-            el: document.getElementById('lectureGrid'),
-            columns: [
-              { header: '강의아이디', name: 'lectureId', sortable: false },
-              { header: '강의명', name: 'lectureName', sortable: false },
-              { header: '학점', name: 'subjectCredits', sortable: false },
-              { header: '학기', name: 'semesterName', sortable: false },
-              { header: '수강 인원', name: 'currentStudents', sortable: false },
-            ],
-            bodyHeight: 300
-        });
+  <script>
+    // Toast UI Grid 초기화
+    const lectureGrid = new tui.Grid({
+      el: document.getElementById('lectureGrid'),
+      columns: [
+        { header: '강의아이디', name: 'lectureId', sortable: false },
+        { header: '강의명', name: 'lectureName', sortable: false },
+        { header: '학점', name: 'subjectCredits', sortable: false },
+        { header: '학기', name: 'semesterName', sortable: false },
+        { header: '수강 인원', name: 'currentStudents', sortable: false },
+      ],
+      bodyHeight: 300
+    });
 
-        document.addEventListener('DOMContentLoaded', function () {
-          const currentMonth = new Date().getMonth() + 1;
-          const semesterSelect = document.getElementById('Semester');
-          const professorIdInput = document.getElementById('professorId');
+    document.addEventListener('DOMContentLoaded', function () {
+      const currentMonth = new Date().getMonth() + 1;
+      const semesterSelect = document.getElementById('Semester');
+      const professorIdInput = document.getElementById('professorId');
 
-          if (currentMonth >= 8 || currentMonth <= 1) {
-            semesterSelect.value = 'SECOND_SEMESTER';
-          }else{
-            semesterSelect.value = 'FIRST_SEMESTER';
+      if (currentMonth >= 8 || currentMonth <= 1) {
+        semesterSelect.value = 'SECOND_SEMESTER';
+      } else {
+        semesterSelect.value = 'FIRST_SEMESTER';
+      }
+
+      // 초기 검색 실행
+      document.getElementById('searchButton').click();
+    });
+
+    // 검색 버튼 클릭 이벤트
+    document.getElementById('searchButton').addEventListener('click', function () {
+      const semesterCode = document.getElementById('Semester').value;
+      const professorId = document.getElementById('professorId').value;
+
+      fetch(`/api/lecture/professorId?semesterCode=${semesterCode}&professorId=${professorId}`)
+        .then(response => response.json())
+        .then(lectures => {
+          if (lectures.length === 0) {
+            alert('검색 결과가 없습니다.');
           }
-
-          // 초기 검색 실행
-          document.getElementById('searchButton').click();
+          lectureGrid.resetData(lectures);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('강의 목록을 불러오는데 실패했습니다.');
         });
+    });
 
-        // 검색 버튼 클릭 이벤트
-        document.getElementById('searchButton').addEventListener('click', function () {
-          const semesterCode = document.getElementById('Semester').value;
-          const professorId = document.getElementById('professorId').value;
+    let selectedLectureId = null;
 
-          fetch(`/api/lecture/professorId?semesterCode=${semesterCode}&professorId=${professorId}`)
-                  .then(response => response.json())
-                  .then(lectures => {
-                    if (lectures.length === 0) {
-                      alert('검색 결과가 없습니다.');
-                    }
-                    lectureGrid.resetData(lectures);
-                  })
-                  .catch(error => {
-                    console.error('Error:', error);
-                    alert('강의 목록을 불러오는데 실패했습니다.');
-                  });
-        });
+    lectureGrid.on('click', (ev) => {
+      const rowData = lectureGrid.getRow(ev.rowKey);
+      if (rowData) {
+        selectedLectureId = rowData.lectureId;
+        document.getElementById('selectedLecture').value = rowData.lectureName;
+      }
+    });
 
-        let selectedLectureId = null;
+    // 과제 생성 버튼 클릭 이벤트
+    document.getElementById('createButton').addEventListener('click', function () {
+      // 1. 선택된 강의 확인
+      if (!selectedLectureId) {  // hidden input의 value 대신 변수 사용
+        alert('강의를 선택해주세요.');
+        return;
+      }
 
-        lectureGrid.on('click', (ev) => {
-          const rowData = lectureGrid.getRow(ev.rowKey);
-          if (rowData) {
-            selectedLectureId = rowData.lectureId;
-            document.getElementById('selectedLecture').value = rowData.lectureName;
+      // 2. 입력값 가져오기 및 검증
+      const assignmentName = document.getElementById('assignmentName').value.trim();
+      const description = document.getElementById('assignmentDescription').value.trim();
+      const deadlineDate = document.getElementById('deadlineDate').value;
+      const file = document.getElementById('assignmentFile').files[0];
+
+      // 3. 필수 입력값 검증
+      if (!assignmentName) {
+        alert('과제명을 입력하세요.');
+        document.getElementById('assignmentName').focus();
+        return;
+      }
+      if (!description) {
+        alert('과제 설명을 입력하세요.');
+        document.getElementById('assignmentDescription').focus();
+        return;
+      }
+      if (!deadlineDate) {
+        alert('제출 기한을 설정하세요.');
+        return;
+      }
+
+      // 4. 현재 날짜와 비교
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(deadlineDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        alert('제출 기한은 오늘 이후로 설정해주세요.');
+        return;
+      }
+
+      // 5. FormData 객체 생성 및 데이터 추가
+      const formData = new FormData();
+      formData.append('lectureId', selectedLectureId);
+      formData.append('assignmentName', assignmentName);
+      formData.append('description', description);
+      formData.append('dueDate', deadlineDate);  // 시간을 00:00:00으로 고정
+
+      if (file) {
+        formData.append('file', file);
+      }
+
+      // 6. API 호출
+      fetch('/api/assignment/create', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (!response.ok) {
+            return response.text().then(text => {
+              throw new Error(text);
+            });
           }
+          return response.text();
+        })
+        .then(message => {
+          alert('과제가 성공적으로 등록되었습니다.');
+          // 입력 폼 초기화
+          resetForm();
+          // 선택된 강의 정보 초기화
+          document.getElementById('selectedLecture').value = '';
+          selectedLectureId = null;
+          // 그리드 선택 해제
+          lectureGrid.uncheckAll();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(error.message || '과제 등록 중 오류가 발생했습니다.');
         });
+    });
 
-        // 과제 생성 버튼 클릭 이벤트
-        document.getElementById('createButton').addEventListener('click', function() {
-            // 1. 선택된 강의 확인
-            if (!selectedLectureId) {  // hidden input의 value 대신 변수 사용
-                alert('강의를 선택해주세요.');
-                return;
-            }
-
-            // 2. 입력값 가져오기 및 검증
-            const assignmentName = document.getElementById('assignmentName').value.trim();
-            const description = document.getElementById('assignmentDescription').value.trim();
-            const deadlineDate = document.getElementById('deadlineDate').value;
-            const file = document.getElementById('assignmentFile').files[0];
-
-            // 3. 필수 입력값 검증
-            if (!assignmentName) {
-                alert('과제명을 입력하세요.');
-                document.getElementById('assignmentName').focus();
-                return;
-            }
-            if (!description) {
-                alert('과제 설명을 입력하세요.');
-                document.getElementById('assignmentDescription').focus();
-                return;
-            }
-            if (!deadlineDate) {
-                alert('제출 기한을 설정하세요.');
-                return;
-            }
-
-            // 4. 현재 날짜와 비교
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const selectedDate = new Date(deadlineDate);
-            selectedDate.setHours(0, 0, 0, 0);
-            if (selectedDate < today) {
-                alert('제출 기한은 오늘 이후로 설정해주세요.');
-                return;
-            }
-
-            // 5. FormData 객체 생성 및 데이터 추가
-            const formData = new FormData();
-            formData.append('lectureId', selectedLectureId);
-            formData.append('assignmentName', assignmentName);
-            formData.append('description', description);
-            formData.append('dueDate', deadlineDate);  // 시간을 00:00:00으로 고정
-
-            if (file) {
-                formData.append('file', file);
-            }
-
-            // 6. API 호출
-            fetch('/api/assignment/create', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text);
-                        });
-                    }
-                    return response.text();
-                })
-                .then(message => {
-                    alert('과제가 성공적으로 등록되었습니다.');
-                    // 입력 폼 초기화
-                    resetForm();
-                    // 선택된 강의 정보 초기화
-                    document.getElementById('selectedLecture').value = '';
-                    selectedLectureId = null;
-                    // 그리드 선택 해제
-                    lectureGrid.uncheckAll();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert(error.message || '과제 등록 중 오류가 발생했습니다.');
-                });
-        });
-
-        // 입력 폼 초기화 함수
-        function resetForm() {
-            document.getElementById('assignmentName').value = '';
-            document.getElementById('assignmentDescription').value = '';
-            document.getElementById('deadlineDate').value = '';
-            document.getElementById('assignmentFile').value = '';
-        }
-    </script>
+    // 입력 폼 초기화 함수
+    function resetForm() {
+      document.getElementById('assignmentName').value = '';
+      document.getElementById('assignmentDescription').value = '';
+      document.getElementById('deadlineDate').value = '';
+      document.getElementById('assignmentFile').value = '';
+    }
+  </script>
 </body>
 
 </html>

@@ -22,11 +22,36 @@
     .cancel-btn:hover {
       background-color: darkred;
     }
+
+    .academic-status {
+      border-radius: 20px; /* 둥근 모서리 */
+      padding: 10px 20px; /* 여백 */
+      display: inline-block; /* 인라인 블록으로 배치 */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+      font-family: 'Arial', sans-serif; /* 귀여운 폰트 */
+      margin-top: 20px; /* 위쪽 여백 */
+    }
+
+    .academic-status strong {
+      font-size: 1.2em; /* 제목 글씨 크기 */
+      color: #ff6347; /* 귀여운 색상 */
+      margin-right: 10px; /* 제목과 상태 사이 여백 */
+    }
+
+    #academic-status {
+      font-size: 1.1em; /* 상태 글씨 크기 */
+      font-weight: bold; /* 글씨 두껍게 */
+    }
   </style>
 </head>
 <body>
 <h2>학적 조회</h2>
 
+<!-- 학적 상태 표시 부분 -->
+<div class="academic-status">
+  <strong></strong>
+  <span id="academic-status">학적 상태 로딩 중...</span>
+</div>
 
 
 <div id="change-request-list"></div>
@@ -39,9 +64,11 @@
 
 
   const changeRequestListDiv = document.querySelector('#change-request-list');
+  const academicStatusSpan = document.querySelector('#academic-status');
 
   document.addEventListener('DOMContentLoaded', () => {
     createChangeRequestGrid(changeRequestListDiv);
+    fetchAcademicStatus();
   });
 
   function createChangeRequestGrid(targetDiv) {
@@ -71,6 +98,14 @@
               return response.json();
             })
             .then(data => {
+              // 마지막 학적 상태 찾기 (requestDate 기준으로 마지막 상태를 선택)
+              const lastRequest = data.reduce((last, current) => {
+                return new Date(current.requestDate) > new Date(last.requestDate) ? current : last;
+              }, data[0]);
+
+              // 마지막 학적 상태 표시 (예: 학적 상태: 마지막 상태)
+              const academicStatusSpan = document.getElementById('academic-status');
+              academicStatusSpan.textContent = `학적 상태: ${lastRequest.academicStatus.codeName}`;
               return data.map(request => ({
                 id: request.id,
                 beforeCodeName: request.beforeCode.codeName,
@@ -104,6 +139,8 @@
               console.error('Error fetching change requests:', error);
             });
   }
+
+
   window.cancelChangeRequest = function(applicationId) {
     console.log('신청 취소 시도:', applicationId);
     if (confirm('정말 신청을 취소하시겠습니까?')) {

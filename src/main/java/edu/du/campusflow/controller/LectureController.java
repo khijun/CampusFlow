@@ -1,6 +1,7 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.LectureDTO;
+import edu.du.campusflow.dto.OfregistrationDTO;
 import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.service.AuthService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -158,5 +160,19 @@ public class LectureController {
             @RequestParam String semesterCode,
             @RequestParam String professorId) {
         return lectureService.getApprovedLectures(semesterCode, professorId);
+    }
+
+    //과제 제출페이지 학생이 수강중인 강의 검색
+    @GetMapping("/api/lecture/student")
+    @ResponseBody
+    public ResponseEntity<List<OfregistrationDTO>> getStudentLectures(
+            @RequestParam String semesterCode,
+            @RequestParam String studentId) {
+        try {
+            List<OfregistrationDTO> lectures = lectureService.getStudentLectures(semesterCode, studentId);
+            return ResponseEntity.ok(lectures);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
     }
 }
