@@ -5,6 +5,7 @@ import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.Ofregistration;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -57,7 +58,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId")
     List<Ofregistration> findByLectureId(Long lectureId);
 
-    // 중복 체크를 위한 메서드 추가
+    // 중복 체크를 위한 메서드
     boolean existsByMemberAndLectureId(Member member, Lecture lecture);
 
     // 학생의 모든 수강신청 내역 조회
@@ -73,4 +74,9 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
 
     // 과제 제출 페이지에서 학생의 수강중인 강의 조회
     List<Ofregistration> findByMemberAndLectureId_Semester(Member student, CommonCode semester);
+
+    // 수강신청 취소를 위한 메서드
+    @Modifying
+    @Query("DELETE FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId AND o.member.memberId = :memberId")
+    void deleteByLectureIdAndMemberMemberId(@Param("lectureId") Long lectureId, @Param("memberId") Long memberId);
 }
