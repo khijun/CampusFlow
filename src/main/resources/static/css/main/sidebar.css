@@ -1,17 +1,27 @@
 .sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--secondary-color);
+    /* 요소 배치를 세로로 */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    /* 시작 위치 설정, 왼쪽 위 */
+    justify-content: flex-start;
+    align-items: flex-start;
+    /* 너비는 고정값 */
+    width: 260px;
+    height: 100%;
     padding: 20px;
-    /*padding-bottom: 100px; !* 하단에 여유 공간 추가 *!*/
-    height: calc(100vh - 60px); /* 화면 높이에서 헤더 높이를 제외한 높이 */
-    /*position: fixed;*/
-    top: 70px; /* nav-list 상단에 맞춤 */
-    left: 0;
-    z-index: 1000;
-    overflow-y: auto; /* 세로 스크롤 활성화 */
-    overflow-x: hidden; /* 가로 스크롤 방지 */
-    margin-top: 60px;
-    scrollbar-width: none; /* 스크롤바 삭제, 스크롤은 가능 */
+
+    background-color: var(--secondary-color);
+    /* 스크롤바 */
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll;
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .sidebar-header h2 {
@@ -21,21 +31,65 @@
     margin-bottom: 30px;
 }
 
-.sidebar a {
-    display: block;
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    margin-bottom: 10px;
-    border-radius: 4px;
+.sidebar-menu{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    margin: 0;
 }
 
-.sidebar a:hover {
+.sidebar-menu li{
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+}
+
+.sidebar-menu a{
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    width: 100%;
+    text-align: left;
+    text-decoration: none;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 16px;
+}
+
+.sidebar-menu a:hover{
     background-color: var(--primary-color);
 }
 
-.sidebar::after {
-    content: "";
-    display: block;
-    height: 100px; /* 여유 공간 추가 */
+/* 서브 요소 */
+.submenu{
+    margin: 0;
+    padding: 0 0 0 10px ;
 }
+
+.submenu a{
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.category-item{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+/*!* 실제 카테고리가 들어가는 ul *!*/
+
+/*}*/
+
+/*!* 카테고리 요소들(li) *!*/
+/*.sidebar-menu li{*/
+/*    display: flex;*/
+/*    width: 100%;*/
+/*    text-align: left;*/
+/*}*/

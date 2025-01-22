@@ -1,40 +1,32 @@
+/* 헤더를 제외한 나머지 요소 */
 .main-content {
-   margin-left: 240px;
-   padding: 20px;
-   flex-grow: 1;
-   box-sizing: border-box;
-   /*overflow: hidden;  !* 스크롤 제거 *!*/
+   display: flex;
+   flex: 1;
    min-width: 1024px;
-   position: absolute; /* 추가 */
-   right: 0; /* 추가 */
-   bottom: 0; /* 추가 */
-   left: 0; /* 추가 */
-   top: 10px;
+   overflow: auto;
 }
 
-.main-content .iframe-container {
-   width: 100%;
-   height: calc(100vh - 140px);  /* 상단 여백 고려하여 수정 */
-   position: relative;
-   min-width: 1024px;
-}
-
-.main-content iframe {
+/* 사이드바를 제외한 요소 */
+.main-content-iframe-container {
+   display: flex;
+   flex-direction: column;
    width: 100%;
    height: 100%;
-   border: none;
-   display: block;
-   min-width: 1024px;
 }
 
-.tab-container {
-   /*min-width: 1024px;  !* 최소 너비 설정 *!*/
+/* iframe 으로 컨텐츠를 보여주는 요소, 탭 컨테이너가 제외됨 */
+.iframe-container{
+   display: flex;
+   width: 100%;
+   height: 100%;
+   flex:1;
+   overflow: auto;
 }
 
-.footer {
-   background-color: white;
-   text-align: center;
-   padding: 10px;
-   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-   min-width: 1024px;  /* 최소 너비 설정 */
-}
+/*.footer {*/
+/*   background-color: white;*/
+/*   text-align: center;*/
+/*   padding: 10px;*/
+/*   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);*/
+/*   min-width: 1024px;  !* 최소 너비 설정 *!*/
+/*}*/

@@ -1,11 +1,10 @@
 /* 고정형 설정 */
 .container {
-   width: auto; /* 고정된 전체 레이아웃 너비 */
+   width: 100%; /* 고정된 전체 레이아웃 너비 */
+   height: 100%;
    margin: 0 auto; /* 화면 중앙 정렬 */
-}
-
-.header-nav, .nav-list, .sidebar, .main-content {
-   /*max-width: 2000px; !* 고정된 너비 *!*/
+   display: flex;
+   flex-direction: column;
 }
 
 .nav-list {
