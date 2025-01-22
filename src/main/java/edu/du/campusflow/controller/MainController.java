@@ -20,7 +20,7 @@ public class MainController {
    @GetMapping("/")
    public String frontMain(Model model) {
       model.addAttribute("memberDTO", MemberDTO.fromEntity(authService.getCurrentMember()));
-      return "view/main_view/front_main"; // 메인 페이지
+      return "view/iframe/main/front_main"; // 메인 페이지
    }
 
    @GetMapping("/access-denied")
