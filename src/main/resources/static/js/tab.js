@@ -302,14 +302,27 @@ function closeTab(button) {
  */
 function closeAllTabs() {
     const tabs = document.getElementById('tabs');
-    tabs.innerHTML = '';
+    const iframeContainer = document.querySelector('.iframe-container');
+    const infoContainer = document.querySelector('.info-container');
 
-    // 모든 캐시된 iframe 제거
-    iframeCache.forEach((frame, url) => {
-        frame.remove();
-    });
+    // 모든 탭 제거
+    if (tabs) {
+        tabs.innerHTML = '';
+    }
+
+    // 모든 iframe 제거
+    if (iframeContainer) {
+        iframeContainer.innerHTML = '';
+        iframeContainer.style.display = 'none';
+    }
+
+    // 메인 화면도 숨기기
+    if (infoContainer) {
+        infoContainer.style.display = 'none';
+    }
+
+    // 캐시 및 세션 스토리지 초기화
     iframeCache.clear();
-
     sessionStorage.removeItem('tabState');
 }
 
