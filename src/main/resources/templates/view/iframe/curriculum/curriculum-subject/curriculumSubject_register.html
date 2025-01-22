@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>교육과정 교과목 등록</title>
+   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+</head>
+<body>
+<div id="container">
+
+   <div id="curriculum-list-table-container">
+      <h2>교육과정 조회</h2>
+      <hr class="divider">
+      <div class="list-option-container">
+         <label for="curriculum-name-input">교육과정명:</label>
+         <input type="text" id="curriculum-name-input" class="input-field"/>
+         <button id="curriculum-list-select-btn" class="btn">조회</button>
+      </div>
+      <div id="curriculum-list-grid" style="height: 300px;"></div>
+   </div>
+
+   <div id="curriculum-subject-register-container" style="margin-top: 60px;">
+      <h2>교육과정 교과목 추가</h2>
+      <hr class="divider">
+      <div id="curriculum-subject-button-container" class="list-option-container">
+         <button id="add-row-btn" class="btn">행 추가</button>
+         <button id="delete-row-btn" class="btn">행 삭제</button>
+         <button id="save-subjects-btn" class="btn">저장</button>
+      </div>
+      <div id="curriculum-subject-grid-container" style="height: 500px;"></div>
+   </div>
+</div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        let selectedCurriculum = null;
+        let subjectTypeList = [];
+        let gradingMethodList = [];
+        let subjectList = [];
+        let subjectGrid;
+
+        await loadCommonCodes();
+        await loadSubjects();
+        initializeGrids();
+
+        async function fetchCommonCodes(groupCode) {
+            try {
+                const response = await fetch(`/api/common-codes/${groupCode}`);
+                if (!response.ok) throw new Error(`Failed to fetch ${groupCode} codes`);
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${groupCode} codes:`, error);
+                return [];
+            }
+        }
+
+        async function loadSubjects() {
+            try {
+                const response = await fetch(`/api/subjects/all`);
+                if (!response.ok) throw new Error("Failed to fetch subjects");
+                const data = await response.json();
+                subjectList = data.map(subject => ({ text: subject.subjectName, value: subject.subjectId }));
+            } catch (error) {
+                console.error("Error fetching subjects:", error);
+            }
+        }
+
+        async function loadCommonCodes() {
+            const [subjectTypeOptions, gradingMethodOptions] = await Promise.all([
+                fetchCommonCodes("SUBJECTTYPE"),
+                fetchCommonCodes("GRADING_METHOD")
+            ]);
+
+            function transformOptions(options) {
+                return (options ?? []).map(opt => ({ text: opt.codeName, value: opt.codeValue }));
+            }
+
+            subjectTypeList = transformOptions(subjectTypeOptions);
+            gradingMethodList = transformOptions(gradingMethodOptions);
+        }
+
+        function initializeGrids() {
+            const curriculumGrid = new tui.Grid({
+                el: document.getElementById("curriculum-list-grid"),
+                data: [],
+                columns: [
+                    { header: "교육과정 ID", name: "curriculumId", width: 200, align: "center" },
+                    { header: "교육과정명", name: "curriculumName", width: 500 },
+                    { header: "연도", name: "curriculumYear", width: 200, align: "center" },
+                    { header: "학년", name: "grade", width: 200, align: "center" },
+                    { header: "학기", name: "semester", width: 200, align: "center" },
+                    { header: "주야 구분", name: "dayNight", width: 265, align: "center" }
+                ],
+                bodyHeight: 300,
+                rowHeaders: ["rowNum"]
+            });
+
+            subjectGrid = new tui.Grid({
+                el: document.getElementById("curriculum-subject-grid-container"),
+                data: [],
+                columns: [
+                    { header: "교육과정명", name: "curriculumName", width: 500, readOnly: true },
+                    { header: "과목명", name: "subjectId",
+                        formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
+                        editor: { type: "select", options: { listItems: subjectList } }, width: 500, align: "center" },
+                    { header: "이수 구분", name: "subjectTypeName",
+                        formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
+                        editor: { type: "select", options: { listItems: subjectTypeList } }, width: 275, align: "center" },
+                    { header: "평가 방법", name: "gradingMethod",
+                        formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
+                        editor: { type: "select", options: { listItems: gradingMethodList } }, width: 290, align: "center" }
+                ],
+                bodyHeight: "fitToParent",
+                rowHeaders: ["checkbox"],
+                editingEvent: "click"
+            });
+
+            document.getElementById("curriculum-list-select-btn").addEventListener("click", function () {
+                const keyword = document.getElementById("curriculum-name-input").value.trim();
+                let queryParams = keyword ? `?keyword=${encodeURIComponent(keyword)}` : "";
+
+                fetch(`/api/curriculums${queryParams}`)
+                    .then(response => response.json())
+                    .then(data => curriculumGrid.resetData(data))
+                    .catch(error => console.error("Error fetching curriculums:", error));
+            });
+
+            curriculumGrid.on("click", function (ev) {
+                if (ev.rowKey !== null) {
+                    selectedCurriculum = curriculumGrid.getRow(ev.rowKey);
+                    alert(`교육과정 선택됨: ${selectedCurriculum.curriculumName}`);
+                }
+            });
+
+            document.getElementById("add-row-btn").addEventListener("click", function () {
+                if (!selectedCurriculum) return alert("먼저 교육과정을 선택하세요.");
+
+                subjectGrid.appendRow({
+                    curriculumId: selectedCurriculum.curriculumId,
+                    curriculumName: selectedCurriculum.curriculumName,
+                    subjectId: subjectList[0]?.value || null,
+                    subjectTypeName: subjectTypeList[0]?.value || "MAJOR_REQUIRED",
+                    gradingMethod: gradingMethodList[0]?.value || "RELATIVE"
+                });
+            });
+
+            document.getElementById("delete-row-btn").addEventListener("click", function () {
+                const checkedRows = subjectGrid.getCheckedRows();
+                if (checkedRows.length === 0) return alert("삭제할 행을 선택하세요.");
+                subjectGrid.removeCheckedRows();
+            });
+
+            document.getElementById("save-subjects-btn").addEventListener("click", function () {
+                const rows = subjectGrid.getCheckedRows();
+                if (rows.length === 0) return alert("저장할 행을 선택하세요.");
+
+                const formattedData = rows.map(row => ({
+                    curriculumId: row.curriculumId,
+                    subjectId: row.subjectId,
+                    subjectTypeName: row.subjectTypeName,
+                    gradingMethod: row.gradingMethod
+                }));
+
+                fetch("/api/curriculum-subjects/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formattedData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        subjectGrid.clear();
+                    })
+                    .catch(error => alert("교과목 등록 중 오류 발생."));
+            });
+
+        }
+    });
+</script>
+</body>
+</html>

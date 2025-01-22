@@ -2,6 +2,7 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.CurriculumSubjectDTO;
 import edu.du.campusflow.dto.CurriculumSubjectDetailDTO;
+import edu.du.campusflow.dto.CurriculumSubjectRegisterDTO;
 import edu.du.campusflow.service.CurriculumSubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @Controller
 public class CurriculumSubjectController {
 
@@ -23,6 +23,11 @@ public class CurriculumSubjectController {
     @GetMapping("/iframe/curriculum/curriculum-subject/update")
     public String getCurriculumSubjectUpdatePage() {
         return "view/iframe/curriculum/curriculum-subject/curriculumSubject_update";  // curriculumSubject_update.html 반환
+    }
+
+    @GetMapping("/iframe/curriculum/curriculum-subject/register")
+    public String getCurriculumSubjectRegisterPage() {
+        return "view/iframe/curriculum/curriculum-subject/curriculumSubject_register";
     }
 
     //강의 개설 페이지에서 사용할 검색
@@ -57,4 +62,9 @@ public class CurriculumSubjectController {
         return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 삭제되었습니다.\"}");
     }
 
+    @PostMapping("/api/curriculum-subjects/register")
+    public ResponseEntity<?> registerCurriculumSubjects(@RequestBody List<CurriculumSubjectRegisterDTO> curriculumSubjects) {
+        curriculumSubjectService.registerCurriculumSubjects(curriculumSubjects);
+        return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 추가되었습니다.\"}");
+    }
 }

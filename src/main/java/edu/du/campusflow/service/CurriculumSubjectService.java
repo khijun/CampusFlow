@@ -2,8 +2,11 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.CurriculumSubjectDTO;
 import edu.du.campusflow.dto.CurriculumSubjectDetailDTO;
+import edu.du.campusflow.dto.CurriculumSubjectRegisterDTO;
+import edu.du.campusflow.entity.Curriculum;
 import edu.du.campusflow.entity.CurriculumSubject;
 import edu.du.campusflow.entity.Subject;
+import edu.du.campusflow.repository.CurriculumRepository;
 import edu.du.campusflow.repository.CurriculumSubjectRepository;
 import edu.du.campusflow.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,12 @@ public class CurriculumSubjectService {
 
     @Autowired
     SubjectRepository subjectRepository;
+
+    @Autowired
+    CommonCodeService commonCodeService;
+
+    @Autowired
+    CurriculumRepository curriculumRepository;
 
     //강좌 개설에서 사용할 교육과정 교과목 검색
     public List<CurriculumSubjectDTO> searchCurriculumSubjectBySubjectName(String subjectName, String curriculumName, String semesterCode) {
@@ -92,15 +101,17 @@ public class CurriculumSubjectService {
         return subjects.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // 교육과정 교과목 수정
     @Transactional
     public void updateCurriculumSubjects(List<CurriculumSubjectDetailDTO> updatedSubjects) {
         for (CurriculumSubjectDetailDTO dto : updatedSubjects) {
             CurriculumSubject subject = curriculumSubjectRepository.findById(dto.getCurriculumSubjectId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 교과목 ID: " + dto.getCurriculumSubjectId()));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 교과목 ID: " + dto.getCurriculumSubjectId()));
 
-            subject.setSubjectType(null);
-            subject.setGradingMethod(null);
+            subject.setSubjectType(dto.getSubjectTypeName() != null ?
+                commonCodeService.getCodeByValue(23L, dto.getSubjectTypeName()) : null);
+
+            subject.setGradingMethod(dto.getGradingMethod() != null ?
+                commonCodeService.getCodeByValue(29L, dto.getGradingMethod()) : null);
 
             curriculumSubjectRepository.save(subject);
         }
@@ -112,13 +123,11 @@ public class CurriculumSubjectService {
         curriculumSubjectRepository.deleteAllById(curriculumSubjectIds);
     }
 
-    // Entity → DTO 변환
     private CurriculumSubjectDetailDTO convertToDTO(CurriculumSubject subject) {
         CurriculumSubjectDetailDTO dto = new CurriculumSubjectDetailDTO();
         dto.setCurriculumSubjectId(subject.getCurriculumSubjectId());
         dto.setCurriculumName(subject.getCurriculum().getCurriculumName());
         dto.setSubjectName(subject.getSubject().getSubjectName());
-        dto.setPrereqSubjectName(subject.getPrereqSubject() != null ? subject.getPrereqSubject().getSubjectName() : "미정");
         dto.setSubjectCredits(subject.getSubject().getSubjectCredits() != null ? subject.getSubject().getSubjectCredits().toString() : "미정");
         dto.setSubjectTypeName(subject.getSubjectType() != null ? subject.getSubjectType().getCodeName() : "미정");
         dto.setGradingMethod(subject.getGradingMethod() != null ? subject.getGradingMethod().getCodeName() : "미정");
@@ -129,4 +138,26 @@ public class CurriculumSubjectService {
         return dto;
     }
 
+    @Transactional
+    public void registerCurriculumSubjects(List<CurriculumSubjectRegisterDTO> curriculumSubjects) {
+        for (CurriculumSubjectRegisterDTO dto : curriculumSubjects) {
+
+            Curriculum curriculum = curriculumRepository.findById(dto.getCurriculumId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육과정 ID: " + dto.getCurriculumId()));
+
+            Subject subject = subjectRepository.findById(dto.getSubjectId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목 ID: " + dto.getSubjectId()));
+
+            var subjectType = commonCodeService.getCodeByValue(23L, dto.getSubjectTypeName()); // 이수 구분 (group_id = 23)
+            var gradingMethod = commonCodeService.getCodeByValue(29L, dto.getGradingMethod()); // 평가 방법 (group_id = 29)
+
+            CurriculumSubject curriculumSubject = new CurriculumSubject();
+            curriculumSubject.setCurriculum(curriculum);
+            curriculumSubject.setSubject(subject);
+            curriculumSubject.setSubjectType(subjectType);
+            curriculumSubject.setGradingMethod(gradingMethod);
+
+            curriculumSubjectRepository.save(curriculumSubject);
+        }
+    }
 }

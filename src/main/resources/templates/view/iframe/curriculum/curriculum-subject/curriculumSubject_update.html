@@ -29,32 +29,38 @@
    });
 
    async function fetchCommonCodes(groupCode) {
-      try {
-         const response = await fetch(`/api/common-codes/${groupCode}`);
-         return response.ok ? await response.json() : [];
-      } catch {
-         return [];
-      }
+       try {
+           const response = await fetch(`/api/common-codes/${groupCode}`);
+           const data = response.ok ? await response.json() : [];
+           console.log(`Fetched ${groupCode} codes:`, data); // 디버깅 추가
+           return data;
+       } catch (error) {
+           console.error(`Error fetching ${groupCode}:`, error);
+           return [];
+       }
    }
 
    async function loadCommonCodes() {
       const [subjectTypeOptions, gradingMethodOptions] = await Promise.all([
-         fetchCommonCodes("SUBJECTTYPE"),  // ✅ 이수 구분 코드
-         fetchCommonCodes("GRADING_METHOD") // ✅ 평가 방법 코드
+         fetchCommonCodes("SUBJECTTYPE"),
+         fetchCommonCodes("GRADING_METHOD")
       ]);
-
-      function transformOptions(options) {
-         return (options ?? []).map(opt => ({ text: opt.codeName, value: opt.codeValue }));
-      }
 
       subjectTypeList = transformOptions(subjectTypeOptions);
       gradingMethodList = transformOptions(gradingMethodOptions);
    }
 
-   // ✅ 조회 버튼 클릭 이벤트
+   function transformOptions(options) {
+       return (options ?? []).map(opt => ({ text: opt.codeName, value: opt.codeValue }));
+   }
+
+   function getCodeValue(codeList, codeValue) {
+       return codeList?.find(opt => opt.text === codeValue)?.value || null;
+   }
+
    document.getElementById("curriculum-subject-list-select-btn").addEventListener("click", async () => {
       const keyword = document.getElementById("curriculum-name-input").value.trim();
-      await loadCommonCodes(); // ✅ 공통 코드 로드
+      await loadCommonCodes();
 
       fetch(`/api/curriculum-subjects?keyword=${encodeURIComponent(keyword)}`)
               .then(response => response.json())
@@ -105,43 +111,39 @@
    });
 
    document.getElementById("save-updates-btn").addEventListener("click", () => {
-      if (!grid) {
-         alert("먼저 교육과정을 조회하세요.");
-         return;
-      }
+       if (!grid) {
+           alert("먼저 교육과정을 조회하세요.");
+           return;
+       }
 
-      const updatedRows = grid.getModifiedRows().updatedRows;
+       const updatedRows = grid.getModifiedRows().updatedRows;
 
-      if (updatedRows.length === 0) {
-         alert("수정된 데이터가 없습니다.");
-         return;
-      }
+       if (updatedRows.length === 0) {
+           alert("수정된 데이터가 없습니다.");
+           return;
+       }
 
-      const formattedData = updatedRows.map(row => ({
-         curriculumSubjectId: row.curriculumSubjectId || null,
-         subjectTypeName: getCodeValue(subjectTypeList, row.subjectTypeName) || "SUBJECT_TYPE_DEFAULT",
-         gradingMethod: getCodeValue(gradingMethodList, row.gradingMethod) || "GRADING_METHOD_DEFAULT"
-      }));
+       const formattedData = updatedRows.map(row => ({
+           curriculumSubjectId: row.curriculumSubjectId || null,
+           subjectTypeName: row.subjectTypeName ? getCodeValue(subjectTypeList, row.subjectTypeName) : "MAJOR_REQUIRED",  // 기본값 설정
+           gradingMethod: row.gradingMethod ? getCodeValue(gradingMethodList, row.gradingMethod) : "ABSOLUTE" // 기본값 설정
+       }));
 
-      fetch("/api/curriculum-subjects/update", {
-         method: "PUT",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(formattedData)  // ✅ 변환된 데이터 전송
-      })
-              .then(response => response.json())
-              .then(() => {
-                 alert("데이터가 수정되었습니다");
-                 document.getElementById("curriculum-subject-list-select-btn").click(); // 최신 데이터 조회
-              })
-              .catch(error => {
-                 console.error("Error updating curriculum subjects:", error);
-                 alert("수정 저장 중 오류가 발생했습니다.");
-              });
+       fetch("/api/curriculum-subjects/update", {
+           method: "PUT",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify(formattedData)
+       })
+           .then(response => response.json())
+           .then(() => {
+               alert("데이터가 수정되었습니다");
+               document.getElementById("curriculum-subject-list-select-btn").click(); // 최신 데이터 조회
+           })
+           .catch(error => {
+               console.error("Error updating curriculum subjects:", error);
+               alert("수정 저장 중 오류가 발생했습니다.");
+           });
    });
-
-   function getCodeValue(codeList, codeValue) {
-      return codeList?.find(opt => opt.text === codeValue)?.value || null;
-   }
 
    document.getElementById("delete-selected-btn").addEventListener("click", () => {
       if (!grid) {

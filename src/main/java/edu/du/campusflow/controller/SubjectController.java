@@ -63,4 +63,10 @@ public class SubjectController {
       subjectService.deleteSubjects(ids);
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects deleted successfully."));
    }
+
+   @GetMapping("/api/subjects/all")
+   public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
+      List<SubjectDTO> subjects = subjectService.getAllSubjects();
+      return ResponseEntity.ok(subjects);
+   }
 }
