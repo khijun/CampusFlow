@@ -6,20 +6,32 @@
     <title>학사관리 시스템</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="css/main/header.css" rel="stylesheet">
-    <link href="css/main/navigation.css" rel="stylesheet">
-    <link href="css/main/sidebar.css" rel="stylesheet">
-    <link href="css/main/main-content.css" rel="stylesheet">
-    <link href="css/main/tab.css" rel="stylesheet">
-    <link href="css/main/mainStyle.css" rel="stylesheet">
-    <link href="css/main/sidebar-menu.css" rel="stylesheet">
+    <link href="/static/css/main/header.css" th:href="@{/css/main/header.css}" rel="stylesheet">
+    <link href="/static/css/main/navigation.css" th:href="@{/css/main/navigation.css}" rel="stylesheet">
+    <link href="/static/css/main/sidebar.css" th:href="@{/css/main/sidebar.css}" rel="stylesheet">
+    <link href="/static/css/main/main-content.css" th:href="@{/css/main/main-content.css}" rel="stylesheet">
+    <link href="/static/css/main/tab.css" th:href="@{/css/main/tab.css}" rel="stylesheet">
+    <link href="/static/css/main/mainStyle.css" th:href="@{/css/main/mainStyle.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            height: 100%;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-width: var(--min-width); /* 최소 너비 설정 */
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <!-- Header -->
-    <nav class="header-nav">
-        <div class="header-left">
+    <div class="header-nav">
+        <!-- 로고 -->
+        <div class="header-logo-container">
             <div class="header-logo">
                 <img src="/assets/logo/doinUniver_02.png" alt="두인대학교 로고">
             </div>
@@ -29,66 +41,76 @@
             </div>
         </div>
 
-        <!-- Navigation Bar -->
-<!--        <ul class="nav-list">-->
-<!--            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>-->
-<!--            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>-->
-<!--            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i> 메인</a></li>-->
-<!--            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i> 학생 페이지</a></li>-->
-<!--            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i> 교수 페이지</a></li>-->
-<!--            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i> 관리자 페이지</a></li>-->
-<!--        </ul>-->
+        <div class="spacer"></div>
 
-        <ul class="header-list">
-            <li th:if="${memberDTO != null}" class="header-member-info-li">
-                <span id="session-timer" th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
+        <div class="header-member-info-container" th:if="${memberDTO != null}">
+            <div class="session-info-container">
+                <span id="session-timer" th:text="${remainingTime}">00:00</span>
                 <button id="session-extension-btn" class="session-button">세션 연장</button>
+            </div>
+            <div class="divider"></div>
+            <div class="header-span-container">
                 <span th:text="${memberDTO.deptName}">학과</span>
+            </div>
+            <div class="divider"></div>
+            <div class="header-span-container">
                 <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
+            </div>
+            <div class="divider"></div>
+            <div class="header-span-container">
                 <span th:text="${memberDTO.name}">박 두 인</span>
-            </li>
-            <li>
-                <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
-                <a th:if="${memberDTO == null}" th:href="@{/login}">로그인</a>
-            </li>
-        </ul>
-    </nav>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="side-bar">
-        <div class="sidebar-header">
-            <h2>학 사</h2>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Tab Container -->
-        <div class="tab-container">
-            <ul id="tabs" class="draggable-tabs"></ul>
-            <div class="tab-controls">
-                <button class="close-all" onclick="closeAllTabs()">
-                    <i class="fas fa-trash"></i>
-                </button>
             </div>
         </div>
 
-        <!-- Iframe Container -->
-        <div class="iframe-container">
-            <!-- iframe은 JavaScript에서 동적으로 생성됩니다 -->
+        <div class="divider"></div>
+
+        <div class="header-login-btn-container">
+            <div>
+                <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
+                <a th:if="${memberDTO == null}" th:href="@{/login}">로그인</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar" id="side-bar">
+            <div class="sidebar-header">
+                <h2>학 사</h2>
+            </div>
+            <!-- sidebar-category -->
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content-iframe-container">
+            <!-- Tab Container -->
+            <div class="tab-container">
+                <ul id="tabs"></ul>
+                <div class="tab-controls">
+                    <button class="close-all" onclick="closeAllTabs()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Iframe Container -->
+            <div class="iframe-container">
+                <!-- iframe은 JavaScript에서 동적으로 생성됩니다 -->
+            </div>
         </div>
     </div>
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 <script src="/js/session_timer.js"></script>
-<script src="/js/sidebar_category.js"></script>
+<script th:src="@{/js/sidebar_category.js}" src="/static/js/sidebar_category.js"></script>
 <script>
-function handleLogout() {
-    // 탭 상태 초기화
-    clearTabState();
-    // 시큐리티 로그아웃 URL로 이동
-    window.location.href = '/logout';
-}
+    function handleLogout() {
+        // 탭 상태 초기화
+        clearTabState();
+        // 시큐리티 로그아웃 URL로 이동
+        window.location.href = '/logout';
+    }
 </script>
 </body>
 </html>

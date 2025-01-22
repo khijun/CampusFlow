@@ -7,31 +7,64 @@
     --min-width: 1024px;  /* 최소 너비 변수 추가 */
 }
 
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Noto Sans KR', sans-serif;
-    height: 100%;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    min-width: var(--min-width);  /* 최소 너비 설정 */
-    overflow: hidden;
-}
-
 .header-nav {
     display: flex;
-    align-items: center;
+    align-items: center; /* 수직 정렬 */
     background-color: white;
     padding: 10px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 40px;
     justify-content: space-between;
-    min-width: var(--min-width);
-    position: fixed;  /* 헤더 고정 */
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+}
+
+.header-nav span{
+    white-space: nowrap;
+}
+
+.header-member-info-container .divider{
+    width: 10px;
+}
+
+.header-nav .divider{
+    width: 20px;
+}
+
+.header-span-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-login-btn-container a{
+    padding: 10px;
+    border: solid 1px lightgrey;
+    border-radius: 2px; /* 모서리 둥글게 */
+    text-decoration: none;
+    background: whitesmoke;
+}
+
+/* 버튼 호버 효과 */
+.header-login-btn-container a:hover {
+    background-color: #f5f5f5; /* 호버 시 색상 변경 */
+}
+
+/* 로고 */
+
+.header-logo-container{
+    display: flex;
+    height: 100%;
+    width: 300px;
+    overflow: hidden;
+}
+
+.header-logo-image{
+    height: 40px;
+    width: 100px;
+}
+
+.header-member-info-container{
+    display: flex;
+    height: 100%;
 }
 
 .header-list {
@@ -40,10 +73,6 @@ body, html {
     list-style-type: none;
     gap: 15px;
     margin-right: 20px;
-    position: absolute;  /* 추가 */
-    right: 0;          /* 추가 */
-    top: 25%;          /* 추가 */
-    transform: translateY(-50%);  /* 추가 */
 }
 
 .header-left {
@@ -53,71 +82,11 @@ body, html {
     min-width: 300px;  /* 로고와 타이틀이 겹치지 않도록 */
 }
 
-.header-logo img {
-    margin-top: 10px;
-    margin-left: -30px;
-    height: 90px;
-    width: auto;
+/* 공간 채우기용 빈칸 */
+.spacer{
+    flex: 1;
 }
 
-.header-title {
-    margin-left: -20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: var(--primary-color);
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 25px;
-    font-weight: 600;
-    white-space: nowrap;  /* 텍스트 줄바꿈 방지 */
-}
-
-.header-title small {
-    font-size: 14px;
-    color: var(--text-color);
-    font-weight: 200;
-}
-
-.header-list a {
-    font-size: 16px;
-    color: white;
-    text-decoration: none;
-    background-color: var(--primary-color);
-    padding: 6px 10px;
-    border-radius: 4px;
-    white-space: nowrap;  /* 텍스트 줄바꿈 방지 */
-}
-
-.header-list a:hover {
-    background-color: #0056b3;
-}
-
-/* 컨테이너 전체에 최소 너비 적용 */
-.container {
-    min-width: var(--min-width);
-    position: relative;
-}
-
-.header-member-info-li{
-    box-sizing: border-box;
-    padding: 15px;
-    align-content: space-between;
-}
-
-.header-member-info-li span:first-child{
-    border: none;
-}
-
-.header-member-info-li span {
-    padding: 8px 15px;  /* 상하 8px, 좌우 15px */
-    height: 70%;
-    border-left: 2px solid #ddd;
-    margin: 8px 15px;  /* 상하 8px, 좌우 15px */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
 /* button 태그 크기 조정 */
 .session-button {
     font-size: 1.0rem; /* 글자 크기 조정 */
