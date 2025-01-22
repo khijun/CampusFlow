@@ -1,6 +1,8 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.LecQuestionDTO;
+import edu.du.campusflow.dto.LectureDTO;
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.DiagEvaluationService;
@@ -58,6 +60,23 @@ public class LecEvaluationController {
 
         log.info("Search results size: {}", results.size());
         return ResponseEntity.ok(results);
+    }
+
+    // 학과 선택에 따른 과목 선택
+    @GetMapping("/admin/lectures")
+    @ResponseBody
+    public ResponseEntity<List<LectureDTO>> getLecturesByDepartment(@RequestParam Long deptId) {
+        List<Lecture> lectures = lecQuestionService.getLecLecturesByDepartment(deptId);
+
+        List<LectureDTO> lectureDTOs = lectures.stream()
+                .map(lecture -> {
+                    LectureDTO dto = new LectureDTO();
+                    dto.setLectureName(lecture.getLectureName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(lectureDTOs);
     }
 
     // 교수용 강의평가 페이지 이동

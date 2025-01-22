@@ -2,6 +2,8 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
+import edu.du.campusflow.dto.LectureDTO;
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.DiagEvaluationService;
@@ -56,6 +58,23 @@ public class DiagEvaluationController {
 
         log.info("Search results size: {}", results.size());
         return ResponseEntity.ok(results);
+    }
+
+    // 학과 선택에 따른 과목 선택
+    @GetMapping("/admin/lectures")
+    @ResponseBody
+    public ResponseEntity<List<LectureDTO>> getLecturesByDepartment(@RequestParam Long deptId) {
+        List<Lecture> lectures = diagEvaluationService.getDiagLecturesByDepartment(deptId);
+
+        List<LectureDTO> lectureDTOs = lectures.stream()
+                .map(lecture -> {
+                    LectureDTO dto = new LectureDTO();
+                    dto.setLectureName(lecture.getLectureName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(lectureDTOs);
     }
 
 

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
@@ -15,31 +16,45 @@
 </style>
 
 <body>
-    <!-- 검색 컨테이너 -->
-    <div class="search-container">
-      <div class="input-group">
-        <label for="Semester">학기</label>
-        <select id="Semester">
-          <option value="FIRST_SEMESTER">1학기</option>
-          <option value="SECOND_SEMESTER">2학기</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label for="professorId">교번</label>
-        <input type="text" id="professorId" name="professorId" th:value="${member.memberId}" readonly>
-      </div>
-      <div class="input-group">
-        <label for="professorName">교수명</label>
-        <input type="text" id="professorName" name="professorName" th:value="${member.name}" readonly>
-      </div>
-      <button type="submit" id="searchButton">조회</button>
+
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 검색</span>
+  </div>
+  <!-- 검색 컨테이너 -->
+  <div class="search-container">
+    <div class="input-group">
+      <label for="Semester">학기</label>
+      <select id="Semester">
+        <option value="FIRST_SEMESTER">1학기</option>
+        <option value="SECOND_SEMESTER">2학기</option>
+      </select>
     </div>
+    <div class="input-group">
+      <label for="professorId">교번</label>
+      <input type="text" id="professorId" name="professorId" th:value="${member.memberId}" readonly>
+    </div>
+    <div class="input-group">
+      <label for="professorName">교수명</label>
+      <input type="text" id="professorName" name="professorName" th:value="${member.name}" readonly>
+    </div>
+    <button type="submit" id="searchButton">조회</button>
+  </div>
 
-    <!-- 승인된 강의 목록 그리드 -->
-    <div id="approvedLectureGrid"></div>
-
-    <!-- 대기중인 강의 목록 그리드 -->
-    <div id="approval_pendingLectureGrid"></div>
+  <!-- 승인된 강의 목록 그리드 -->
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 목록</span>
+  </div>
+  <div id="approvedLectureGrid"></div>
+  <hr style="border: none; margin: 20px 0;">
+  <!-- 대기중인 강의 목록 그리드 -->
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">승인 대기 강의</span>
+  </div>
+  <div id="approval_pendingLectureGrid"></div>
 
   <script>
     // Toast UI Grid 초기화
@@ -77,6 +92,8 @@
 
       if (currentMonth >= 8 || currentMonth <= 1) {
         semesterSelect.value = 'SECOND_SEMESTER';
+      } else {
+        semesterSelect.value = 'FIRST_SEMESTER';
       }
       // 초기 데이터 로드
       const semesterCode = semesterSelect.value;
@@ -84,13 +101,13 @@
         fetch(`/api/lecture/approvedList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json()),
         fetch(`/api/lecture/pendingList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json())
       ])
-              .then(([approvedLectures, pendingLectures]) => {
-                approvedGrid.resetData(approvedLectures);
-                pendingGrid.resetData(pendingLectures);
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
+        .then(([approvedLectures, pendingLectures]) => {
+          approvedGrid.resetData(approvedLectures);
+          pendingGrid.resetData(pendingLectures);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
     });
 
     // 조회 버튼 클릭 이벤트 처리
@@ -103,23 +120,23 @@
         fetch(`/api/lecture/approvedList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json()),
         fetch(`/api/lecture/pendingList?semesterCode=${semesterCode}&professorId=${professorId}`).then(response => response.json())
       ])
-              .then(([approvedLectures, pendingLectures]) => {
-                if (approvedLectures.length === 0) {
-                  approvedGrid.resetData([]);
-                } else {
-                  approvedGrid.resetData(approvedLectures);
-                }
+        .then(([approvedLectures, pendingLectures]) => {
+          if (approvedLectures.length === 0) {
+            approvedGrid.resetData([]);
+          } else {
+            approvedGrid.resetData(approvedLectures);
+          }
 
-                if (pendingLectures.length === 0) {
-                  pendingGrid.resetData([]);
-                } else {
-                  pendingGrid.resetData(pendingLectures);
-                }
-              })
-              .catch(error => {
-                alert('강의 리스트 조회 중 오류가 발생했습니다.');
-                console.error('Error:', error);
-              });
+          if (pendingLectures.length === 0) {
+            pendingGrid.resetData([]);
+          } else {
+            pendingGrid.resetData(pendingLectures);
+          }
+        })
+        .catch(error => {
+          alert('강의 리스트 조회 중 오류가 발생했습니다.');
+          console.error('Error:', error);
+        });
     });
   </script>
 </body>

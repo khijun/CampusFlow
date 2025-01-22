@@ -54,5 +54,4 @@ public interface DiagEvaluationRepository extends JpaRepository<Ofregistration, 
             "ORDER BY l.lectureName")
     @EntityGraph(attributePaths = "member")
     List<Lecture> findDiagLecturesByProfessorId(@Param("professorId") Long professorId);
-
 }
