@@ -27,6 +27,10 @@
         .submit-button:hover {
             background-color: #f5f5f5; /* 호버 시 색상 변경 */
         }
+        .btn-container{
+            margin: 20px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -41,9 +45,11 @@
         </div>
     </div>
     <div id="dept-input-grid"></div>
-    <input type="button" id="add-row-button" class="submit-button" value="열 추가"/>
-    <input type="button" id="delete-row-button" class="submit-button" value="열 삭제"/>
-    <input type="button" id="grid-add-dept-button" class="submit-button" value="학과 생성"/>
+    <div class="btn-container">
+        <input type="button" id="add-row-button" class="submit-button" value="열 추가"/>
+        <input type="button" id="delete-row-button" class="submit-button" value="열 삭제"/>
+        <input type="button" id="grid-add-dept-button" class="submit-button" value="학과 생성"/>
+    </div>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
