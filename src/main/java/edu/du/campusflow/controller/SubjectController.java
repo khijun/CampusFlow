@@ -59,7 +59,6 @@ public class SubjectController {
 
    @DeleteMapping("/api/subjects/delete")
    public ResponseEntity<?> deleteSubjects(@RequestBody List<Long> ids) {
-      // 삭제 요청 처리
       subjectService.deleteSubjects(ids);
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects deleted successfully."));
    }

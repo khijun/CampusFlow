@@ -14,6 +14,7 @@
       <button id="curriculum-subject-list-select-btn">조회</button>
       <button id="save-updates-btn">수정 저장</button>
       <button id="delete-selected-btn">삭제</button>
+      &nbsp;<h5>이수학점,이수구분 항목만 수정가능</h5>
    </div>
    <div id="curriculum-subject-grid-container" style="height: 700px;"></div>
 </div>
@@ -32,10 +33,8 @@
        try {
            const response = await fetch(`/api/common-codes/${groupCode}`);
            const data = response.ok ? await response.json() : [];
-           console.log(`Fetched ${groupCode} codes:`, data); // 디버깅 추가
            return data;
        } catch (error) {
-           console.error(`Error fetching ${groupCode}:`, error);
            return [];
        }
    }
@@ -105,44 +104,52 @@
 
               })
               .catch(error => {
-                 console.error("Error fetching curriculum subjects:", error);
                  alert("교육과정 교과목 데이터를 불러오는 데 실패했습니다.");
               });
    });
 
    document.getElementById("save-updates-btn").addEventListener("click", () => {
-       if (!grid) {
-           alert("먼저 교육과정을 조회하세요.");
-           return;
-       }
+      if (!grid) {
+         alert("먼저 교육과정을 조회하세요.");
+         return;
+      }
 
-       const updatedRows = grid.getModifiedRows().updatedRows;
+      const updatedRows = grid.getModifiedRows().updatedRows;
 
-       if (updatedRows.length === 0) {
-           alert("수정된 데이터가 없습니다.");
-           return;
-       }
+      if (updatedRows.length === 0) {
+         alert("수정된 데이터가 없습니다.");
+         return;
+      }
 
-       const formattedData = updatedRows.map(row => ({
-           curriculumSubjectId: row.curriculumSubjectId || null,
-           subjectTypeName: row.subjectTypeName ? getCodeValue(subjectTypeList, row.subjectTypeName) : "MAJOR_REQUIRED",  // 기본값 설정
-           gradingMethod: row.gradingMethod ? getCodeValue(gradingMethodList, row.gradingMethod) : "ABSOLUTE" // 기본값 설정
-       }));
+      function getCodeValue(codeList, codeText) {
+         const found = codeList.find(opt => opt.text === codeText);
+         return found ? found.value : codeText; // 변경된 값이 리스트에 없으면 기존 값 유지
+      }
 
-       fetch("/api/curriculum-subjects/update", {
-           method: "PUT",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify(formattedData)
-       })
-           .then(response => response.json())
-           .then(() => {
-               alert("데이터가 수정되었습니다");
-               document.getElementById("curriculum-subject-list-select-btn").click(); // 최신 데이터 조회
-           })
-           .catch(error => {
-               console.error("Error updating curriculum subjects:", error);
-               alert("수정 저장 중 오류가 발생했습니다.");
-           });
+      const formattedData = updatedRows.map(row => ({
+         curriculumSubjectId: row.curriculumSubjectId || null,
+         subjectTypeName: row.subjectTypeName ? getCodeValue(subjectTypeList, row.subjectTypeName) : "MAJOR_REQUIRED",
+         gradingMethod: row.gradingMethod ? getCodeValue(gradingMethodList, row.gradingMethod) : "ABSOLUTE"
+      }));
+
+      fetch("/api/curriculum-subjects/update", {
+         method: "PUT",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(formattedData)
+      })
+              .then(response => {
+                 if (!response.ok) {
+                    throw new Error("Failed to update curriculum subjects");
+                 }
+                 return response.json();
+              })
+              .then(() => {
+                 alert("데이터가 수정되었습니다");
+                 document.getElementById("curriculum-subject-list-select-btn").click(); // 최신 데이터 조회
+              })
+              .catch(error => {
+                 alert("수정 저장 중 오류가 발생했습니다.");
+              });
    });
 
    document.getElementById("delete-selected-btn").addEventListener("click", () => {
@@ -176,7 +183,6 @@
                  document.getElementById("curriculum-subject-list-select-btn").click(); // 최신 데이터 반영
               })
               .catch(error => {
-                 console.error("Error deleting curriculum subjects:", error);
                  alert("데이터 삭제 중 오류가 발생했습니다.");
               });
    });

@@ -52,7 +52,6 @@
                 if (!response.ok) throw new Error(`Failed to fetch ${groupCode} codes`);
                 return await response.json();
             } catch (error) {
-                console.error(`Error fetching ${groupCode} codes:`, error);
                 return [];
             }
         }

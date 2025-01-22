@@ -148,8 +148,8 @@ public class CurriculumSubjectService {
             Subject subject = subjectRepository.findById(dto.getSubjectId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목 ID: " + dto.getSubjectId()));
 
-            var subjectType = commonCodeService.getCodeByValue(23L, dto.getSubjectTypeName()); // 이수 구분 (group_id = 23)
-            var gradingMethod = commonCodeService.getCodeByValue(29L, dto.getGradingMethod()); // 평가 방법 (group_id = 29)
+            var subjectType = commonCodeService.getCodeByValue(23L, dto.getSubjectTypeName());
+            var gradingMethod = commonCodeService.getCodeByValue(29L, dto.getGradingMethod());
 
             CurriculumSubject curriculumSubject = new CurriculumSubject();
             curriculumSubject.setCurriculum(curriculum);
