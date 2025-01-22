@@ -29,16 +29,6 @@
             </div>
         </div>
 
-        <!-- Navigation Bar -->
-        <!--        <ul class="nav-list">-->
-        <!--            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>-->
-        <!--            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>-->
-        <!--            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i> 메인</a></li>-->
-        <!--            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i> 학생 페이지</a></li>-->
-        <!--            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i> 교수 페이지</a></li>-->
-        <!--            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i> 관리자 페이지</a></li>-->
-        <!--        </ul>-->
-
         <ul class="header-list">
             <li class="header-member-info-li" th:if="${memberDTO != null}">
                 <span id="session-timer" th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
@@ -85,12 +75,10 @@
                 <div class="section-title">공지사항</div>
                 <ul class="info-list">
                     <li>
-                        <span>2025학년도 1학기 수강신청 안내</span>
-                        <span class="date">2025.01.21</span>
-                    </li>
-                    <li>
-                        <span>동계방학 도서관 운영시간 안내</span>
-                        <span class="date">2025.01.20</span>
+                        <a href="#" onclick="openNewPage('수강신청', '/iframe/ofregistration/student/studentOfre')">
+                            <span>2025학년도 1학기 수강신청 안내</span>
+                            <span class="date">2025.01.21</span>
+                        </a>
                     </li>
                     <li>
                         <span>졸업사정 결과 확인 안내</span>
@@ -125,15 +113,31 @@
 <script src="/js/sidebar_category.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 메인 탭 추가
-        addTab('메인', '/main');
+        // 세션 스토리지 초기화
+        sessionStorage.removeItem('tabState');
 
-        // 메인 컨텐츠 표시, iframe 숨기기
-        const infoContainer = document.querySelector('.info-container');
+        // iframe 컨테이너 초기화
         const iframeContainer = document.querySelector('.iframe-container');
+        if (iframeContainer) {
+            iframeContainer.innerHTML = '';
+            iframeContainer.style.display = 'none';
+        }
 
-        if (infoContainer) infoContainer.style.display = 'flex';
-        if (iframeContainer) iframeContainer.style.display = 'none';
+        // 메인 컨텐츠 표시
+        const mainContent = document.querySelector('.info-container');
+        if (mainContent) {
+            mainContent.style.display = 'flex';
+        }
+
+        // 메인 탭만 추가
+        const tabs = document.getElementById('tabs');
+        if (tabs) {
+            tabs.innerHTML = ''; // 기존 탭 모두 제거
+            addTab('메인', '/main', false); // 메인 탭 추가
+        }
+
+        // 메인 탭 활성화
+        switchTab('/main');
     });
 
     function handleLogout() {

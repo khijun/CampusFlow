@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // onclick을 수정하여 탭 생성 및 iframe 로드
             childLink.setAttribute('href', '#');
-            childLink.setAttribute('onclick', `addTab('${child.name}', '${child.url}')`);
+            childLink.setAttribute('onclick', `openNewPage('${child.name}', '${child.url}')`);
             childLink.innerHTML = child.image
                 ? `<img src="/file/${child.image}" alt="${child.name}" style="width: 20px; height: 20px;"> ${child.name}`
                 : `${child.name}`;
