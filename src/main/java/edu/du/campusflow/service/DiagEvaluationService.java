@@ -2,10 +2,7 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
-import edu.du.campusflow.entity.DiagItem;
-import edu.du.campusflow.entity.DiagQuestion;
-import edu.du.campusflow.entity.Member;
-import edu.du.campusflow.entity.Ofregistration;
+import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ public class DiagEvaluationService {
     private final DiagItemRepository diagItemRepository;
     private final DiagQuestionRepository diagQuestionRepository;
     private final DiagEvaluationRepository diagEvaluationRepository;
+    private final LectureRepository lectureRepository;
 
     @Transactional
     public List<DiagEvaluationDetailDTO> searchEvaluations(
@@ -137,5 +135,9 @@ public class DiagEvaluationService {
                     return map;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<Lecture> getDiagLecturesByDepartment(Long deptId) {
+        return lectureRepository.findByDepartmentId(deptId);
     }
 }

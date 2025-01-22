@@ -16,7 +16,7 @@
             <!-- 학생 목록 반복 -->
             <th:block th:each="registration : ${ofregistrations}">
                 <tr>
-                    <a th:href="@{/grade/{memberId}(memberId=${registration.member.memberId})}" th:text="${registration.member.memberId}">학번</a>
+                    <td th:text="${registration.member.memberId}">학번</td>
                     <td th:text="${registration.member.name}">학생명</td>
                     <td>
                         <!-- 성적 유형 선택 -->

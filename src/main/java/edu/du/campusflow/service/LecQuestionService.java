@@ -3,11 +3,9 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.dto.LecQuestionDTO;
 import edu.du.campusflow.entity.LecItem;
 import edu.du.campusflow.entity.LecQuestion;
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Ofregistration;
-import edu.du.campusflow.repository.DeptRepository;
-import edu.du.campusflow.repository.LecItemRepository;
-import edu.du.campusflow.repository.LecQuestionRepository;
-import edu.du.campusflow.repository.OfregistrationRepository;
+import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,7 @@ public class LecQuestionService {
     private final OfregistrationRepository ofregistrationRepository;
     private final LecQuestionRepository lecQuestionRepository;
     private final LecItemRepository lecItemRepository;
+    private final LectureRepository lectureRepository;
 
     @Transactional
     public List<LecQuestionDTO> searchEvaluations(
@@ -127,5 +126,9 @@ public class LecQuestionService {
                     return map;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<Lecture> getLecLecturesByDepartment(Long deptId) {
+        return lectureRepository.findByDepartmentId(deptId);
     }
 }

@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const childItem = document.createElement('li');
             const childLink = document.createElement('a');
 
-            // onclick을 사용하여 iframe을 로드
+            // onclick을 수정하여 탭 생성 및 iframe 로드
             childLink.setAttribute('href', '#');
-            childLink.setAttribute('onclick', `loadIframe('${child.url}')`);
+            childLink.setAttribute('onclick', `openNewPage('${child.name}', '${child.url}')`);
             childLink.innerHTML = child.image
                 ? `<img src="/file/${child.image}" alt="${child.name}" style="width: 20px; height: 20px;"> ${child.name}`
                 : `${child.name}`;
