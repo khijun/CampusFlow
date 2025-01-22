@@ -86,6 +86,8 @@ function createMemberGrid(memberListDiv) {
         .then(data => { // 이건 데이터의 형태를 바꾸는 작업. 없으면 스킵해도됨
             return data.map(member => ({
                 ...member, // data에 있는 모든 변수들을 그대로 복사해 붙여넣는다.
+                updateAt: member.updateAt.trim().replace('T',' '),
+                createAt: member.createAt.trim().replace('T',' '),
                 isActive: member.isActive ? '활성화' : '비활성화', // boolean 타입을 보기쉽게 변경
                 updateAt: member.updateAt.trim().replace('T',' '),
                 createAt: member.createAt.trim().replace('T',' '),

@@ -8,6 +8,7 @@ import edu.du.campusflow.entity.Dept;
 import edu.du.campusflow.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,10 +61,20 @@ public class DeptApiController {
         return ResponseEntity.ok(deptList);
     }
 
+    @PreAuthorize("hasAnyRole('STAFF')")
     @PostMapping
     public ResponseEntity<?> postDept(@RequestBody DeptCreateRequest deptCreateRequest) {
         try{
             return ResponseEntity.ok(deptService.create(deptCreateRequest));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/all")
+    public ResponseEntity<?> putDept(@RequestBody List<DeptDTO> deptDTOList) {
+        try{
+            return ResponseEntity.ok(deptService.update(deptDTOList));
         }catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
