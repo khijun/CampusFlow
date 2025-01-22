@@ -6,23 +6,114 @@
     <title>공지사항 상세</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .notice-header {
+        :root {
+            --primary-color: #495057;
+            --secondary-color: #6c757d;
+            --danger-color: #868e96;
+            --border-color: #dee2e6;
+            --hover-color: #343a40;
+        }
+        
+        body {
             background-color: #f8f9fa;
+            color: var(--primary-color);
+        }
+        
+        .notice-header {
+            background-color: white;
             padding: 20px;
+            border: 1px solid var(--border-color);
             border-radius: 5px;
             margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
+        
         .notice-content {
             min-height: 200px;
             padding: 20px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             border-radius: 5px;
             background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
+        
         .notice-footer {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .content-area {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--primary-color);
+        }
+        
+        .content-area img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .content-area table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+        
+        .content-area table td,
+        .content-area table th {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-list {
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-list:hover {
+            background-color: var(--hover-color);
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--hover-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--hover-color);
+            color: white;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .text-muted {
+            color: var(--secondary-color) !important;
         }
     </style>
 </head>
@@ -30,29 +121,35 @@
 <div class="container mt-5">
     <div class="notice-header">
         <h2 th:text="${notice.subject}"></h2>
-        <p>
-            <span th:text="|번호: ${noticeNumber}|"></span> |
-            <span th:text="|작성자: ${notice.member.name}|"></span> |
-            <span th:text="|등록일: ${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}|"></span>
-        </p>
-    </div>
+        <div class="d-flex justify-content-end align-items-center mb-2">
+            <div>
+                <span class="text-muted">번호: </span>
+                <span th:text="${noticeNumber}"></span>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-muted">작성자: </span>
+                <span th:text="${notice.member.name}"></span>
+            </div>
+            <small class="text-muted" th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
         </div>
     </div>
 
     <div class="notice-content">
-        <p th:text="${notice.content}" style="white-space: pre-line;"></p>
+        <div class="content-area" th:utext="${notice.content}"></div>
     </div>
 
     <div class="notice-footer">
         <div class="row">
             <div class="col">
-                <a href="/iframe/notice/view" class="btn btn-secondary">목록으로</a>
+                <a href="/iframe/notice/view" class="btn btn-list">목록으로</a>
             </div>
             <!-- 교직원인 경우에만 수정/삭제 버튼 표시 -->
             <div class="col text-right" th:if="${isStaff}">
-                <a th:href="@{/iframe/notice/edit/{id}(id=${notice.noticeId})}" class="btn btn-primary">수정</a>
+                <a th:href="@{/iframe/notice/edit/{id}(id=${notice.noticeId})}" class="btn btn-edit">수정</a>
                 <form th:action="@{/iframe/notice/delete/{id}(id=${notice.noticeId})}" method="post" style="display: inline;" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
-                    <button type="submit" class="btn btn-danger">삭제</button>
+                    <button type="submit" class="btn btn-delete">삭제</button>
                 </form>
             </div>
         </div>

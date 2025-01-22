@@ -4,46 +4,169 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공지사항 수정</title>
+    
+    <!-- TOAST UI Editor CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
     <style>
-        .form-group label {
-            font-weight: bold;
+        :root {
+            --primary-color: #495057;
+            --secondary-color: #6c757d;
+            --danger-color: #868e96;
+            --border-color: #dee2e6;
+            --hover-color: #343a40;
         }
-        .content-area {
-            min-height: 300px;
-            resize: vertical;
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--primary-color);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .subject-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+        
+        .subject-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(73, 80, 87, 0.2);
+        }
+        
+        .button-group {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-cancel {
+            background-color: var(--secondary-color);
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .btn-cancel:hover {
+            background-color: var(--hover-color);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background-color: var(--hover-color);
+            color: white;
+        }
+        
+        #editor {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .toastui-editor-defaultUI {
+            border: none !important;
+        }
+        
+        .toastui-editor-toolbar {
+            border-bottom: 1px solid var(--border-color) !important;
         }
     </style>
 </head>
 <body>
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h2>공지사항 수정</h2>
+<div class="container">
+    <h1>공지사항 수정</h1>
+    <form th:action="@{/iframe/notice/edit/{id}(id=${notice.noticeId})}" method="post" onsubmit="return submitForm()">
+        <input type="text" class="subject-input" name="subject" th:value="${notice.subject}" placeholder="제목을 입력하세요" required>
+        <div id="editor"></div>
+        <input type="hidden" name="content" id="contentInput">
+        <div class="button-group">
+            <a th:href="@{/iframe/notice/{id}(id=${notice.noticeId})}" class="btn btn-cancel">취소</a>
+            <button type="submit" class="btn btn-submit" id="submitBtn">저장</button>
         </div>
-        <div class="card-body">
-            <form th:action="@{/iframe/notice/edit/{id}(id=${notice.noticeId})}" method="post">
-                <div class="form-group">
-                    <label for="subject">제목</label>
-                    <input type="text" class="form-control" id="subject" name="subject"
-                           th:value="${notice.subject}" required>
-                </div>
-                <div class="form-group">
-                    <label for="content">내용</label>
-                    <textarea class="form-control content-area" id="content" name="content"
-                              rows="10" required th:text="${notice.content}"></textarea>
-                </div>
-                <div class="form-group text-right">
-                    <a th:href="@{/iframe/notice/{id}(id=${notice.noticeId})}" class="btn btn-secondary">취소</a>
-                    <button type="submit" class="btn btn-primary">수정완료</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    </form>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- TOAST UI Editor JS -->
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
+<script th:inline="javascript">
+    const initialContent = /*[[${notice.content}]]*/ '';
+    
+    const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        height: '500px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: initialContent,
+        language: 'ko',
+        placeholder: '내용을 입력하세요',
+        toolbarItems: [
+            ['heading', 'bold', 'italic', 'strike'],
+            ['hr', 'quote'],
+            ['ul', 'ol', 'task', 'indent', 'outdent'],
+            ['table', 'link']
+        ]
+    });
+
+    function submitForm() {
+        const subject = document.querySelector('.subject-input').value;
+        const content = editor.getHTML();
+
+        if (!subject.trim()) {
+            alert('제목을 입력하세요.');
+            return false;
+        }
+
+        if (!content.trim()) {
+            alert('내용을 입력하세요.');
+            return false;
+        }
+
+        // 숨겨진 input에 에디터 내용 설정
+        document.getElementById('contentInput').value = content;
+
+        // 버튼 비활성화 및 로딩 표시
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 저장 중...';
+
+        return true;
+    }
+</script>
 </body>
 </html> 

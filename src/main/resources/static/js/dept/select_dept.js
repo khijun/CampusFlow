@@ -1,4 +1,4 @@
-let instance = null; // 리스트를 저장해놓기 위한 변수
+let grid = null; // 리스트를 저장해놓기 위한 변수
 
 // 조회 버튼
 const listSelectButton = document.querySelector("#dept-list-select-btn");
@@ -18,12 +18,33 @@ listSelectButton.addEventListener('click', () => {
 function createDeptGrid(listDiv) {
     const columns = [
         {header: '학과 코드', name: 'deptId'},
+<<<<<<< HEAD
         {header: '학과 이름', name: 'deptName'},
         {header: '최대 수용 인원', name: 'maxStudents'},
         {header: '학과 상태', name: 'deptStatus'},
         {header: '전공 학점', name: 'generalCredits'},
         {header: '교양 학점', name: 'majorCredits'},
         {header: '졸업 학점', name: 'graduationCredits'},
+=======
+        {header: '학과 이름', name: 'deptName', editor: 'text'},
+        {header: '최대 수용 인원', name: 'maxStudents', editor: 'text'},
+        {
+            header: '학과 상태', name: 'deptStatus',
+            editor: {
+                type: 'select',
+                options: {
+                    listItems: [
+                        {text: '활성화', value: '활성화'},
+                        {text: '비활성화', value: '비활성화'},
+                        {text: '대기중', value: '대기중'}
+                    ]
+                }
+            }
+        },
+        {header: '교양 학점', name: 'generalCredits', editor: 'text'},
+        {header: '전공 학점', name: 'majorCredits', editor: 'text'},
+        {header: '졸업 학점', name: 'graduationCredits', editor: 'text'},
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
 
     ];
 
@@ -35,7 +56,7 @@ function createDeptGrid(listDiv) {
         deptStatus: deptStatusInput && deptStatusInput.value ? deptStatusInput.value : null,
     };
 
-    fetch('/api/dept?filter='+encodeURIComponent(JSON.stringify(filter)))
+    fetch('/api/dept?filter=' + encodeURIComponent(JSON.stringify(filter)))
         .then(response => { // 응답을 받으면
             if (!response.ok) { // 응답이 ok인지 확인한다. 아니면 에러를 발생
                 throw new Error('Network response was not ok' + response.statusText);
@@ -44,13 +65,79 @@ function createDeptGrid(listDiv) {
             return response.json(); // json으로 변환한다.
         })
         .then(data => {
-            return data;// 이건 데이터의 형태를 바꾸는 작업. 없으면 스킵해도됨
+            return data.map(dept => ({
+                    ...dept,
+                    deptStatus: dept.deptStatus === 35 ? '활성화' :
+                        dept.deptStatus === 36 ? '비활성화' : '대기중'
+                    // 활성35, 비활성36, 대기37
+                })
+            )
         })
         .then(mappedData => {
-            if (instance != null) { // 리스트가 이미 있으면, 그 전껄 지우고 새로운걸 띄우기 위함
-                instance.destroy();
-                instance = null;
+            if (grid != null) { // 리스트가 이미 있으면, 그 전껄 지우고 새로운걸 띄우기 위함
+                grid.destroy();
+                grid = null;
             }
-            instance = createGrid(listDiv, columns, mappedData, null);
+            grid = new tui.Grid({
+                el: listDiv,
+                columnOptions: {},
+                rowHeaders: ['checkbox'], // 체크박스를 사용하여 행 선택
+                columns: columns,
+                data: mappedData,
+                scrollX: true,
+                bodyHeight: 400,
+                maxBodyWidth: 1300,
+            })
         })
+}
+
+const deptUpdateBtn = document.querySelector("#dept-update-btn");
+deptUpdateBtn.addEventListener('click', () => {
+    update();
+})
+
+function update() {
+    // 버튼 비활성화 코드
+    deptUpdateBtn.disabled = true;
+
+    const checkedRows = grid.getCheckedRows(); // 체크된 행 가져오기
+
+    if (checkedRows.length === 0) {
+        alert("수정할 행을 선택하세요."); // 체크된 행이 없으면 경고
+        deptUpdateBtn.disabled = false;
+        return;
+    }
+
+    checkedRows.forEach(row => {
+        row.deptStatus = row.deptStatus === "활성화" ? 35 :
+            row.deptStatus === '비활성화' ? 36 : 37;
+    })
+
+    // API 호출
+    fetch("/api/dept/all", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(checkedRows) // 체크된 행만 서버로 전송
+    })
+        .then(response => {
+            console.log(checkedRows);
+            if (!response.ok) {
+                throw new Error("Failed to save subjects");
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("수정 완료되었습니다");
+            createDeptGrid(listDiv)
+        })
+        .catch(error => {
+            console.error("Error saving subjects:", error);
+            alert("오류가 발생했습니다");
+        })
+        .finally(data => {
+            deptUpdateBtn.disabled = false;
+        });
+
 }

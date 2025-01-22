@@ -25,7 +25,7 @@ public class Notice {
     @Column(name = "subject", length = 100)
     private String subject; // 제목
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "LONGTEXT")
     private String content; // 내용
 
     @Column(name = "created_at")

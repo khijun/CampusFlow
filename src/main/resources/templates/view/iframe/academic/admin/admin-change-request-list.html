@@ -12,11 +12,15 @@
   </style>
 </head>
 <body>
+<<<<<<< HEAD
 <div>
   <div id="change-request-select">
     <input id="change-request-select-btn" type="button" value="변동 신청 조회"/>
   </div>
 </div>
+=======
+
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
 
 <div id="change-request-list"></div>
 
@@ -24,10 +28,16 @@
 <script>
   let instance = null; // 그리드 인스턴스를 저장하기 위한 변수
 
+<<<<<<< HEAD
   const changeRequestSelectButton = document.querySelector("#change-request-select-btn");
   const changeRequestListDiv = document.querySelector('#change-request-list');
 
   changeRequestSelectButton.addEventListener('click', () => {
+=======
+  const changeRequestListDiv = document.querySelector('#change-request-list');
+
+  document.addEventListener('DOMContentLoaded', () => {
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
     createChangeRequestGrid(changeRequestListDiv);
   });
 

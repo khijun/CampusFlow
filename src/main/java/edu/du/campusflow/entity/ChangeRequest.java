@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -44,6 +45,14 @@ public class ChangeRequest {
 
     @Column(name = "request_date")
     private LocalDate requestDate;                  // 신청 일자
+
+    @Column(name = "leave_start_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate leaveStartDate;
+
+    @Column(name = "leave_end_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate leaveEndDate;
 
     @Column(name = "reason")
     private String reason; // 사유

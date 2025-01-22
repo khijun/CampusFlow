@@ -28,4 +28,6 @@ public class LectureDTO {
 
     private String semesterCode;
 
+    private Long FileInfo;           //저장된 파일 아이디
+
 }

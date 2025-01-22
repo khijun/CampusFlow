@@ -4,12 +4,105 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+<<<<<<< HEAD
   <title>변동 신청 승인</title>
 </head>
 <body>
 <div>
   <div id="change-request-history-select">
     <input id="change-request-history-btn" type="button" value="변동 이력 조회"/>
+=======
+  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+        th:href="@{/css/iframe/curriculum/search-container.css}"/>
+  <title>변동 신청 승인</title>
+  <style>
+    #filter-container {
+      width: 900px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #change-history{
+      border: 1px solid;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff
+    }
+
+    .change-history-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      margin: 0;
+    }
+
+    .change-history-header label {
+      font-weight: bold;
+      flex: 0 0 150px; /* 고정된 너비 설정 (필요 시 조정 가능) */
+      text-align: right; /* 텍스트를 오른쪽으로 정렬 */
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    .change-history-header input {
+      flex: 1; /* input이 남은 공간을 차지 */
+      padding: 5px; /* 여백 추가 */
+      border: 1px solid #ccc; /* 테두리 설정 */
+      border-radius: 4px; /* 모서리 둥글게 */
+    }
+
+    #btn-container{
+      text-align: right;
+    }
+
+    .submit-button {
+      font-size: 1.0rem; /* 글자 크기 조정 */
+      height: 2.3rem; /* 높이 조정 */
+      cursor: pointer; /* 커서 변경 */
+      border: 1px solid #ccc; /* 테두리 */
+      border-radius: 2px; /* 모서리 둥글게 */
+      margin: 5px;
+    }
+
+    .submit-button:hover {
+      background-color: #f5f5f5; /* 호버 시 색상 변경 */
+    }
+  </style>
+</head>
+<body>
+
+<div id="filter-container">
+  <div id="change-history" class="search-container">
+    <div class="change-history-header">
+  <label for="deptFilter">학과 선택: </label>
+  <select id="deptFilter">
+    <option value="">전체</option>
+    <th:block th:each="dept : ${deptList}">
+      <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+    </th:block>
+  </select>
+    </div>
+
+    <div class="change-history-header">
+  <label for="nameFilter">이름 검색: </label>
+  <input type="text" id="nameFilter" placeholder="이름 입력">
+      </div>
+
+    <div class="change-history-header">
+  <label for="afterStateFilter">변경 후 상태: </label>
+  <select id="afterStateFilter">
+    <option value="">전체</option>
+    <option value="휴학">휴학</option>
+    <option value="재학">재학</option>
+    <option value="자퇴">자퇴</option>
+    <option value="퇴학">퇴학</option>
+    <option value="졸업">졸업</option>
+    <option value="제적">제적</option>
+  </select>
+    </div>
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
   </div>
 </div>
 
@@ -17,6 +110,7 @@
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
+<<<<<<< HEAD
   let instance = null; // 그리드 인스턴스를 저장할 변수
 
   const historySelectButton = document.querySelector("#change-request-history-btn");
@@ -69,6 +163,87 @@
               console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
             });
   }
+=======
+  document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#change-request-history-grid');
+    const deptFilter = document.querySelector('#deptFilter');
+    const nameFilter = document.querySelector('#nameFilter');
+    const afterStateFilter = document.querySelector('#afterStateFilter');
+
+    let originalData = []; // 원본 데이터를 저장할 변수
+    let instance = null; // TOAST UI Grid 인스턴스
+
+    createChangeHistoryGrid(gridDiv);
+
+    // 필터링 이벤트 리스너 추가
+    deptFilter.addEventListener('change', filterGrid);
+    nameFilter.addEventListener('input', filterGrid);
+    afterStateFilter.addEventListener('change', filterGrid);
+
+    function createChangeHistoryGrid(gridDiv) {
+      const columns = [
+        {header: '학번', name: 'memberId', align: 'center'},
+        {header: '이름', name: 'name', align: 'center'},
+        {header: '학년', name: 'grade', align: 'center'},
+        {header: '학과', name: 'deptName', align: 'center'},
+        {header: '변경 전 상태', name: 'beforeState', align: 'center'},
+        {header: '변경 후 상태', name: 'afterState', align: 'center'},
+        {header: '승인 날짜', name: 'approvalDate', align: 'center'}
+      ];
+
+      fetch('/api/admin/change-request-history')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('네트워크 응답이 실패했습니다.' + response.statusText);
+                }
+                return response.json();
+              })
+              .then(data => {
+                originalData = data.map(history => ({
+                  memberId: history.memberId,
+                  name: history.name,
+                  grade: history.grade,
+                  deptId: history.deptId,      // 🔹 deptId 추가
+                  deptName: history.deptName,
+                  beforeState: history.beforeState,
+                  afterState: history.afterState,
+                  approvalDate: history.approvalDate
+                }));
+
+                renderGrid(gridDiv, originalData, columns);
+              })
+              .catch(error => {
+                console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
+              });
+    }
+
+    function renderGrid(gridDiv, data, columns) {
+      if (instance !== null) {
+        instance.destroy();
+        instance = null;
+      }
+      instance = new tui.Grid({
+        el: gridDiv,
+        columns: columns,
+        data: data
+      });
+    }
+
+    function filterGrid() {
+      const selectedDeptId = deptFilter.value;  // 선택한 학과의 ID
+      const nameKeyword = nameFilter.value.trim().toLowerCase();
+      const selectedAfterState = afterStateFilter.value;
+
+      const filteredData = originalData.filter(item => {
+        return (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&  // deptId로 비교
+                (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword)) &&
+                (selectedAfterState === "" || item.afterState === selectedAfterState);
+      });
+
+      renderGrid(gridDiv, filteredData, instance.getColumns());
+    }
+  });
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
 </script>
 </body>
 </html>

@@ -6,15 +6,57 @@
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
   <title>학생 상태 관리</title>
   <style>
+<<<<<<< HEAD
     form {
       display: inline;
+=======
+    #filter-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    select, input {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #student-status-list {
+      margin-top: 10px;
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
     }
   </style>
 </head>
 <body>
+<<<<<<< HEAD
 <div>
   <div id="student-status-select">
     <input id="student-status-select-btn" type="button" value="학생 상태 조회"/>
+=======
+
+<div id="filter-container">
+  <div class="filter-item">
+    <label for="deptFilter">학과 선택:</label>
+    <select id="deptFilter">
+      <option value="">전체</option>
+      <th:block th:each="dept : ${deptList}">
+        <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+      </th:block>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <label for="nameFilter">이름 검색:</label>
+    <input type="text" id="nameFilter" placeholder="이름 입력">
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
   </div>
 </div>
 
@@ -23,6 +65,7 @@
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
   let gridInstance = null;
+<<<<<<< HEAD
 
   const studentStatusSelectButton = document.querySelector("#student-status-select-btn");
   const studentStatusDiv = document.querySelector('#student-status-list');
@@ -82,5 +125,76 @@
             .catch(error => console.error('Error:', error));
   }
 </script>
+=======
+  let originalData = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchStudentData();
+  });
+
+  function fetchStudentData() {
+    fetch('/api/admin/academic-management')
+            .then(response => response.json())
+            .then(data => {
+              originalData = data.filter(member =>
+                      !['퇴학', '졸업', '제적'].includes(member.academicStatus)
+              );
+              renderGrid(originalData);
+            })
+            .catch(error => console.error('Error:', error));
+  }
+
+  function renderGrid(data) {
+    if (gridInstance) {
+      gridInstance.destroy();
+    }
+
+    gridInstance = new tui.Grid({
+      el: document.querySelector('#student-status-list'),
+      data: data,
+      columns: [
+        { header: '학번', name: 'memberId', align: 'center' },
+        { header: '이름', name: 'name', align: 'center' },
+        { header: '학적 상태', name: 'academicStatus', align: 'center' },
+        { header: '학과', name: 'deptName', align: 'center' },
+        {
+          header: '퇴학/제적 처리',
+          name: 'actions',
+          align: 'center',
+          formatter: (cellInfo) => {
+            const id = cellInfo.row.memberId;
+            return `
+              <form action="/members/${id}/withdraw" method="post" style="display:inline;">
+                <button type="submit">퇴학</button>
+              </form>
+              <form action="/members/${id}/expel" method="post" style="display:inline;">
+                <button type="submit">제적</button>
+              </form>
+            `;
+          }
+        }
+      ],
+      rowHeaders: ['rowNum'],
+      bodyHeight: 400,
+    });
+  }
+
+  function filterGrid() {
+    const selectedDeptId = document.querySelector('#deptFilter').value;
+    const nameKeyword = document.querySelector('#nameFilter').value.trim().toLowerCase();
+
+    const filteredData = originalData.filter(item =>
+            (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
+            (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
+    );
+
+    renderGrid(filteredData);
+  }
+
+  document.querySelector('#deptFilter').addEventListener('change', filterGrid);
+  document.querySelector('#nameFilter').addEventListener('input', filterGrid);
+</script>
+
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
 </body>
 </html>

@@ -6,6 +6,10 @@
         <table>
             <thead>
             <tr>
+<<<<<<< HEAD
+=======
+                <th>학번</th>
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
                 <th>학생명</th>
                 <th>성적 유형</th>
                 <th>점수</th>
@@ -15,6 +19,7 @@
             <!-- 학생 목록 반복 -->
             <th:block th:each="registration : ${ofregistrations}">
                 <tr>
+<<<<<<< HEAD
                     <td th:text="${registration.member.name}">학생명</td>
                     <td>
                         <!-- 성적 유형 선택 -->
@@ -23,6 +28,17 @@
                             <option value="68">기말</option>
                             <option value="69">과제</option>
                             <option value="70">출석</option>
+=======
+                    <td th:text="${registration.member.memberId}">학번</td>
+                    <td th:text="${registration.member.name}">학생명</td>
+                    <td>
+                        <!-- 성적 유형 선택 -->
+                        <select name="gradeType" class="individualGradeType" required>
+                            <option value="67" th:selected="${gradeType == 67}">중간</option>
+                            <option value="68" th:selected="${gradeType == 68}">기말</option>
+                            <option value="69" th:selected="${gradeType == 69}">과제</option>
+                            <option value="70" th:selected="${gradeType == 70}">출석</option>
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
                         </select>
                     </td>
                     <td>
@@ -42,3 +58,7 @@
 <section th:if="${#lists.isEmpty(ofregistrations)}">
     <p>선택한 강의에 등록된 학생이 없습니다.</p>
 </section>
+<<<<<<< HEAD
+=======
+
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9

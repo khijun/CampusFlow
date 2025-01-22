@@ -3,11 +3,9 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.dto.LecQuestionDTO;
 import edu.du.campusflow.entity.LecItem;
 import edu.du.campusflow.entity.LecQuestion;
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Ofregistration;
-import edu.du.campusflow.repository.DeptRepository;
-import edu.du.campusflow.repository.LecItemRepository;
-import edu.du.campusflow.repository.LecQuestionRepository;
-import edu.du.campusflow.repository.OfregistrationRepository;
+import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,7 @@ public class LecQuestionService {
     private final OfregistrationRepository ofregistrationRepository;
     private final LecQuestionRepository lecQuestionRepository;
     private final LecItemRepository lecItemRepository;
+    private final LectureRepository lectureRepository;
 
     @Transactional
     public List<LecQuestionDTO> searchEvaluations(
@@ -80,7 +79,7 @@ public class LecQuestionService {
     public List<LecQuestionDTO> getLecQuestions(Long ofregistrationId) {
         log.info("강의평가 문항 조회 - ofregistrationId: {}", ofregistrationId);
 
-        return lecQuestionRepository.findAll().stream()
+        return lecQuestionRepository.findAllLecQuestions().stream()
                 .map(question -> LecQuestionDTO.builder()
                         .questionId(question.getQuestionId())
                         .questionName(question.getQuestionName())
@@ -107,12 +106,29 @@ public class LecQuestionService {
         scores.forEach((questionId, score) -> {
             LecItem lecItem = new LecItem();
             lecItem.setOfRegistration(ofRegistration);
-            LecQuestion lecQuestion = lecQuestionRepository.findById(questionId)
+            LecQuestion lecQuestion = lecQuestionRepository.findLecQuestionById(questionId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid questionId: " + questionId));
 
             lecItem.setLecQuestion(lecQuestion);
             lecItem.setScore(score);
             lecItemRepository.save(lecItem);
         });
+    }
+
+    // 교수가 담당하는 과목 불러오기
+    public List<Map<String, Object>> getProfessorLectures(Long professorId) {
+        return lecQuestionRepository.findLecLecturesByProfessorId(professorId)
+                .stream()
+                .map(lecture -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("lectureId", lecture.getLectureId());
+                    map.put("lectureName", lecture.getLectureName());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<Lecture> getLecLecturesByDepartment(Long deptId) {
+        return lectureRepository.findByDepartmentId(deptId);
     }
 }

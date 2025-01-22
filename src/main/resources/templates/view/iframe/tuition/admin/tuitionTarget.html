@@ -1,91 +1,211 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Toast UI Grid CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <style>
+        /* 페이지 타이틀 스타일 */
+        .page-title {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+    </style>
     <title>등록금 대상자 관리</title>
-    <link rel="stylesheet" th:href="@{/css/tuition/tuitionTarget.css}">
 </head>
 <body>
-<div class="container">
-    <!-- 페이지 헤더 -->
-    <div class="header">
-        <h1>등록금 대상자 관리</h1>
-    </div>
+    <h2 class="page-title">등록금 대상자 관리</h2>
 
-    <!-- 등록금 대상자 목록 테이블 -->
-    <table>
-        <thead>
-        <tr>
-            <th>학과</th>
-            <th>학번</th>
-            <th>이름</th>
-            <th>등록금액</th>
-            <th>납부금액</th>
-            <th>납부일자</th>
-            <th>납부상태</th>
-            <th>관리</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="target : ${tuitionTarget}">
-            <td th:text="${target.deptName}"></td>
-            <td th:text="${target.memberId}"></td>
-            <td th:text="${target.memberName}"></td>
-            <td th:text="${#numbers.formatDecimal(target.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-            <td>
-                <input type="number" th:value="${target.paidAmount}" th:attr="data-member-id=${target.memberId}" class="paid-amount-input" />
-            </td>
-            <td th:text="${target.paymentStatus ? #temporals.format(target.paidDate, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
-            <td th:text="${target.paymentStatus ? '완납' : '미납'}"></td>
-            <td>
-                <button th:if="${!target.paymentStatus}"
-                        th:onclick="'markAsPaid(' + ${target.memberId} + ')'">완납처리</button>
-                <button th:if="${target.paymentStatus}"
-                        th:onclick="'markAsUnpaid(' + ${target.memberId} + ')'">미납처리</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <!-- 등록금 관리 그리드 -->
+    <div id="tuition-grid"></div>
 
-<!-- JavaScript -->
-<script>
-    // 납부 상태 변경
-    function updatePaymentStatus(memberId, status) {
-        fetch('/iframe/tuition/update-status', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                memberId: memberId,
-                paymentStatus: status
-            })
-        }).then(() => location.reload());
-    }
+    <!-- Toast UI Grid 라이브러리 -->
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+    <script>
+        // 그리드 인스턴스 변수
+        let instance = null;
+        const tuitionGridDiv = document.querySelector('#tuition-grid');
 
-    // 완납/미납 처리
-    function markAsPaid(memberId) { updatePaymentStatus(memberId, true); }
-    function markAsUnpaid(memberId) { updatePaymentStatus(memberId, false); }
-
-    // 납부 금액 변경
-    function updatePaidAmount(memberId, paidAmount) {
-        fetch('/iframe/tuition/update-paid-amount', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                memberId: memberId,
-                paidAmount: paidAmount
-            })
-        }).then(() => location.reload());
-    }
-
-    // 납부 금액 입력 필드의 변경 감지
-    document.querySelectorAll('.paid-amount-input').forEach(input => {
-        input.addEventListener('change', function() {
-            const memberId = this.getAttribute('data-member-id');
-            const paidAmount = parseInt(this.value);
-            updatePaidAmount(memberId, paidAmount);
+        // 페이지 로드 시 그리드 생성
+        document.addEventListener('DOMContentLoaded', () => {
+            createTuitionGrid();
         });
-    });
-</script>
+
+        /**
+         * 등록금 관리 그리드 생성 함수
+         */
+        function createTuitionGrid() {
+            // 그리드 컬럼 정의
+            const columns = [
+                {header: '학과', name: 'deptName', align: 'center'},
+                {header: '학번', name: 'memberId', align: 'center'},
+                {header: '이름', name: 'memberName', align: 'center'},
+                {
+                    header: '등록금액', 
+                    name: 'amount', 
+                    align: 'right',
+                    formatter: ({value}) => value.toLocaleString() + '원'
+                },
+                {
+                    header: '납부금액',
+                    name: 'paidAmount',
+                    align: 'right',
+                    editor: {
+                        type: 'text',
+                        options: {
+                            maxLength: 10
+                        }
+                    },
+                    formatter: ({value}) => value ? value.toLocaleString() + '원' : '0원'
+                },
+                {
+                    header: '납부일자',
+                    name: 'paidDate',
+                    align: 'center',
+                    formatter: ({row}) => row.paymentStatus ? new Date(row.paidDate).toLocaleString() : '-'
+                },
+                {
+                    header: '납부상태',
+                    name: 'paymentStatus',
+                    align: 'center',
+                    formatter: ({value}) => value ? '완납' : '미납'
+                },
+                {
+                    header: '관리',
+                    name: 'management',
+                    align: 'center',
+                    renderer: {
+                        type: CustomButtonRenderer
+                    }
+                }
+            ];
+
+            // API로부터 데이터 조회
+            fetch('/api/tuition/admin/targets')
+                .then(response => response.json())
+                .then(data => {
+                    // 기존 그리드 제거
+                    if (instance) {
+                        instance.destroy();
+                    }
+
+                    // 새 그리드 생성
+                    instance = new tui.Grid({
+                        el: tuitionGridDiv,
+                        columns: columns,
+                        data: data.map(item => ({
+                            ...item,
+                            management: {
+                                memberId: item.memberId,
+                                paymentStatus: item.paymentStatus
+                            }
+                        })),
+                        bodyHeight: 400,
+                        minBodyHeight: 400,
+                        rowHeight: 40,
+                        columnOptions: {
+                            resizable: true
+                        }
+                    });
+
+                    // 납부금액 편집 이벤트 처리
+                    instance.on('editingFinish', (ev) => {
+                        if (ev.columnName === 'paidAmount') {
+                            const row = instance.getRow(ev.rowKey);
+                            const newAmount = parseInt(ev.value.replace(/[^0-9]/g, ''));
+                            if (!isNaN(newAmount)) {
+                                updatePaidAmount(row.memberId, newAmount);
+                            }
+                        }
+                    });
+                });
+        }
+
+        /**
+         * 커스텀 버튼 렌더러 클래스
+         * 납부상태에 따라 다른 버튼을 표시
+         */
+        class CustomButtonRenderer {
+            constructor(props) {
+                const el = document.createElement('div');
+                const { value } = props;
+                
+                // 버튼 생성
+                const button = document.createElement('button');
+                button.innerHTML = value.paymentStatus ? '미납처리' : '완납처리';
+                button.style.cssText = value.paymentStatus ? 
+                    'width: 80px; padding: 5px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;' :
+                    'width: 80px; padding: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                button.onclick = () => updatePaymentStatus(value.memberId, !value.paymentStatus);
+                
+                el.appendChild(button);
+                this.el = el;
+            }
+
+            getElement() {
+                return this.el;
+            }
+        }
+
+        /**
+         * 납부상태 업데이트 함수
+         */
+        function updatePaymentStatus(memberId, status) {
+            if (!confirm(status ? '완납 처리하시겠습니까?' : '미납 처리하시겠습니까?')) {
+                return;
+            }
+
+            fetch('/api/tuition/admin/update-status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    memberId: memberId,
+                    paymentStatus: status
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert(status ? '완납 처리되었습니다.' : '미납 처리되었습니다.');
+                    createTuitionGrid();
+                } else {
+                    throw new Error('처리 실패');
+                }
+            })
+            .catch(error => alert(error.message));
+        }
+
+        /**
+         * 납부금액 업데이트 함수
+         */
+        function updatePaidAmount(memberId, paidAmount) {
+            if (!confirm(`납부금액을 ${paidAmount.toLocaleString()}원으로 변경하시겠습니까?`)) {
+                return;
+            }
+
+            fetch('/api/tuition/admin/update-paid-amount', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    memberId: memberId,
+                    paidAmount: paidAmount
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('납부금액이 변경되었습니다.');
+                    createTuitionGrid();
+                } else {
+                    throw new Error('처리 실패');
+                }
+            })
+            .catch(error => alert(error.message));
+        }
+    </script>
 </body>
 </html>

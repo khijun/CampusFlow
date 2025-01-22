@@ -71,6 +71,7 @@ iframe {
     width: 100%;
 }
 
+<<<<<<< HEAD
 /* 검색 버튼 스타일 */
 .search-container button {
     background-color: var(--primary-color, #3498db);
@@ -84,6 +85,8 @@ iframe {
     align-self: flex-end;
 }
 
+=======
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
 .search-container button:hover {
     background-color: #2980b9;
 }
@@ -92,6 +95,7 @@ iframe {
 .button-group {
     display: flex;
     gap: 10px;
+<<<<<<< HEAD
     justify-content: flex-end;
     margin-top: 15px;
 }
@@ -105,6 +109,12 @@ iframe {
     align-self: flex-end; /* 오른쪽 하단으로 위치 */
 }
 
+=======
+    margin-left: auto; /* 오른쪽 정렬을 위해 추가 */
+    margin-top: 15px;
+}
+
+>>>>>>> a7516feb8ff654da47c92b90d6ecdf6b3176fac9
 .button-group button {
     background-color: var(--primary-color, #3498db);
     color: white;
