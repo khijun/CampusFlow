@@ -1,5 +1,6 @@
 package edu.du.campusflow.repository;
 
+import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.entity.Ofregistration;
@@ -69,4 +70,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     // 특정 강의와 학생의 수강신청 정보 조회
     @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId AND o.member.memberId = :memberId")
     Optional<Ofregistration> findByLectureIdAndMemberId(@Param("lectureId") Long lectureId, @Param("memberId") Long memberId);
+
+    // 과제 제출 페이지에서 학생의 수강중인 강의 조회
+    List<Ofregistration> findByMemberAndLectureId_Semester(Member student, CommonCode semester);
 }

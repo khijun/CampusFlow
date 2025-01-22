@@ -138,6 +138,10 @@ public class FacilityService {
 
         // DTO로 변환
         return lectureTimes.stream()
+                .filter(lectureTime -> {
+                    String lectureStatus = lectureTime.getLectureWeek().getLecture().getLectureStatus().getCodeValue();
+                    return lectureStatus.equals("LECTURE_PENDING") || lectureStatus.equals("LECTURE_STARTED");
+                })
                 .map(lectureTime -> {
                     LectureTimeDTO dto = new LectureTimeDTO();
                     dto.setLectureTimeId(lectureTime.getLectureTimeId());
