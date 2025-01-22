@@ -30,6 +30,10 @@
         .submit-button:hover {
             background-color: #f5f5f5; /* 호버 시 색상 변경 */
         }
+        #dept-update-btn-container{
+            margin: 20px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -58,10 +62,13 @@
                         th:selected="${commonCode.codeId == selectedDeptStatus}"></option>
             </select>
         </div>
+        <div class="input-group"></div>
         <button id="dept-list-select-btn">조회</button>
     </div>
     <div id="dept-list"></div>
-    <button id="dept-update-btn" class="submit-button">수정</button>
+    <div id="dept-update-btn-container" class="dept-update-btn-container">
+        <button id="dept-update-btn" class="submit-button">학과 수정</button>
+    </div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
