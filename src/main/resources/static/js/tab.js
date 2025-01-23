@@ -53,9 +53,6 @@ function loadIframe(url) {
         const newIframe = document.createElement('iframe');
         newIframe.name = 'contentFrame';
         newIframe.src = url;
-        newIframe.style.width = '100%';
-        newIframe.style.height = '100%';
-        newIframe.style.border = 'none';
         iframeCache.set(url, newIframe);
         container.appendChild(newIframe);
     }
