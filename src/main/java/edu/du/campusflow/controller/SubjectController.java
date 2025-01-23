@@ -1,6 +1,7 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.SubjectDTO;
+import edu.du.campusflow.entity.Subject;
 import edu.du.campusflow.service.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,6 +39,12 @@ public class SubjectController {
       return ResponseEntity.ok(SubjectDTO.fromEntityList(subjectService.findSubjects(keyword)));
    }
 
+   @GetMapping("/api/subjects/search")
+   public ResponseEntity<List<SubjectDTO>> searchSubjects(@RequestParam String keyword) {
+      List<SubjectDTO> subjects = SubjectDTO.fromEntityList(subjectService.searchSubjects(keyword));
+      return ResponseEntity.ok(subjects);
+   }
+
    @PostMapping("/api/subjects")
    public ResponseEntity<?> registerSubjects(@RequestBody List<SubjectDTO> subjects) {
       subjectService.saveAll(subjects);
@@ -51,8 +59,13 @@ public class SubjectController {
 
    @DeleteMapping("/api/subjects/delete")
    public ResponseEntity<?> deleteSubjects(@RequestBody List<Long> ids) {
-      // 삭제 요청 처리
       subjectService.deleteSubjects(ids);
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects deleted successfully."));
+   }
+
+   @GetMapping("/api/subjects/all")
+   public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
+      List<SubjectDTO> subjects = subjectService.getAllSubjects();
+      return ResponseEntity.ok(subjects);
    }
 }
