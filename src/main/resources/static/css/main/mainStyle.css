@@ -11,8 +11,3 @@
    white-space: nowrap; /* 한 줄로 유지 */
    overflow: hidden; /* 초과 콘텐츠 숨김 */
 }
-
-.main-content iframe {
-   max-width: 100%; /* iframe의 크기 제한 */
-   /*overflow: hidden; !* 스크롤 방지 *!*/
-}
