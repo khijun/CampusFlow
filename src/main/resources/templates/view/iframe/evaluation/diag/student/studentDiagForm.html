@@ -99,12 +99,6 @@
       background-color: #1976D2;
     }
 
-    .error-message {
-      color: #f44336;
-      margin-top: 5px;
-      font-size: 0.9em;
-    }
-
     .completed-message {
       text-align: center;
       padding: 30px;
@@ -112,6 +106,7 @@
       border-radius: 8px;
       color: #2e7d32;
       margin-bottom: 20px;
+      margin-top: 20px;
     }
 
     .no-results {
@@ -138,7 +133,7 @@
       </option>
     </select>
   </div>
-
+<!-- 학생 뷰 n학년으로 나오게 변경 -->
   <!-- 강의가 선택되지 않았을 때 -->
   <div class="no-results" th:if="${!showForm}">
     <p>강의를 선택하면 진단평가 문항이 표시됩니다.</p>
@@ -172,7 +167,7 @@
 
   <!-- 이미 평가를 완료한 경우 -->
   <div class="completed-message" th:if="${evaluated}">
-    <p>이미 진단평가를 완료하였습니다.</p>
+    <p>완료된 진단평가 입니다.</p>
   </div>
 </div>
 <script>

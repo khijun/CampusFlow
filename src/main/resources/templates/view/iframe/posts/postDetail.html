@@ -5,6 +5,13 @@
   <title>게시물 상세</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --danger-color: #868e96;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
     body {
       background-color: #f8f9fa;
     }
@@ -94,35 +101,71 @@
       justify-content: flex-end;
       padding-top: 0.5rem;
     }
-    .btn-delete {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-    }
-    .post-actions {
-      display: flex;
-      gap: 0.5rem;
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
     
-    .btn-outline-danger {
-      color: #dc3545;
-      border-color: #dc3545;
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
     }
     
-    .btn-outline-danger:hover {
-      color: #fff;
-      background-color: #dc3545;
-      border-color: #dc3545;
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      border: none;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--hover-color);
+      color: white;
     }
     
     .btn-outline-primary {
-      color: #007bff;
-      border-color: #007bff;
+      color: var(--primary-color);
+      border-color: var(--primary-color);
     }
     
     .btn-outline-primary:hover {
-      color: #fff;
-      background-color: #007bff;
-      border-color: #007bff;
+      color: white;
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-outline-danger {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-outline-danger:hover {
+      color: white;
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      border: none;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    
+    .btn-delete {
+      padding: 4px 12px;
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -274,7 +317,7 @@
         // 버튼 비활성화 및 로딩 표시
         deleteBtn.disabled = true;
         deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 삭제중...';
-        
+
         fetch(`/iframe/posts/${postId}/delete`, {
             method: 'POST'
         })

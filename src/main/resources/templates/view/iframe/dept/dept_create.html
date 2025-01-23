@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <title>학과 개설 페이지</title>
+    <style>
+        .tui-grid-cell {
+            background-color: #f5f5f5 !important; /* 연한 회색 배경 */
+            color: #333; /* 글자색 */
+        }
+        #dept-input-grid{
+            margin-bottom: 20px;
+        }
+        /* button 태그 크기 조정 */
+        .submit-button {
+            font-size: 1.0rem; /* 글자 크기 조정 */
+            height: 2.3rem; /* 높이 조정 */
+            cursor: pointer; /* 커서 변경 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 2px; /* 모서리 둥글게 */
+        }
+        /* 버튼 호버 효과 */
+        .submit-button:hover {
+            background-color: #f5f5f5; /* 호버 시 색상 변경 */
+        }
+        .btn-container{
+            margin: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div id="dept-input-container">
+    <div class="search-container">
+        <div class="input-group">
+            <label for="dept-status-input">상태</label>
+            <select id="dept-status-input">
+                <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}"
+                        th:text="${commonCode.codeName}"></option>
+            </select>
+        </div>
+    </div>
+    <div id="dept-input-grid"></div>
+    <div class="btn-container">
+        <input type="button" id="add-row-button" class="submit-button" value="열 추가"/>
+        <input type="button" id="delete-row-button" class="submit-button" value="열 삭제"/>
+        <input type="button" id="grid-add-dept-button" class="submit-button" value="학과 생성"/>
+    </div>
+</div>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script src="/js/create_grid.js"></script>
+<script>
+    const columns = [
+        {header: "학과명", name: "deptName", editor: 'text'},
+        {header: "최대 인원수", name: "maxStudents", editor: 'text'},
+        // {header: "학과 상태", name: "deptStatus",
+        //     editor: {
+        //
+        //     }
+        // },
+        {header: "필요 교양 학점", name: "generalCredits", editor: 'text'},
+        {header: "필요 전공 학점", name: "majorCredits", editor: 'text'},
+        {header: "졸업 필요 학점", name: "graduationCredits", editor: 'text'},
+    ]
+
+    let grid = new tui.Grid({
+        el: document.getElementById('dept-input-grid'),
+        data: [], // 초기 데이터 없음
+        columns: columns,
+        columnOptions: {
+            width: 'auto',
+        },
+        bodyHeight: 400,
+        bodyWidth: 1300,
+        scrollY: true,
+        rowHeaders: ['checkbox'], // 체크박스를 사용하여 행 선택
+        editingEvent: 'click'
+    });
+
+    // 입력 행 추가 버튼 동작
+    document.getElementById("add-row-button").addEventListener("click", () => {
+        grid.appendRow({});
+    });
+
+    // 행 삭제 버튼 동작
+    document.getElementById("delete-row-button").addEventListener("click", () => {
+        const checkedRows = grid.getCheckedRows(); // 체크된 행 가져오기
+
+        if (checkedRows.length === 0) {
+            alert("삭제할 행을 선택하세요."); // 체크된 행이 없으면 경고
+            return;
+        }
+
+        // 데이터가 있는지 확인 (빈 행인지 판단)
+        const hasData = checkedRows.some(row =>
+            row.deptName?.trim() !== "" ||
+            row.maxStudents?.trim() !== "" ||
+            row.generalCredits?.trim() !== "" ||
+            row.majorCredits?.trim() !== "" ||
+            row.graduationCredits?.trim() !== ""
+        );
+
+        if (hasData) {
+            const confirmDelete = confirm("정말 삭제하시겠습니까?");
+            if (!confirmDelete) {
+                return; // 사용자가 삭제를 취소하면 종료
+            }
+        }
+
+        grid.removeCheckedRows(); // 체크된 행 삭제
+    });
+
+    const postBtn = document.getElementById("grid-add-dept-button");
+    const deptStatusInput = document.querySelector("#dept-status-input");
+
+    // 데이터 저장
+    postBtn.addEventListener("click", () => {
+        // 체크된 행만 가져오기
+        const rows = grid.getCheckedRows();
+
+        if (rows.length === 0) {
+            alert("저장할 행을 선택하세요."); // 체크된 행이 없으면 경고
+            return;
+        }
+
+        const emptyRows = rows.filter(row =>
+            !row.deptName?.trim() || // 학과명이 없거나 공백일 때
+            !row.maxStudents?.trim() || // 최대 인원수가 없거나 공백일 때
+            !row.generalCredits?.trim() || // 필요 교양 학점이 없거나 공백일 때
+            !row.majorCredits?.trim() || // 필요 전공 학점이 없거나 공백일 때
+            !row.graduationCredits?.trim() // 졸업 필요 학점이 없거나 공백일 때
+        );
+
+
+        if (emptyRows.length > 0) {
+            alert("비어 있는 행이 존재합니다");
+            return;
+        }
+
+        postBtn.disabled = true;
+
+        fetch(`/api/dept`, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                deptDTOList : grid.getCheckedRows(),
+                deptStatus: deptStatusInput.value,
+            })
+        })
+            .then(response=> {
+                if (!response.ok) {
+                    alert("학과 추가 실패!");
+                    postBtn.disabled = false;
+                    throw new Error('Request failed with status ' + response.status);
+                }
+                alert("학과 추가 성공");
+                location.reload();
+            })
+    })
+</script>
+</body>
+</html>

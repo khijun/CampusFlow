@@ -108,7 +108,26 @@ body, html {
     border: none;
 }
 
-.header-member-info-li span{
-    padding: 15px;
-    border-left: dimgray solid 1px;
+.header-member-info-li span {
+    padding: 8px 15px;  /* 상하 8px, 좌우 15px */
+    height: 70%;
+    border-left: 2px solid #ddd;
+    margin: 8px 15px;  /* 상하 8px, 좌우 15px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+/* button 태그 크기 조정 */
+.session-button {
+    font-size: 1.0rem; /* 글자 크기 조정 */
+    height: 2.3rem; /* 높이 조정 */
+    cursor: pointer; /* 커서 변경 */
+    border: 1px solid #ccc; /* 테두리 */
+    border-radius: 2px; /* 모서리 둥글게 */
+}
+
+/* 버튼 호버 효과 */
+.session-button button:hover {
+    background-color: #f5f5f5; /* 호버 시 색상 변경 */
 }

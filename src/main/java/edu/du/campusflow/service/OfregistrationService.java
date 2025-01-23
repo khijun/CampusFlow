@@ -12,10 +12,12 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import javax.servlet.http.HttpSession;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,8 @@ public class OfregistrationService {
     private final LectureTimeRepository lectureTimeRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final MemberRepository memberRepository;
+    private final HttpSession httpSession;  // HttpSession 주입
+    private final AuthService authService;  // AuthService 주입
 
     public Ofregistration getOfregistrationById(Long id) {
         return ofregistrationRepository.findById(id)
@@ -59,13 +63,13 @@ public class OfregistrationService {
             }
 
             // 다른 학과의 전공 필수 과목인 경우 건너뛰기
-            if (!curriculum.getDept().getDeptName().equals(studentDeptName) && 
-                curriculumSubject.getSubjectType().getCodeValue().equals("MAJOR_REQUIRED")) {
+            if (!curriculum.getDept().getDeptName().equals(studentDeptName) &&
+                    curriculumSubject.getSubjectType().getCodeValue().equals("MAJOR_REQUIRED")) {
                 continue;
             }
 
             OfregistrationDTO dto = new OfregistrationDTO();
-            
+
             // 기존 DTO 설정 코드는 그대로 유지
             dto.setLectureId(lecture.getLectureId());
             dto.setLectureName(lecture.getLectureName());
@@ -95,6 +99,18 @@ public class OfregistrationService {
             // 기타 정보 설정
             dto.setDayNight(curriculum.getDayNight().getCodeName());
 
+            // 현재 로그인한 학생의 수강신청 상태 확인
+            Long memberId = authService.getCurrentMemberId();
+            Optional<Ofregistration> existingRegistration = ofregistrationRepository
+                    .findByLectureIdAndMemberId(lecture.getLectureId(), memberId);
+
+            // 수강신청 상태 설정
+            if (existingRegistration.isPresent()) {
+                dto.setRegStatus(existingRegistration.get().getRegStatus().getCodeValue());
+            } else {
+                dto.setRegStatus("NOT_REQUESTED");
+            }
+
             result.add(dto);
         }
 
@@ -103,13 +119,13 @@ public class OfregistrationService {
             // 먼저 본인 학과인지 확인
             if (!a.getDeptName().equals(studentDeptName) && b.getDeptName().equals(studentDeptName)) return 1;
             if (a.getDeptName().equals(studentDeptName) && !b.getDeptName().equals(studentDeptName)) return -1;
-            
+
             // 같은 학과인 경우 전공필수 여부로 정렬
             if (a.getDeptName().equals(studentDeptName) && b.getDeptName().equals(studentDeptName)) {
                 if (a.getSubjectType().equals("전공 필수") && !b.getSubjectType().equals("전공 필수")) return -1;
                 if (!a.getSubjectType().equals("전공 필수") && b.getSubjectType().equals("전공 필수")) return 1;
             }
-            
+
             // 그 외의 경우 학과명으로 정렬
             return a.getDeptName().compareTo(b.getDeptName());
         });
@@ -139,17 +155,17 @@ public class OfregistrationService {
         for (Ofregistration existingReg : studentLectures) {
             // 학생이 이미 신청한 강의 정보 가져오기
             Lecture existingLecture = existingReg.getLectureId();
-            
+
             // 기존 강의와 새로 신청하려는 강의의 시간 정보 조회
             List<LectureTime> existingTimes = lectureTimeRepository.findByLectureWeek_Lecture(existingLecture);
             List<LectureTime> newTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
-            
+
             // 두 강의 모두 시간 정보가 있는 경우에만 체크
             if (!existingTimes.isEmpty() && !newTimes.isEmpty()) {
                 // 각 강의의 첫 번째 시간표 정보를 가져옴
                 LectureTime existingTime = existingTimes.get(0);
                 LectureTime newTime = newTimes.get(0);
-                
+
                 // 같은 요일에 진행되는 강의인 경우에만 시간 중복 체크
                 if (existingTime.getLectureDay().getCodeValue().equals(newTime.getLectureDay().getCodeValue())) {
                     // 교시를 숫자로 변환 (예: PERIOD_FIRST -> 1, PERIOD_SECOND -> 2)
@@ -163,7 +179,7 @@ public class OfregistrationService {
                     //  새 강의 종료 시간이 기존 강의 시작 시간보다 늦은 경우 겹침)
                     if (hasTimeOverlap(newStart, newEnd, existingStart, existingEnd)) {
                         throw new IllegalStateException(
-                            String.format("'%s' 강의와 시간이 겹칩니다.", existingLecture.getLectureName())
+                                String.format("'%s' 강의와 시간이 겹칩니다.", existingLecture.getLectureName())
                         );
                     }
                 }
@@ -294,7 +310,7 @@ public class OfregistrationService {
             List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
 
             OfregistrationDTO dto = new OfregistrationDTO();
-            
+
             // 기본 강의 정보 설정
             dto.setLectureId(lecture.getLectureId());
             dto.setLectureName(lecture.getLectureName());
@@ -332,22 +348,44 @@ public class OfregistrationService {
     public void updateRegistrationStatus(Long lectureId, Long memberId, String status) {
         // 수강신청 정보 조회
         Ofregistration registration = ofregistrationRepository
-            .findByLectureIdAndMemberId(lectureId, memberId)
-            .orElseThrow(() -> new IllegalArgumentException("수강신청 정보를 찾을 수 없습니다."));
+                .findByLectureIdAndMemberId(lectureId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("수강신청 정보를 찾을 수 없습니다."));
 
         // 상태 코드 조회
         CommonCode statusCode = commonCodeRepository.findByCodeValue(status);
 
         // 상태 업데이트
         registration.setRegStatus(statusCode);
-        
+
         // 승인 상태일 경우 수강인원 증가
         if (status.equals("APPROVED")) {
             Lecture lecture = registration.getLectureId();
             lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
             lectureRepository.save(lecture);
         }
-        
+
         ofregistrationRepository.save(registration);
+    }
+
+    @Transactional
+    public void cancelRegistration(Long lectureId) {
+        // 세션에서 현재 로그인한 사용자 ID 가져오기
+        Long memberId = authService.getCurrentMemberId();
+        if (memberId == null) {
+            throw new IllegalStateException("로그인 정보를 찾을 수 없습니다.");
+        }
+
+        // 수강신청 정보가 존재하는지 확인
+        Optional<Ofregistration> registration = ofregistrationRepository.findByLectureIdAndMemberId(lectureId, memberId);
+        if (registration.isEmpty()) {
+            throw new IllegalStateException("수강신청 정보를 찾을 수 없습니다.");
+        }
+
+        try {
+            // 수강신청 정보 삭제
+            ofregistrationRepository.deleteByLectureIdAndMemberMemberId(lectureId, memberId);
+        } catch (Exception e) {
+            throw new RuntimeException("수강신청 취소 중 오류가 발생했습니다.", e);
+        }
     }
 }

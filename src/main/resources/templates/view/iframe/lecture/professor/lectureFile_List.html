@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>강의계획서 목록</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+    <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+</head>
+
+<!-- CSS 스타일 추가 -->
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        height: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: black;
+    }
+</style>
+
+<body>
+    <!-- 검색 조건 -->
+    <hr style="border: none; margin: 20px 0;">
+    <div class="d-flex align-items-center mb-3">
+        <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+        <span class="h6 mb-0">강의 검색</span>
+    </div>
+    <div class="search-container">
+        <div class="input-group">
+            <label for="Semester">학기</label>
+            <select id="Semester">
+                <option value="FIRST_SEMESTER">1학기</option>
+                <option value="SECOND_SEMESTER">2학기</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="professorId">교번</label>
+            <input type="text" id="professorId" th:value="${member.memberId}" readonly>
+        </div>
+        <button type="button" id="searchButton">조회</button>
+    </div>
+
+    <!-- 검색 결과 그리드 -->
+    <hr style="border: none; margin: 20px 0;">
+    <div class="d-flex align-items-center mb-3">
+        <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+        <span class="h6 mb-0">강의 목록</span>
+    </div>
+    <div id="lectureGrid"></div>
+
+    <!-- PDF 뷰어 모달 추가 -->
+    <div id="pdfModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <iframe id="pdfViewer" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const lectureList = new tui.Grid({
+            el: document.getElementById('lectureGrid'),
+            columns: [
+                { header: '강의코드', name: 'lectureId', sortable: false },
+                { header: '강의명', name: 'lectureName', sortable: false },
+                { header: '학점', name: 'subjectCredits', sortable: false },
+                { header: '학기', name: 'semesterName', sortable: false },
+                { header: '최대 인원', name: 'maxStudents', sortable: false },
+                {
+                    header: '강의계획서',
+                    name: 'fileInfo',
+                    formatter: function (data) {
+                        if (data.value) {
+                            return '<button type="button" class="download-btn">강의계획서</button>';
+                        }
+                        return '미등록';
+                    }
+                }
+            ],
+            bodyHeight: 300
+        });
+
+        // 현재 월을 기준으로 학기 선택
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentMonth = new Date().getMonth() + 1;
+            const semesterSelect = document.getElementById('Semester');
+            const professorId = document.getElementById('professorId').value;
+
+            if (currentMonth >= 8 || currentMonth <= 1) {
+                semesterSelect.value = 'SECOND_SEMESTER';
+            } else {
+                semesterSelect.value = 'FIRST_SEMESTER';
+            }
+
+            loadLectureList(semesterSelect.value, professorId);
+        });
+
+        // 검색 버튼 클릭 이벤트
+        document.getElementById('searchButton').addEventListener('click', function () {
+            const semesterCode = document.getElementById('Semester').value;
+            const professorId = document.getElementById('professorId').value;
+            loadLectureList(semesterCode, professorId);
+        });
+
+        // 강의 목록 로드 함수
+        function loadLectureList(semesterCode, professorId) {
+            fetch(`/api/lecture/file-search?semesterCode=${semesterCode}&professorId=${professorId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        alert('검색 결과가 없습니다.');
+                    }
+                    lectureList.resetData(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('강의 목록을 불러오는데 실패했습니다.');
+                });
+        }
+
+        // PDF 뷰어 모달 관련 코드 추가
+        const modal = document.getElementById("pdfModal");
+        const pdfViewer = document.getElementById("pdfViewer");
+        const closeBtn = document.getElementsByClassName("close")[0];
+
+        // 강의계획서 버튼 클릭 이벤트
+        lectureList.on('click', (ev) => {
+            if (ev.columnName === 'fileInfo') {
+                const rowData = lectureList.getRow(ev.rowKey);
+                if (rowData.fileInfo) {
+                    // PDF 뷰어 URL 설정
+                    pdfViewer.src = `/api/file/view/${rowData.fileInfo}`;
+                    modal.style.display = "block";
+                }
+            }
+        });
+
+        // 모달 닫기 버튼
+        closeBtn.onclick = function () {
+            modal.style.display = "none";
+            pdfViewer.src = "";  // iframe 초기화
+        }
+
+        // 모달 외부 클릭시 닫기
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                pdfViewer.src = "";  // iframe 초기화
+            }
+        }
+    </script>
+</body>
+
+</html>

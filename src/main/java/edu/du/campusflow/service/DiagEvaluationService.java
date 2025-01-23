@@ -2,10 +2,7 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.DiagEvaluationDetailDTO;
 import edu.du.campusflow.dto.DiagQuestionDTO;
-import edu.du.campusflow.entity.DiagItem;
-import edu.du.campusflow.entity.DiagQuestion;
-import edu.du.campusflow.entity.Member;
-import edu.du.campusflow.entity.Ofregistration;
+import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ public class DiagEvaluationService {
     private final DiagItemRepository diagItemRepository;
     private final DiagQuestionRepository diagQuestionRepository;
     private final DiagEvaluationRepository diagEvaluationRepository;
+    private final LectureRepository lectureRepository;
 
     @Transactional
     public List<DiagEvaluationDetailDTO> searchEvaluations(
@@ -43,7 +41,7 @@ public class DiagEvaluationService {
         );
     }
 
-    private Long getGradeCodeId(String grade) { // 중복코드 최적화는 나중에
+    private Long getGradeCodeId(String grade) {
         switch (grade) {
             case "1": return 97L;  // 1학년
             case "2": return 98L;  // 2학년
@@ -98,6 +96,7 @@ public class DiagEvaluationService {
                 .collect(Collectors.toList());
     }
 
+    // 기존 답변 조회
     public Map<Long, Integer> getPreviousAnswers(Long ofregistrationId) {
         List<DiagItem> diagItems = diagItemRepository.findByOfRegistration_Id(ofregistrationId);
         return diagItems.stream()
@@ -107,6 +106,7 @@ public class DiagEvaluationService {
                 ));
     }
 
+    // 강의평가 저장
     @Transactional
     public void saveDiagnosticEvaluation(Long ofregistrationId, Map<Long, Integer> scores) {  // 파라미터 타입 변경
         Ofregistration ofRegistration = ofregistrationRepository.findById(ofregistrationId)
@@ -122,5 +122,22 @@ public class DiagEvaluationService {
             diagItem.setScore(score);
             diagItemRepository.save(diagItem);
         });
+    }
+
+    // 교수가 담당하는 과목 불러오기
+    public List<Map<String, Object>> getProfessorLectures(Long professorId) {
+        return diagEvaluationRepository.findDiagLecturesByProfessorId(professorId)
+                .stream()
+                .map(lecture -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("lectureId", lecture.getLectureId());
+                    map.put("lectureName", lecture.getLectureName());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<Lecture> getDiagLecturesByDepartment(Long deptId) {
+        return lectureRepository.findByDepartmentId(deptId);
     }
 }

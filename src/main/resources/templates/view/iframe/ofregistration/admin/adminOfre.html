@@ -1,114 +1,150 @@
 <!DOCTYPE html>
-<!-- 관리자용 수강신청 관리 페이지 -->
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>수강신청 관리</title>
-    <!-- 테이블 스타일 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .btn {
-            padding: 5px 10px;
-            margin: 0 2px;
-            cursor: pointer;
-            border: none;
-            border-radius: 3px;
-        }
-        .approve-btn {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .reject-btn {
-            background-color: #f44336;
-            color: white;
+        .page-title {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
         }
     </style>
+    <title>수강신청 관리</title>
 </head>
 <body>
-    <!-- 페이지 제목 -->
-    <h2>수강신청 관리</h2>
-    
-    <!-- 수강신청 관리 테이블 -->
-    <table>
-        <!-- 테이블 헤더 -->
-        <thead>
-            <tr>
-                <th>강의명</th>
-                <th>학번</th>
-                <th>학생명</th>
-                <th>학과</th>
-                <th>이수구분</th>
-                <th>학점</th>
-                <th>강의시간</th>
-                <th>강의실</th>
-                <th>신청상태</th>
-                <th>관리</th>
-            </tr>
-        </thead>
-        <!-- 테이블 본문: 수강신청 목록 -->
-        <tbody>
-            <tr th:each="reg : ${registrations}">
-                <td th:text="${reg.lectureName}"></td>
-                <td th:text="${reg.memberId}"></td>
-                <td th:text="${reg.name}"></td>
-                <td th:text="${reg.deptName}"></td>
-                <td th:text="${reg.subjectType}"></td>
-                <td th:text="${reg.subjectCredits}"></td>
-                <td th:text="${reg.lectureDay + ' ' + reg.startTime + '-' + reg.endTime}"></td>
-                <td th:text="${reg.facilityName}"></td>
-                <td th:text="${reg.regStatus}"></td>
-                <td>
-                    <!-- 승인/거절 버튼 -->
-                    <button class="btn approve-btn" 
-                            th:onclick="'updateStatus(' + ${reg.lectureId} + ', \'' + ${reg.memberId} + '\', \'APPROVED\')'">
-                        승인
-                    </button>
-                    <button class="btn reject-btn" 
-                            th:onclick="'updateStatus(' + ${reg.lectureId} + ', \'' + ${reg.memberId} + '\', \'REJECTED\')'">
-                        거절
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<h2 class="page-title">수강신청 관리</h2>
 
-    <!-- JavaScript 함수 -->
-    <script>
-        // 수강신청 상태 업데이트 함수
-        function updateStatus(lectureId, memberId, status) {
-            if (!confirm(status === 'APPROVED' ? '승인하시겠습니까?' : '거절하시겠습니까?')) {
-                return;
+<div id="registration-list"></div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    let instance = null;
+    const registrationListDiv = document.querySelector('#registration-list');
+
+    // 페이지 로드시 자동으로 수강신청 내역 조회
+    document.addEventListener('DOMContentLoaded', () => {
+        createRegistrationGrid(registrationListDiv);
+    });
+
+    function createRegistrationGrid(registrationListDiv) {
+        const columns = [
+            {header: '강의명', name: 'lectureName', align: 'center'},
+            {header: '학번', name: 'memberId', align: 'center'},
+            {header: '학생명', name: 'name', align: 'center'},
+            {header: '학과', name: 'deptName', align: 'center'},
+            {header: '이수구분', name: 'subjectType', align: 'center'},
+            {header: '학점', name: 'subjectCredits', align: 'center'},
+            {header: '강의시간', name: 'lectureTime', align: 'center'},
+            {header: '강의실', name: 'facilityName', align: 'center'},
+            {header: '신청상태', name: 'regStatus', align: 'center'},
+            {
+                header: '관리',
+                name: 'management',
+                align: 'center',
+                renderer: {
+                    type: CustomButtonRenderer
+                }
+            }
+        ];
+
+        fetch('/api/ofregistration/admin/pending')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                return data.map(registration => ({
+                    ...registration,
+                    lectureTime: `${registration.lectureDay} ${registration.startTime}-${registration.endTime}`,
+                    management: {
+                        lectureId: registration.lectureId,
+                        memberId: registration.memberId,
+                        regStatus: registration.regStatus
+                    }
+                }));
+            })
+            .then(mappedData => {
+                if (instance != null) {
+                    instance.destroy();
+                    instance = null;
+                }
+                instance = new tui.Grid({
+                    el: registrationListDiv,
+                    columns: columns,
+                    data: mappedData,
+                    bodyHeight: 400,
+                    minBodyHeight: 400,
+                    rowHeight: 40,
+                    columnOptions: {
+                        resizable: true
+                    }
+                });
+            });
+    }
+
+    // 커스텀 버튼 렌더러 정의
+    class CustomButtonRenderer {
+        constructor(props) {
+            const el = document.createElement('div');
+            const { lectureId, memberId, regStatus } = props.value;
+
+            if (regStatus !== 'APPROVED' && regStatus !== 'REJECTED') {
+                // 승인 버튼
+                const approveButton = document.createElement('button');
+                approveButton.innerHTML = '승인';
+                approveButton.style.cssText = 'width: 50px; padding: 5px; margin-right: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                approveButton.onclick = () => updateStatus(lectureId, memberId, 'APPROVED');
+
+                // 거절 버튼
+                const rejectButton = document.createElement('button');
+                rejectButton.innerHTML = '거절';
+                rejectButton.style.cssText = 'width: 50px; padding: 5px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                rejectButton.onclick = () => updateStatus(lectureId, memberId, 'REJECTED');
+
+                el.appendChild(approveButton);
+                el.appendChild(rejectButton);
+            } else {
+                el.innerHTML = regStatus === 'APPROVED' ? '승인됨' : '거절됨';
             }
 
-            const data = {
-                lectureId: lectureId,
-                memberId: memberId,
-                regStatus: status
-            };
+            this.el = el;
+        }
 
-            fetch('/iframe/ofregistration/admin/update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
+        getElement() {
+            return this.el;
+        }
+    }
+
+    function updateStatus(lectureId, memberId, status) {
+        if (!confirm(status === 'APPROVED' ? '승인하시겠습니까?' : '거절하시겠습니까?')) {
+            return;
+        }
+
+        const data = {
+            lectureId: lectureId,
+            memberId: memberId,
+            regStatus: status
+        };
+
+        fetch('/api/ofregistration/admin/update-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
             .then(response => {
                 if (response.ok) {
                     alert(status === 'APPROVED' ? '승인되었습니다.' : '거절되었습니다.');
-                    location.reload();
+                    createRegistrationGrid(registrationListDiv);
                 } else {
                     return response.text().then(text => {
                         throw new Error(text);
@@ -118,7 +154,7 @@
             .catch(error => {
                 alert('처리 실패: ' + error.message);
             });
-        }
-    </script>
+    }
+</script>
 </body>
 </html>

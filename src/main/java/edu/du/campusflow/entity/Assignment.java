@@ -25,7 +25,6 @@ public class Assignment { //과제 정보 데이터를 저장하는 엔티티
     @JoinColumn(name = "lecture_id")
     private Lecture lecture; //강의 아이디
 
-
     @Column(name = "assignment_name", length = 20)
     private String assignmentName; //과제 제목
 

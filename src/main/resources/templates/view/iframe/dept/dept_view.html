@@ -5,22 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>학과 조회</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <style>
+        .tui-grid-cell {
+            background-color: #f5f5f5 !important; /* 연한 회색 배경 */
+            color: #333; /* 글자색 */
+        }
+        #dept-list{
+            margin-bottom: 10px;
+        }
+        #member-input-grid{
+            margin-bottom: 20px;
+        }
+        /* button 태그 크기 조정 */
+        .submit-button {
+            font-size: 1.0rem; /* 글자 크기 조정 */
+            height: 2.3rem; /* 높이 조정 */
+            cursor: pointer; /* 커서 변경 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 2px; /* 모서리 둥글게 */
+        }
+        /* 버튼 호버 효과 */
+        .submit-button:hover {
+            background-color: #f5f5f5; /* 호버 시 색상 변경 */
+        }
+        #dept-update-btn-container{
+            margin: 20px;
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
 <div id="dept-list-table-container">
-    <div id="dept-list-option-container">
-        <span>학과 코드: </span><input type="text" id="dept-id-input"/>
-        <span>학과명: </span><input type="text" id="dept-name-input"/>
-        <span>인원수: </span><input type="text" id="dept-min-student-value-input"/>
-        <span>~</span> <input type="text" id="dept-max-student-value-input"/>
-        <span>상태: </span>
-        <select id="dept-status-input">
-            <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}" th:text="${commonCode.codeName}"
-                    th:selected="${commonCode.codeId == selectedDeptStatus}" ></option>
-        </select>
-        <input type="button" value="조회" id="dept-list-select-btn"/>
+    <div id="dept-list-option-container" class="search-container">
+        <div class="input-group">
+            <label for="dept-id-input">학과 코드 :</label>
+            <input type="text" id="dept-id-input"/>
+        </div>
+        <div class="input-group">
+            <label for="dept-name-input">학과명 :</label>
+            <input type="text" id="dept-name-input"/>
+        </div>
+        <div class="input-group">
+            <label for="dept-min-student-value-input">최소 수용 인원 수 :</label>
+            <input type="text" id="dept-min-student-value-input"/>
+            <label for="dept-max-student-value-input">최대 수용 인원 수 :</label>
+            <input type="text" id="dept-max-student-value-input"/>
+        </div>
+        <div class="input-group">
+            <label for="dept-status-input">상태</label>
+            <select id="dept-status-input">
+                <option th:value="${null}" th:text="전체" selected></option>
+                <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}"
+                        th:text="${commonCode.codeName}"
+                        th:selected="${commonCode.codeId == selectedDeptStatus}"></option>
+            </select>
+        </div>
+        <div class="input-group"></div>
+        <button id="dept-list-select-btn">조회</button>
     </div>
     <div id="dept-list"></div>
+    <div id="dept-update-btn-container" class="dept-update-btn-container">
+        <button id="dept-update-btn" class="submit-button">학과 수정</button>
+    </div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>

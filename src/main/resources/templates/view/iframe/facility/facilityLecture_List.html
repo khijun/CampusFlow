@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui.grid/latest/tui-grid.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
   <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
 </head>
@@ -14,40 +15,74 @@
   .timetable {
     width: 100%;
     margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .timetable table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: fixed;
   }
 
-  .timetable th,
-  .timetable td {
-    border: 1px solid #ddd;
-    padding: 8px;
+  .timetable th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    padding: 12px;
+    border-bottom: 2px solid #dee2e6;
     text-align: center;
-    width: 16.66%;
+    /* 가운데 정렬 추가 */
+    vertical-align: middle;
+    /* 세로 중앙 정렬도 추가 */
+  }
+
+  .timetable td {
+    border: 1px solid #e9ecef;
+    padding: 0;
+    vertical-align: top;
+    height: 90px;
+  }
+
+  /* 첫 번째 열(시간) 스타일 */
+  .timetable td:first-child {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    color: #495057;
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
   }
 
   .lecture-cell {
-    height: 80px;
-    max-height: 100px;
-    vertical-align: middle;
-    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .lecture-cell:hover {
+    background-color: #f8f9fa;
   }
 
   .lecture-info {
-    padding: 5px;
+    padding: 8px;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background-color: #e3f2fd;
+    /* 연한 파란색 배경 */
+    border-radius: 4px;
+    margin: 4px;
   }
 
   .lecture-name {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-weight: 500;
+    color: #1976d2;
+    margin-bottom: 4px;
+    font-size: 0.9em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -55,15 +90,47 @@
 
   .professor-name {
     color: #666;
-    font-size: 0.9em;
+    font-size: 0.8em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  /* 요일별 색상 구분 */
+  .lecture-info.monday {
+    background-color: #e3f2fd;
+  }
+
+  /* 월요일 */
+  .lecture-info.tuesday {
+    background-color: #f3e5f5;
+  }
+
+  /* 화요일 */
+  .lecture-info.wednesday {
+    background-color: #e8f5e9;
+  }
+
+  /* 수요일 */
+  .lecture-info.thursday {
+    background-color: #fff3e0;
+  }
+
+  /* 목요일 */
+  .lecture-info.friday {
+    background-color: #fce4ec;
+  }
+
+  /* 금요일 */
 </style>
 
 <body>
   <!-- 검색 조건 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의실 검색</span>
+  </div>
   <div class="search-container">
     <div class="input-group">
       <label for="buildingName">건물명</label>
@@ -84,11 +151,16 @@
   </div>
 
   <!-- 시간표 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-calendar mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의실 시간표</span>
+  </div>
   <div class="timetable">
     <table>
       <thead>
         <tr>
-          <th>시간</th>
+          <th></th>
           <th>월요일</th>
           <th>화요일</th>
           <th>수요일</th>

@@ -1,38 +1,105 @@
-<!doctype html>
-<html lang="ko">
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <title>사용자 정보 조회</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학적 조회</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
   <style>
-    #change-request-list {
-      width: 100%;
-      margin-top: 20px;
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      overflow-y: auto;
+      height: 100vh;
+      box-sizing: border-box;
     }
 
-    .cancel-btn {
-      background-color: red;
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+      font-weight: 700;
+    }
+
+    /* 공통 그리드 스타일 */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 5개의 열 */
+      /*gap: 10px; !* 셀 간 간격 *!*/
+      width: 90%;
+      overflow-y: auto;   /* 수직 스크롤 추가 */
+      margin: 0 auto;
+    }
+
+    /* 헤더 스타일 */
+    .header-container {
+      background-color: #007BFF;
       color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px 0;
+      /*border-radius: 5px;*/
+    }
+
+    /* 아이템 스타일 */
+    .item-container .item {
+      padding: 10px;
+      text-align: center;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      /*border-radius: 5px;*/
+    }
+
+    .item-container .item:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* 버튼 스타일 */
+    .cancel-btn {
+      color: #dc3545;
       border: none;
-      padding: 5px 10px;
+      background: none;
       cursor: pointer;
+      font-size: 14px;
     }
 
     .cancel-btn:hover {
       background-color: darkred;
+    }
+
+    .academic-status {
+      border-radius: 20px; /* 둥근 모서리 */
+      padding: 10px 20px; /* 여백 */
+      display: inline-block; /* 인라인 블록으로 배치 */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+      font-family: 'Arial', sans-serif; /* 귀여운 폰트 */
+      margin-top: 20px; /* 위쪽 여백 */
+    }
+
+    .academic-status strong {
+      font-size: 1.2em; /* 제목 글씨 크기 */
+      margin-right: 10px; /* 제목과 상태 사이 여백 */
+    }
+
+    #academic-status {
+      font-size: 1.1em; /* 상태 글씨 크기 */
+      font-weight: bold; /* 글씨 두껍게 */
     }
   </style>
 </head>
 <body>
 <h2>학적 조회</h2>
 
-<div>
-  <div id="change-request-select">
-    <input id="change-request-select-btn" type="button" value="조회"/>
-    <!-- 클릭 시 함수를 실행해서 리스트를 보여줌 -->
-  </div>
+<!-- 학적 상태 표시 부분 -->
+<div class="academic-status">
+  <strong style="font-size: 30px">현재 학적 상태:</strong><strong th:text="${member.academicStatus.codeName}" style="font-size: 30px"></strong>
 </div>
+
 
 <div id="change-request-list"></div>
 <!-- TOAST UI Grid를 표시할 요소 -->
@@ -42,11 +109,13 @@
 <script>
   let instance = null; // Grid 인스턴스를 저장해둘 변수
 
-  const changeRequestSelectButton = document.querySelector("#change-request-select-btn");
-  const changeRequestListDiv = document.querySelector('#change-request-list');
 
-  changeRequestSelectButton.addEventListener('click', () => {
+  const changeRequestListDiv = document.querySelector('#change-request-list');
+  const academicStatusSpan = document.querySelector('#academic-status');
+
+  document.addEventListener('DOMContentLoaded', () => {
     createChangeRequestGrid(changeRequestListDiv);
+    fetchAcademicStatus();
   });
 
   function createChangeRequestGrid(targetDiv) {
@@ -76,6 +145,12 @@
               return response.json();
             })
             .then(data => {
+              // 마지막 학적 상태 찾기 (requestDate 기준으로 마지막 상태를 선택)
+              const lastRequest = data.reduce((last, current) => {
+                return new Date(current.requestDate) > new Date(last.requestDate) ? current : last;
+              }, data[0]);
+
+
               return data.map(request => ({
                 id: request.id,
                 beforeCodeName: request.beforeCode.codeName,
@@ -109,6 +184,8 @@
               console.error('Error fetching change requests:', error);
             });
   }
+
+
   window.cancelChangeRequest = function(applicationId) {
     console.log('신청 취소 시도:', applicationId);
     if (confirm('정말 신청을 취소하시겠습니까?')) {

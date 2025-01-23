@@ -14,12 +14,7 @@
 </head>
 <body>
 
-<!-- 가족 정보 조회 버튼 -->
-<div>
-  <div id="family-info-select">
-    <input id="family-info-select-btn" type="button" value="가족 정보 조회"/>
-  </div>
-</div>
+
 
 <div id="family-info-list"></div>
 
@@ -54,30 +49,57 @@
 <script>
   let instance = null;
 
-  // 가족 정보 조회 버튼 클릭 시 그리드 생성
-  document.querySelector("#family-info-select-btn").addEventListener('click', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     createFamilyGrid();
   });
+
+  function deleteFamily(id) {
+    console.log("삭제 요청 ID:", id);  // 삭제할 ID 확인
+
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    fetch('/api/family_info/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+            .then(response => {
+              console.log("응답 상태:", response.status);  // 응답 상태 코드 확인
+              if (!response.ok) throw new Error('삭제 실패');
+              return response.json();
+            })
+            .then(data => {
+              alert(data.message);
+              createFamilyGrid(); // 데이터 새로고침
+            })
+            .catch(error => console.error("삭제 오류:", error));
+  }
+
 
   function createFamilyGrid() {
     const familyInfoListDiv = document.querySelector('#family-info-list');
     const columns = [
-      { header: '관계', name: 'familyRelation',align:'center' },
-      { header: '이름', name: 'name',align:'center' },
-      { header: '생년월일', name: 'birthDate',align:'center' },
-      { header: '전화번호', name: 'contact',align:'center' }
+      { header: '관계', name: 'familyRelation', align: 'center' },
+      { header: '이름', name: 'name', align: 'center' },
+      { header: '생년월일', name: 'birthDate', align: 'center' },
+      { header: '전화번호', name: 'contact', align: 'center' },
+      {
+        header: '삭제',
+        name: 'delete',
+        align: 'center',
+        formatter: ({ row }) => `<button class="delete-btn" data-id="${row.id}">삭제</button>`
+      }
     ];
 
-    // Toast UI Grid 생성
     if (instance) {
-      instance.destroy(); // 기존 인스턴스가 있으면 파괴
+      instance.destroy();
     }
 
     instance = new tui.Grid({
       el: familyInfoListDiv,
       rowHeight: 'auto',
       columns: columns,
-      data: [] // 처음에는 비어 있는 데이터로 설정
+      data: []
     });
 
     fetch('/api/family_info')
@@ -85,14 +107,20 @@
             .then(data => {
               const mappedData = data.map(info => ({
                 ...info,
-                familyRelation: info.familyRelation.codeName
+                familyRelation: info.familyRelation && info.familyRelation.codeId === 41 ? '부' : '모'
               }));
-
-              // 그리드에 데이터 추가
               instance.resetData(mappedData);
             })
             .catch(error => console.error('가족 정보 처리 오류:', error));
   }
+
+  // 이벤트 위임 방식으로 삭제 버튼 클릭 감지
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-btn')) {
+      const id = event.target.getAttribute('data-id');
+      deleteFamily(id);
+    }
+  });
 
   // 폼 토글 기능
   function toggleForm() {
@@ -123,6 +151,7 @@
             })
             .catch(error => alert(error.message));
   }
+
 </script>
 
 </body>

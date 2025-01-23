@@ -7,11 +7,18 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
+
 <body>
   <!-- 검색 섹션 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 검색</span>
+  </div>
   <div class="search-container">
     <div class="input-group">
       <label for="deptName">학과명</label>
@@ -32,11 +39,21 @@
   </div>
 
   <!-- 검색 결과 컨테이너 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">개설 신청 강의 목록</span>
+  </div>
   <div id="lectureGrid">
 
   </div>
 
   <!-- 강의 정보 입력 섹션 -->
+  <hr style="border: none; margin: 20px 0;">
+  <div class="d-flex align-items-center mb-3">
+    <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 주차 및 시간 설정</span>
+  </div>
   <div class="search-container" style="margin-top: 20px;">
     <!-- 기존 필드들 유지 -->
     <div class="input-group">
@@ -128,14 +145,14 @@
     const grid = new tui.Grid({
       el: document.getElementById('lectureGrid'),
       columns: [
-        { header: '강의명', name: 'lectureName'},
-        { header: '교수명', name: 'professorName'},
-        { header: '최대 인원', name: 'maxStudents'},
-        { header: '학과명', name: 'deptName'},
-        { header: '학기', name: 'semesterName'},
+        { header: '강의명', name: 'lectureName' },
+        { header: '교수명', name: 'professorName' },
+        { header: '최대 인원', name: 'maxStudents' },
+        { header: '학과명', name: 'deptName' },
+        { header: '학기', name: 'semesterName' },
       ],
       bodyHeight: 300,      // 그리드 바디의 높이를 300px로 설정
-      rowClassName: function(rowData) {
+      rowClassName: function (rowData) {
         return rowData.lectureId === document.getElementById('lectureId').value ? 'selected-row' : '';
       }
     });
@@ -147,32 +164,34 @@
 
       if (currentMonth >= 8 || currentMonth <= 1) {
         semesterSelect.value = 'SECOND_SEMESTER';
+      } else {
+        semesterSelect.value = 'FIRST_SEMESTER';
       }
 
       // 페이지 로드 시 자동으로 검색 실행
       const semesterCode = document.getElementById('Semester').value;
       fetch(`/api/lecture/search?semesterCode=${semesterCode}`)
-              .then(response => response.json())
-              .then(lectures => {
-                grid.resetData(lectures);
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
+        .then(response => response.json())
+        .then(lectures => {
+          grid.resetData(lectures);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
     });
 
 
 
     // 그리드 행 클릭 이벤트 처리
-      grid.on('click', function(ev) {
-          if (ev.targetType === 'cell') {
-              const rowData = grid.getRow(ev.rowKey);
-              document.getElementById('lectureName').value = rowData.lectureName;
-              document.getElementById('professorName').value = rowData.professorName;
-              document.getElementById('maxStudents').value = rowData.maxStudents;
-              document.getElementById('lectureId').value = rowData.lectureId;
-          }
-      });
+    grid.on('click', function (ev) {
+      if (ev.targetType === 'cell') {
+        const rowData = grid.getRow(ev.rowKey);
+        document.getElementById('lectureName').value = rowData.lectureName;
+        document.getElementById('professorName').value = rowData.professorName;
+        document.getElementById('maxStudents').value = rowData.maxStudents;
+        document.getElementById('lectureId').value = rowData.lectureId;
+      }
+    });
 
 
     // 검색 버튼 클릭 이벤트 처리
@@ -183,14 +202,17 @@
 
       // 검색 API 호출
       fetch(`/api/lecture/search?semesterCode=${semesterCode}&deptName=${encodeURIComponent(deptName)}&professorName=${encodeURIComponent(professorName)}`)
-              .then(response => response.json())
-              .then(lectures => {
-                grid.resetData(lectures);
-              })
-              .catch(error => {
-                alert('검색 중 오류가 발생했습니다.');
-                console.error('Error:', error);
-              });
+        .then(response => response.json())
+        .then(lectures => {
+          if (lectures.length === 0) {
+            alert('개설 신청한 강의가 없습니다.')
+          }
+          grid.resetData(lectures);
+        })
+        .catch(error => {
+          alert('검색 중 오류가 발생했습니다.');
+          console.error('Error:', error);
+        });
     });
 
     document.getElementById('building').addEventListener('change', function () {

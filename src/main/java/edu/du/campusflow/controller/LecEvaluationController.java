@@ -1,6 +1,8 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.LecQuestionDTO;
+import edu.du.campusflow.dto.LectureDTO;
+import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.DiagEvaluationService;
@@ -60,9 +62,32 @@ public class LecEvaluationController {
         return ResponseEntity.ok(results);
     }
 
+    // 학과 선택에 따른 과목 선택
+    @GetMapping("/admin/lectures")
+    @ResponseBody
+    public ResponseEntity<List<LectureDTO>> getLecturesByDepartment(@RequestParam Long deptId) {
+        List<Lecture> lectures = lecQuestionService.getLecLecturesByDepartment(deptId);
+
+        List<LectureDTO> lectureDTOs = lectures.stream()
+                .map(lecture -> {
+                    LectureDTO dto = new LectureDTO();
+                    dto.setLectureName(lecture.getLectureName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(lectureDTOs);
+    }
+
     // 교수용 강의평가 페이지 이동
     @GetMapping("/professor")
-    public String showProfessorDiagnosticList() {
+    public String showProfessorLecturesList(Model model) {
+        Member professor = authService.getCurrentMember();  // 현재 로그인한 교수 정보 가져오기
+
+        // 교수의 강의 목록 조회
+        List<Map<String, Object>> lectures = lecQuestionService.getProfessorLectures(professor.getMemberId());
+        model.addAttribute("lectures", lectures);
+
         return "view/iframe/evaluation/lec/professor/professorLec";
     }
 
