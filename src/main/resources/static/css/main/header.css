@@ -3,10 +3,9 @@
     --secondary-color: #2c3e50;
     --background-color: #ecf0f1;
     --text-color: #34495e;
-    --sidebar-width: 200px;
-    --min-width: 1024px;  /* 최소 너비 변수 추가 */
 }
 
+/* 헤더 상단 네비게이션 바 */
 .header-nav {
     display: flex;
     align-items: center; /* 수직 정렬 */
@@ -17,14 +16,17 @@
     justify-content: space-between;
 }
 
+/* 네비게이션 바 span 태그 */
 .header-nav span{
     white-space: nowrap;
 }
 
+/* 헤더 회원 정보 컨테이너의 간격 너비 */
 .header-member-info-container .divider{
     width: 10px;
 }
 
+/* 헤더의 간격 너비 */
 .header-nav .divider{
     width: 20px;
 }
@@ -65,21 +67,6 @@
 .header-member-info-container{
     display: flex;
     height: 100%;
-}
-
-.header-list {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    gap: 15px;
-    margin-right: 20px;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 300px;  /* 로고와 타이틀이 겹치지 않도록 */
 }
 
 /* 공간 채우기용 빈칸 */
