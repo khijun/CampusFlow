@@ -2,111 +2,103 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>학사관리 시스템</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="css/main/header.css" rel="stylesheet">
-    <link href="css/main/navigation.css" rel="stylesheet">
-    <link href="css/main/sidebar.css" rel="stylesheet">
-    <link href="css/main/main-content.css" rel="stylesheet">
-    <link href="css/main/tab.css" rel="stylesheet">
-    <link href="css/main/mainStyle.css" rel="stylesheet">
-    <link href="css/main/sidebar-menu.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!--    탭의 모두삭제 버튼에 쓰레기통 이미지를 넣기 위함 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="/static/css/main/header.css" th:href="@{/css/main/header.css}" rel="stylesheet">
+    <link href="/static/css/main/sidebar.css" th:href="@{/css/main/sidebar.css}" rel="stylesheet">
+    <link href="/static/css/main/main-content.css" th:href="@{/css/main/main-content.css}" rel="stylesheet">
+    <link href="/static/css/main/tab.css" th:href="@{/css/main/tab.css}" rel="stylesheet">
+    <link href="/static/css/main/mainStyle.css" th:href="@{/css/main/mainStyle.css}" rel="stylesheet">
 </head>
 <body>
 <div class="container">
     <!-- Header -->
-    <nav class="header-nav">
-        <div class="header-left">
+    <div class="header-nav">
+        <!-- 로고 -->
+        <div class="header-logo-container">
             <div class="header-logo">
-                <img alt="두인대학교 로고" src="/assets/logo/doinUniver_02.png">
+                <img src="/static/assets/logo/doinUniver_03.png" th:src="@{/assets/logo/doinUniver_03.png}" alt="">
             </div>
-            <div class="header-title">
-                두인대학교
-                <small>DOIN UNIVERSITY 통합정보시스템</small>
+            <div class="divider"></div>
+            <div class="header-title-container">
+                <span class="title">두인대학교</span>
+                <span class="subtitle">DOIN UNIVERSITY 통합정보시스템</span>
             </div>
         </div>
+        <div class="spacer"></div>
+        <div class="header-content-container">
+            <div class="header-member-info-container" th:if="${memberDTO != null}">
+                <div class="session-info-container">
+                    <div class="header-span-container">
+                        <span id="session-timer">00:00</span>
+                    </div>
+                    <div class="divider line"></div>
+                    <div class="header-span-container">
+                        <button id="session-extension-btn" class="session-extension-btn">세션 연장</button>
+                    </div>
+                </div>
+                <div class="divider line"></div>
+                <div class="header-span-container">
+                    <span th:text="${memberDTO.deptName}">학과</span>
+                </div>
+                <div class="divider line"></div>
+                <div class="header-span-container">
+                    <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
+                </div>
+                <div class="divider line"></div>
+                <div class="header-span-container">
+                    <span th:text="${memberDTO.name}">박 두 인</span>
+                </div>
+            </div>
 
-        <ul class="header-list">
-            <li class="header-member-info-li" th:if="${memberDTO != null}">
-                <span id="session-timer" th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
-                <button class="session-button" id="session-extension-btn">세션 연장</button>
-                <span th:text="${memberDTO.deptName}">학과</span>
-                <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
-                <span th:text="${memberDTO.name}">박 두 인</span>
-            </li>
-            <li>
-                <a class="logout-link" href="#" onclick="handleLogout()" th:if="${memberDTO != null}">로그아웃</a>
-                <a th:href="@{/login}" th:if="${memberDTO == null}">로그인</a>
-            </li>
-        </ul>
-    </nav>
+            <div class="divider line"></div>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="side-bar">
-        <div class="sidebar-header">
-            <h2>학 사</h2>
+            <div class="header-login-btn-container">
+                <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
+                <a th:if="${memberDTO == null}" href='#' th:href="@{/login}">로그인</a>
+            </div>
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Tab Container -->
-        <div class="tab-container">
-            <ul id="tabs" class="draggable-tabs"></ul>
-            <div class="tab-controls">
-                <button class="close-all" onclick="closeAllTabs()">
-                    <i class="fas fa-trash"></i>
-                </button>
+        <!-- Sidebar -->
+        <div class="sidebar" id="side-bar">
+            <div class="sidebar-header">
+                <h2>학 사</h2>
+            </div>
+            <!-- sidebar-category -->
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content-iframe-container">
+            <!-- Tab Container -->
+            <div class="tab-container">
+                <ul id="tabs"></ul>
+                <div class="tab-controls">
+                    <button class="close-all" onclick="closeAllTabs()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Iframe Container -->
+            <div class="iframe-container">
+                <!-- iframe은 JavaScript에서 동적으로 생성됩니다 -->
             </div>
         </div>
-
-        <!-- Iframe Container -->
-        <div class="iframe-container" style="display: none;">
-            <!-- iframe은 JavaScript에서 동적으로 생성됩니다 -->
-        </div>
-
-        <!-- 메인 컨텐츠 iframe -->
-        <iframe id="main-content-frame" src="/main-content" style="width: 100%; height: calc(100vh - 140px); border: none; display: block;">
-        </iframe>
     </div>
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 <script src="/js/session_timer.js"></script>
-<script src="/js/sidebar_category.js"></script>
+<script th:src="@{/js/sidebar_category.js}" src="/static/js/sidebar_category.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 세션 스토리지 초기화
-        sessionStorage.removeItem('tabState');
-
-        // iframe 컨테이너 초기화
-        const iframeContainer = document.querySelector('.iframe-container');
-        if (iframeContainer) {
-            iframeContainer.innerHTML = '';
-            iframeContainer.style.display = 'none';
-        }
-
-        // 메인 컨텐츠 표시
-        const mainContent = document.querySelector('.info-container');
-        if (mainContent) {
-            mainContent.style.display = 'flex';
-        }
-
-        // 메인 탭만 추가
-        const tabs = document.getElementById('tabs');
-        if (tabs) {
-            tabs.innerHTML = ''; // 기존 탭 모두 제거
-            addTab('메인', '/main', false); // 메인 탭 추가
-        }
-
-        // 메인 탭 활성화
-        switchTab('/main');
-    });
-
     function handleLogout() {
+        // 탭 상태 초기화
         clearTabState();
+        // 시큐리티 로그아웃 URL로 이동
         window.location.href = '/logout';
     }
 </script>

@@ -21,6 +21,16 @@
   <div class="search-container">
     <!-- 검색 섹션 컨테이너 -->
     <div class="input-group">
+      <label for="curriculumYear">연도</label>
+      <input type="number"
+             id="curriculumYear"
+             name="curriculumYear"
+             th:value="${#calendars.format(#calendars.createNow(), 'yyyy')}"
+             min="2000"
+             max="2099"
+             style="width: 80px;">
+    </div>
+    <div class="input-group">
       <label for="Semester">학기</label>
       <select id="Semester">
         <option value="FIRST_SEMESTER">1학기</option>
@@ -28,12 +38,14 @@
       </select>
     </div>
     <div class="input-group">
-      <label for="subjectName">과목명</label>
-      <input type="text" id="subjectName" name="subjectName" placeholder="과목명을 입력하세요">
+      <label for="deptName">학과명</label>
+      <input type="text" id="deptName" name="deptName" th:value="${member.dept.getDeptName()}">
     </div>
     <div class="input-group">
       <label for="curriculumName">교육과정명</label>
       <input type="text" id="curriculumName" name="curriculumName" placeholder="교육과정명을 입력하세요">
+    </div>
+    <div class="input-group">
     </div>
     <button type="submit" id="searchButton">검색</button>
   </div>
@@ -87,8 +99,10 @@
         { header: '교과목아이디', name: 'curriculumSubjectId', sortable: false },
         { header: '과목명', name: 'subjectName', sortable: false },
         { header: '교육과정명', name: 'curriculumName', sortable: false },
+        { header: '학과명', name: 'deptName', sortable: false },
         { header: '학점', name: 'subjectCredits', sortable: false },
         { header: '학기', name: 'semesterName', sortable: false },
+        { header: '교육과정 연도', name: 'curriculumYear', sortable: false },
         { header: '이수 구분', name: 'subjectTypeName', sortable: false }
       ],
       bodyHeight: 300,      // 그리드 바디의 높이를 300px로 설정
@@ -101,6 +115,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
       const semesterSelect = document.getElementById('Semester');
+      const curriculumYear = document.getElementById('curriculumYear').value;
 
       if (currentMonth >= 8 || currentMonth <= 1) {
         semesterSelect.value = 'SECOND_SEMESTER';
@@ -109,14 +124,10 @@
       }
 
       const semesterCode = document.getElementById('Semester').value;
-      fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}`)
+      fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&curriculumYear=${curriculumYear}`)
               .then(response => response.json())
               .then(subjects => {
-                if (subjects.length === 0) {
-                  alert('검색 결과가 없습니다.');
-                } else {
-                  grid.resetData(subjects);
-                }
+                grid.resetData(subjects);
               })
               .catch(error => {
                 console.error('Error:', error);
@@ -128,14 +139,24 @@
     // 검색 버튼 클릭 이벤트 처리
     document.getElementById('searchButton').addEventListener('click', function () {
       const semesterCode = document.getElementById('Semester').value;
-      const subjectName = document.getElementById('subjectName').value;
+      const deptName = document.getElementById('deptName').value;
       const curriculumName = document.getElementById('curriculumName').value;
+      const curriculumYear = document.getElementById('curriculumYear').value;
 
+      // 연도가 빈 값이거나 범위를 벗어나는지 체크
+      if (!curriculumYear || curriculumYear < 2000 || curriculumYear > 2099) {
+        alert('올바른 연도를 입력해주세요. (2000-2099)');
+        return;
+      }
       // 검색 API 호출
-      fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&subjectName=${encodeURIComponent(subjectName)}&curriculumName=${encodeURIComponent(curriculumName)}`)
+      fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&deptName=${encodeURIComponent(deptName)}&curriculumName=${encodeURIComponent(curriculumName)}&curriculumYear=${curriculumYear}`)
               .then(response => response.json())
               .then(subjects => {
-                grid.resetData(subjects);
+                if (subjects.length === 0) {
+                  alert('검색 결과가 없습니다.');
+                } else {
+                  grid.resetData(subjects);
+                }
               })
               .catch(error => {
                 alert('검색 중 오류가 발생했습니다.');
