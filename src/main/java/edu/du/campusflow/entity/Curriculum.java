@@ -24,7 +24,7 @@ public class Curriculum {
    @JoinColumn(name = "dept_id")
    private Dept dept;
 
-   @Column(name = "curriculum_name", length = 20)
+   @Column(name = "curriculum_name")
    private String curriculumName;
 
    @Column(name = "curriculum_year")

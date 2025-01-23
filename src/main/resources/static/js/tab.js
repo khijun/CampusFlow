@@ -32,23 +32,12 @@ function restoreTabState() {
         const tabs = document.getElementById('tabs');
         tabs.innerHTML = ''; // 기존 탭 초기화
 
-        // 메인 탭이 없으면 추가
-        if (!tabsData.some(tab => tab.url === '/main')) {
-            addTab('메인', '/main', false);
-        }
-
         tabsData.forEach(tabData => {
-            if (tabData.url !== '/main') {  // 메인 탭은 중복 추가하지 않음
-                addTab(tabData.title, tabData.url, false);
-            }
+            addTab(tabData.title, tabData.url, false); // 저장된 탭 복원
             if (tabData.active) {
                 switchTab(tabData.url);
             }
         });
-    } else {
-        // 저장된 상태가 없으면 메인 탭만 추가
-        addTab('메인', '/main', false);
-        switchTab('/main');
     }
 }
 
@@ -59,27 +48,25 @@ function restoreTabState() {
 function loadIframe(url) {
     const container = document.querySelector('.iframe-container');
 
-    // 기존 iframe 제거
-    const existingIframe = container.querySelector('iframe');
-    if (existingIframe) {
-        existingIframe.remove();
+    // 처음 로드하는 URL이면 새 iframe 생성
+    if (!iframeCache.has(url)) {
+        const newIframe = document.createElement('iframe');
+        newIframe.name = 'contentFrame';
+        newIframe.src = url;
+        iframeCache.set(url, newIframe);
+        container.appendChild(newIframe);
     }
 
-    // 새 iframe 생성
-    const newIframe = document.createElement('iframe');
-    newIframe.name = 'contentFrame';
-    newIframe.style.width = '100%';
-    newIframe.style.height = '100%';
-    newIframe.style.border = 'none';
+    // 모든 iframe 숨기기
+    iframeCache.forEach(frame => {
+        frame.style.display = 'none';
+    });
 
-    // 로드 이벤트 추가
-    newIframe.onload = function() {
-        console.log('iframe loaded:', url);
-    };
-
-    // src 설정 및 추가
-    newIframe.src = url;
-    container.appendChild(newIframe);
+    // 현재 URL의 iframe 표시
+    const currentFrame = iframeCache.get(url);
+    if (currentFrame) {
+        currentFrame.style.display = 'block';
+    }
 }
 
 /**
@@ -170,7 +157,7 @@ function handleDragOver(e) {
     const tab = e.target.closest('.tab-item');
     if (tab && tab !== dragTab) {
         const rect = tab.getBoundingClientRect();
-        const midPoint = rect.x + (rect.width / 2); // 50% 지점으로 수정
+         const midPoint = rect.x + (rect.width / 2); // 50% 지점으로 수정
 
         // 기존 모든 탭의 경계선 스타일 초기화
         const tabs = document.getElementById('tabs');
@@ -234,35 +221,16 @@ function handleDragEnd(e) {
  */
 function switchTab(url) {
     const tabs = document.getElementById('tabs');
-    const iframeContainer = document.querySelector('.iframe-container');
-    const mainContentFrame = document.getElementById('main-content-frame');
-
-    // 모든 탭 비활성화
-    Array.from(tabs.children).forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.getAttribute('data-url') === url) {
-            tab.classList.add('active');
-        }
-    });
-
-    // 메인 페이지인 경우
-    if (url === '/main') {
-        if (iframeContainer) {
-            iframeContainer.style.display = 'none';
-        }
-        if (mainContentFrame) {
-            mainContentFrame.style.display = 'block';
-        }
-    } else {
-        // 다른 페이지인 경우
-        if (iframeContainer) {
-            iframeContainer.style.display = 'block';
-        }
-        if (mainContentFrame) {
-            mainContentFrame.style.display = 'none';
-        }
-        loadIframe(url);
+    // 모든 탭의 활성화 상태 제거
+    Array.from(tabs.children).forEach(tab => tab.classList.remove('active'));
+    // 선택한 탭 활성화
+    const activeTab = Array.from(tabs.children).find(tab => tab.getAttribute('data-url') === url);
+    if (activeTab) {
+        activeTab.classList.add('active');
     }
+    // iframe 내용 로드 및 상태 저장
+    loadIframe(url);
+    saveTabState();
 }
 
 /**
@@ -273,9 +241,6 @@ function closeTab(button) {
     const tab = button.parentElement;
     const tabs = document.getElementById('tabs');
     const url = tab.getAttribute('data-url');
-    const iframeContainer = document.querySelector('.iframe-container');
-    const infoContainer = document.querySelector('.info-container');
-    const mainContentFrame = document.getElementById('main-content-frame');
 
     // 이벤트 버블링 방지
     event.stopPropagation();
@@ -293,36 +258,11 @@ function closeTab(button) {
         iframeCache.delete(url);
     }
 
-    // 남은 탭이 있는 경우
-    if (tabs.children.length > 0) {
-        if (isActiveTab) {
-            const lastTab = tabs.children[tabs.children.length - 1];
-            const lastUrl = lastTab.getAttribute('data-url');
-            switchTab(lastUrl);
-        }
-    } else {
-        // 모든 탭이 닫힌 경우
-        if (iframeContainer) {
-            iframeContainer.innerHTML = '';
-            iframeContainer.style.display = 'none';
-        }
-        if (infoContainer) {
-            infoContainer.style.display = 'none';
-        }
-        if (mainContentFrame) {
-            mainContentFrame.style.display = 'none';
-        }
-        // 세션 스토리지 초기화
-        sessionStorage.removeItem('tabState');
+    if (isActiveTab && tabs.children.length > 0) {
+        const lastTab = tabs.children[tabs.children.length - 1];
+        const lastUrl = lastTab.getAttribute('data-url');
+        switchTab(lastUrl);
     }
-
-    // 메인 탭을 닫는 경우 ('/main' URL 확인)
-    if (url === '/main') {
-        if (mainContentFrame) {
-            mainContentFrame.style.display = 'none';
-        }
-    }
-
     // 탭 상태 저장
     saveTabState();
 }
@@ -332,27 +272,14 @@ function closeTab(button) {
  */
 function closeAllTabs() {
     const tabs = document.getElementById('tabs');
-    const iframeContainer = document.querySelector('.iframe-container');
-    const infoContainer = document.querySelector('.info-container');
+    tabs.innerHTML = '';
 
-    // 모든 탭 제거
-    if (tabs) {
-        tabs.innerHTML = '';
-    }
-
-    // 모든 iframe 제거
-    if (iframeContainer) {
-        iframeContainer.innerHTML = '';
-        iframeContainer.style.display = 'none';
-    }
-
-    // 메인 화면도 숨기기
-    if (infoContainer) {
-        infoContainer.style.display = 'none';
-    }
-
-    // 캐시 및 세션 스토리지 초기화
+    // 모든 캐시된 iframe 제거
+    iframeCache.forEach((frame, url) => {
+        frame.remove();
+    });
     iframeCache.clear();
+
     sessionStorage.removeItem('tabState');
 }
 
@@ -362,10 +289,6 @@ function closeAllTabs() {
  * @param {string} url - 페이지 URL
  */
 function openNewPage(title, url) {
-    const mainContentFrame = document.getElementById('main-content-frame');
-    if (mainContentFrame) {
-        mainContentFrame.style.display = 'none';
-    }
     addTab(title, url);
     loadIframe(url);
 }
@@ -418,5 +341,6 @@ function clearTabState() {
     });
     iframeCache.clear();
 }
+
 
 

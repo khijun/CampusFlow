@@ -45,7 +45,7 @@
             {header: '신청상태', name: 'regStatus', align: 'center'}
         ];
 
-        fetch('/api/ofregistration/my-registrations')
+        fetch('/iframe/ofregistration/student/registrations')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok: ' + response.statusText);
