@@ -273,6 +273,7 @@ function closeTab(button) {
     const url = tab.getAttribute('data-url');
     const iframeContainer = document.querySelector('.iframe-container');
     const infoContainer = document.querySelector('.info-container');
+    const mainContentFrame = document.getElementById('main-content-frame');
 
     // 이벤트 버블링 방지
     event.stopPropagation();
@@ -306,8 +307,18 @@ function closeTab(button) {
         if (infoContainer) {
             infoContainer.style.display = 'none';
         }
+        if (mainContentFrame) {
+            mainContentFrame.style.display = 'none';
+        }
         // 세션 스토리지 초기화
         sessionStorage.removeItem('tabState');
+    }
+
+    // 메인 탭을 닫는 경우 ('/main' URL 확인)
+    if (url === '/main') {
+        if (mainContentFrame) {
+            mainContentFrame.style.display = 'none';
+        }
     }
 
     // 탭 상태 저장

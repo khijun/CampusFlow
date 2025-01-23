@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="css/main/main-content.css" rel="stylesheet">
+</head>
+<body>
+<!-- 정보 컨테이너 -->
+<div class="info-container">
+    <!-- 공지사항 -->
+    <div class="notice-section">
+        <div class="section-title">공지사항</div>
+        <ul class="info-list">
+            <li th:if="${memberDTO != null && memberDTO.memberTypeStr == '학생'}">
+                <a href="#" onclick="parent.openNewPage('수강신청', '/iframe/ofregistration/student/studentOfre')">
+                    <span>2025학년도 1학기 수강신청 안내</span>
+                    <span class="date">2025.01.21</span>
+                </a>
+            </li>
+            <li>
+                <span>졸업사정 결과 확인 안내</span>
+                <span class="date">2025.01.19</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 주요일정 -->
+    <div class="schedule-section">
+        <div class="section-title">주요일정</div>
+        <ul class="info-list">
+            <li>
+                <span>2025-1학기 수강신청 기간</span>
+                <span class="date">01.22 ~ 01.26</span>
+            </li>
+            <li>
+                <span>2024학년도 학위수여식</span>
+                <span class="date">02.15</span>
+            </li>
+            <li>
+                <span>2025학년도 신입생 입학식</span>
+                <span class="date">02.26</span>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

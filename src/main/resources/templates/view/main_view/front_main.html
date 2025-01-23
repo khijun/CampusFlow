@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>학사관리 시스템</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
@@ -13,7 +13,7 @@
     <link href="css/main/tab.css" rel="stylesheet">
     <link href="css/main/mainStyle.css" rel="stylesheet">
     <link href="css/main/sidebar-menu.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -21,7 +21,7 @@
     <nav class="header-nav">
         <div class="header-left">
             <div class="header-logo">
-                <img src="/assets/logo/doinUniver_02.png" alt="두인대학교 로고">
+                <img alt="두인대학교 로고" src="/assets/logo/doinUniver_02.png">
             </div>
             <div class="header-title">
                 두인대학교
@@ -29,27 +29,17 @@
             </div>
         </div>
 
-        <!-- Navigation Bar -->
-<!--        <ul class="nav-list">-->
-<!--            <li><a href="#" th:href="@{/static}"><i class="fas fa-tachometer-alt"></i> 학사 행정</a></li>-->
-<!--            <li><a href="#" th:href="@{/students}"><i class="fas fa-user-graduate"></i> 일반 행정</a></li>-->
-<!--            <li><a href="#" th:href="@{/}"><i class="fas fa-tachometer-alt"></i> 메인</a></li>-->
-<!--            <li><a href="#" th:href="@{/student_main}"><i class="fas fa-book"></i> 학생 페이지</a></li>-->
-<!--            <li><a href="#" th:href="@{/professor_main}"><i class="fas fa-chart-bar"></i> 교수 페이지</a></li>-->
-<!--            <li><a href="#" th:href="@{/staff_main}"><i class="fas fa-cog"></i> 관리자 페이지</a></li>-->
-<!--        </ul>-->
-
         <ul class="header-list">
-            <li th:if="${memberDTO != null}" class="header-member-info-li">
+            <li class="header-member-info-li" th:if="${memberDTO != null}">
                 <span id="session-timer" th:text="'남은 시간: ' + ${remainingTime}">남은 시간</span>
-                <button id="session-extension-btn" class="session-button">세션 연장</button>
+                <button class="session-button" id="session-extension-btn">세션 연장</button>
                 <span th:text="${memberDTO.deptName}">학과</span>
                 <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
                 <span th:text="${memberDTO.name}">박 두 인</span>
             </li>
             <li>
-                <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
-                <a th:if="${memberDTO == null}" th:href="@{/login}">로그인</a>
+                <a class="logout-link" href="#" onclick="handleLogout()" th:if="${memberDTO != null}">로그아웃</a>
+                <a th:href="@{/login}" th:if="${memberDTO == null}">로그인</a>
             </li>
         </ul>
     </nav>
@@ -73,62 +63,52 @@
             </div>
         </div>
 
-        <div class="info-container">
-            <!-- 공지사항 -->
-            <div class="notice-section">
-                <div class="section-title">공지사항</div>
-                <ul class="info-list">
-                    <li>
-                        <span>2025학년도 1학기 수강신청 안내</span>
-                        <span class="date">2025.01.21</span>
-                    </li>
-                    <li>
-                        <span>동계방학 도서관 운영시간 안내</span>
-                        <span class="date">2025.01.20</span>
-                    </li>
-                    <li>
-                        <span>졸업사정 결과 확인 안내</span>
-                        <span class="date">2025.01.19</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 주요일정 -->
-            <div class="schedule-section">
-                <div class="section-title">주요일정</div>
-                <ul class="info-list">
-                    <li>
-                        <span>2025-1학기 수강신청 기간</span>
-                        <span class="date">01.22 ~ 01.26</span>
-                    </li>
-                    <li>
-                        <span>2024학년도 학위수여식</span>
-                        <span class="date">02.15</span>
-                    </li>
-                    <li>
-                        <span>2025학년도 신입생 입학식</span>
-                        <span class="date">02.26</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
         <!-- Iframe Container -->
-        <div class="iframe-container">
+        <div class="iframe-container" style="display: none;">
             <!-- iframe은 JavaScript에서 동적으로 생성됩니다 -->
         </div>
+
+        <!-- 메인 컨텐츠 iframe -->
+        <iframe id="main-content-frame" src="/main-content" style="width: 100%; height: calc(100vh - 140px); border: none; display: block;">
+        </iframe>
     </div>
 </div>
 <script src="/js/tab.js"></script> <!-- 경로를 /static/js/ 대신 /js/로 수정 -->
 <script src="/js/session_timer.js"></script>
 <script src="/js/sidebar_category.js"></script>
 <script>
-function handleLogout() {
-    // 탭 상태 초기화
-    clearTabState();
-    // 시큐리티 로그아웃 URL로 이동
-    window.location.href = '/logout';
-}
+    document.addEventListener('DOMContentLoaded', function() {
+        // 세션 스토리지 초기화
+        sessionStorage.removeItem('tabState');
+
+        // iframe 컨테이너 초기화
+        const iframeContainer = document.querySelector('.iframe-container');
+        if (iframeContainer) {
+            iframeContainer.innerHTML = '';
+            iframeContainer.style.display = 'none';
+        }
+
+        // 메인 컨텐츠 표시
+        const mainContent = document.querySelector('.info-container');
+        if (mainContent) {
+            mainContent.style.display = 'flex';
+        }
+
+        // 메인 탭만 추가
+        const tabs = document.getElementById('tabs');
+        if (tabs) {
+            tabs.innerHTML = ''; // 기존 탭 모두 제거
+            addTab('메인', '/main', false); // 메인 탭 추가
+        }
+
+        // 메인 탭 활성화
+        switchTab('/main');
+    });
+
+    function handleLogout() {
+        clearTabState();
+        window.location.href = '/logout';
+    }
 </script>
 </body>
 </html>
