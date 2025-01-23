@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
     <style>
-        .page-title {
+        * {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+        }
+        .page-title {
             font-size: 28px;
             font-weight: 600;
             color: #333;
@@ -14,17 +18,61 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #f0f0f0;
         }
+        #lecture-option-container {
+            margin: 0 0 20px 0;
+        }
     </style>
     <title>수강신청</title>
 </head>
 <body>
 <h2 class="page-title">수강신청 가능 강의 목록</h2>
 
+<div id="lecture-option-container" class="search-container">
+    <div class="input-group">
+        <label for="lectureName">
+            강의명 :
+        </label>
+        <input type="text" id="lectureName"/>
+    </div>
+    <div class="input-group">
+        <label for="professorName">
+            담당교수 :
+        </label>
+        <input type="text" id="professorName"/>
+    </div>
+    <div class="input-group">
+        <label for="deptName">
+            학과 :
+        </label>
+        <input type="text" id="deptName"/>
+    </div>
+    <div class="input-group">
+        <label for="subjectType">
+            이수구분 :
+        </label>
+        <input type="text" id="subjectType"/>
+    </div>
+    <div class="input-group">
+        <label for="subjectCredits">
+            학점 :
+        </label>
+        <input type="text" id="subjectCredits"/>
+    </div>
+    <div class="input-group">
+        <label for="lectureDay">
+            강의요일 :
+        </label>
+        <input type="text" id="lectureDay"/>
+    </div>
+    <button id="searchButton">조회</button>
+</div>
+
 <div id="lecture-list"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     let instance = null;
+    let originalData = null;
     const lectureListDiv = document.querySelector('#lecture-list');
 
     // 페이지 로드시 자동으로 강의 목록 조회
@@ -54,32 +102,28 @@
         ];
 
         fetch('/api/ofregistration/available-lectures')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                return data.map(lecture => ({
+                console.log('서버 응답 데이터:', data); // 디버깅용 로그
+                originalData = data.map(lecture => ({
                     ...lecture,
                     lectureTime: `${lecture.startTime} - ${lecture.endTime}`,
                     studentCount: `${lecture.currentStudents}/${lecture.maxStudents}`,
                     registerButton: {
                         lectureId: lecture.lectureId,
-                        isFull: lecture.currentStudents >= lecture.maxStudents
+                        isFull: lecture.currentStudents >= lecture.maxStudents,
+                        regStatus: lecture.regStatus
                     }
                 }));
-            })
-            .then(mappedData => {
-                if (instance != null) {
+
+                if (instance) {
                     instance.destroy();
-                    instance = null;
                 }
+
                 instance = new tui.Grid({
                     el: lectureListDiv,
                     columns: columns,
-                    data: mappedData,
+                    data: originalData,
                     bodyHeight: 400,
                     minBodyHeight: 400,
                     rowHeight: 40,
@@ -90,18 +134,61 @@
             });
     }
 
-    // 커스텀 버튼 렌더러 정의
+    // 검색 버튼 클릭 이벤트 처리
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const lectureName = document.getElementById('lectureName').value;
+        const professorName = document.getElementById('professorName').value;
+        const deptName = document.getElementById('deptName').value;
+        const subjectType = document.getElementById('subjectType').value;
+        const subjectCredits = document.getElementById('subjectCredits').value;
+        const lectureDay = document.getElementById('lectureDay').value;
+
+        const filteredData = originalData.filter(row => {
+            if (lectureName && !String(row.lectureName || '').includes(lectureName)) {
+                return false;
+            }
+            if (professorName && !String(row.name || '').includes(professorName)) {
+                return false;
+            }
+            if (deptName && !String(row.deptName || '').includes(deptName)) {
+                return false;
+            }
+            if (subjectType && !String(row.subjectType || '').includes(subjectType)) {
+                return false;
+            }
+            if (subjectCredits && !String(row.subjectCredits || '').includes(subjectCredits)) {
+                return false;
+            }
+            if (lectureDay && !String(row.lectureDay || '').includes(lectureDay)) {
+                return false;
+            }
+            return true;
+        });
+
+        if (instance) {
+            instance.resetData(filteredData);
+        }
+    });
+
     class CustomButtonRenderer {
         constructor(props) {
             const el = document.createElement('div');
-            const { lectureId, isFull } = props.value;
+            const { lectureId, isFull, regStatus } = props.value;
+            
+            console.log('버튼 렌더링:', { lectureId, isFull, regStatus }); // 디버깅용 로그
 
-            if (isFull) {
+            if (isFull && regStatus !== 'REQUESTED') {
                 el.innerHTML = '<span style="color: #ff4444;">마감</span>';
+            } else if (regStatus === 'REQUESTED') {
+                const button = document.createElement('button');
+                button.innerHTML = '취소';
+                button.style.cssText = 'width: 50px; padding: 5px; background-color: #666; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                button.onclick = () => cancelLecture(lectureId);
+                el.appendChild(button);
             } else {
                 const button = document.createElement('button');
                 button.innerHTML = '신청';
-                button.style.cssText = 'width: 50px; padding: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                button.style.cssText = 'width: 50px; padding: 5px; background-color: #666; color: white; border: none; border-radius: 4px; cursor: pointer;';
                 button.onclick = () => registerLecture(lectureId);
                 el.appendChild(button);
             }
@@ -140,6 +227,31 @@
                 })
                 .catch(error => {
                     alert('수강신청 실패: ' + error.message);
+                });
+        }
+    }
+
+    function cancelLecture(lectureId) {
+        if (confirm('이 강의의 수강신청을 취소하시겠습니까?')) {
+            fetch(`/iframe/ofregistration/cancel/${lectureId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('수강신청이 취소되었습니다.');
+                        createLectureGrid(lectureListDiv);
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('수강신청 취소 실패: ' + error.message);
                 });
         }
     }

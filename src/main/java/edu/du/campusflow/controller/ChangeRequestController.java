@@ -3,7 +3,9 @@ package edu.du.campusflow.controller;
 import edu.du.campusflow.dto.ChangeRequestDTO;
 import edu.du.campusflow.dto.DeptDTO;
 import edu.du.campusflow.entity.ChangeRequest;
+import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.repository.CommonCodeRepository;
+import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.ChangeRequestService;
 import edu.du.campusflow.service.DeptService;
@@ -20,11 +22,13 @@ public class ChangeRequestController {
     private final ChangeRequestService changeRequestService;
     private final AuthService authService;
     private final DeptService deptService;
+    private final MemberRepository memberRepository;
 
-    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService, DeptService deptService) {
+    public ChangeRequestController(ChangeRequestService changeRequestService, AuthService authService, DeptService deptService, MemberRepository memberRepository) {
         this.changeRequestService = changeRequestService;
         this.authService = authService;
         this.deptService = deptService;
+        this.memberRepository = memberRepository;
     }
 
     // 관리자용 - 모든 학생의 신청서 조회
@@ -39,8 +43,13 @@ public class ChangeRequestController {
     // 학적 조회
     @GetMapping("/iframe/academic/change-request-list")
     public String getChangeRequests(Model model) {
+        Long memberId = authService.getCurrentMemberId();
+
         List<ChangeRequest> changeRequests = changeRequestService.getChangeRequestsByMemberId(authService.getCurrentMemberId());
         model.addAttribute("changeRequests", changeRequests);
+
+        Member member = memberRepository.findById(memberId).orElse(null);
+        model.addAttribute("member", member);
         return "view/iframe/academic/change-request-list"; // 학적 조회 페이지
     }
 
