@@ -8,7 +8,6 @@
 /* 헤더 상단 네비게이션 바 */
 .header-nav {
     display: flex;
-    align-items: center; /* 수직 정렬 */
     background-color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 60px;
@@ -16,31 +15,41 @@
 }
 
 /* 네비게이션 바 span 태그 */
-.header-nav span{
+.header-nav span {
     white-space: nowrap;
 }
 
 /* 헤더의 간격 너비 */
-.header-nav .divider{
-    width: 20px;
+.header-nav .divider {
+    display: flex;
+    box-sizing: border-box;
+    margin: 10px 10px;
 }
 
-.header-nav a{
+.header-nav .line {
+    border-right: 1px solid lightgrey;
+}
+
+.header-nav a {
     text-decoration: none;
     color: var(--text-color);
 }
 
 /* span 태그 위치 조정을 위한 flex box*/
-.header-span-container{
+.header-span-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 /* 공간 채우기용 빈칸 */
-.spacer{
+.spacer {
     flex: 1;
 }
+
+/* 가로방향 flex box */
+
+/* 세로방향 flex box */
 
 /*
 =====================================================
@@ -49,17 +58,16 @@
 */
 
 /* 로고 */
-.header-logo-container{
+.header-logo-container {
     display: flex;
-    align-items: center;
     height: 100%;
 }
 
-.header-logo-container .divider{
-    width: 5px;
+.header-logo-container .divider {
+    margin: 5px;
 }
 
-.header-logo{
+.header-logo {
     height: 100%;
     display: flex;
     box-sizing: border-box;
@@ -67,26 +75,26 @@
 }
 
 /* 로고 이미지 */
-.header-logo img{
-    width: auto;
+.header-logo img {
     height: 100%;
+    width: auto;
 }
 
-.header-title-container{
+.header-title-container {
     display: flex;
     flex-direction: column;
     height: 100%;
     justify-content: center;
 }
 
-.header-title-container .title{
+.header-title-container .title {
     color: #3498db;
     font-size: 24px;
     font-weight: bold;
     text-align: left;
 }
 
-.header-title-container .subtitle{
+.header-title-container .subtitle {
     font-size: 14px;
     color: #aaaaaa;
 }
@@ -97,19 +105,14 @@
 =====================================================
 */
 
-.header-content-container{
-    display: flex;
-    align-items: center;
-}
-
-.header-member-info-container{
+.header-content-container {
     display: flex;
     height: 100%;
 }
 
-/* 헤더 회원 정보 컨테이너의 간격 너비 */
-.header-member-info-container .divider{
-    width: 10px;
+.header-member-info-container {
+    display: flex;
+    height: 100%;
 }
 
 /* 버튼 호버 효과 */
@@ -123,12 +126,11 @@
 =====================================================
 */
 
-.session-info-container{
+.session-info-container {
     display: flex;
-    align-items: center;
 }
 
-.session-info-container .divider{
+.session-info-container .divider {
     width: 10px;
 }
 
@@ -146,8 +148,16 @@
     background-color: #f5f5f5; /* 호버 시 색상 변경 */
 }
 
+/* 로그인/로그아웃 버튼 컨테이너 */
+.header-login-btn-container {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
 /* 로그인 버튼(a) */
-.header-login-btn-container a{
+.header-login-btn-container a {
+    height: auto;
     padding: 10px;
     border: solid 1px lightgrey;
     border-radius: 2px; /* 모서리 둥글게 */
@@ -157,10 +167,4 @@
 /* 버튼 호버 효과 */
 .header-login-btn-container a:hover {
     background-color: #f5f5f5; /* 호버 시 색상 변경 */
-}
-
-/* 로그인/로그아웃 버튼 컨테이너 */
-.header-login-btn-container{
-    display: flex;
-    height: 100%;
 }

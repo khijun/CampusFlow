@@ -31,25 +31,29 @@
         <div class="header-content-container">
             <div class="header-member-info-container" th:if="${memberDTO != null}">
                 <div class="session-info-container">
-                    <span id="session-timer" th:text="${remainingTime}">00:00</span>
-                    <div class="divider"></div>
-                    <button id="session-extension-btn" class="session-extension-btn">세션 연장</button>
+                    <div class="header-span-container">
+                        <span id="session-timer">00:00</span>
+                    </div>
+                    <div class="divider line"></div>
+                    <div class="header-span-container">
+                        <button id="session-extension-btn" class="session-extension-btn">세션 연장</button>
+                    </div>
                 </div>
-                <div class="divider"></div>
+                <div class="divider line"></div>
                 <div class="header-span-container">
                     <span th:text="${memberDTO.deptName}">학과</span>
                 </div>
-                <div class="divider"></div>
+                <div class="divider line"></div>
                 <div class="header-span-container">
                     <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
                 </div>
-                <div class="divider"></div>
+                <div class="divider line"></div>
                 <div class="header-span-container">
                     <span th:text="${memberDTO.name}">박 두 인</span>
                 </div>
             </div>
 
-            <div class="divider"></div>
+            <div class="divider line"></div>
 
             <div class="header-login-btn-container">
                 <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
