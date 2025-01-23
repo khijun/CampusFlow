@@ -271,6 +271,8 @@ function closeTab(button) {
     const tab = button.parentElement;
     const tabs = document.getElementById('tabs');
     const url = tab.getAttribute('data-url');
+    const iframeContainer = document.querySelector('.iframe-container');
+    const infoContainer = document.querySelector('.info-container');
 
     // 이벤트 버블링 방지
     event.stopPropagation();
@@ -288,11 +290,26 @@ function closeTab(button) {
         iframeCache.delete(url);
     }
 
-    if (isActiveTab && tabs.children.length > 0) {
-        const lastTab = tabs.children[tabs.children.length - 1];
-        const lastUrl = lastTab.getAttribute('data-url');
-        switchTab(lastUrl);
+    // 남은 탭이 있는 경우
+    if (tabs.children.length > 0) {
+        if (isActiveTab) {
+            const lastTab = tabs.children[tabs.children.length - 1];
+            const lastUrl = lastTab.getAttribute('data-url');
+            switchTab(lastUrl);
+        }
+    } else {
+        // 모든 탭이 닫힌 경우
+        if (iframeContainer) {
+            iframeContainer.innerHTML = '';
+            iframeContainer.style.display = 'none';
+        }
+        if (infoContainer) {
+            infoContainer.style.display = 'none';
+        }
+        // 세션 스토리지 초기화
+        sessionStorage.removeItem('tabState');
     }
+
     // 탭 상태 저장
     saveTabState();
 }
