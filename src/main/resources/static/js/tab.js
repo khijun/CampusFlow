@@ -7,6 +7,14 @@ const MAX_TABS = 7;
 // 드래그 관련 변수 추가
 let dragTab = null;
 
+
+/**
+ *  페이지가 로드될 때 메인 iframe을 띄워주는 함수
+ */
+window.addEventListener('DOMContentLoaded', (event)=>{
+    addTab('메인', '/iframe/main/main-content');
+})
+
 /**
  * 현재 열려있는 탭들의 상태를 sessionStorage에 저장하는 함수
  * 각 탭의 제목, URL, 활성화 상태를 저장

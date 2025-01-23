@@ -21,7 +21,7 @@ public class MainController {
       return "view/main_view/front_main"; // 메인 페이지
    }
 
-   @GetMapping("/main-content")
+   @GetMapping("/iframe/main/main-content")
    public String mainContent(Model model) {
       model.addAttribute("memberDTO", MemberDTO.fromEntity(authService.getCurrentMember()));
       return "view/iframe/main/main_content";
