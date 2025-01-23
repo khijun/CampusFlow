@@ -4,26 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>학사관리 시스템</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <!--    탭의 모두삭제 버튼에 쓰레기통 이미지를 넣기 위함 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="/static/css/main/header.css" th:href="@{/css/main/header.css}" rel="stylesheet">
     <link href="/static/css/main/sidebar.css" th:href="@{/css/main/sidebar.css}" rel="stylesheet">
     <link href="/static/css/main/main-content.css" th:href="@{/css/main/main-content.css}" rel="stylesheet">
     <link href="/static/css/main/tab.css" th:href="@{/css/main/tab.css}" rel="stylesheet">
     <link href="/static/css/main/mainStyle.css" th:href="@{/css/main/mainStyle.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-            height: 100%;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            min-width: 1024px;
-            overflow: hidden;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
@@ -32,41 +19,41 @@
         <!-- 로고 -->
         <div class="header-logo-container">
             <div class="header-logo">
-                <img src="/assets/logo/doinUniver_02.png" alt="두인대학교 로고">
+                <img src="/static/assets/logo/doinUniver_03.png" th:src="@{/assets/logo/doinUniver_03.png}" alt="">
             </div>
-            <div class="header-title">
-                두인대학교
-                <small>DOIN UNIVERSITY 통합정보시스템</small>
+            <div class="divider"></div>
+            <div class="header-title-container">
+                <span class="title">두인대학교</span>
+                <span class="subtitle">DOIN UNIVERSITY 통합정보시스템</span>
             </div>
         </div>
-
         <div class="spacer"></div>
+        <div class="header-content-container">
+            <div class="header-member-info-container" th:if="${memberDTO != null}">
+                <div class="session-info-container">
+                    <span id="session-timer" th:text="${remainingTime}">00:00</span>
+                    <div class="divider"></div>
+                    <button id="session-extension-btn" class="session-extension-btn">세션 연장</button>
+                </div>
+                <div class="divider"></div>
+                <div class="header-span-container">
+                    <span th:text="${memberDTO.deptName}">학과</span>
+                </div>
+                <div class="divider"></div>
+                <div class="header-span-container">
+                    <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
+                </div>
+                <div class="divider"></div>
+                <div class="header-span-container">
+                    <span th:text="${memberDTO.name}">박 두 인</span>
+                </div>
+            </div>
 
-        <div class="header-member-info-container" th:if="${memberDTO != null}">
-            <div class="session-info-container">
-                <span id="session-timer" th:text="${remainingTime}">00:00</span>
-                <button id="session-extension-btn" class="session-button">세션 연장</button>
-            </div>
             <div class="divider"></div>
-            <div class="header-span-container">
-                <span th:text="${memberDTO.deptName}">학과</span>
-            </div>
-            <div class="divider"></div>
-            <div class="header-span-container">
-                <span th:text="|${memberDTO.memberId}(${memberDTO.memberTypeStr})|">학번(멤버 타입)</span>
-            </div>
-            <div class="divider"></div>
-            <div class="header-span-container">
-                <span th:text="${memberDTO.name}">박 두 인</span>
-            </div>
-        </div>
 
-        <div class="divider"></div>
-
-        <div class="header-login-btn-container">
-            <div>
+            <div class="header-login-btn-container">
                 <a th:if="${memberDTO != null}" href="#" onclick="handleLogout()" class="logout-link">로그아웃</a>
-                <a th:if="${memberDTO == null}" th:href="@{/login}">로그인</a>
+                <a th:if="${memberDTO == null}" href='#' th:href="@{/login}">로그인</a>
             </div>
         </div>
     </div>

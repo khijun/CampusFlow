@@ -82,14 +82,3 @@
     width: 100%;
     flex-direction: column;
 }
-
-/*!* 실제 카테고리가 들어가는 ul *!*/
-
-/*}*/
-
-/*!* 카테고리 요소들(li) *!*/
-/*.sidebar-menu li{*/
-/*    display: flex;*/
-/*    width: 100%;*/
-/*    text-align: left;*/
-/*}*/
