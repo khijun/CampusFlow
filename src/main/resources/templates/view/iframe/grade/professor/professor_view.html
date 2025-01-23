@@ -130,7 +130,7 @@
         <h2>강의 선택</h2>
         <form action="#" method="get" th:action="@{/iframe/grade/professor/professor_view}" th:method="get">
             <label for="lectureId">강의:</label>
-            <select id="lectureId" name="lectureId" onchange="loadStudents()">
+            <select id="lectureId" name="lectureId" onchange="loadStudents()" onclick="updateGradeTypeForAllStudents()">
                 <th:block th:each="lecture : ${lectures}">
                     <option th:value="${lecture.lectureId}" th:text="${lecture.lectureName}">강의명</option>
                 </th:block>
@@ -190,6 +190,65 @@
         var studentSelects = document.querySelectorAll('.individualGradeType');
         studentSelects.forEach(function(select) {
             select.value = selectedGradeType;
+        });
+    }
+
+    function setGradeLimit(selectElement) {
+        // 성적 유형에 따른 점수 제한 설정
+        var gradeType = selectElement.value;
+        var scoreInputs = selectElement.closest('tr').querySelectorAll('input[name="score"]');
+
+        scoreInputs.forEach(function(input) {
+            // 기본 최대값을 100으로 설정
+            input.max = 100;
+            input.min = 0;
+
+            // gradeType에 따른 점수 제한 설정
+            if (gradeType === '67' || gradeType === '68') {
+                input.max = 40; // 중간, 기말은 40점 이하
+            } else if (gradeType === '69' || gradeType === '70') {
+                input.max = 10; // 과제, 출석은 10점 이하
+            }
+        });
+    }
+
+    function validateScore(inputElement) {
+        var gradeType = inputElement.closest('tr').querySelector('select[name="gradeType"]').value;
+        var maxScore = 100;
+
+        // 성적 유형에 따른 점수 최대값 설정
+        if (gradeType === '67' || gradeType === '68') {
+            maxScore = 40; // 중간, 기말은 40점 이하
+        } else if (gradeType === '69' || gradeType === '70') {
+            maxScore = 10; // 과제, 출석은 10점 이하
+        }
+
+        // 입력한 점수가 최대값을 초과하면 경고창 표시하고 점수 제한
+        if (parseInt(inputElement.value) > maxScore) {
+            alert('점수는 ' + maxScore + '점을 초과할 수 없습니다.');
+            inputElement.value = maxScore; // 입력값을 최대값으로 제한
+        }
+    }
+
+    function updateGradeTypeForAllStudents() {
+        var selectedGradeType = document.getElementById('gradeTypeSelect').value;
+
+        // 모든 학생의 성적 유형 select box와 hidden 값을 변경
+        var gradeTypeInputs = document.querySelectorAll('.gradeTypeForAll');
+        gradeTypeInputs.forEach(function(input) {
+            input.value = selectedGradeType;
+        });
+
+        // 각 학생의 성적 유형 select box도 변경
+        var studentSelects = document.querySelectorAll('.individualGradeType');
+        studentSelects.forEach(function(select) {
+            select.value = selectedGradeType;
+        });
+
+        // 성적 유형이 변경되면 점수 input을 비운다
+        var scoreInputs = document.querySelectorAll('input[name="score"]');
+        scoreInputs.forEach(function(input) {
+            input.value = '';  // 점수 입력란을 빈칸으로 설정
         });
     }
 </script>
