@@ -10,6 +10,6 @@ import java.util.List;
 @Data
 @ToString
 public class DeptCreateRequest {
-    List<DeptDTO> deptDTOList;
-    Long deptStatus;
+   List<DeptDTO> deptDTOList;
+   Long deptStatus;
 }

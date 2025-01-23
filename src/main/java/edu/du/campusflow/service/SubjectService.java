@@ -4,6 +4,7 @@ import edu.du.campusflow.dto.SubjectDTO;
 import edu.du.campusflow.entity.Subject;
 import edu.du.campusflow.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,4 +46,10 @@ public class SubjectService {
       subjectRepository.deleteAllById(ids); // JPA 메서드로 ID 리스트 기반 삭제
    }
 
+   public List<SubjectDTO> getAllSubjects() {
+      List<Subject> subjects = subjectRepository.findAll(Sort.by(Sort.Direction.ASC, "subjectName"));
+      return subjects.stream()
+          .map(SubjectDTO::fromEntity)
+          .collect(Collectors.toList());
+   }
 }

@@ -2,6 +2,8 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.GradeDTO;
 import edu.du.campusflow.dto.GradeForm;
+import edu.du.campusflow.dto.GradeFormProfessor;
+import edu.du.campusflow.dto.GradeProfessorDTO;
 import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.*;
 import edu.du.campusflow.service.AuthService;
@@ -114,6 +116,39 @@ public class GradeController {
         return "redirect:/iframe/grade/professor/professor_view"; // 리다이렉트 경로
     }
 
+    // 학생 성적 조회
+    @GetMapping("/iframe/grade/professor/student_grade/{studentId}")
+    public String getStudentGrade(@PathVariable Long studentId, Model model) {
+        Long memberId = authService.getCurrentMemberId();
+        // 해당 학생의 성적을 조회
+        List<GradeProfessorDTO> grades = gradeService.getStudentGradesByProfessor(authService.getCurrentMemberId(), studentId, Arrays.asList(67L, 68L, 69L, 70L));
+        List<Long> lectureIds = lectureRepository.findLectureIdsByMemberId(memberId);
+        model.addAttribute("grades", grades);
+        model.addAttribute("studentId", studentId);
+        model.addAttribute("lectureIds", lectureIds);
+        return "view/iframe/grade/professor/student_grade"; // 학생 성적을 표시할 뷰
+    }
+
+
+
+    @PostMapping("/iframe/grade/professor/edit/{memberId}")
+    public String updateGrade(@PathVariable Long memberId, @RequestParam Long lectureId,
+                              @RequestParam List<String> gradeType, @RequestParam List<Integer> score,
+                              @RequestParam Long selectedLectureId,  // 선택된 강의 ID 추가
+                              RedirectAttributes redirectAttributes) {
+        try {
+            // GradeForm 생성 시 lectureId와 selectedLectureId를 사용하여 생성
+            GradeFormProfessor gradeFormProfessor = new GradeFormProfessor(lectureId, selectedLectureId, createStudentGradesProfessor(Arrays.asList(memberId), gradeType, score));
+            gradeService.updateGrade(gradeFormProfessor);
+
+            redirectAttributes.addFlashAttribute("message", "성적이 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/iframe/grade/professor/professor_view"; // 성적 수정 후 교수 뷰로 리다이렉트
+    }
+
     // 학생 성적 리스트 생성
     private List<GradeForm.StudentGrade> createStudentGrades(List<Long> memberIds, List<String> gradeTypes, List<Integer> scores) {
         List<GradeForm.StudentGrade> studentGrades = new ArrayList<>();
@@ -124,7 +159,13 @@ public class GradeController {
     }
 
 
-
-
+    // 교수 성적 리스트 생성
+    private List<GradeFormProfessor.StudentGrade> createStudentGradesProfessor(List<Long> memberIds, List<String> gradeTypes, List<Integer> scores) {
+        List<GradeFormProfessor.StudentGrade> studentGrades = new ArrayList<>();
+        for (int i = 0; i < memberIds.size(); i++) {
+            studentGrades.add(new GradeFormProfessor.StudentGrade(memberIds.get(i), gradeTypes.get(i), scores.get(i)));
+        }
+        return studentGrades;
+    }
 
 }

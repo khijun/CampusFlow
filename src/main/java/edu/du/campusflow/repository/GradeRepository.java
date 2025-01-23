@@ -29,4 +29,29 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
 
 
     List<Grade> findByCompletion(Completion completion);
+
+    @Query("SELECT g FROM Grade g " +
+            "JOIN g.completion c " +
+            "JOIN c.ofRegistration r " +
+            "JOIN r.lectureId l " +
+            "WHERE l.lectureId IN :lectureIds " +
+            "AND r.member.memberId = :studentId " +
+            "AND g.gradeType.codeId IN :gradeTypeList")
+    List<Grade> findByLectureIdsAndStudentIdAndGradeTypes(
+            @Param("lectureIds") List<Long> lectureIds,
+            @Param("studentId") Long studentId,
+            @Param("gradeTypeList") List<Long> gradeTypeList);
+
+    Grade findByCompletionAndGradeType(Completion completion, CommonCode gradeTypeCode);
+
+    @Query("SELECT g FROM Grade g " +
+            "JOIN g.completion c " +
+            "JOIN c.ofRegistration o " +
+            "JOIN o.lectureId l " +
+            "JOIN o.member m " +
+            "WHERE l.lectureId = :lectureId " +
+            "AND m.memberId = :memberId")
+    List<Grade> findByCompletionOfRegistrationLectureIdAndCompletionOfRegistrationMemberId(@Param("lectureId") Long lectureId, @Param("memberId") Long memberId);
+
+    boolean existsByCompletionAndGradeType(Completion completion, CommonCode gradeType);
 }

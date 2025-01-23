@@ -39,21 +39,55 @@ public class OfregistrationController {
 
 
     /**
-     * 수강신청 가능한 강의 목록 페이지
+     * 수강신청 가능한 강의 목록 페이지 (페이지만 로드)
      */
     @GetMapping("/student/studentOfre")
-    public String showAvailableLectures(Model model) {
-        // 현재 로그인한 학생의 정보 가져오기
-        Member currentStudent = memberRepository.findById(authService.getCurrentMemberId())
-            .orElseThrow(() -> new IllegalStateException("로그인 정보를 찾을 수 없습니다."));
-        
-        // 학생의 학과명과 함께 수강 가능한 강의 목록 조회
-        List<OfregistrationDTO> lectures = ofregistrationService.getAllAvailableLectures(
-            currentStudent.getDept().getDeptName()
-        );
-        
-        model.addAttribute("lectures", lectures);
+    public String showAvailableLectures() {
         return "view/iframe/ofregistration/student/studentOfre";
+    }
+
+    /**
+     * 수강신청 가능한 강의 목록 데이터 조회 (API)
+     */
+    @GetMapping("/student/available-lectures")
+    public ResponseEntity<List<OfregistrationDTO>> getAvailableLectures() {
+        try {
+            Member currentStudent = memberRepository.findById(authService.getCurrentMemberId())
+                .orElseThrow(() -> new IllegalStateException("로그인 정보를 찾을 수 없습니다."));
+            
+            List<OfregistrationDTO> lectures = ofregistrationService.getAllAvailableLectures(
+                currentStudent.getDept().getDeptName()
+            );
+            return ResponseEntity.ok(lectures);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 수강신청 내역 조회 페이지 (페이지만 로드)
+     */
+    @GetMapping("/student/stuViewOfre")
+    public String viewStudentRegistrations() {
+        return "view/iframe/ofregistration/student/stuViewOfre";
+    }
+
+    /**
+     * 수강신청 내역 데이터 조회 (API)
+     */
+    @GetMapping("/student/registrations")
+    public ResponseEntity<List<OfregistrationDTO>> getStudentRegistrations() {
+        try {
+            Member currentStudent = memberRepository.findById(authService.getCurrentMemberId())
+                    .orElseThrow(() -> new IllegalStateException("로그인 정보를 찾을 수 없습니다."));
+            
+            List<OfregistrationDTO> registrations = ofregistrationService.getStudentRegistrations(
+                    currentStudent.getMemberId()
+            );
+            return ResponseEntity.ok(registrations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     /**
@@ -90,32 +124,24 @@ public class OfregistrationController {
     }
 
     /**
-     * 수강신청 내역 조회 페이지
+     * 관리자용 수강신청 관리 페이지 (페이지만 로드)
      */
-    @GetMapping("/student/stuViewOfre")
-    public String viewStudentRegistrations(Model model) {
-        // 현재 로그인한 학생의 정보 가져오기
-        Member currentStudent = memberRepository.findById(authService.getCurrentMemberId())
-                .orElseThrow(() -> new IllegalStateException("로그인 정보를 찾을 수 없습니다."));
-        
-        // 학생의 수강신청 내역 조회
-        List<OfregistrationDTO> registrations = ofregistrationService.getStudentRegistrations(
-                currentStudent.getMemberId()
-        );
-        
-        model.addAttribute("registrations", registrations);
-        return "view/iframe/ofregistration/student/stuViewOfre";
+    @GetMapping("/admin/adminOfre")
+    public String showAdminOfregistrations() {
+        return "view/iframe/ofregistration/admin/adminOfre";
     }
 
     /**
-     * 관리자용 수강신청 관리 페이지
+     * 관리자용 수강신청 관리 데이터 조회 (API)
      */
-    @GetMapping("/admin/adminOfre")
-    public String showAdminOfregistrations(Model model) {
-        // 수강신청 대기 상태인 강의 목록 조회
-        List<OfregistrationDTO> registrations = ofregistrationService.getPendingRegistrations();
-        model.addAttribute("registrations", registrations);
-        return "view/iframe/ofregistration/admin/adminOfre";
+    @GetMapping("/admin/registrations")
+    public ResponseEntity<List<OfregistrationDTO>> getAdminRegistrations() {
+        try {
+            List<OfregistrationDTO> registrations = ofregistrationService.getPendingRegistrations();
+            return ResponseEntity.ok(registrations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     /**

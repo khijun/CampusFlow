@@ -57,7 +57,7 @@ public class CommonCodeService {
     public CommonCode getCodeByValue(Long groupId, String codeValue) {
         CommonCode code = commonCodeRepository.findByGroupIdAndCodeValue(groupId, codeValue);
         if (code == null) {
-            throw new IllegalArgumentException("❌ 해당 코드가 존재하지 않습니다: groupId=" + groupId + ", codeValue=" + codeValue);
+            throw new IllegalArgumentException("해당 코드가 존재하지 않습니다: groupId=" + groupId + ", codeValue=" + codeValue);
         }
         return code;
     }
