@@ -51,6 +51,7 @@ public class DiagEvaluationService {
         }
     }
 
+    // 모든 dept 정보 가져오기
     public List<Map<String, Object>> getAllDepartments() {
         return deptRepository.findAll().stream()
                 .map(dept -> {
@@ -62,6 +63,7 @@ public class DiagEvaluationService {
                 .collect(Collectors.toList());
     }
 
+    // 현재 로그인한 교수의 소속 dept를 조회하는 메서드
     public List<Map<String, Object>> getProfessorDepartment() {
         Member professor = authService.getCurrentMember();  // authService 사용
 
