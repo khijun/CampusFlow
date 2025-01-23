@@ -233,34 +233,36 @@ function handleDragEnd(e) {
  * @param {string} url - 전환할 탭의 URL
  */
 function switchTab(url) {
-    const mainContent = document.querySelector('.info-container');  // .main-content 대신 .info-container
-    const iframeContainer = document.querySelector('.iframe-container');
     const tabs = document.getElementById('tabs');
+    const iframeContainer = document.querySelector('.iframe-container');
+    const mainContentFrame = document.getElementById('main-content-frame');
 
     // 모든 탭 비활성화
-    Array.from(tabs.children).forEach(tab => tab.classList.remove('active'));
+    Array.from(tabs.children).forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-url') === url) {
+            tab.classList.add('active');
+        }
+    });
 
+    // 메인 페이지인 경우
     if (url === '/main') {
-        // 메인 페이지인 경우
-        if (mainContent) mainContent.style.display = 'flex';  // block 대신 flex
-        if (iframeContainer) iframeContainer.style.display = 'none';
+        if (iframeContainer) {
+            iframeContainer.style.display = 'none';
+        }
+        if (mainContentFrame) {
+            mainContentFrame.style.display = 'block';
+        }
     } else {
         // 다른 페이지인 경우
-        if (mainContent) mainContent.style.display = 'none';
         if (iframeContainer) {
             iframeContainer.style.display = 'block';
-            loadIframe(url);  // loadIframe 함수 호출
         }
+        if (mainContentFrame) {
+            mainContentFrame.style.display = 'none';
+        }
+        loadIframe(url);
     }
-
-    // 현재 탭 활성화
-    const activeTab = Array.from(tabs.children).find(tab => tab.getAttribute('data-url') === url);
-    if (activeTab) {
-        activeTab.classList.add('active');
-    }
-
-    // 상태 저장
-    saveTabState();
 }
 
 /**
@@ -360,6 +362,10 @@ function closeAllTabs() {
  * @param {string} url - 페이지 URL
  */
 function openNewPage(title, url) {
+    const mainContentFrame = document.getElementById('main-content-frame');
+    if (mainContentFrame) {
+        mainContentFrame.style.display = 'none';
+    }
     addTab(title, url);
     loadIframe(url);
 }
