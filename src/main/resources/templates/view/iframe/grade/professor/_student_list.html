@@ -16,11 +16,15 @@
             <!-- 학생 목록 반복 -->
             <th:block th:each="registration : ${ofregistrations}">
                 <tr>
-                    <td th:text="${registration.member.memberId}">학번</td>
+                    <td>
+                        <a th:href="@{/iframe/grade/professor/student_grade/{studentId}(studentId=${registration.member.memberId})}">
+                            <span th:text="${registration.member.memberId}">학번</span>
+                        </a>
+                    </td>
                     <td th:text="${registration.member.name}">학생명</td>
                     <td>
                         <!-- 성적 유형 선택 -->
-                        <select name="gradeType" class="individualGradeType" required>
+                        <select name="gradeType" class="individualGradeType" required onchange="setGradeLimit(this)" onclick="updateGradeTypeForAllStudents()">
                             <option value="67" th:selected="${gradeType == 67}">중간</option>
                             <option value="68" th:selected="${gradeType == 68}">기말</option>
                             <option value="69" th:selected="${gradeType == 69}">과제</option>
@@ -30,7 +34,7 @@
                     <td>
                         <!-- 학생 ID와 성적을 매핑 -->
                         <input type="hidden" name="memberId" th:value="${registration.member.memberId}" />
-                        <input type="number" name="score" placeholder="점수 입력" required />
+                        <input type="number" name="score" placeholder="점수 입력" required min="0" max="100" oninput="validateScore(this)" />
                     </td>
                 </tr>
             </th:block>
