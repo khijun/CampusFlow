@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
     <style>
         .page-title {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
@@ -14,22 +16,92 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #f0f0f0;
         }
+        #registration-option-container {
+            margin: 0 0 20px 0;
+        }
     </style>
     <title>수강신청 관리</title>
 </head>
 <body>
 <h2 class="page-title">수강신청 관리</h2>
 
+<div id="registration-option-container" class="search-container">
+    <div class="input-group">
+        <label for="lectureName">
+            강의명 :
+        </label>
+        <input type="text" id="lectureName"/>
+    </div>
+    <div class="input-group">
+        <label for="studentId">
+            학번 :
+        </label>
+        <input type="text" id="studentId"/>
+    </div>
+    <div class="input-group">
+        <label for="studentName">
+            학생명 :
+        </label>
+        <input type="text" id="studentName"/>
+    </div>
+    <div class="input-group">
+        <label for="deptName">
+            학과 :
+        </label>
+        <input type="text" id="deptName"/>
+    </div>
+    <div class="input-group">
+        <label for="subjectType">
+            이수구분 :
+        </label>
+        <input type="text" id="subjectType"/>
+    </div>
+    <button id="searchButton">조회</button>
+</div>
+
 <div id="registration-list"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     let instance = null;
+    let originalData = null;
     const registrationListDiv = document.querySelector('#registration-list');
 
     // 페이지 로드시 자동으로 수강신청 내역 조회
     document.addEventListener('DOMContentLoaded', () => {
         createRegistrationGrid(registrationListDiv);
+    });
+
+    // 검색 버튼 클릭 이벤트 처리
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const lectureName = document.getElementById('lectureName').value;
+        const studentId = document.getElementById('studentId').value;
+        const studentName = document.getElementById('studentName').value;
+        const deptName = document.getElementById('deptName').value;
+        const subjectType = document.getElementById('subjectType').value;
+
+        const filteredData = originalData.filter(row => {
+            if (lectureName && !String(row.lectureName || '').includes(lectureName)) {
+                return false;
+            }
+            if (studentId && !String(row.memberId || '').includes(studentId)) {
+                return false;
+            }
+            if (studentName && !String(row.name || '').includes(studentName)) {
+                return false;
+            }
+            if (deptName && !String(row.deptName || '').includes(deptName)) {
+                return false;
+            }
+            if (subjectType && !String(row.subjectType || '').includes(subjectType)) {
+                return false;
+            }
+            return true;
+        });
+
+        if (instance) {
+            instance.resetData(filteredData);
+        }
     });
 
     function createRegistrationGrid(registrationListDiv) {
@@ -61,7 +133,7 @@
                 return response.json();
             })
             .then(data => {
-                return data.map(registration => ({
+                originalData = data.map(registration => ({
                     ...registration,
                     lectureTime: `${registration.lectureDay} ${registration.startTime}-${registration.endTime}`,
                     management: {
@@ -70,8 +142,6 @@
                         regStatus: registration.regStatus
                     }
                 }));
-            })
-            .then(mappedData => {
                 if (instance != null) {
                     instance.destroy();
                     instance = null;
@@ -79,7 +149,7 @@
                 instance = new tui.Grid({
                     el: registrationListDiv,
                     columns: columns,
-                    data: mappedData,
+                    data: originalData,
                     bodyHeight: 400,
                     minBodyHeight: 400,
                     rowHeight: 40,
@@ -100,13 +170,13 @@
                 // 승인 버튼
                 const approveButton = document.createElement('button');
                 approveButton.innerHTML = '승인';
-                approveButton.style.cssText = 'width: 50px; padding: 5px; margin-right: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                approveButton.style.cssText = 'width: 40px; padding: 5px; margin-right: 3px; background-color: #666; color: white; border: none; border-radius: 4px; cursor: pointer;';
                 approveButton.onclick = () => updateStatus(lectureId, memberId, 'APPROVED');
 
                 // 거절 버튼
                 const rejectButton = document.createElement('button');
                 rejectButton.innerHTML = '거절';
-                rejectButton.style.cssText = 'width: 50px; padding: 5px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                rejectButton.style.cssText = 'width: 40px; padding: 5px; background-color: #666; color: white; border: none; border-radius: 4px; cursor: pointer;';
                 rejectButton.onclick = () => updateStatus(lectureId, memberId, 'REJECTED');
 
                 el.appendChild(approveButton);
