@@ -33,10 +33,11 @@ public class CurriculumSubjectController {
     //강의 개설 페이지에서 사용할 검색
     @GetMapping("/api/curriculum-subjects/search")
     public ResponseEntity<List<CurriculumSubjectDTO>> searchCurriculumSubjects(
-            @RequestParam(required = false) String subjectName,
+            @RequestParam(required = false) String deptName,
             @RequestParam(required = false) String curriculumName,
-            @RequestParam(required = false) String semesterCode) {
-        List<CurriculumSubjectDTO> subjects = curriculumSubjectService.searchCurriculumSubjectBySubjectName(subjectName, curriculumName, semesterCode);
+            @RequestParam(required = false) String semesterCode,
+            @RequestParam(required = false) Integer curriculumYear) {
+        List<CurriculumSubjectDTO> subjects = curriculumSubjectService.searchCurriculumSubjectBySubjectName(deptName, curriculumName, semesterCode, curriculumYear);
         return ResponseEntity.ok(subjects);
     }
 

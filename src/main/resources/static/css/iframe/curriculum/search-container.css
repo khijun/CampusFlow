@@ -34,8 +34,8 @@ iframe {
    justify-content: space-between; /* 공간 분배 */
    padding: 15px 15px;
    min-height: 100px; /* 기본 높이 설정 */
-   width: calc(100% - 60px); /* main-content의 너비에 맞춤 */
-   margin: 20px auto; /* 가운데 정렬 */
+   width: 100%; /* main-content의 너비에 맞춤 */
+   margin-bottom: 10px; /* 아래 공간을  */
    background-color: white;
    border: 1px solid #ddd; /* 확인용 테두리 */
    color: black;
