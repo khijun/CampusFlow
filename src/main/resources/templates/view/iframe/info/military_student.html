@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+        th:href="@{/css/iframe/curriculum/search-container.css}"/>
   <title>병역 정보</title>
   <style>
     .hidden { display: none; }
@@ -13,12 +15,7 @@
 <h2>병역 정보</h2>
 <div id="military-info-list"></div>
 
-<!-- 병역 정보 조회 버튼 -->
-<div>
-  <div id="military-info-select">
-    <input id="military-info-select-btn" type="button" value="병역 정보 조회"/>
-  </div>
-</div>
+
 
 <!-- 병역 추가 버튼 -->
 <div>
@@ -26,7 +23,9 @@
 </div>
 
 <!-- 병역 정보 추가 폼 -->
+<div class="search-container">
 <div id="addForm" class="hidden">
+  <div class="input-group">
   <form id="military-form">
     <label for="dischargeType">전역 구분:</label>
     <select id="dischargeType" name="dischargeType" required>
@@ -42,23 +41,53 @@
 
     <button type="button" onclick="submitMilitary()">저장</button>
   </form>
+  </div>
+</div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
   let instance = null;
 
-  // 병역 정보 조회 버튼 클릭 시 그리드 생성
-  document.querySelector("#military-info-select-btn").addEventListener('click', () => {
+
+  document.addEventListener('DOMContentLoaded', () => {
     createMilitaryGrid();
   });
+
+  function deleteMilitary(id) {
+    console.log("삭제 요청 ID:", id);  // 삭제할 ID 확인
+
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    fetch('/api/military_info/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+            .then(response => {
+              console.log("응답 상태:", response.status);  // 응답 상태 코드 확인
+              if (!response.ok) throw new Error('삭제 실패');
+              return response.json();
+            })
+            .then(data => {
+              alert(data.message);
+              createMilitaryGrid(); // 데이터 새로고침
+            })
+            .catch(error => console.error("삭제 오류:", error));
+  }
 
   function createMilitaryGrid() {
     const militaryInfoListDiv = document.querySelector('#military-info-list');
     const columns = [
       { header: '전역 구분', name: 'dischargeType' ,align:'center'},
       { header: '최종 계급', name: 'finalRank' ,align:'center'},
-      { header: '군번', name: 'serviceNumber' ,align:'center'}
+      { header: '군번', name: 'serviceNumber' ,align:'center'},
+      {
+        header: '삭제',
+        name: 'delete',
+        align: 'center',
+        formatter: ({ row }) => `<button class="delete-btn" data-id="${row.id}">삭제</button>`
+      }
     ];
 
     // Toast UI Grid 생성
@@ -86,6 +115,15 @@
             })
             .catch(error => console.error('병역 정보 처리 오류:', error));
   }
+
+  // 이벤트 위임 방식으로 삭제 버튼 클릭 감지
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-btn')) {
+      const id = event.target.getAttribute('data-id');
+      deleteMilitary(id);
+    }
+  });
+
 
   // 폼 토글 기능
   function toggleForm() {

@@ -4,20 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+        th:href="@{/css/iframe/curriculum/search-container.css}"/>
   <title>학력 정보 조회</title>
   <style>
     .hidden { display: none; }
-    .form-container { margin-top: 20px; }
-    .form-container input, .form-container select { margin-right: 10px; }
-    .add-button { cursor: pointer; color: #007bff; font-size: 18px; }
   </style>
 </head>
 <body>
-<div>
-  <div id="education-list-select">
-    <input id="education-list-select-btn" type="button" value="학력 조회"/>
-  </div>
-</div>
+
 
 <div id="education-list"></div>
 
@@ -27,56 +22,88 @@
 </div>
 
 <!-- 학력 추가 폼 -->
+<div class="search-container">
 <div id="addForm" class="hidden">
+  <div class="input-group">
   <form id="education-form">
     <label for="schoolName">학교명:</label>
     <input type="text" id="schoolName" name="schoolName" required>
 
+
     <label for="enrollmentDate">입학일:</label>
     <input type="date" id="enrollmentDate" name="enrollmentDate" required>
 
+
     <label for="graduationDate">졸업일:</label>
     <input type="date" id="graduationDate" name="graduationDate">
+
 
     <label for="graduationStatus">졸업 상태:</label>
     <select id="graduationStatus" name="graduationStatus" required>
       <option value="3">졸업</option>
       <option value="1">재학</option>
     </select>
-
     <button type="button" onclick="submitEducation()">저장</button>
   </form>
+  </div>
 </div>
-
+</div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 
 <script>
   let instance = null;
 
-  document.querySelector("#education-list-select-btn").addEventListener('click', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     createEducationGrid();
   });
+
+  function deleteEducation(id) {
+    console.log("삭제 요청 ID:", id);  // 삭제할 ID 확인
+
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    fetch('/api/education_info/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    })
+            .then(response => {
+              console.log("응답 상태:", response.status);  // 응답 상태 코드 확인
+              if (!response.ok) throw new Error('삭제 실패');
+              return response.json();
+            })
+            .then(data => {
+              alert(data.message);
+              createEducationGrid(); // 데이터 새로고침
+            })
+            .catch(error => console.error("삭제 오류:", error));
+  }
 
   function createEducationGrid() {
     const educationListDiv = document.querySelector('#education-list');
     const columns = [
-      {header: '학교명', name: 'schoolName',align:'center'},
-      {header: '입학일', name: 'enrollmentDate',align:'center'},
-      {header: '졸업일', name: 'graduationDate',align:'center'},
-      {header: '졸업 상태', name: 'graduationStatus',align:'center'}
+      { header: '학교명', name: 'schoolName', align: 'center' },
+      { header: '입학일', name: 'enrollmentDate', align: 'center' },
+      { header: '졸업일', name: 'graduationDate', align: 'center' },
+      { header: '졸업 상태', name: 'graduationStatus', align: 'center' },
+      {
+        header: '삭제',
+        name: 'delete',
+        align: 'center',
+        formatter: ({ row }) => `<button class="delete-btn" data-id="${row.id}">삭제</button>`
+      }
     ];
 
-    // Toast UI Grid 생성
     if (instance) {
-      instance.destroy(); // 기존 인스턴스가 있으면 파괴
+      instance.destroy();
     }
 
     instance = new tui.Grid({
       el: educationListDiv,
       rowHeight: 'auto',
       columns: columns,
-      data: [] // 처음에는 비어 있는 데이터로 설정
+      data: []
     });
 
     fetch('/api/education_info')
@@ -86,12 +113,18 @@
                 ...info,
                 graduationStatus: info.graduationStatus && info.graduationStatus.codeId === 3 ? '졸업' : '재학'
               }));
-
-              // 그리드에 데이터 추가
               instance.resetData(mappedData);
             })
             .catch(error => console.error('데이터 처리 오류:', error));
   }
+
+  // 이벤트 위임 방식으로 삭제 버튼 클릭 감지
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-btn')) {
+      const id = event.target.getAttribute('data-id');
+      deleteEducation(id);
+    }
+  });
 
   function toggleForm() {
     document.getElementById("addForm").classList.toggle("hidden");

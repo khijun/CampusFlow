@@ -2,6 +2,8 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.GradeDTO;
 import edu.du.campusflow.dto.GradeForm;
+import edu.du.campusflow.dto.GradeFormProfessor;
+import edu.du.campusflow.dto.GradeProfessorDTO;
 import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -148,14 +150,13 @@ public class GradeService {
 
     @Transactional
     public void assignGrade(GradeForm gradeForm) {
-        Long lectureId = gradeForm.getLectureId(); // 강의 ID
+        Long lectureId = gradeForm.getLectureId();
 
         for (GradeForm.StudentGrade studentGrade : gradeForm.getStudentGrades()) {
-            Long memberId = studentGrade.getMemberId(); // 학생 ID
-            String gradeType = studentGrade.getGradeType(); // 성적 유형
-            int score = studentGrade.getScore(); // 점수
+            Long memberId = studentGrade.getMemberId();
+            String gradeType = studentGrade.getGradeType();
+            int score = studentGrade.getScore();
 
-            // 회원 정보 조회하여 member_type이 101인 학생만 필터링
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new IllegalArgumentException("학생이 존재하지 않습니다."));
 
@@ -163,22 +164,25 @@ public class GradeService {
                 throw new IllegalArgumentException("학생이 아닙니다.");
             }
 
-            // Ofregistration 조회 - 선택한 강의에만 성적을 부여
             List<Ofregistration> ofregistrations = ofregistrationRepository.findByMember_MemberIdAndLectureId(memberId, lectureId);
             if (ofregistrations.isEmpty()) {
                 throw new IllegalStateException("선택한 강의에 등록되지 않은 학생입니다.");
             }
 
-            // 강의에 대해 성적 부여
             for (Ofregistration ofregistration : ofregistrations) {
                 List<Completion> completions = completionRepository.findAllByOfRegistration(ofregistration);
                 Completion completion = completions.isEmpty()
                         ? createCompletion(ofregistration)
                         : completions.get(0);
 
-                String gradeTypeName = getGradeTypeName(Long.parseLong(gradeType));
                 CommonCode gradeTypeCode = commonCodeRepository.findById(Long.parseLong(gradeType))
                         .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 성적 유형입니다."));
+
+                // 이미 해당 성적 유형이 부여된 경우 처리 방지
+                boolean gradeExists = gradeRepository.existsByCompletionAndGradeType(completion, gradeTypeCode);
+                if (gradeExists) {
+                    throw new IllegalStateException("이미 해당 유형의 성적이 부여되었습니다.");
+                }
 
                 Grade grade = Grade.builder()
                         .completion(completion)
@@ -247,9 +251,141 @@ public class GradeService {
     }
 
 
+    public List<GradeProfessorDTO> getStudentGradesByProfessor(Long professorId, Long targetStudentId, List<Long> gradeTypeList) {
+        // 교수인지 검증
+        Member professor = memberRepository.findById(professorId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        Long memberType = professor.getMemberType().getCodeId();
+        if (memberType != 102L) { // 102L: 교수
+            throw new IllegalArgumentException("교수만 조회할 수 있습니다.");
+        }
+
+        // 교수가 담당하는 강의 목록 조회
+        List<Long> lectureIds = lectureRepository.findLectureIdsByMemberId(professorId);
+        if (lectureIds.isEmpty()) {
+            throw new IllegalArgumentException("담당 강의가 없습니다.");
+        }
+
+        // 특정 학생의 성적 조회 (교수가 담당하는 강의 내에서만)
+        List<Grade> grades = gradeRepository.findByLectureIdsAndStudentIdAndGradeTypes(lectureIds, targetStudentId, gradeTypeList);
+        if (grades.isEmpty()) {
+            throw new IllegalArgumentException("해당 학생의 성적 정보가 없습니다.");
+        }
+
+        // 데이터 그룹화
+        Map<String, List<Grade>> groupedGrades = grades.stream()
+                .collect(Collectors.groupingBy(grade ->
+                        grade.getCompletion().getOfRegistration().getLectureId().getLectureName()
+                ));
+
+        // 그룹화된 데이터를 DTO로 변환
+        List<GradeProfessorDTO> result = groupedGrades.entrySet().stream()
+                .map(entry -> {
+                    String lectureName = entry.getKey();
+
+                    Map<String, Integer> scores = new HashMap<>();
+                    int totalScore = 0;
+                    int subjectCredits = 0;
+
+                    for (Grade grade : entry.getValue()) {
+                        scores.put(getGradeTypeName(grade.getGradeType().getCodeId()), grade.getScore());
+                    }
+
+                    int finalTotalScore = calculateTotalScore(entry.getValue());
+                    Long finalGradeCode = calculateFinalGrade(finalTotalScore);
+
+                    CommonCode finalGrade = commonCodeRepository.findById(finalGradeCode)
+                            .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 성적 코드입니다."));
+
+                    Completion completion = entry.getValue().get(0).getCompletion();
+                    completion.setFinalGrade(finalGrade);
+                    completionRepository.save(completion);
+
+                    subjectCredits = completion.getOfRegistration().getLectureId().getCurriculumSubject().getSubject().getSubjectCredits();
+                    int earnedCredits = (completion.getCompletionState().getCodeId() == 30) ? 0 : subjectCredits;
+
+                    // 선택된 강의 ID를 현재 강의로 설정 (lectureIds에서 해당 강의에 맞는 강의 ID를 찾아서 전달)
+                    Long selectedLectureId = entry.getValue().get(0).getCompletion().getOfRegistration().getLectureId().getLectureId();
+
+                    return new GradeProfessorDTO(lectureIds, selectedLectureId, professor.getName(), lectureName, scores, finalGrade.getCodeName(), finalTotalScore, subjectCredits, earnedCredits);
+                })
+                .collect(Collectors.toList());
+
+        return result;
+    }
 
 
 
+    @Transactional
+    public void updateGrade(GradeFormProfessor gradeFormProfessor) {
+        Long lectureId = gradeFormProfessor.getLectureId(); // 강의 ID
+        Long selectedLectureId = gradeFormProfessor.getSelectedLectureId();
 
+        for (GradeFormProfessor.StudentGrade studentGrade : gradeFormProfessor.getStudentGrades()) {
+            Long memberId = studentGrade.getMemberId(); // 학생 ID
+            String gradeType = studentGrade.getGradeType(); // 성적 유형
+            int score = studentGrade.getScore(); // 점수
 
+            // 회원 정보 조회하여 member_type이 101인 학생만 필터링
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("학생이 존재하지 않습니다."));
+
+            if (member.getMemberType().getCodeId() != 101L) {
+                throw new IllegalArgumentException("학생이 아닙니다.");
+            }
+
+            // Ofregistration 조회 - 선택한 강의에만 성적을 부여
+            List<Ofregistration> ofregistrations = ofregistrationRepository.findByMember_MemberIdAndLectureId(memberId, lectureId);
+            if (ofregistrations.isEmpty()) {
+                throw new IllegalStateException("선택한 강의에 등록되지 않은 학생입니다.");
+            }
+
+            // 강의에 대해 성적 부여
+            for (Ofregistration ofregistration : ofregistrations) {
+                List<Completion> completions = completionRepository.findAllByOfRegistration(ofregistration);
+                Completion completion = completions.isEmpty()
+                        ? createCompletion(ofregistration)
+                        : completions.get(0);
+
+                // 성적 유형 및 등급 코드 확인
+                CommonCode gradeTypeCode = commonCodeRepository.findById(Long.parseLong(gradeType))
+                        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 성적 유형입니다."));
+
+                // 기존 성적이 있는지 확인 후 업데이트
+                Grade existingGrade = gradeRepository.findByCompletionAndGradeType(completion, gradeTypeCode);
+                if (existingGrade != null) {
+                    // 기존 성적이 있으면 업데이트
+                    existingGrade.setScore(score);
+                    gradeRepository.save(existingGrade);
+                } else {
+                    // 기존 성적이 없으면 새로 생성
+                    Grade grade = Grade.builder()
+                            .completion(completion)
+                            .gradeType(gradeTypeCode)
+                            .score(score)
+                            .build();
+                    gradeRepository.save(grade);
+                }
+
+                // 최종 성적 계산
+                List<Grade> grades = gradeRepository.findByCompletion(completion);
+                int totalScore = calculateTotalScore(grades);
+
+                Long finalGradeCodeId = calculateFinalGrade(totalScore);
+                CommonCode finalGrade = commonCodeRepository.findById(finalGradeCodeId)
+                        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 최종 등급입니다."));
+
+                completion.setFinalGrade(finalGrade);
+
+                // 이수 상태 업데이트
+                Long completionStateCode = (finalGradeCodeId == 50L) ? 30L : 29L;
+                CommonCode completionState = commonCodeRepository.findById(completionStateCode)
+                        .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 이수 상태 코드입니다."));
+
+                completion.setCompletionState(completionState);
+                completionRepository.save(completion);
+            }
+        }
+    }
 }

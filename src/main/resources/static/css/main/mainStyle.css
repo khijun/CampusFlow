@@ -1,19 +1,13 @@
 /* 고정형 설정 */
 .container {
-   width: auto; /* 고정된 전체 레이아웃 너비 */
-   margin: 0 auto; /* 화면 중앙 정렬 */
-}
-
-.header-nav, .nav-list, .sidebar, .main-content {
-   /*max-width: 2000px; !* 고정된 너비 *!*/
+    width: 100%; /* 고정된 전체 레이아웃 너비 */
+    height: 100%;
+    margin: 0 auto; /* 화면 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
 }
 
 .nav-list {
-   white-space: nowrap; /* 한 줄로 유지 */
-   overflow: hidden; /* 초과 콘텐츠 숨김 */
-}
-
-.main-content iframe {
-   max-width: 100%; /* iframe의 크기 제한 */
-   /*overflow: hidden; !* 스크롤 방지 *!*/
+    white-space: nowrap; /* 한 줄로 유지 */
+    overflow: hidden; /* 초과 콘텐츠 숨김 */
 }

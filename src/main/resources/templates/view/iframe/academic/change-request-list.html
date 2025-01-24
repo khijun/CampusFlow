@@ -34,7 +34,6 @@
 
     .academic-status strong {
       font-size: 1.2em; /* 제목 글씨 크기 */
-      color: #ff6347; /* 귀여운 색상 */
       margin-right: 10px; /* 제목과 상태 사이 여백 */
     }
 
@@ -49,8 +48,7 @@
 
 <!-- 학적 상태 표시 부분 -->
 <div class="academic-status">
-  <strong></strong>
-  <span id="academic-status">학적 상태 로딩 중...</span>
+  <div>현재 학적 상태:<span th:text="${member.academicStatus.codeName}" style="color: gray"></span></div>
 </div>
 
 
@@ -103,9 +101,7 @@
                 return new Date(current.requestDate) > new Date(last.requestDate) ? current : last;
               }, data[0]);
 
-              // 마지막 학적 상태 표시 (예: 학적 상태: 마지막 상태)
-              const academicStatusSpan = document.getElementById('academic-status');
-              academicStatusSpan.textContent = `학적 상태: ${lastRequest.academicStatus.codeName}`;
+
               return data.map(request => ({
                 id: request.id,
                 beforeCodeName: request.beforeCode.codeName,
