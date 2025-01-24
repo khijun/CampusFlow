@@ -4,36 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+        th:href="@{/css/iframe/curriculum/search-container.css}"/>
   <title>학생 상태 관리</title>
-  <style>
-    #filter-container {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .filter-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    select, input {
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    #student-status-list {
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <body>
 
-<div id="filter-container">
-  <div class="filter-item">
+<div class="search-container">
+  <div class="input-group">
     <label for="deptFilter">학과 선택:</label>
     <select id="deptFilter">
       <option value="">전체</option>
@@ -43,13 +21,15 @@
     </select>
   </div>
 
-  <div class="filter-item">
+  <div class="input-group">
     <label for="nameFilter">이름 검색:</label>
     <input type="text" id="nameFilter" placeholder="이름 입력">
   </div>
+
+  <button id="searchButton">조회</button>
 </div>
 
-<div id="student-status-list"></div>
+<div id="student-status-list" style="display: none;"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
@@ -57,19 +37,32 @@
   let originalData = [];
 
   document.addEventListener('DOMContentLoaded', () => {
-    fetchStudentData();
+    document.querySelector('#searchButton').addEventListener('click', fetchFilteredData);
   });
 
-  function fetchStudentData() {
+  function fetchFilteredData() {
     fetch('/api/admin/academic-management')
             .then(response => response.json())
             .then(data => {
               originalData = data.filter(member =>
                       !['퇴학', '졸업', '제적'].includes(member.academicStatus)
               );
-              renderGrid(originalData);
+              applyFiltersAndRender();
             })
             .catch(error => console.error('Error:', error));
+  }
+
+  function applyFiltersAndRender() {
+    const selectedDeptId = document.querySelector('#deptFilter').value;
+    const nameKeyword = document.querySelector('#nameFilter').value.trim().toLowerCase();
+
+    const filteredData = originalData.filter(item =>
+            (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
+            (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
+    );
+
+    document.querySelector('#student-status-list').style.display = 'block';
+    renderGrid(filteredData);
   }
 
   function renderGrid(data) {
@@ -106,21 +99,6 @@
       bodyHeight: 400,
     });
   }
-
-  function filterGrid() {
-    const selectedDeptId = document.querySelector('#deptFilter').value;
-    const nameKeyword = document.querySelector('#nameFilter').value.trim().toLowerCase();
-
-    const filteredData = originalData.filter(item =>
-            (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
-            (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
-    );
-
-    renderGrid(filteredData);
-  }
-
-  document.querySelector('#deptFilter').addEventListener('change', filterGrid);
-  document.querySelector('#nameFilter').addEventListener('input', filterGrid);
 </script>
 
 </body>
