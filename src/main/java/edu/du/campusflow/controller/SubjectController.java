@@ -1,7 +1,6 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.SubjectDTO;
-import edu.du.campusflow.entity.Subject;
 import edu.du.campusflow.service.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -66,6 +65,20 @@ public class SubjectController {
    @GetMapping("/api/subjects/all")
    public ResponseEntity<List<SubjectDTO>> getAllSubjects() {
       List<SubjectDTO> subjects = subjectService.getAllSubjects();
+      return ResponseEntity.ok(subjects);
+   }
+
+   @GetMapping("/api/subjects/by-dept/{deptId}")
+   public ResponseEntity<List<SubjectDTO>> getSubjectsByDept(@PathVariable Long deptId) {
+      if (deptId == null) {
+         return ResponseEntity.badRequest().body(Collections.emptyList());
+      }
+      List<SubjectDTO> subjects = subjectService.getSubjectsByDept(deptId);
+      if (subjects.isEmpty()) {
+         System.out.println("해당 학과에 등록된 과목이 없습니다.");
+      } else {
+         System.out.println("조회된 과목 리스트: " + subjects);
+      }
       return ResponseEntity.ok(subjects);
    }
 }
