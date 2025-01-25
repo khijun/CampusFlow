@@ -8,67 +8,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
   <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 20px;
-    }
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 30px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    label {
-      font-weight: bold;
-      color: #555;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-    #leaveDates {
-       display: none; /* 기본적으로 시작일과 종료일 숨기기 */
-     }
-  </style>
   <script>
     function toggleLeaveDates() {
       const statusCode = document.getElementById('newStatusCodeId').value;
@@ -91,6 +31,8 @@
 </head>
 <body>
 <h2>휴학/복학 신청</h2>
+<div class="search-container">
+  <div class="input-group">
 <form th:action="@{/iframe/academic/process-change-request}" th:object="${changeRequestDto}" method="post">
   <input type="hidden" name="memberId" th:value="${changeRequestDto.memberId}">
 
@@ -99,19 +41,25 @@
     <option value="2">휴학</option>
     <option value="8">복학</option>
   </select>
+
   <label for="reason">사유:</label>
   <input type="text" name="reason" id="reason">
+
+
 
   <div id="leaveDates">
   <label for="leaveStartDate">휴학 시작일:</label>
   <input type="date" name="leaveStartDate" id="leaveStartDate">
+
 
   <label for="leaveEndDate">휴학 종료일:</label>
   <input type="date" name="leaveEndDate" id="leaveEndDate">
   </div>
 
   <button type="submit">신청</button>
-</form>
 
+</form>
+  </div>
+</div>
 </body>
 </html>

@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+        th:href="@{/css/iframe/curriculum/search-container.css}"/>
   <title>병역 정보</title>
   <style>
     .hidden { display: none; }
@@ -21,7 +23,9 @@
 </div>
 
 <!-- 병역 정보 추가 폼 -->
+<div class="search-container">
 <div id="addForm" class="hidden">
+  <div class="input-group">
   <form id="military-form">
     <label for="dischargeType">전역 구분:</label>
     <select id="dischargeType" name="dischargeType" required>
@@ -37,6 +41,8 @@
 
     <button type="button" onclick="submitMilitary()">저장</button>
   </form>
+  </div>
+</div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>

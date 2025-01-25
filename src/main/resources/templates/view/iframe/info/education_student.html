@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+        th:href="@{/css/iframe/curriculum/search-container.css}"/>
   <title>학력 정보 조회</title>
   <style>
     .hidden { display: none; }
-    .form-container { margin-top: 20px; }
-    .form-container input, .form-container select { margin-right: 10px; }
-    .add-button { cursor: pointer; color: #007bff; font-size: 18px; }
   </style>
 </head>
 <body>
@@ -23,27 +22,32 @@
 </div>
 
 <!-- 학력 추가 폼 -->
+<div class="search-container">
 <div id="addForm" class="hidden">
+  <div class="input-group">
   <form id="education-form">
     <label for="schoolName">학교명:</label>
     <input type="text" id="schoolName" name="schoolName" required>
 
+
     <label for="enrollmentDate">입학일:</label>
     <input type="date" id="enrollmentDate" name="enrollmentDate" required>
 
+
     <label for="graduationDate">졸업일:</label>
     <input type="date" id="graduationDate" name="graduationDate">
+
 
     <label for="graduationStatus">졸업 상태:</label>
     <select id="graduationStatus" name="graduationStatus" required>
       <option value="3">졸업</option>
       <option value="1">재학</option>
     </select>
-
     <button type="button" onclick="submitEducation()">저장</button>
   </form>
+  </div>
 </div>
-
+</div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 

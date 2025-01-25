@@ -52,4 +52,14 @@ public class SubjectService {
           .map(SubjectDTO::fromEntity)
           .collect(Collectors.toList());
    }
+
+   public List<SubjectDTO> getSubjectsByDept(Long deptId) {
+      if (deptId == null) {
+         throw new IllegalArgumentException("학과 ID가 null입니다.");
+      }
+
+      String deptPrefix = String.valueOf(deptId);
+      List<Subject> subjects = subjectRepository.findSubjectsByDeptId(deptPrefix);
+      return subjects.stream().map(SubjectDTO::fromEntity).collect(Collectors.toList());
+   }
 }
