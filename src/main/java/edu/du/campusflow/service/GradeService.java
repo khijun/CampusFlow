@@ -270,7 +270,8 @@ public class GradeService {
         // 특정 학생의 성적 조회 (교수가 담당하는 강의 내에서만)
         List<Grade> grades = gradeRepository.findByLectureIdsAndStudentIdAndGradeTypes(lectureIds, targetStudentId, gradeTypeList);
         if (grades.isEmpty()) {
-            throw new IllegalArgumentException("해당 학생의 성적 정보가 없습니다.");
+            // 성적 정보가 없으면 빈 리스트 반환
+            return Collections.emptyList();
         }
 
         // 데이터 그룹화
