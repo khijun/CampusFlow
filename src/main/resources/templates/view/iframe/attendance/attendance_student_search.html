@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>출결 상태 조회</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+    <style>
+        .large-circle {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>학생 출결 상태 조회</h1>
+    <div class="search-container">
+        <div class="input-group">
+            <label for="year-select">년도:</label>
+            <select id="year-select" class="input-field">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025" selected>2025</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="semester-select">학기:</label>
+            <select id="semester-select" class="input-field">
+                <option value="88">1학기</option>
+                <option value="89">2학기</option>
+            </select>
+        </div>
+
+        <button id="attendance-search-btn" class="btn">조회</button>
+    </div>
+
+    <div id="attendance-grid-container" style="height: 700px; margin-top: 20px;"></div>
+</div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    let grid;
+
+    function formatAttendanceStatus(status) {
+        console.log("DEBUG: status 값 확인 =>", status);
+
+        if (!status) return "-";
+
+        const statusMap = {
+            "P": "<span class='large-circle'>○</span>",
+            "L": "△",
+            "A": "X"
+        };
+
+        return statusMap[status.toString()] || "-";
+    }
+
+    function calculateAttendanceScore(attendance, late, absent) {
+        let penalty = Math.floor((late || 0) / 3) + (absent || 0);
+        return Math.max(10 - penalty * 0.5, 0).toFixed(1);
+    }
+
+    document.getElementById("attendance-search-btn").addEventListener("click", () => {
+        const year = document.getElementById("year-select").value;
+        const semester = document.getElementById("semester-select").value;
+
+        fetch(`/attendance/api?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("서버 응답 오류");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data || data.length === 0) {
+                    alert("출결 데이터가 없습니다.");
+                    return;
+                }
+
+                if (grid) {
+                    grid.destroy();
+                }
+
+                data.forEach(row => {
+                    row.attendanceScore = calculateAttendanceScore(row.attendanceCount, row.lateCount, row.absentCount);
+
+                    for (let i = 1; i <= 15; i++) {
+                        row[`week${i}`] = formatAttendanceStatus(row[`week${i}`]);
+                    }
+                });
+
+                grid = new tui.Grid({
+                    el: document.getElementById('attendance-grid-container'),
+                    data: data,
+                    columns: [
+                        { header: '강의명', name: 'lectureName', width: 400, align: 'center' },
+                        { header: '출석', name: 'attendanceCount', width: 100, align: 'center' },
+                        { header: '지각', name: 'lateCount', width: 100, align: 'center' },
+                        { header: '결석', name: 'absentCount', width: 100, align: 'center' },
+                        { header: '1주차', name: 'week1', width: 50, align: 'center' },
+                        { header: '2주차', name: 'week2', width: 50, align: 'center' },
+                        { header: '3주차', name: 'week3', width: 50, align: 'center' },
+                        { header: '4주차', name: 'week4', width: 50, align: 'center' },
+                        { header: '5주차', name: 'week5', width: 50, align: 'center' },
+                        { header: '6주차', name: 'week6', width: 50, align: 'center' },
+                        { header: '7주차', name: 'week7', width: 50, align: 'center' },
+                        { header: '8주차', name: 'week8', width: 50, align: 'center' },
+                        { header: '9주차', name: 'week9', width: 50, align: 'center' },
+                        { header: '10주차', name: 'week10', width: 50, align: 'center' },
+                        { header: '11주차', name: 'week11', width: 50, align: 'center' },
+                        { header: '12주차', name: 'week12', width: 50, align: 'center' },
+                        { header: '13주차', name: 'week13', width: 50, align: 'center' },
+                        { header: '14주차', name: 'week14', width: 50, align: 'center' },
+                        { header: '15주차', name: 'week15', width: 50, align: 'center' },
+                        { header: '출석 점수', name: 'attendanceScore', width: 205, align: 'center' }
+                    ],
+                    bodyHeight: 'fitToParent'
+                });
+            })
+            .catch(error => {
+                console.error("출결 데이터 로딩 실패:", error);
+                alert("출결 데이터를 불러오는 데 실패했습니다.");
+            });
+    });
+</script>
+</body>
+</html>
