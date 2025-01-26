@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/attendance")  // ✅ 더 직관적인 경로로 변경
+@RequestMapping("/attendance")
 @RequiredArgsConstructor
 public class AttendanceController {
 

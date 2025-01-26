@@ -12,7 +12,7 @@ import java.util.List;
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
-    private final AuthService authService;  // ✅ 기존 AuthService 사용
+    private final AuthService authService;
 
     public List<AttendanceDTO> getStudentAttendance(Long semesterCodeId, Integer year) {
         Long memberId = authService.getCurrentMemberId();

@@ -55,7 +55,6 @@ public class AttendanceDTO {
         this.lateCount = lateCount != null ? lateCount.intValue() : 0;
         this.absentCount = absentCount != null ? absentCount.intValue() : 0;
 
-        // ✅ `codeId` 값을 변환하여 `P`, `L`, `A`로 변경
         this.week1 = convertStatus(week1);
         this.week2 = convertStatus(week2);
         this.week3 = convertStatus(week3);
@@ -74,7 +73,7 @@ public class AttendanceDTO {
     }
 
     private String convertStatus(Long statusCode) {
-        if (statusCode == null || statusCode == -1) return "-"; // ✅ 값이 없을 때 기본값 '-'
+        if (statusCode == null || statusCode == -1) return "-"; //값이 없을 때 기본값 '-'
         switch (statusCode.intValue()) {
             case 16: return "P"; // 출석
             case 17: return "L"; // 지각

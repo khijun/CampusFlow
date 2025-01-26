@@ -6,11 +6,11 @@
     <title>출결 상태 조회</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet"> <!-- ✅ CSS 적용 -->
+    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
     <style>
         .large-circle {
-            font-size: 24px;  /* ✅ ○ 크기 키우기 */
-            font-weight: bold;  /* ✅ 글자 굵게 */
+            font-size: 24px;
+            font-weight: bold;
             text-align: center;
         }
     </style>
@@ -18,7 +18,6 @@
 <body>
 <div>
     <h1>학생 출결 상태 조회</h1>
-    <!-- ✅ search-container 클래스를 추가하여 기존 CSS 적용 -->
     <div class="search-container">
         <div class="input-group">
             <label for="year-select">년도:</label>
@@ -124,7 +123,7 @@
                 });
             })
             .catch(error => {
-                console.error("❌ 출결 데이터 로딩 실패:", error);
+                console.error("출결 데이터 로딩 실패:", error);
                 alert("출결 데이터를 불러오는 데 실패했습니다.");
             });
     });
