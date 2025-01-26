@@ -30,7 +30,7 @@ public class Attendance {
    private LocalDateTime attendanceDate;
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "attendance_status", referencedColumnName = "code_id")
+   @JoinColumn(name = "status", referencedColumnName = "code_id") //테이블 컬럼과 이름이 맞지않아 재구성
    private CommonCode attendanceStatus; // 공통 코드 (출석 상태)
 
    @Column(name = "remarks", length = 200)
