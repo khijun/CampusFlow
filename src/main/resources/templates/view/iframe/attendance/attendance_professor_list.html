@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>출결 상태 조회</title>
+    <title>교수 출결 조회</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
     <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
@@ -17,7 +17,7 @@
 </head>
 <body>
 <div>
-    <h1>학생 출결 상태 조회</h1>
+    <h1>교수 출결 조회</h1>
     <div class="search-container">
         <div class="input-group">
             <label for="year-select">년도:</label>
@@ -36,9 +36,19 @@
             </select>
         </div>
 
+        <div class="input-group">
+            <label for="lecture-select">강의:</label>
+            <select id="lecture-select" class="input-field">
+            </select>
+        </div>
+
         <button id="attendance-search-btn" class="btn">조회</button>
     </div>
-
+    <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
+        <span class="legend-item">출석 : ○</span>
+        <span class="legend-item">지각 : △</span>
+        <span class="legend-item">결석 : X</span>
+    </div>
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
 </div>
 
@@ -47,16 +57,12 @@
     let grid;
 
     function formatAttendanceStatus(status) {
-        console.log("DEBUG: status 값 확인 =>", status);
-
-        if (!status) return "-";
-
+        if (!status) return "-"; // NULL 값 처리
         const statusMap = {
             "P": "<span class='large-circle'>○</span>",
             "L": "△",
             "A": "X"
         };
-
         return statusMap[status.toString()] || "-";
     }
 
@@ -68,27 +74,22 @@
     document.getElementById("attendance-search-btn").addEventListener("click", () => {
         const year = document.getElementById("year-select").value;
         const semester = document.getElementById("semester-select").value;
+        const lectureId = document.getElementById("lecture-select").value;
 
-        fetch(`/attendance/api/student?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("서버 응답 오류");
-                }
-                return response.json();
-            })
+        if (!lectureId) {
+            alert("강의를 선택해주세요.");
+            return;
+        }
+
+        fetch(`/attendance/api/professor?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}&lectureId=${encodeURIComponent(lectureId)}`)
+            .then(response => response.json())
             .then(data => {
-                if (!data || data.length === 0) {
-                    alert("출결 데이터가 없습니다.");
-                    return;
-                }
-
                 if (grid) {
                     grid.destroy();
                 }
 
                 data.forEach(row => {
                     row.attendanceScore = calculateAttendanceScore(row.attendanceCount, row.lateCount, row.absentCount);
-
                     for (let i = 1; i <= 15; i++) {
                         row[`week${i}`] = formatAttendanceStatus(row[`week${i}`]);
                     }
@@ -98,7 +99,8 @@
                     el: document.getElementById('attendance-grid-container'),
                     data: data,
                     columns: [
-                        { header: '강의명', name: 'lectureName', width: 400, align: 'center' },
+                        { header: '학번', name: 'studentId', width: 202, align: 'center' },
+                        { header: '학생 이름', name: 'studentName', width: 200, align: 'center' },
                         { header: '출석', name: 'attendanceCount', width: 100, align: 'center' },
                         { header: '지각', name: 'lateCount', width: 100, align: 'center' },
                         { header: '결석', name: 'absentCount', width: 100, align: 'center' },
@@ -117,7 +119,7 @@
                         { header: '13주차', name: 'week13', width: 50, align: 'center' },
                         { header: '14주차', name: 'week14', width: 50, align: 'center' },
                         { header: '15주차', name: 'week15', width: 50, align: 'center' },
-                        { header: '출석 점수', name: 'attendanceScore', width: 205, align: 'center' }
+                        { header: '출석 점수', name: 'attendanceScore', width: 200, align: 'center' }
                     ],
                     bodyHeight: 'fitToParent'
                 });
@@ -127,6 +129,36 @@
                 alert("출결 데이터를 불러오는 데 실패했습니다.");
             });
     });
+
+    // 🔹 로그인된 교수(member_id) 기준으로 강의 목록 불러오기
+    window.onload = function() {
+        fetch("/attendance/api/professor/lectures")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`서버 응답 오류: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(lectures => {
+                if (!Array.isArray(lectures)) {
+                    throw new Error("강의 목록이 배열이 아닙니다.");
+                }
+                const lectureSelect = document.getElementById("lecture-select");
+                lectureSelect.innerHTML = "<option value=''>강의 선택</option>";
+
+                lectures.forEach(lecture => {
+                    const option = document.createElement("option");
+                    option.value = lecture.lectureId;
+                    option.textContent = lecture.lectureName;
+                    lectureSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("강의 목록 로딩 실패:", error);
+                alert(`강의 목록을 불러오는 데 실패했습니다: ${error.message}`);
+            });
+    };
+
 </script>
 </body>
 </html>

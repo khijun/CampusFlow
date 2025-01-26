@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>출석 등록 (교수용)</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+    <style>
+        .large-circle {
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .save-button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            margin-top: 10px;
+        }
+        .save-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>출석 등록 (교수용)</h1>
+    <div class="search-container">
+        <div class="input-group">
+            <label for="year-select">년도:</label>
+            <select id="year-select" class="input-field">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025" selected>2025</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="semester-select">학기:</label>
+            <select id="semester-select" class="input-field">
+                <option value="88">1학기</option>
+                <option value="89">2학기</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="lecture-select">강의:</label>
+            <select id="lecture-select" class="input-field">
+            </select>
+        </div>
+
+        <button id="attendance-search-btn" class="btn">조회</button>
+    </div>
+
+    <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
+        <span class="legend-item">출석 : ○</span>
+        <span class="legend-item">지각 : △</span>
+        <span class="legend-item">결석 : X</span>
+    </div>
+
+    <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
+
+    <button id="save-attendance-btn" class="save-button">출석 저장</button>
+</div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    let grid;
+
+    function formatAttendanceStatus(status) {
+        if (!status) return "-";
+        const statusMap = {
+            "P": "<span class='large-circle'>○</span>",
+            "L": "△",
+            "A": "X"
+        };
+        return statusMap[status.toString()] || "-";
+    }
+
+    function calculateAttendanceScore(attendance, late, absent) {
+        let penalty = Math.floor((late || 0) / 3) + (absent || 0);
+        return Math.max(10 - penalty * 0.5, 0).toFixed(1);
+    }
+
+    document.getElementById("attendance-search-btn").addEventListener("click", () => {
+        const year = document.getElementById("year-select").value;
+        const semester = document.getElementById("semester-select").value;
+        const lectureId = document.getElementById("lecture-select").value;
+
+        if (!lectureId) {
+            alert("강의를 선택해주세요.");
+            return;
+        }
+
+        fetch(`/attendance/api/professor?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}&lectureId=${encodeURIComponent(lectureId)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (grid) {
+                    grid.destroy();
+                }
+
+                data.forEach(row => {
+                    row.attendanceScore = calculateAttendanceScore(row.attendanceCount, row.lateCount, row.absentCount);
+                    for (let i = 1; i <= 15; i++) {
+                        row[`week${i}`] = row[`week${i}`] || "-";
+                    }
+                });
+
+                grid = new tui.Grid({
+                    el: document.getElementById('attendance-grid-container'),
+                    data: data,
+                    columns: [
+                        { header: '학번', name: 'studentId', width: 150, align: 'center', readOnly: true },
+                        { header: '학생 이름', name: 'studentName', width: 150, align: 'center', readOnly: true },
+                        { header: '출석', name: 'attendanceCount', width: 80, align: 'center', readOnly: true },
+                        { header: '지각', name: 'lateCount', width: 80, align: 'center', readOnly: true },
+                        { header: '결석', name: 'absentCount', width: 80, align: 'center', readOnly: true },
+                        { header: '1주차', name: 'week1', width: 80, align: 'center', editor: 'text' },
+                        { header: '2주차', name: 'week2', width: 80, align: 'center', editor: 'text' },
+                        { header: '3주차', name: 'week3', width: 80, align: 'center', editor: 'text' },
+                        { header: '4주차', name: 'week4', width: 80, align: 'center', editor: 'text' },
+                        { header: '5주차', name: 'week5', width: 80, align: 'center', editor: 'text' },
+                        { header: '출석 점수', name: 'attendanceScore', width: 100, align: 'center', readOnly: true }
+                    ],
+                    bodyHeight: 'fitToParent'
+                });
+            })
+            .catch(error => {
+                console.error("출결 데이터 로딩 실패:", error);
+                alert("출결 데이터를 불러오는 데 실패했습니다.");
+            });
+    });
+
+    document.getElementById("save-attendance-btn").addEventListener("click", () => {
+        if (!grid) {
+            alert("출결 데이터를 먼저 조회해주세요.");
+            return;
+        }
+
+        const updatedData = grid.getData().map(row => ({
+            studentId: row.studentId,
+            lectureId: document.getElementById("lecture-select").value,
+            weeks: Array.from({ length: 15 }, (_, i) => row[`week${i + 1}`] || "-")
+        }));
+
+        fetch("/attendance/api/professor/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("출결 저장 실패");
+                }
+                alert("출결 정보가 저장되었습니다.");
+            })
+            .catch(error => {
+                console.error("출결 저장 실패:", error);
+                alert("출결 정보를 저장하는 데 실패했습니다.");
+            });
+    });
+</script>
+</body>
+</html>
