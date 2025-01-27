@@ -120,12 +120,23 @@ public class GradeController {
     @GetMapping("/iframe/grade/professor/student_grade/{studentId}")
     public String getStudentGrade(@PathVariable Long studentId, Model model) {
         Long memberId = authService.getCurrentMemberId();
-        // 해당 학생의 성적을 조회
-        List<GradeProfessorDTO> grades = gradeService.getStudentGradesByProfessor(authService.getCurrentMemberId(), studentId, Arrays.asList(67L, 68L, 69L, 70L));
-        List<Long> lectureIds = lectureRepository.findLectureIdsByMemberId(memberId);
-        model.addAttribute("grades", grades);
-        model.addAttribute("studentId", studentId);
-        model.addAttribute("lectureIds", lectureIds);
+        try {
+            // 해당 학생의 성적을 조회
+            List<GradeProfessorDTO> grades = gradeService.getStudentGradesByProfessor(authService.getCurrentMemberId(), studentId, Arrays.asList(67L, 68L, 69L, 70L));
+
+            // 성적이 부여된 강의가 없으면 에러 메시지 추가
+            if (grades.isEmpty()) {
+                model.addAttribute("errorMessage", "성적이 부여된 강의가 없습니다.");
+            } else {
+                model.addAttribute("grades", grades);
+            }
+
+            List<Long> lectureIds = lectureRepository.findLectureIdsByMemberId(memberId);
+            model.addAttribute("studentId", studentId);
+            model.addAttribute("lectureIds", lectureIds);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "학생 성적 정보를 조회하는 도중 오류가 발생했습니다.");
+        }
         return "view/iframe/grade/professor/student_grade"; // 학생 성적을 표시할 뷰
     }
 

@@ -63,8 +63,15 @@
 </head>
 <body>
 <div class="container">
-    <h1>선택 학생 성적 조회</h1>
-
+    <h1><span th:text="${studentId}"></span> 학생 성적 조회</h1>
+    <!-- 여기에서 학생 성적 정보와 에러 메시지를 처리 -->
+    <!-- 성적 조회 에러 메시지 처리 -->
+    <div th:if="${errorMessage}">
+        <script type="text/javascript">
+            alert([[${errorMessage}]]);
+        </script>
+        <p th:text="${errorMessage}"></p>
+    </div>
 
     <div class="search-container">
     <!-- 강의 선택 -->
@@ -205,6 +212,8 @@
             }
         }
     </script>
+
+
 </div>
 </body>
 </html>
