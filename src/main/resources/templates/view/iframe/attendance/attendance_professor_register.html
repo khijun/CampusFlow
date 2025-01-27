@@ -63,30 +63,34 @@
         <span class="legend-item">지각 : △</span>
         <span class="legend-item">결석 : X</span>
     </div>
+    <button id="save-attendance-btn" class="save-button" style="margin-right: 20px; margin-bottom: 10px">출석 저장</button>
+
 
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
 
-    <button id="save-attendance-btn" class="save-button">출석 저장</button>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     let grid;
 
-    function formatAttendanceStatus(status) {
-        if (!status) return "-";
-        const statusMap = {
-            "P": "<span class='large-circle'>○</span>",
-            "L": "△",
-            "A": "X"
-        };
-        return statusMap[status.toString()] || "-";
-    }
+    window.onload = function() {
+        fetch("/attendance/api/professor/lectures")
+            .then(response => response.json())
+            .then(lectures => {
+                console.log("🔹 강의 목록:", lectures);
+                const lectureSelect = document.getElementById("lecture-select");
+                lectureSelect.innerHTML = "<option value=''>강의 선택</option>";
 
-    function calculateAttendanceScore(attendance, late, absent) {
-        let penalty = Math.floor((late || 0) / 3) + (absent || 0);
-        return Math.max(10 - penalty * 0.5, 0).toFixed(1);
-    }
+                lectures.forEach(lecture => {
+                    const option = document.createElement("option");
+                    option.value = lecture.lectureId;
+                    option.textContent = lecture.lectureName;
+                    lectureSelect.appendChild(option);
+                });
+            })
+            .catch(error => alert(`강의 목록 불러오기 실패: ${error.message}`));
+    };
 
     document.getElementById("attendance-search-btn").addEventListener("click", () => {
         const year = document.getElementById("year-select").value;
@@ -98,19 +102,12 @@
             return;
         }
 
-        fetch(`/attendance/api/professor?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}&lectureId=${encodeURIComponent(lectureId)}`)
+        fetch(`/attendance/api/professor?year=${year}&semester=${semester}&lectureId=${lectureId}`)
             .then(response => response.json())
             .then(data => {
                 if (grid) {
                     grid.destroy();
                 }
-
-                data.forEach(row => {
-                    row.attendanceScore = calculateAttendanceScore(row.attendanceCount, row.lateCount, row.absentCount);
-                    for (let i = 1; i <= 15; i++) {
-                        row[`week${i}`] = row[`week${i}`] || "-";
-                    }
-                });
 
                 grid = new tui.Grid({
                     el: document.getElementById('attendance-grid-container'),
@@ -121,20 +118,22 @@
                         { header: '출석', name: 'attendanceCount', width: 80, align: 'center', readOnly: true },
                         { header: '지각', name: 'lateCount', width: 80, align: 'center', readOnly: true },
                         { header: '결석', name: 'absentCount', width: 80, align: 'center', readOnly: true },
-                        { header: '1주차', name: 'week1', width: 80, align: 'center', editor: 'text' },
-                        { header: '2주차', name: 'week2', width: 80, align: 'center', editor: 'text' },
-                        { header: '3주차', name: 'week3', width: 80, align: 'center', editor: 'text' },
-                        { header: '4주차', name: 'week4', width: 80, align: 'center', editor: 'text' },
-                        { header: '5주차', name: 'week5', width: 80, align: 'center', editor: 'text' },
+                        ...Array.from({ length: 15 }, (_, i) => ({
+                            header: `${i + 1}주차`,
+                            name: `week${i + 1}`,
+                            width: 50,
+                            align: 'center',
+                            editor: {
+                                type: 'select',
+                                options: { listItems: [{ text: "P", value: "P" }, { text: "L", value: "L" }, { text: "A", value: "A" }, { text: "-", value: "-" }] }
+                            }
+                        })),
                         { header: '출석 점수', name: 'attendanceScore', width: 100, align: 'center', readOnly: true }
                     ],
                     bodyHeight: 'fitToParent'
                 });
             })
-            .catch(error => {
-                console.error("출결 데이터 로딩 실패:", error);
-                alert("출결 데이터를 불러오는 데 실패했습니다.");
-            });
+            .catch(error => alert("출결 데이터를 불러오는 데 실패했습니다."));
     });
 
     document.getElementById("save-attendance-btn").addEventListener("click", () => {
@@ -143,30 +142,30 @@
             return;
         }
 
+        const lectureId = document.getElementById("lecture-select").value;
+        if (!lectureId) {
+            alert("강의를 선택해주세요.");
+            return;
+        }
+
         const updatedData = grid.getData().map(row => ({
             studentId: row.studentId,
-            lectureId: document.getElementById("lecture-select").value,
-            weeks: Array.from({ length: 15 }, (_, i) => row[`week${i + 1}`] || "-")
+            lectureId: lectureId,
+            week1: row.week1, week2: row.week2, week3: row.week3, week4: row.week4, week5: row.week5,
+            week6: row.week6, week7: row.week7, week8: row.week8, week9: row.week9, week10: row.week10,
+            week11: row.week11, week12: row.week12, week13: row.week13, week14: row.week14, week15: row.week15
         }));
 
-        fetch("/attendance/api/professor/save", {
+        fetch(`/attendance/api/professor/update?lectureId=${lectureId}`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedData)
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("출결 저장 실패");
-                }
-                alert("출결 정보가 저장되었습니다.");
-            })
-            .catch(error => {
-                console.error("출결 저장 실패:", error);
-                alert("출결 정보를 저장하는 데 실패했습니다.");
-            });
+            .then(response => response.text())
+            .then(message => alert(message))
+            .catch(error => alert("출결 정보 저장 실패: " + error));
     });
+
 </script>
 </body>
 </html>

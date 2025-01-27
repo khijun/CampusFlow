@@ -9,39 +9,43 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfessorAttendanceDTO {
 
-    private Long studentId;    // 학생 ID
-    private String studentName; // 학생 이름
-    private String lectureName; // 강의명
-    private Integer attendanceCount;
-    private Integer lateCount;
-    private Integer absentCount;
+    private Long studentId;
+    private String studentName = "";  // 🔹 기본값 ""
+    private String lectureName = "";  // 🔹 기본값 ""
+    private Long lectureId;
 
-    private String week1;
-    private String week2;
-    private String week3;
-    private String week4;
-    private String week5;
-    private String week6;
-    private String week7;
-    private String week8;
-    private String week9;
-    private String week10;
-    private String week11;
-    private String week12;
-    private String week13;
-    private String week14;
-    private String week15;
+    private Integer attendanceCount = 0;  // 🔹 기본값 0
+    private Integer lateCount = 0;  // 🔹 기본값 0
+    private Integer absentCount = 0;  // 🔹 기본값 0
+
+    private String week1 = "-";
+    private String week2 = "-";
+    private String week3 = "-";
+    private String week4 = "-";
+    private String week5 = "-";
+    private String week6 = "-";
+    private String week7 = "-";
+    private String week8 = "-";
+    private String week9 = "-";
+    private String week10 = "-";
+    private String week11 = "-";
+    private String week12 = "-";
+    private String week13 = "-";
+    private String week14 = "-";
+    private String week15 = "-";
 
     public ProfessorAttendanceDTO(
-            Long studentId, String studentName, String lectureName,
+            Long studentId, String studentName, String lectureName, Long lectureId,
             Long attendanceCount, Long lateCount, Long absentCount,
             Long week1, Long week2, Long week3, Long week4, Long week5,
             Long week6, Long week7, Long week8, Long week9, Long week10,
             Long week11, Long week12, Long week13, Long week14, Long week15) {
 
         this.studentId = studentId;
-        this.studentName = studentName;
-        this.lectureName = lectureName;
+        this.studentName = studentName != null ? studentName : ""; // 🔹 기본값 ""
+        this.lectureName = lectureName != null ? lectureName : ""; // 🔹 기본값 ""
+        this.lectureId = lectureId;
+
         this.attendanceCount = attendanceCount != null ? attendanceCount.intValue() : 0;
         this.lateCount = lateCount != null ? lateCount.intValue() : 0;
         this.absentCount = absentCount != null ? absentCount.intValue() : 0;
@@ -64,11 +68,11 @@ public class ProfessorAttendanceDTO {
     }
 
     private String convertStatus(Long statusCode) {
-        if (statusCode == null || statusCode == -1) return "-"; // 값이 없을 때 기본값 '-'
+        if (statusCode == null || statusCode == -1) return "-";
         switch (statusCode.intValue()) {
-            case 16: return "P"; // 출석
-            case 17: return "L"; // 지각
-            case 18: return "A"; // 결석
+            case 16: return "P";
+            case 17: return "L";
+            case 18: return "A";
             default: return "-";
         }
     }

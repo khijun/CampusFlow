@@ -38,6 +38,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Long>, JpaSpec
             @Param("semester") CommonCode semester
     );
 
-    List<Lecture> findByMember_MemberId(Long memberId);
+    List<Lecture> findByMember_MemberId(@Param("memberId") Long professorId);
 
 }
