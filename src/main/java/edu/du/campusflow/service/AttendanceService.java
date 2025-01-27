@@ -3,6 +3,7 @@ package edu.du.campusflow.service;
 import edu.du.campusflow.dto.AttendanceDTO;
 import edu.du.campusflow.dto.LectureListDTO;
 import edu.du.campusflow.dto.ProfessorAttendanceDTO;
+import edu.du.campusflow.dto.ProfessorAttendanceUpdateDTO;
 import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.repository.AttendanceRepository;
 import edu.du.campusflow.repository.LectureRepository;
@@ -38,7 +39,7 @@ public class AttendanceService {
         List<Lecture> lectures = lectureRepository.findByMember_MemberId(professorId);
 
         if (lectures.isEmpty()) {
-            System.out.println("❌ 강의 목록이 비어 있습니다.");
+            System.out.println("강의 목록이 비어 있습니다.");
         }
 
         return lectures.stream()
@@ -51,24 +52,25 @@ public class AttendanceService {
     }
 
     @Transactional
-    public void updateAttendance(Long lectureId, List<ProfessorAttendanceDTO> attendanceData) {
-        if (lectureId == null || attendanceData == null || attendanceData.isEmpty()) {
-            throw new IllegalArgumentException("❌ 강의 ID 또는 출결 데이터가 유효하지 않습니다.");
+    public void updateAttendance(List<ProfessorAttendanceUpdateDTO> updateDTOList) {
+        if (updateDTOList == null || updateDTOList.isEmpty()) {
+            throw new IllegalArgumentException("요청 데이터가 올바르지 않습니다.");
         }
 
-        for (ProfessorAttendanceDTO dto : attendanceData) {
+        for (ProfessorAttendanceUpdateDTO dto : updateDTOList) {
             for (int week = 1; week <= 15; week++) {
                 String status = getWeekStatus(dto, week);
                 Long statusCode = convertStatusCode(status);
 
                 if (dto.getStudentId() != null && statusCode != null) {
-                    int updatedRows = attendanceRepository.updateAttendanceStatus(
-                            dto.getStudentId(), lectureId, week, statusCode);
+                    int updatedRows = attendanceRepository.updateAttendanceStatus(dto.getStudentId(), dto.getLectureId(), week, statusCode);
 
                     if (updatedRows == 0) {
-                        System.out.println("⚠️ 출결 업데이트 실패: studentId=" + dto.getStudentId() + ", lectureId=" + lectureId + ", week=" + week + ", statusCode=" + statusCode);
+                        // 🔹 기존 데이터가 없을 경우 INSERT 수행
+                        System.out.println("⚠출결 데이터 없음 → 새로운 출결 데이터 추가: studentId=" + dto.getStudentId() + ", lectureId=" + dto.getLectureId() + ", week=" + week + ", statusCode=" + statusCode);
+                        attendanceRepository.insertAttendance(dto.getStudentId(), dto.getLectureId(), week, statusCode);
                     } else {
-                        System.out.println("✅ 출결 업데이트 성공: studentId=" + dto.getStudentId() + ", lectureId=" + lectureId + ", week=" + week + ", statusCode=" + statusCode + " (변경된 행: " + updatedRows + ")");
+                        System.out.println("출결 업데이트 성공: studentId=" + dto.getStudentId() + ", lectureId=" + dto.getLectureId() + ", week=" + week + ", statusCode=" + statusCode);
                     }
                 }
             }
@@ -85,7 +87,7 @@ public class AttendanceService {
         }
     }
 
-    private String getWeekStatus(ProfessorAttendanceDTO dto, int week) {
+    private String getWeekStatus(ProfessorAttendanceUpdateDTO dto, int week) {
         switch (week) {
             case 1: return dto.getWeek1();
             case 2: return dto.getWeek2();
@@ -106,7 +108,4 @@ public class AttendanceService {
         }
     }
 
-    public Long findLectureIdByStudent(Long studentId) {
-        return attendanceRepository.findLectureIdByStudent(studentId);
-    }
 }

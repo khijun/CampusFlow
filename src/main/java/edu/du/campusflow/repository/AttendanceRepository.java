@@ -91,26 +91,36 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             @Param("year") Integer year
     );
 
-    @Query("SELECT DISTINCT o.lectureId.lectureId " +
-            "FROM Ofregistration o " +
-            "WHERE o.member.memberId = :studentId")
-    Long findLectureIdByStudent(@Param("studentId") Long studentId);
-
     @Modifying
     @Transactional
     @Query(value = "UPDATE attendance a " +
             "JOIN ofregistration o ON a.ofregistration_id = o.id " +
             "JOIN lecture_time lt ON a.lecture_time_id = lt.lecture_time_id " +
             "JOIN lecture_week lw ON lt.lecture_week_id = lw.lecture_week_id " +
-            "SET a.status = :statusCode, " +
-            "a.updated_at = NOW() " +
+            "SET a.status = :statusCode, a.updated_at = NOW() " +
             "WHERE o.member_id = :studentId " +
-            "AND a.lecture_time_id = :lectureId " +
+            "AND o.lecture_id = :lectureId " +
             "AND lw.week = :week", nativeQuery = true)
-    int updateAttendanceStatus(
-            @Param("studentId") Long studentId,
-            @Param("lectureId") Long lectureId,
-            @Param("week") Integer week,
-            @Param("statusCode") Long statusCode);
+    int updateAttendanceStatus(@Param("studentId") Long studentId,
+                               @Param("lectureId") Long lectureId,
+                               @Param("week") Integer week,
+                               @Param("statusCode") Long statusCode);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO attendance (ofregistration_id, lecture_time_id, status, created_at, updated_at) " +
+            "SELECT o.id, lt.lecture_time_id, :statusCode, NOW(), NOW() " +
+            "FROM ofregistration o " +
+            "JOIN lecture_week lw ON lw.lecture_id = o.lecture_id " +
+            "JOIN lecture_time lt ON lt.lecture_week_id = lw.lecture_week_id " +
+            "WHERE o.member_id = :studentId " +
+            "AND o.lecture_id = :lectureId " +
+            "AND lw.week = :week " +
+            "AND NOT EXISTS (SELECT 1 FROM attendance a WHERE a.ofregistration_id = o.id AND a.lecture_time_id = lt.lecture_time_id)", nativeQuery = true)
+    void insertAttendance(@Param("studentId") Long studentId,
+                          @Param("lectureId") Long lectureId,
+                          @Param("week") Integer week,
+                          @Param("statusCode") Long statusCode);
+
 
 }

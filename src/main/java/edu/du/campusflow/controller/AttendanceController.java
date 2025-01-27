@@ -3,6 +3,7 @@ package edu.du.campusflow.controller;
 import edu.du.campusflow.dto.AttendanceDTO;
 import edu.du.campusflow.dto.LectureListDTO;
 import edu.du.campusflow.dto.ProfessorAttendanceDTO;
+import edu.du.campusflow.dto.ProfessorAttendanceUpdateDTO;
 import edu.du.campusflow.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,6 @@ public class AttendanceController {
     public ResponseEntity<List<AttendanceDTO>> getStudentAttendance(
             @RequestParam("semester") Long semesterCodeId,
             @RequestParam("year") Integer year) {
-
         return ResponseEntity.ok(attendanceService.getStudentAttendance(semesterCodeId, year));
     }
 
@@ -49,7 +49,6 @@ public class AttendanceController {
             @RequestParam("semester") Long semesterCodeId,
             @RequestParam("year") Integer year,
             @RequestParam("lectureId") Long lectureId) {
-
         return ResponseEntity.ok(attendanceService.getProfessorAttendance(year, semesterCodeId, lectureId));
     }
 
@@ -61,18 +60,14 @@ public class AttendanceController {
 
     @PostMapping("/api/professor/update")
     @ResponseBody
-    public ResponseEntity<Map<String, String>> updateAttendance(
-            @RequestParam("lectureId") Long lectureId,
-            @RequestBody List<ProfessorAttendanceDTO> attendanceList) {
+    public ResponseEntity<Void> updateAttendance(
+            @RequestBody List<ProfessorAttendanceUpdateDTO> updateDTOList) {
 
-        if (lectureId == null || attendanceList == null || attendanceList.isEmpty()) {
-            throw new IllegalArgumentException("❌ 요청 데이터가 올바르지 않습니다.");
+        if (updateDTOList == null || updateDTOList.isEmpty()) {
+            return ResponseEntity.badRequest().build();
         }
 
-        System.out.println("🔹 요청된 출결 데이터: " + attendanceList);
-
-        attendanceService.updateAttendance(lectureId, attendanceList);
-
-        return ResponseEntity.ok(Map.of("message", "출결 정보가 정상적으로 수정되었습니다."));
+        attendanceService.updateAttendance(updateDTOList);
+        return ResponseEntity.ok().build();
     }
 }
