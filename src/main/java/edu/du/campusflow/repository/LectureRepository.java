@@ -1,5 +1,7 @@
 package edu.du.campusflow.repository;
 
+import edu.du.campusflow.dto.LectureDTO;
+import edu.du.campusflow.dto.LectureListDTO;
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Lecture;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -35,4 +37,7 @@ public interface LectureRepository extends JpaRepository<Lecture, Long>, JpaSpec
             @Param("professorId") String professorId,
             @Param("semester") CommonCode semester
     );
+
+    List<Lecture> findByMember_MemberId(@Param("memberId") Long professorId);
+
 }
