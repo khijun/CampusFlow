@@ -1,71 +1,22 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>학적 조회</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <title>사용자 정보 조회</title>
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      color: #333;
-      overflow-y: auto;
-      height: 100vh;
-      box-sizing: border-box;
+    #change-request-list {
+      width: 100%;
+      margin-top: 20px;
     }
 
-    h2 {
-      text-align: center;
-      margin: 20px 0;
-      font-weight: 700;
-    }
-
-    /* 공통 그리드 스타일 */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr); /* 5개의 열 */
-      /*gap: 10px; !* 셀 간 간격 *!*/
-      width: 90%;
-      overflow-y: auto;   /* 수직 스크롤 추가 */
-      margin: 0 auto;
-    }
-
-    /* 헤더 스타일 */
-    .header-container {
-      background-color: #007BFF;
-      color: white;
-      font-weight: bold;
-      text-align: center;
-      padding: 10px 0;
-      /*border-radius: 5px;*/
-    }
-
-    /* 아이템 스타일 */
-    .item-container .item {
-      padding: 10px;
-      text-align: center;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      /*border-radius: 5px;*/
-    }
-
-    .item-container .item:hover {
-      background-color: #f1f1f1;
-    }
-
-    /* 버튼 스타일 */
     .cancel-btn {
-      color: #dc3545;
+      background-color: red;
+      color: white;
       border: none;
-      background: none;
+      padding: 5px 10px;
       cursor: pointer;
-      font-size: 14px;
     }
 
     .cancel-btn:hover {
@@ -97,7 +48,7 @@
 
 <!-- 학적 상태 표시 부분 -->
 <div class="academic-status">
-  <strong style="font-size: 30px">현재 학적 상태:</strong><strong th:text="${member.academicStatus.codeName}" style="font-size: 30px"></strong>
+  <div>현재 학적 상태:<span th:text="${member.academicStatus.codeName}" style="color: gray"></span></div>
 </div>
 
 
