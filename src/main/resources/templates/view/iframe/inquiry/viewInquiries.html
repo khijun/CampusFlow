@@ -5,36 +5,85 @@
   <meta charset="UTF-8">
   <title>문의 목록</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --danger-color: #868e96;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
+    .post-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .post-title a {
+      color: #212529;
+      text-decoration: none;
+    }
+    .post-title a:hover {
+      color: #007bff;
+    }
+    .status-badge {
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.25rem;
+      background-color: #e9ecef;
+      color: #495057;
+      font-size: 0.9em;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h1>문의 목록</h1>
-  <a th:if="${isStudent}" href="/iframe/inquiry/add" class="btn btn-primary mb-3">문의 작성</a>
-  
-  <table class="table">
-    <thead>
-    <tr>
-      <th>번호</th>
-      <th>제목</th>
-      <th>작성일</th>
-      <th>처리상태</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="inquiry, inquiryStat : ${inquiries}">
-      <td th:text="${inquiryStat.size - inquiryStat.index}"></td>
-      <td>
-        <a th:if="${isStaff} or ${#authentication.principal.username == inquiry.member.memberId.toString()}"
-           th:href="@{/iframe/inquiry/detail-view/{id}(id=${inquiry.inquiryId})}" 
-           th:text="${inquiry.subject}"></a>
-        <span th:unless="${isStaff} or ${#authentication.principal.username == inquiry.member.memberId.toString()}"
-              th:text="${inquiry.subject}"></span>
-      </td>
-      <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-      <td th:text="${inquiry.inquiryStatus.codeName}"></td>
-    </tr>
-    </tbody>
-  </table>
+<div class="container mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>문의 목록</h2>
+    <a th:if="${isStudent}" th:href="@{/iframe/inquiry/add}" class="btn btn-primary">문의 작성</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <table class="table mb-0">
+        <thead>
+        <tr>
+          <th>번호</th>
+          <th>제목</th>
+          <th>작성일</th>
+          <th>처리상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="inquiry, inquiryStat : ${inquiries}">
+          <td th:text="${inquiryStat.size - inquiryStat.index}"></td>
+          <td class="post-title">
+            <a th:if="${isStaff} or ${#authentication.principal.username == inquiry.member.memberId.toString()}"
+               th:href="@{/iframe/inquiry/detail-view/{id}(id=${inquiry.inquiryId})}" 
+               th:text="${inquiry.subject}"></a>
+            <span th:unless="${isStaff} or ${#authentication.principal.username == inquiry.member.memberId.toString()}"
+                  th:text="${inquiry.subject}"></span>
+          </td>
+          <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+          <td><span class="status-badge" th:text="${inquiry.inquiryStatus.codeName}"></span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 </body>
 </html>

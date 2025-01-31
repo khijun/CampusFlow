@@ -2,24 +2,96 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>문의글 작성</title>
+  <title>문의 작성</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --danger-color: #868e96;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
+    .form-group label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .form-control {
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+    }
+    .form-control:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      border: none;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h2>문의글 작성</h2>
-  <form th:action="@{/iframe/inquiry}" method="post">
+<div class="container mt-3">
+  <h1>문의 작성</h1>
+  <form th:action="@{/iframe/inquiry/add}" method="post" onsubmit="return handleSubmit(this)">
     <div class="form-group">
       <label for="subject">제목</label>
       <input type="text" class="form-control" id="subject" name="subject" required>
     </div>
     <div class="form-group">
       <label for="content">내용</label>
-      <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+      <textarea class="form-control" id="content" name="content" rows="15" required></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">작성</button>
-    <a th:href="@{/iframe/inquiry/view}" class="btn btn-secondary">취소</a>
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary" id="submitBtn">작성</button>
+      <a th:href="@{/iframe/inquiry/view}" class="btn btn-secondary ml-2" id="cancelBtn">취소</a>
+    </div>
   </form>
 </div>
+
+<script>
+function handleSubmit(form) {
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    
+    // 버튼 비활성화 및 로딩 표시
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 처리중...';
+    cancelBtn.style.display = 'none';
+    
+    // 폼 제출
+    form.submit();
+    return false;
+}
+</script>
 </body>
 </html>

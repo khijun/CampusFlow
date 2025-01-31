@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 @RequestMapping("/iframe/inquiry")
@@ -29,10 +30,10 @@ public class InquiryController {
     }
 
     // 문의 추가 처리
-    @PostMapping
-    public String addInquiry(Inquiry inquiry) {
-        inquiryService.createInquiry(inquiry); // 문의 생성
-        return "redirect:/iframe/inquiry/view"; // 문의 추가 후 목록 페이지로 리다이렉트
+    @PostMapping("/add")
+    public String addInquiry(@ModelAttribute Inquiry inquiry) {
+        inquiryService.createInquiry(inquiry);
+        return "redirect:/iframe/inquiry/view";
     }
 
     // 모든 문의 조회 페이지

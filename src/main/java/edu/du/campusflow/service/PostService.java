@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -122,5 +123,41 @@ public class PostService {
     public boolean isCommentAuthor(Post comment) {
         Member currentMember = authService.getCurrentMember();
         return currentMember != null && currentMember.equals(comment.getMember());
+    }
+
+    public boolean isPostAuthor(Post post) {
+        Member currentMember = authService.getCurrentMember();
+        if (currentMember == null || post == null) {
+            return false;
+        }
+        return post.getMember().getMemberId().equals(currentMember.getMemberId());
+    }
+
+    // 게시물 수정
+    public void updatePost(Long postId, String title, String content) {
+        Post post = getPostById(postId);
+        
+        // 작성자 확인
+        if (!isPostAuthor(post)) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+        
+        post.setTitle(title);
+        post.setContent(content);
+        post.setUpdatedAt(LocalDateTime.now());
+        
+        postRepository.save(post);
+    }
+
+    // 게시물 삭제
+    public void deletePost(Long id) {
+        Post post = getPostById(id);
+        
+        // 작성자 확인
+        if (!isPostAuthor(post)) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
+        }
+        
+        postRepository.delete(post);
     }
 }

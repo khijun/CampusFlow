@@ -67,4 +67,39 @@ public class PostController {
         postService.deleteComment(commentId);
         return "redirect:/iframe/posts/detail-view/" + postId;
     }
+
+    // 게시물 수정 페이지 표시
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Post post = postService.getPostById(id);
+        
+        // 작성자 확인
+        if (!postService.isPostAuthor(post)) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+        
+        model.addAttribute("post", post);
+        return "view/iframe/posts/editPost";
+    }
+
+    // 게시물 수정 처리
+    @PostMapping("/{id}/edit")
+    public String updatePost(@PathVariable Long id, @ModelAttribute Post updatedPost) {
+        Post post = postService.getPostById(id);
+        
+        // 작성자 확인
+        if (!postService.isPostAuthor(post)) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+        
+        postService.updatePost(id, updatedPost.getTitle(), updatedPost.getContent());
+        return "redirect:/iframe/posts/detail-view/" + id;
+    }
+
+    // 게시물 삭제
+    @PostMapping("/{id}/delete")
+    public String deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return "redirect:/iframe/posts/view";
+    }
 }

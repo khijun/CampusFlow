@@ -5,6 +5,13 @@
   <title>게시물 상세</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --danger-color: #868e96;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
     body {
       background-color: #f8f9fa;
     }
@@ -94,18 +101,85 @@
       justify-content: flex-end;
       padding-top: 0.5rem;
     }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      border: none;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-outline-primary:hover {
+      color: white;
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .btn-outline-danger {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-outline-danger:hover {
+      color: white;
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      border: none;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    
     .btn-delete {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
+      padding: 4px 12px;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 <div class="container mt-3">
-
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>게시물 상세</h2>
-    <a th:href="@{/iframe/posts/view}" class="btn btn-secondary">목록으로</a>
+    <div class="post-actions">
+      <div th:if="${@postService.isPostAuthor(post)}">
+        <a th:href="@{/iframe/posts/{id}/edit(id=${post.postId})}" class="btn btn-outline-primary">수정</a>
+        <button type="button" class="btn btn-outline-danger" th:onclick="|confirmPostDelete(${post.postId})|">삭제</button>
+      </div>
+      <a th:href="@{/iframe/posts/view}" class="btn btn-secondary">목록으로</a>
+    </div>
   </div>
 
   <div class="card">
@@ -170,22 +244,20 @@
     submitButton.disabled = true;
     submitButton.textContent = '등록 중...';
 
-    // 폼 제출 전에 입력값 저장
-    const commentContent = content;
-
-    // 폼 제출
+    // 폼 데이터 생성
     const formData = new FormData(commentForm);
-    formData.set('content', commentContent);  // 저장된 입력값 사용
 
+    // fetch를 사용하여 데이터 전송
     fetch(commentForm.action, {
       method: 'POST',
       body: formData
     })
     .then(response => {
       if (response.ok) {
-        // 성공적으로 제출된 후에 입력 필드 초기화
+        // 성공적으로 전송된 후에 입력 필드 초기화
         commentInput.value = '';
-        window.location.reload();  // 페이지 새로고침
+        // 페이지 새로고침
+        window.location.reload();
       } else {
         throw new Error('댓글 등록 실패');
       }
@@ -200,9 +272,9 @@
       submitButton.textContent = '댓글 등록';
     });
 
-    return false;  // 폼의 기본 제출 방지
+    return false;
   }
-
+  
   commentInput.addEventListener('keydown', function(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -216,8 +288,52 @@
     if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
       if (!isSubmitting) {
         isSubmitting = true;
-        form.submit();
+
+        // fetch를 사용하여 삭제 요청
+        fetch(form.action, {
+          method: 'POST'
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            throw new Error('댓글 삭제 실패');
+          }
+        })
+        .catch(error => {
+          alert('댓글 삭제에 실패했습니다.');
+          console.error('Error:', error);
+        })
+        .finally(() => {
+          isSubmitting = false;
+        });
       }
+    }
+  }
+
+  function confirmPostDelete(postId) {
+    if (confirm('정말 삭제하시겠습니까?')) {
+        const deleteBtn = document.querySelector('.btn-outline-danger');
+        // 버튼 비활성화 및 로딩 표시
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 삭제중...';
+
+        fetch(`/iframe/posts/${postId}/delete`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/iframe/posts/view';
+            } else {
+                throw new Error('삭제 실패');
+            }
+        })
+        .catch(error => {
+            alert('삭제 중 오류가 발생했습니다.');
+            // 오류 발생 시 버튼 상태 복구
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = '삭제';
+        });
     }
   }
 

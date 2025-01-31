@@ -15,27 +15,37 @@ public class AcademicCalendarService {
     @Autowired
     private AcademicCalendarRepository academicCalendarRepository;
 
+    @Autowired
+    private AuthService authService;
+
     // 모든 학사 일정 조회
     public List<AcademicCalendar> getAllAcademicCalendars() {
-        return academicCalendarRepository.findAll(); // 모든 학사 일정 조회
+        return academicCalendarRepository.findAll();
     }
 
     // 학사 일정 추가
-    public AcademicCalendar createAcademicCalendar(AcademicCalendar academicCalendar) {
-        return academicCalendarRepository.save(academicCalendar); // 학사 일정 저장
-    }
-
     public ResponseEntity<Void> addAcademicCalendar(AcademicCalendar academicCalendar) {
         try {
+            var currentMember = authService.getCurrentMember();
+            if (currentMember == null || !"STAFF".equals(currentMember.getMemberType().getCodeValue())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+            
+            academicCalendar.setMember(currentMember);
             academicCalendarRepository.save(academicCalendar);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            // 예외 처리 로직 추가
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     public ResponseEntity<?> updateAcademicCalendar(AcademicCalendar academicCalendar) {
         try {
+            var currentMember = authService.getCurrentMember();
+            if (currentMember == null || !"STAFF".equals(currentMember.getMemberType().getCodeValue())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             // 기존 일정이 있는지 확인
             AcademicCalendar existingCalendar = academicCalendarRepository.findById(academicCalendar.getCalendarId())
                     .orElseThrow(() -> new RuntimeException("해당 학사 일정을 찾을 수 없습니다."));
@@ -45,17 +55,25 @@ public class AcademicCalendarService {
             existingCalendar.setStartDate(academicCalendar.getStartDate());
             existingCalendar.setEndDate(academicCalendar.getEndDate());
             existingCalendar.setDescription(academicCalendar.getDescription());
+            existingCalendar.setMember(currentMember);
 
             // 저장
             academicCalendarRepository.save(existingCalendar);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 수정 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("일정 수정 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
     public ResponseEntity<?> deleteCalendar(Long id) {
         try {
+            var currentMember = authService.getCurrentMember();
+            if (currentMember == null || !"STAFF".equals(currentMember.getMemberType().getCodeValue())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             // 삭제할 일정이 있는지 확인
             AcademicCalendar calendar = academicCalendarRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("해당 학사 일정을 찾을 수 없습니다."));
@@ -69,7 +87,8 @@ public class AcademicCalendarService {
                     .body("일정 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
     public List<AcademicCalendar> getAllCalendars() {
-        return academicCalendarRepository.findAll(); // 모든 학사 일정 반환
+        return academicCalendarRepository.findAll();
     }
 }
