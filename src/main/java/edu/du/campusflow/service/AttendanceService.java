@@ -1,11 +1,9 @@
 package edu.du.campusflow.service;
 
-import edu.du.campusflow.dto.AttendanceDTO;
-import edu.du.campusflow.dto.LectureListDTO;
-import edu.du.campusflow.dto.ProfessorAttendanceDTO;
-import edu.du.campusflow.dto.ProfessorAttendanceUpdateDTO;
+import edu.du.campusflow.dto.*;
 import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.repository.AttendanceRepository;
+import edu.du.campusflow.repository.DeptRepository;
 import edu.du.campusflow.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,7 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final LectureRepository lectureRepository;
     private final AuthService authService;
+    private final DeptRepository deptRepository;
 
     public List<AttendanceDTO> getStudentAttendance(Long semesterCodeId, Integer year) {
         Long memberId = authService.getCurrentMemberId();
@@ -48,6 +47,10 @@ public class AttendanceService {
     }
 
     public List<ProfessorAttendanceDTO> getProfessorAttendance(Integer year, Long semesterCodeId, Long lectureId) {
+        return attendanceRepository.findAttendanceByProfessor(lectureId, semesterCodeId, year);
+    }
+
+    public List<ProfessorAttendanceDTO> getProfessorAttendanceForAdmin(Integer year, Long semesterCodeId, Long lectureId) {
         return attendanceRepository.findAttendanceByProfessor(lectureId, semesterCodeId, year);
     }
 
@@ -106,6 +109,18 @@ public class AttendanceService {
             case 15: return dto.getWeek15();
             default: return "-";
         }
+    }
+
+    public List<DeptDTO> getDepartments() {
+        return deptRepository.findAll().stream()
+                .map(DeptDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<LectureListDTO> getLecturesByDepartment(Long deptId) {
+        return lectureRepository.findByDepartmentId(deptId).stream()
+                .map(lecture -> new LectureListDTO(lecture.getLectureId(), lecture.getLectureName()))
+                .collect(Collectors.toList());
     }
 
 }

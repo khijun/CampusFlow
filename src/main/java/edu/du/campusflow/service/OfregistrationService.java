@@ -103,7 +103,7 @@ public class OfregistrationService {
             Long memberId = authService.getCurrentMemberId();
             Optional<Ofregistration> existingRegistration = ofregistrationRepository
                     .findByLectureIdAndMemberId(lecture.getLectureId(), memberId);
-            
+
             // 수강신청 상태 설정
             if (existingRegistration.isPresent()) {
                 dto.setRegStatus(existingRegistration.get().getRegStatus().getCodeValue());

@@ -6,9 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
     Page<Notice> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<Notice> findBySubjectContainingOrderByCreatedAtDesc(String keyword, Pageable pageable);
     Page<Notice> findByMember_NameContainingOrderByCreatedAtDesc(String keyword, Pageable pageable);
+    long countByCreatedAtGreaterThan(LocalDateTime createdAt);
 }

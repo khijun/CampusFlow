@@ -73,7 +73,20 @@
                 { header: "학과 ID", name: "deptId", width: 250, align: "center" },
                 { header: "학과명", name: "deptName", width: 500 },
                 { header: "학생 수", name: "maxStudents", width: 400, align: "center" },
-                { header: "상태", name: "deptStatus", width: 400, align: "center" }
+               {
+                  header: "상태",
+                  name: "deptStatus",
+                  width: 462,
+                  align: "center",
+                  formatter: function(item) {
+                     const statusMap = {
+                        35: "활성화",
+                        36: "비활성화",
+                        37: "대기중"
+                     };
+                     return statusMap[item.value] || "알 수 없음";
+                  }
+               }
             ],
             bodyHeight: 300,
             rowHeaders: ["rowNum"]
@@ -112,7 +125,7 @@
                 { header: "상태", name: "curriculumStatus", formatter: item => statusList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: statusList } }, align: "center", width: 200 },
                 { header: "학기", name: "semester", formatter: item => semesterList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: semesterList } }, align: "center", width: 100 },
                 { header: "주야 구분", name: "dayNight", formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: dayNightList } }, align: "center", width: 150 },
-                { header: "사유", name: "reason", editor: "text", width: 400 }
+                { header: "비고", name: "reason", editor: "text", width: 462 }
             ],
             bodyHeight: 400,
             rowHeaders: ["checkbox"],
@@ -153,7 +166,7 @@
                 curriculumStatus: row.curriculumStatus,
                 semester: row.semester,
                 dayNight: row.dayNight,
-                reason: row.reason || "기본값"
+                reason: row.reason
             }));
 
             fetch("/api/curriculums", {

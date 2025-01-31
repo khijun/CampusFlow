@@ -9,7 +9,6 @@
 </head>
 <body>
 <div id="container">
-
    <div id="curriculum-list-table-container">
       <h2>교육과정 조회</h2>
       <hr class="divider">
@@ -22,7 +21,7 @@
    </div>
 
    <div id="curriculum-subject-register-container" style="margin-top: 60px;">
-      <h2>교육과정 교과목 추가</h2>
+      <h2>교과목 등록</h2>
       <hr class="divider">
       <div id="curriculum-subject-button-container" class="list-option-container">
          <button id="add-row-btn" class="btn">행 추가</button>
@@ -32,7 +31,6 @@
       <div id="curriculum-subject-grid-container" style="height: 500px;"></div>
    </div>
 </div>
-
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
@@ -89,11 +87,11 @@
                 data: [],
                 columns: [
                     { header: "교육과정 ID", name: "curriculumId", width: 150, align: "center" },
-                    { header: "학과 ID", name: "deptId", width: 100, align: "center" },
+                    { header: "학과 ID", name: "deptId", width: 162, align: "center" },
                     { header: "교육과정명", name: "curriculumName", width: 500 },
-                    { header: "연도", name: "curriculumYear", width: 150, align: "center" },
-                    { header: "학년", name: "grade", width: 150, align: "center" },
-                    { header: "학기", name: "semester", width: 150, align: "center" },
+                    { header: "연도", name: "curriculumYear", width: 200, align: "center" },
+                    { header: "학년", name: "grade", width: 200, align: "center" },
+                    { header: "학기", name: "semester", width: 200, align: "center" },
                     { header: "주야 구분", name: "dayNight", width: 200, align: "center" }
                 ],
                 bodyHeight: 300,
@@ -104,17 +102,17 @@
                 el: document.getElementById("curriculum-subject-grid-container"),
                 data: [],
                 columns: [
-                    { header: "교육과정명", name: "curriculumName", width: 400, readOnly: true },
+                    { header: "교육과정명", name: "curriculumName", width: 500, readOnly: true },
                     { header: "과목명", name: "subjectId",
                         formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
                         editor: { type: "select", options: { listItems: subjectList } },
                         width: 400, align: "center" },
                     { header: "이수 구분", name: "subjectTypeName",
                         formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: subjectTypeList } }, width: 200, align: "center" },
+                        editor: { type: "select", options: { listItems: subjectTypeList } }, width: 350, align: "center" },
                     { header: "평가 방법", name: "gradingMethod",
                         formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: gradingMethodList } }, width: 200, align: "center" }
+                        editor: { type: "select", options: { listItems: gradingMethodList } }, width: 363, align: "center" }
                 ],
                 bodyHeight: "fitToParent",
                 rowHeaders: ["checkbox"],
@@ -144,7 +142,7 @@
                     await loadSubjects(selectedCurriculum.deptId);
 
                     subjectGrid.setColumns([
-                        { header: "교육과정명", name: "curriculumName", width: 400, readOnly: true },
+                        { header: "교육과정명", name: "curriculumName", width: 500, readOnly: true },
                         { header: "과목명", name: "subjectId",
                             formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
                             editor: { type: "select", options: { listItems: subjectList } },
@@ -152,11 +150,11 @@
                         { header: "이수 구분", name: "subjectTypeName",
                             formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
                             editor: { type: "select", options: { listItems: subjectTypeList } },
-                            width: 200, align: "center" },
+                            width: 350, align: "center" },
                         { header: "평가 방법", name: "gradingMethod",
                             formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
                             editor: { type: "select", options: { listItems: gradingMethodList } },
-                            width: 200, align: "center" }
+                            width: 363, align: "center" }
                     ]);
                 }
             });

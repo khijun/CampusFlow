@@ -8,41 +8,40 @@
     <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
     <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
     <style>
-        .large-circle {
-            font-size: 26px;
-            font-weight: bold;
-            text-align: center;
+        .search-wrapper {
+            margin: 20px; /* 위아래, 좌우 여백 추가 */
         }
     </style>
 </head>
 <body>
 <div>
-    <h1>교수 출결 조회</h1>
-    <div class="search-container">
-        <div class="input-group">
-            <label for="year-select">년도:</label>
-            <select id="year-select" class="input-field">
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025" selected>2025</option>
-            </select>
-        </div>
+    <div class="search-wrapper">
+        <div class="search-container">
+            <div class="input-group">
+                <label for="year-select">년도:</label>
+                <select id="year-select" class="input-field">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                </select>
+            </div>
 
-        <div class="input-group">
-            <label for="semester-select">학기:</label>
-            <select id="semester-select" class="input-field">
-                <option value="88">1학기</option>
-                <option value="89">2학기</option>
-            </select>
-        </div>
+            <div class="input-group">
+                <label for="semester-select">학기:</label>
+                <select id="semester-select" class="input-field">
+                    <option value="88">1학기</option>
+                    <option value="89">2학기</option>
+                </select>
+            </div>
 
-        <div class="input-group">
-            <label for="lecture-select">강의:</label>
-            <select id="lecture-select" class="input-field">
-            </select>
-        </div>
+            <div class="input-group">
+                <label for="lecture-select">강의:</label>
+                <select id="lecture-select" class="input-field">
+                </select>
+            </div>
 
-        <button id="attendance-search-btn" class="btn">조회</button>
+            <button id="attendance-search-btn" class="btn">조회</button>
+        </div>
     </div>
     <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
         <span>출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
