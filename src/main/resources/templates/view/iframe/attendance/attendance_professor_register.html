@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>출석 등록 (교수용)</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+    <style>
+        .save-button { background-color: #3498db; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; float: right; margin-top: 10px; }
+        .save-button:hover { background-color: #2980b9; }
+    </style>
+</head>
+<body>
+<div>
+    <h1>출석 등록 (교수용)</h1>
+    <div class="search-container">
+        <div class="input-group"><label>년도:</label><select id="year-select" class="input-field"><option>2023</option><option>2024</option><option selected>2025</option></select></div>
+        <div class="input-group"><label>학기:</label><select id="semester-select" class="input-field"><option value="88">1학기</option><option value="89">2학기</option></select></div>
+        <div class="input-group"><label>강의:</label><select id="lecture-select" class="input-field"></select></div>
+        <button id="attendance-search-btn" class="btn">조회</button>
+    </div>
+    <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
+        <span>출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
+    </div>
+    <button id="save-attendance-btn" class="save-button" style="margin-bottom: 10px; margin-right: 20px;">출석 저장</button>
+    <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
+</div>
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let grid;
+        const calcScore = (att, late, abs) => Math.max(10 - (Math.floor((late || 0) / 3) + (abs || 0)) * 0.5, 0).toFixed(1);
+
+        fetch("/attendance/api/professor/lectures").then(res => res.json()).then(lectures => {
+            document.getElementById("lecture-select").innerHTML = "<option value=''>강의 선택</option>" +
+                lectures.map(l => `<option value="${l.lectureId}">${l.lectureName}</option>`).join("");
+        }).catch(() => alert("강의 목록 불러오기 실패"));
+
+        document.getElementById("attendance-search-btn").addEventListener("click", () => {
+            const year = document.getElementById("year-select").value,
+                semester = document.getElementById("semester-select").value,
+                lectureId = document.getElementById("lecture-select").value;
+
+            if (!lectureId) return alert("강의를 선택해주세요.");
+
+            fetch(`/attendance/api/professor?year=${year}&semester=${semester}&lectureId=${lectureId}`)
+                .then(res => res.json()).then(data => {
+                if (grid) grid.destroy();
+                data.forEach(r => r.attendanceScore = calcScore(r.attendanceCount, r.lateCount, r.absentCount));
+
+                grid = new tui.Grid({
+                    el: document.getElementById('attendance-grid-container'),
+                    data,
+                    rowHeaders: ["checkbox"],
+                    columns: [
+                        { header: '학번', name: 'studentId', width: 202, align: 'center', readOnly: true },
+                        { header: '학생 이름', name: 'studentName', width: 200, align: 'center', readOnly: true },
+                        { header: '출석', name: 'attendanceCount', width: 100, align: 'center', readOnly: true },
+                        { header: '지각', name: 'lateCount', width: 100, align: 'center', readOnly: true },
+                        { header: '결석', name: 'absentCount', width: 100, align: 'center', readOnly: true },
+                        ...Array.from({ length: 15 }, (_, i) => ({
+                            header: `${i + 1}주차`,
+                            name: `week${i + 1}`,
+                            width: 50,
+                            align: 'center',
+                            editor: { type: 'select', options: { listItems: [{ text: "P", value: "P" }, { text: "L", value: "L" }, { text: "A", value: "A" }, { text: "-", value: "-" }] } }
+                        })),
+                        { header: '출석 점수', name: 'attendanceScore', width: 160, align: 'center', readOnly: true }
+                    ],
+                    bodyHeight: 'fitToParent'
+                });
+            }).catch(() => alert("출결 데이터를 불러오는 데 실패했습니다."));
+        });
+
+        document.getElementById("save-attendance-btn").addEventListener("click", async () => {
+            if (!grid) return alert("출결 데이터를 먼저 조회해주세요.");
+
+            const lectureId = document.getElementById("lecture-select").value;
+            if (!lectureId) return alert("강의를 선택해주세요.");
+
+            const checkedRows = grid.getCheckedRows();
+            if (checkedRows.length === 0) return alert("수정할 출결 데이터를 선택해주세요.");
+
+            const payload = checkedRows.map(r => ({
+                studentId: r.studentId,
+                lectureId,
+                ...Object.fromEntries(Object.entries(r).filter(([key]) => key.startsWith("week")))
+            }));
+
+            try {
+                const response = await fetch(`/attendance/api/professor/update?lectureId=${lectureId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    console.log("출결 정보가 정상적으로 업데이트됨");
+                    alert("출결 정보가 정상적으로 저장되었습니다.");
+                } else {
+                    console.warn("출결 업데이트 실패");
+                    alert("출결 저장 실패");
+                }
+            } catch (error) {
+                console.error("출결 저장 중 오류 발생:", error);
+                alert("출결 정보 저장 실패");
+            }
+        });
+    });
+</script>
+</body>
+</html>

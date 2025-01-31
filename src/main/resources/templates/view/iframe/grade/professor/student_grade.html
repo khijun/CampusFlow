@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>성적 조회</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/> <!-- Toast UI Grid CSS -->
+    <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
 <style>
     #gradeForm {
         margin-top: 20px;
@@ -61,11 +63,20 @@
 </head>
 <body>
 <div class="container">
-    <h1>선택 학생 성적 조회</h1>
+    <h1><span th:text="${studentId}"></span> 학생 성적 조회</h1>
+    <!-- 여기에서 학생 성적 정보와 에러 메시지를 처리 -->
+    <!-- 성적 조회 에러 메시지 처리 -->
+    <div th:if="${errorMessage}">
+        <script type="text/javascript">
+            alert([[${errorMessage}]]);
+        </script>
+        <p th:text="${errorMessage}"></p>
+    </div>
 
-
+    <div class="search-container">
     <!-- 강의 선택 -->
-    <div>
+
+    <div class="input-group">
         <label for="lectureSelect">강의 선택</label>
         <select id="lectureSelect" name="lectureId">
             <option value="">강의를 선택하세요</option>
@@ -74,6 +85,7 @@
     </div>
 
     <!-- 성적 수정 폼 -->
+        <div class="input-group">
     <form th:action="@{/iframe/grade/professor/edit/{memberId}(memberId=${studentId})}" method="post" id="gradeForm" style="display: none;">
         <!-- 선택된 강의 ID 저장 -->
         <input type="hidden" id="selectedLectureId" name="selectedLectureId" />
@@ -97,6 +109,9 @@
 
         <button type="submit">성적 수정</button>
     </form>
+        </div>
+
+    </div>
 
     <!-- 성적 리스트 테이블을 Toast UI Grid로 표시할 요소 -->
     <div id="grade-list"></div> <!-- 성적 데이터를 Toast UI Grid로 표시할 요소 -->
@@ -197,6 +212,8 @@
             }
         }
     </script>
+
+
 </div>
 </body>
 </html>
