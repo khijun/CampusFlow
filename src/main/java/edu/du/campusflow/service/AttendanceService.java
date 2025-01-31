@@ -113,7 +113,7 @@ public class AttendanceService {
 
     public List<DeptDTO> getDepartments() {
         return deptRepository.findAll().stream()
-                .map(DeptDTO::fromEntity) // ✅ 기존 DeptDTO 사용
+                .map(DeptDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
