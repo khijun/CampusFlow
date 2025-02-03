@@ -31,6 +31,7 @@ public class OfregistrationService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;  // HttpSession 주입
     private final AuthService authService;  // AuthService 주입
+    private final CompletionService completionService;  // CompletionService 주입
 
     public Ofregistration getOfregistrationById(Long id) {
         return ofregistrationRepository.findById(id)
@@ -356,15 +357,12 @@ public class OfregistrationService {
 
         // 상태 업데이트
         registration.setRegStatus(statusCode);
-
-        // 승인 상태일 경우 수강인원 증가
-        if (status.equals("APPROVED")) {
-            Lecture lecture = registration.getLectureId();
-            lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
-            lectureRepository.save(lecture);
-        }
-
         ofregistrationRepository.save(registration);
+
+        // APPROVED 상태일 때만 Completion 생성
+        if ("APPROVED".equals(status)) {
+            completionService.createCompletion(registration);
+        }
     }
 
     @Transactional
