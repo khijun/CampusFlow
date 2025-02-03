@@ -6,26 +6,9 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
           th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <style>
-        * {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-        }
-        .page-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #333;
-            margin: 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        #lecture-option-container {
-            margin: 0 0 20px 0;
-        }
-    </style>
     <title>수강신청</title>
 </head>
 <body>
-<h2 class="page-title">수강신청 가능 강의 목록</h2>
 
 <div id="lecture-option-container" class="search-container">
     <div class="input-group">
@@ -64,7 +47,9 @@
         </label>
         <input type="text" id="lectureDay"/>
     </div>
+    <div>
     <button id="searchButton">조회</button>
+    </div>
 </div>
 
 <div id="lecture-list"></div>
