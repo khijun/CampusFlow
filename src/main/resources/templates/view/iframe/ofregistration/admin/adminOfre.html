@@ -6,24 +6,9 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
           th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <style>
-        .page-title {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-            font-size: 28px;
-            font-weight: 600;
-            color: #333;
-            margin: 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        #registration-option-container {
-            margin: 0 0 20px 0;
-        }
-    </style>
     <title>수강신청 관리</title>
 </head>
 <body>
-<h2 class="page-title">수강신청 관리</h2>
 
 <div id="registration-option-container" class="search-container">
     <div class="input-group">
@@ -56,7 +41,9 @@
         </label>
         <input type="text" id="subjectType"/>
     </div>
+    <div>
     <button id="searchButton">조회</button>
+    </div>
 </div>
 
 <div id="registration-list"></div>
