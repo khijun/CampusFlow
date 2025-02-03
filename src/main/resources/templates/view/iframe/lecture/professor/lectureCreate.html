@@ -4,7 +4,7 @@
 
 <head>
   <title>과목 검색</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -14,10 +14,6 @@
 <body>
 
 <hr style="border: none; margin: 20px 0;">
-<div class="d-flex align-items-center mb-3">
-  <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-  <span class="h6 mb-0">교과목 검색</span>
-</div>
   <div class="search-container">
     <!-- 검색 섹션 컨테이너 -->
     <div class="input-group">
@@ -50,6 +46,7 @@
     <button type="submit" id="searchButton">검색</button>
   </div>
 
+  <hr style="border: none; margin: 20px 0;">
   <div class="d-flex align-items-center mb-3">
     <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
     <span class="h6 mb-0">교과목 목록</span>
@@ -64,7 +61,7 @@
     <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
     <span class="h6 mb-0">강의 정보 입력</span>
   </div>
-  <div class="search-container" style="margin-top: 20px;">
+  <div class="search-container">
     <div class="input-group">
       <label for="lectureName">강의명</label>
       <input type="text" id="lectureName" name="lectureName" placeholder="강의명을 입력하세요">
@@ -96,14 +93,14 @@
     const grid = new tui.Grid({
       el: document.getElementById('curriculumSubjectGrid'),
       columns: [
-        { header: '교과목아이디', name: 'curriculumSubjectId', sortable: false },
+        { header: '교과목아이디', name: 'curriculumSubjectId', sortable: false, align:'center'},
         { header: '과목명', name: 'subjectName', sortable: false },
-        { header: '교육과정명', name: 'curriculumName', sortable: false },
-        { header: '학과명', name: 'deptName', sortable: false },
-        { header: '학점', name: 'subjectCredits', sortable: false },
-        { header: '학기', name: 'semesterName', sortable: false },
-        { header: '교육과정 연도', name: 'curriculumYear', sortable: false },
-        { header: '이수 구분', name: 'subjectTypeName', sortable: false }
+        { header: '교육과정명', name: 'curriculumName', sortable: false, width:'auto'},
+        { header: '학과명', name: 'deptName', sortable: false, align:'center'},
+        { header: '학점', name: 'subjectCredits', sortable: false, align:'center'},
+        { header: '학기', name: 'semesterName', sortable: false, align:'center'},
+        { header: '교육과정 연도', name: 'curriculumYear', sortable: false,align: 'center'},
+        { header: '이수 구분', name: 'subjectTypeName', sortable: false, align: 'center' }
       ],
       bodyHeight: 300,      // 그리드 바디의 높이를 300px로 설정
       rowClassName: function(rowData) {

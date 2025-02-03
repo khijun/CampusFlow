@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>강의 개설 목록</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -18,10 +18,6 @@
 <body>
 
   <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
-    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의 검색</span>
-  </div>
   <!-- 검색 컨테이너 -->
   <div class="search-container">
     <div class="input-group">
@@ -42,6 +38,7 @@
     <button type="submit" id="searchButton">조회</button>
   </div>
 
+  <hr style="border: none; margin: 20px 0;">
   <!-- 승인된 강의 목록 그리드 -->
   <div class="d-flex align-items-center mb-3">
     <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
@@ -61,12 +58,12 @@
     const approvedGrid = new tui.Grid({
       el: document.getElementById('approvedLectureGrid'),
       columns: [
-        { header: '강의아이디', name: 'lectureId', sortable: false },
-        { header: '강의명', name: 'lectureName', sortable: false },
-        { header: '학점', name: 'subjectCredits', sortable: false },
-        { header: '학기', name: 'semesterName', sortable: false },
-        { header: '이수 인원', name: 'currentStudents', sortable: false },
-        { header: '최대 인원', name: 'maxStudents', sortable: false }
+        { header: '강의아이디', name: 'lectureId', sortable: false, align:'center' },
+        { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
+        { header: '학점', name: 'subjectCredits', sortable: false, align:'center' },
+        { header: '학기', name: 'semesterName', sortable: false, align:'center' },
+        { header: '이수 인원', name: 'currentStudents', sortable: false, align:'center' },
+        { header: '최대 인원', name: 'maxStudents', sortable: false, align:'center' }
       ],
       bodyHeight: 300
     });
@@ -74,12 +71,12 @@
     const pendingGrid = new tui.Grid({
       el: document.getElementById('approval_pendingLectureGrid'),
       columns: [
-        { header: '강의아이디', name: 'lectureId', sortable: false },
-        { header: '강의명', name: 'lectureName', sortable: false },
-        { header: '학점', name: 'subjectCredits', sortable: false },
-        { header: '학기', name: 'semesterName', sortable: false },
-        { header: '최대 인원', name: 'maxStudents', sortable: false },
-        { header: '강의 상태', name: 'lectureStatus', sortable: false }
+        { header: '강의아이디', name: 'lectureId', sortable: false, align:'center' },
+        { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
+        { header: '학점', name: 'subjectCredits', sortable: false, align:'center' },
+        { header: '학기', name: 'semesterName', sortable: false, align:'center' },
+        { header: '최대 인원', name: 'maxStudents', sortable: false, align:'center' },
+        { header: '강의 상태', name: 'lectureStatus', sortable: false, align:'center' }
       ],
       bodyHeight: 300
     });

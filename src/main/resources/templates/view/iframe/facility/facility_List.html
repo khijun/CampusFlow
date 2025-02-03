@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>강의실 관리</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
@@ -14,10 +13,7 @@
 <body>
   <!-- 검색 조건 -->
   <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
-    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의실 검색</span>
-  </div>
+
   <div class="search-container">
     <div class="input-group">
       <label for="buildingName">건물명</label>
@@ -80,12 +76,12 @@
     const facilityGrid = new tui.Grid({
       el: document.getElementById('facilityGrid'),
       columns: [
-        { header: '강의실 코드', name: 'facilityId', sortable: false },
-        { header: '강의실 명', name: 'facilityName', sortable: false },
-        { header: '건물명', name: 'building', sortable: false },
-        { header: '층수', name: 'floor', sortable: false },
-        { header: '수용 인원', name: 'capacity', sortable: false },
-        { header: '강의실 상태', name: 'facilityStatus', sortable: false }
+        { header: '강의실 코드', name: 'facilityId', sortable: false, align:'center' },
+        { header: '강의실 명', name: 'facilityName', sortable: false, align:'center' },
+        { header: '건물명', name: 'building', sortable: false, align:'center' },
+        { header: '층수', name: 'floor', sortable: false, align:'center' },
+        { header: '수용 인원', name: 'capacity', sortable: false, align:'center' },
+        { header: '강의실 상태', name: 'facilityStatus', sortable: false, align:'center' }
       ],
       bodyHeight: 300
     });
