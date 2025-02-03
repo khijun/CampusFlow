@@ -5,21 +5,27 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
    <title>과목 수정</title>
-
 </head>
 <body>
 <div>
-   <div class="list-option-container">
-      <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" />
-      <button id="subject-list-select-btn">조회</button>
-      <button id="save-updates-btn">수정 저장</button>
-      <button id="delete-selected-btn">삭제</button>
+   <div class="search-container">
+      <div class="input-group">
+         <label for="subject-name-input">과목 이름:</label>
+         <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" class="input-field"/>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; width: 100%;">
+         <button id="subject-list-select-btn" class="btn">조회</button>
+         <button id="save-updates-btn" class="btn">수정 저장</button>
+         <button id="delete-selected-btn" class="btn">삭제</button>
+      </div>
    </div>
+
    <div id="subject-grid-container" style="height: 700px;"></div>
-   <div>
-   </div>
 </div>
+
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     let grid; // TOAST UI Grid 인스턴스

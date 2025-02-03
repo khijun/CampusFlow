@@ -5,14 +5,22 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
    <title>과목 조회</title>
 </head>
 <body>
 <div>
-   <div class="list-option-container">
-      <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" />
-      <button id="subject-list-select-btn">조회</button>
+   <div class="search-container">
+      <div class="input-group">
+         <label for="subject-name-input">과목 이름:</label>
+         <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" class="input-field"/>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; width: 100%;">
+         <button id="subject-list-select-btn" class="btn">조회</button>
+      </div>
    </div>
+
    <div id="subject-grid-container" style="height: 700px;"></div>
 </div>
 
@@ -35,10 +43,10 @@
                     el: document.getElementById('subject-grid-container'),
                     data: data,
                     columns: [
-                        {header: '과목ID', name: 'subjectId', align: 'center', width: 100},
-                        {header: '과목명', name: 'subjectName', align: 'center', width: 400},
-                        {header: '과목설명', name: 'subjectDesc'},
-                        {header: '이수학점', name: 'subjectCredits', align: 'center', width: 100}
+                        {header: '과목ID', name: 'subjectId', align: 'center'},
+                        {header: '과목명', name: 'subjectName', align: 'center'},
+                        {header: '과목설명', name: 'subjectDesc', width: 800},
+                        {header: '이수학점', name: 'subjectCredits', align: 'center'}
                     ]
                 });
             })

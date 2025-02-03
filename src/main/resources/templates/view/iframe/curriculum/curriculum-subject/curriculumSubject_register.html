@@ -6,22 +6,30 @@
    <title>교육과정 교과목 등록</title>
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
 </head>
 <body>
 <div id="container">
    <div id="curriculum-list-table-container">
-      <h2>교육과정 조회</h2>
       <hr class="divider">
-      <div class="list-option-container">
-         <label for="curriculum-name-input">교육과정명:</label>
-         <input type="text" id="curriculum-name-input" class="input-field"/>
-         <button id="curriculum-list-select-btn" class="btn">조회</button>
+      <div class="search-container">
+         <div class="input-group">
+            <label for="curriculum-name-input">교육과정명:</label>
+            <input type="text" id="curriculum-name-input" class="input-field"/>
+         </div>
+         <div class="input-group">
+            <label for="curriculum-name-input">교육과정명:</label>
+            <input type="text" id="curriculum-name-input2" class="input-field"/>
+         </div>
+
+         <div style="display: flex; justify-content: flex-end; width: 100%;">
+            <button id="curriculum-list-select-btn" class="btn">조회</button>
+         </div>
       </div>
       <div id="curriculum-list-grid" style="height: 300px;"></div>
    </div>
 
    <div id="curriculum-subject-register-container" style="margin-top: 60px;">
-      <h2>교과목 등록</h2>
       <hr class="divider">
       <div id="curriculum-subject-button-container" class="list-option-container">
          <button id="add-row-btn" class="btn">행 추가</button>
@@ -86,13 +94,13 @@
                 el: document.getElementById("curriculum-list-grid"),
                 data: [],
                 columns: [
-                    { header: "교육과정 ID", name: "curriculumId", width: 150, align: "center" },
-                    { header: "학과 ID", name: "deptId", width: 162, align: "center" },
-                    { header: "교육과정명", name: "curriculumName", width: 500 },
-                    { header: "연도", name: "curriculumYear", width: 200, align: "center" },
-                    { header: "학년", name: "grade", width: 200, align: "center" },
-                    { header: "학기", name: "semester", width: 200, align: "center" },
-                    { header: "주야 구분", name: "dayNight", width: 200, align: "center" }
+                    { header: "교육과정 ID", name: "curriculumId", align: "center" },
+                    { header: "학과 ID", name: "deptId", align: "center" },
+                    { header: "교육과정명", name: "curriculumName", width: 400 },
+                    { header: "연도", name: "curriculumYear",  align: "center" },
+                    { header: "학년", name: "grade",  align: "center" },
+                    { header: "학기", name: "semester",  align: "center" },
+                    { header: "주야 구분", name: "dayNight",  align: "center" }
                 ],
                 bodyHeight: 300,
                 rowHeaders: ["rowNum"]
@@ -102,17 +110,17 @@
                 el: document.getElementById("curriculum-subject-grid-container"),
                 data: [],
                 columns: [
-                    { header: "교육과정명", name: "curriculumName", width: 500, readOnly: true },
+                    { header: "교육과정명", name: "curriculumName", width: 400, readOnly: true },
                     { header: "과목명", name: "subjectId",
                         formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
                         editor: { type: "select", options: { listItems: subjectList } },
-                        width: 400, align: "center" },
+                        align: "center" },
                     { header: "이수 구분", name: "subjectTypeName",
                         formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: subjectTypeList } }, width: 350, align: "center" },
+                        editor: { type: "select", options: { listItems: subjectTypeList } }, align: "center" },
                     { header: "평가 방법", name: "gradingMethod",
                         formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: gradingMethodList } }, width: 363, align: "center" }
+                        editor: { type: "select", options: { listItems: gradingMethodList } }, align: "center" }
                 ],
                 bodyHeight: "fitToParent",
                 rowHeaders: ["checkbox"],
@@ -142,19 +150,19 @@
                     await loadSubjects(selectedCurriculum.deptId);
 
                     subjectGrid.setColumns([
-                        { header: "교육과정명", name: "curriculumName", width: 500, readOnly: true },
+                        { header: "교육과정명", name: "curriculumName", width: 400, readOnly: true },
                         { header: "과목명", name: "subjectId",
                             formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
                             editor: { type: "select", options: { listItems: subjectList } },
-                            width: 400, align: "center" },
+                            align: "center" },
                         { header: "이수 구분", name: "subjectTypeName",
                             formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
                             editor: { type: "select", options: { listItems: subjectTypeList } },
-                            width: 350, align: "center" },
+                            align: "center" },
                         { header: "평가 방법", name: "gradingMethod",
                             formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
                             editor: { type: "select", options: { listItems: gradingMethodList } },
-                            width: 363, align: "center" }
+                            align: "center" }
                     ]);
                 }
             });
