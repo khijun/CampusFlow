@@ -8,110 +8,14 @@
     <!-- search-container.css 추가 -->
     <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
           th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <style>
-        * {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-        }
-        #tuition-container {
-            margin: 20px;
-        }
-        #tuition-option-container {
-            margin: 0 0 20px 0;
-        }
-        .tui-grid-cell {
-            background-color: #f5f5f5 !important;
-            color: #333;
-        }
-        .submit-button {
-            font-size: 1.0rem;
-            height: 2.3rem;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 2px;
-        }
-        .submit-button:hover {
-            background-color: #f5f5f5;
-        }
-        #tuition-grid {
-            margin-bottom: 20px;
-        }
-        .input-group label {
-            font-weight: 500;
-        }
-        .input-group select, 
-        .input-group input {
-            font-family: inherit;
-        }
-        /* 페이지 타이틀 스타일 */
-        .page-title {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-            font-size: 28px;
-            font-weight: 600;
-            color: #333;
-            margin: 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
 
-        /* Toast UI Grid 커스텀 스타일 */
-        #tuition-grid {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .tui-grid-header-area {
-            background-color: #f8f9fa;
-        }
-
-        .tui-grid-header-area .tui-grid-cell {
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .tui-grid-body-area .tui-grid-cell {
-            color: #212529;
-        }
-
-        /* 검색 폼 스타일 */
-        .search-container {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .form-group {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .search-btn {
-            padding: 6px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .search-btn:hover {
-            background-color: #0056b3;
-        }
     </style>
     <title>등록금 대상자 관리</title>
 </head>
 <body>
-    <h2 class="page-title">등록금 대상자 관리</h2>
 
     <div id="tuition-container">
-        <div id="tuition-option-container" class="search-container">
+        <div class="search-container">
             <div class="input-group">
                 <label for="deptSelect">
                     학과 :
@@ -140,7 +44,9 @@
                 </label>
                 <input type="text" id="memberNameInput"/>
             </div>
-            <button id="searchButton">조회</button>
+            <div>
+            <button id="searchButton" class="btn">조회</button>
+            </div>
         </div>
         <div id="tuition-grid"></div>
     </div>

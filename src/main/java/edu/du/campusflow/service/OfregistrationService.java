@@ -31,6 +31,7 @@ public class OfregistrationService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;  // HttpSession 주입
     private final AuthService authService;  // AuthService 주입
+    private final CompletionService completionService;  // CompletionService 주입
 
     public Ofregistration getOfregistrationById(Long id) {
         return ofregistrationRepository.findById(id)
@@ -353,17 +354,26 @@ public class OfregistrationService {
 
         // 상태 코드 조회
         CommonCode statusCode = commonCodeRepository.findByCodeValue(status);
+        String currentStatus = registration.getRegStatus().getCodeValue();
 
-        // 상태 업데이트
-        registration.setRegStatus(statusCode);
-
-        // 승인 상태일 경우 수강인원 증가
-        if (status.equals("APPROVED")) {
+        // 현재 상태가 승인이 아니고, 새로운 상태가 승인일 경우에만 수강인원 증가
+        if (!"APPROVED".equals(currentStatus) && "APPROVED".equals(status)) {
             Lecture lecture = registration.getLectureId();
             lecture.setCurrentStudents(lecture.getCurrentStudents() + 1);
             lectureRepository.save(lecture);
+            
+            // Completion 생성
+            completionService.createCompletion(registration);
+        }
+        // 현재 상태가 승인이고, 새로운 상태가 거절일 경우 수강인원 감소
+        else if ("APPROVED".equals(currentStatus) && "REJECTED".equals(status)) {
+            Lecture lecture = registration.getLectureId();
+            lecture.setCurrentStudents(lecture.getCurrentStudents() - 1);
+            lectureRepository.save(lecture);
         }
 
+        // 상태 업데이트
+        registration.setRegStatus(statusCode);
         ofregistrationRepository.save(registration);
     }
 
