@@ -48,7 +48,7 @@ iframe {
    align-items: center;
    gap: 10px; /* 라벨과 입력 필드 간격 */
    width: calc(50% - 15px); /* 두 개씩 배치 */
-   min-width: 200px;
+   min-width: 150px;
    margin-bottom: 20px; /* 항목 간격 */
 }
 
@@ -57,7 +57,7 @@ iframe {
    margin-bottom: 5px;
    text-align: right; /* 라벨 텍스트 오른쪽 정렬 */
    color: #333;
-   width: 150px; /* 라벨 고정 너비 */
+   width: 100px; /* 라벨 고정 너비 */
 }
 
 .input-group input,
@@ -73,9 +73,9 @@ iframe {
 
 /* 검색 버튼 스타일 */
 .search-container button {
-   background-color: var(--primary-color, #3498db);
-   color: white;
-   border: none;
+   background-color: whitesmoke; /* 기본 색상을 연한 회색으로 */
+   color: black; /* 글자 색상을 검정으로 */
+   border: solid 1px lightgrey; /* 테두리를 로그인 버튼과 동일하게 */
    padding: 10px 15px;
    font-size: 14px;
    border-radius: 4px;
@@ -84,8 +84,10 @@ iframe {
    align-self: flex-end;
 }
 
+/* 검색 버튼 호버 효과 */
 .search-container button:hover {
-   background-color: #2980b9;
+   background-color: #f5f5f5; /* 호버 시 색상 변경 */
+   border-color: grey; /* 호버 시 테두리 색상 변경 */
 }
 
 /* 버튼 그룹 스타일 */

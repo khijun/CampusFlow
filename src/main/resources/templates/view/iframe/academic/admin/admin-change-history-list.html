@@ -7,97 +7,42 @@
   <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
         th:href="@{/css/iframe/curriculum/search-container.css}"/>
   <title>변동 신청 승인</title>
-  <style>
-    #filter-container {
-      width: 900px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #change-history{
-      border: 1px solid;
-      display: flex;
-      flex-direction: column;
-      background: #ffffff
-    }
-
-    .change-history-header {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      margin: 0;
-    }
-
-    .change-history-header label {
-      font-weight: bold;
-      flex: 0 0 150px; /* 고정된 너비 설정 (필요 시 조정 가능) */
-      text-align: right; /* 텍스트를 오른쪽으로 정렬 */
-      height: 100%;
-      padding: 0;
-      margin: 0;
-    }
-
-    .change-history-header input {
-      flex: 1; /* input이 남은 공간을 차지 */
-      padding: 5px; /* 여백 추가 */
-      border: 1px solid #ccc; /* 테두리 설정 */
-      border-radius: 4px; /* 모서리 둥글게 */
-    }
-
-    #btn-container{
-      text-align: right;
-    }
-
-    .submit-button {
-      font-size: 1.0rem; /* 글자 크기 조정 */
-      height: 2.3rem; /* 높이 조정 */
-      cursor: pointer; /* 커서 변경 */
-      border: 1px solid #ccc; /* 테두리 */
-      border-radius: 2px; /* 모서리 둥글게 */
-      margin: 5px;
-    }
-
-    .submit-button:hover {
-      background-color: #f5f5f5; /* 호버 시 색상 변경 */
-    }
-  </style>
 </head>
 <body>
 
-<div id="filter-container">
-  <div id="change-history" class="search-container">
-    <div class="change-history-header">
-  <label for="deptFilter">학과 선택: </label>
-  <select id="deptFilter">
-    <option value="">전체</option>
-    <th:block th:each="dept : ${deptList}">
-      <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
-    </th:block>
-  </select>
-    </div>
-
-    <div class="change-history-header">
-  <label for="nameFilter">이름 검색: </label>
-  <input type="text" id="nameFilter" placeholder="이름 입력">
-      </div>
-
-    <div class="change-history-header">
-  <label for="afterStateFilter">변경 후 상태: </label>
-  <select id="afterStateFilter">
-    <option value="">전체</option>
-    <option value="휴학">휴학</option>
-    <option value="재학">재학</option>
-    <option value="자퇴">자퇴</option>
-    <option value="퇴학">퇴학</option>
-    <option value="졸업">졸업</option>
-    <option value="제적">제적</option>
-  </select>
-    </div>
+<div class="search-container">
+  <div class="input-group">
+    <label for="deptFilter">학과 선택:</label>
+    <select id="deptFilter">
+      <option value="">전체</option>
+      <th:block th:each="dept : ${deptList}">
+        <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+      </th:block>
+    </select>
   </div>
+
+  <div class="input-group">
+    <label for="nameFilter">이름 검색:</label>
+    <input type="text" id="nameFilter" placeholder="이름 입력">
+  </div>
+
+  <div class="input-group">
+    <label for="afterStateFilter">변경 후 상태:</label>
+    <select id="afterStateFilter">
+      <option value="">전체</option>
+      <option value="휴학">휴학</option>
+      <option value="재학">재학</option>
+      <option value="자퇴">자퇴</option>
+      <option value="퇴학">퇴학</option>
+      <option value="졸업">졸업</option>
+      <option value="제적">제적</option>
+    </select>
+  </div>
+
+  <button id="searchBtn">조회</button>
 </div>
 
-<div id="change-request-history-grid"></div>
+<div id="change-request-history-grid" style="display: none;"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
@@ -106,16 +51,19 @@
     const deptFilter = document.querySelector('#deptFilter');
     const nameFilter = document.querySelector('#nameFilter');
     const afterStateFilter = document.querySelector('#afterStateFilter');
+    const searchBtn = document.querySelector('#searchBtn');
 
-    let originalData = []; // 원본 데이터를 저장할 변수
-    let instance = null; // TOAST UI Grid 인스턴스
+    let originalData = [];
+    let instance = null;
 
-    createChangeHistoryGrid(gridDiv);
-
-    // 필터링 이벤트 리스너 추가
-    deptFilter.addEventListener('change', filterGrid);
-    nameFilter.addEventListener('input', filterGrid);
-    afterStateFilter.addEventListener('change', filterGrid);
+    searchBtn.addEventListener('click', () => {
+      if (instance === null) {
+        createChangeHistoryGrid(gridDiv);
+      } else {
+        filterGrid();
+      }
+      gridDiv.style.display = 'block';
+    });
 
     function createChangeHistoryGrid(gridDiv) {
       const columns = [
@@ -140,7 +88,7 @@
                   memberId: history.memberId,
                   name: history.name,
                   grade: history.grade,
-                  deptId: history.deptId,      // 🔹 deptId 추가
+                  deptId: history.deptId,
                   deptName: history.deptName,
                   beforeState: history.beforeState,
                   afterState: history.afterState,
@@ -167,12 +115,12 @@
     }
 
     function filterGrid() {
-      const selectedDeptId = deptFilter.value;  // 선택한 학과의 ID
+      const selectedDeptId = deptFilter.value;
       const nameKeyword = nameFilter.value.trim().toLowerCase();
       const selectedAfterState = afterStateFilter.value;
 
       const filteredData = originalData.filter(item => {
-        return (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&  // deptId로 비교
+        return (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
                 (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword)) &&
                 (selectedAfterState === "" || item.afterState === selectedAfterState);
       });

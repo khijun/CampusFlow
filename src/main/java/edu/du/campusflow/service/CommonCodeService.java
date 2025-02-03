@@ -73,4 +73,4 @@ public class CommonCodeService {
     public CommonCode findByCodeGroupAndCodeValue(String codeGroup, String codeValue){
         return commonCodeRepository.findByCodeGroupAndCodeValue(codeGroup, codeValue);
     }
-} 
+}

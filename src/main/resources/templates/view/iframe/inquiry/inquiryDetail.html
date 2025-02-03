@@ -5,19 +5,39 @@
   <title>문의 상세</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --danger-color: #868e96;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
     .card {
       word-wrap: break-word;
       overflow-wrap: break-word;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     .card-text {
       white-space: pre-wrap;
-      word-break: break-all;
+      word-break: break-word;
+      line-height: 1.6;
+      font-size: 1.1rem;
+      color: #2c3e50;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 0.25rem;
+      margin: 0;
     }
     .card-header h2 {
       word-wrap: break-word;
       overflow-wrap: break-word;
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
+      color: #343a40;
+    }
+    .card-body {
+      padding: 1.5rem;
+      background-color: #fff;
     }
     .container {
       max-width: 100%;
@@ -28,6 +48,46 @@
         max-width: 90%;
       }
     }
+    .status-badge {
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.25rem;
+      background-color: #e9ecef;
+      color: #495057;
+      font-weight: 500;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    .btn-success {
+      background-color: var(--secondary-color);
+      border: none;
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      border: none;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -35,6 +95,12 @@
   <div class="card">
     <div class="card-header">
       <h2 th:text="${inquiry.subject}"></h2>
+      <div class="d-flex justify-content-end align-items-center mb-2">
+        <div>
+          <span class="text-muted">처리상태: </span>
+          <span class="status-badge" th:text="${inquiry.inquiryStatus.codeName}"></span>
+        </div>
+      </div>
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <span class="text-muted">작성자: </span>
@@ -47,7 +113,6 @@
       <p class="card-text" th:text="${inquiry.content}"></p>
     </div>
     <div class="card-footer">
-      <p>처리상태: <span th:text="${inquiry.inquiryStatus.codeName}"></span></p>
       <!-- 문의 작성자이고 처리중 상태일 때만 확인 버튼 표시 -->
       <form th:if="${isAuthor and inquiry.inquiryStatus.codeValue == 'PROCESSING'}"
             th:action="@{/iframe/inquiry/{id}/complete(id=${inquiry.inquiryId})}"
@@ -71,6 +136,13 @@
     </div>
     <div class="card-body">
       <p class="card-text" th:text="${inquiry.response.content}"></p>
+    </div>
+  </div>
+
+  <!-- 답변이 없는 경우 메시지 표시 -->
+  <div class="card mt-3" th:if="${inquiry.response == null and !isStaff}">
+    <div class="card-body text-center text-muted">
+      <p class="mb-0">아직 답변이 등록되지 않았습니다.</p>
     </div>
   </div>
 

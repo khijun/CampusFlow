@@ -7,13 +7,90 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        :root {
+            --primary-color: #495057;
+            --secondary-color: #6c757d;
+            --danger-color: #868e96;
+            --border-color: #dee2e6;
+            --hover-color: #343a40;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+        }
+        
         .notice-link {
-            color: #212529;
+            color: var(--primary-color);
             text-decoration: none;
         }
+        
         .notice-link:hover {
-            color: #007bff;
+            color: var(--hover-color);
             text-decoration: none;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-write {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-write:hover {
+            background-color: var(--hover-color);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .table td {
+            color: var(--primary-color);
+            border-color: var(--border-color);
+        }
+        
+        .pagination .page-link {
+            color: var(--primary-color);
+            border-color: var(--border-color);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: var(--hover-color);
+            border-color: var(--hover-color);
+            color: white;
+        }
+        
+        .search-form select,
+        .search-form input {
+            border-color: var(--border-color);
+            color: var(--primary-color);
+        }
+        
+        .search-form .btn-outline-success {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .search-form .btn-outline-success:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
     </style>
 </head>
@@ -22,12 +99,12 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>공지사항</h1>
         <div th:if="${isStaff}">
-            <a href="/iframe/notice/add" class="btn btn-primary">공지사항 작성</a>
+            <a href="/iframe/notice/add" class="btn btn-write">작성</a>
         </div>
     </div>
     
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
+    <table class="table table-hover">
+        <thead>
         <tr>
             <th style="width: 10%;">번호</th>
             <th style="width: 50%;">제목</th>
@@ -74,13 +151,14 @@
     </nav>
 
     <div class="d-flex justify-content-center mt-4">
-        <form class="form-inline" action="/iframe/notice/view" method="get">
+        <form class="form-inline search-form" action="/iframe/notice/view" method="get">
             <input type="hidden" name="page" value="0">
             <select class="form-control mr-sm-2" name="searchType">
                 <option value="subject" th:selected="${param.searchType == 'subject'}">제목</option>
                 <option value="member" th:selected="${param.searchType == 'member'}">작성자</option>
             </select>
-            <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="검색어 입력" aria-label="Search" th:value="${param.keyword}">
+            <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="검색어 입력" 
+                   aria-label="Search" th:value="${param.keyword}">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
         </form>
     </div>

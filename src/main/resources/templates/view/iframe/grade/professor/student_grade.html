@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>성적 조회</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/> <!-- Toast UI Grid CSS -->
+    <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+<style>
+    #gradeForm {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        margin: 0 auto;
+    }
+
+    #gradeForm div {
+        margin-bottom: 15px;
+    }
+
+    #gradeForm label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    #gradeForm input,
+    #gradeForm select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    #gradeForm button {
+        width: 100%;
+        padding: 10px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #gradeForm button:hover {
+        background-color: #2980b9;
+    }
+
+    #gradeForm input[type="number"] {
+        -moz-appearance: textfield; /* Firefox에서 숫자 입력 시 화살표 없애기 */
+    }
+
+    #gradeForm input[type="number"]::-webkit-outer-spin-button,
+    #gradeForm input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+</style>
+</head>
+<body>
+<div class="container">
+    <h1><span th:text="${studentId}"></span> 학생 성적 조회</h1>
+    <!-- 여기에서 학생 성적 정보와 에러 메시지를 처리 -->
+    <!-- 성적 조회 에러 메시지 처리 -->
+    <div th:if="${errorMessage}">
+        <script type="text/javascript">
+            alert([[${errorMessage}]]);
+        </script>
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <div class="search-container">
+    <!-- 강의 선택 -->
+
+    <div class="input-group">
+        <label for="lectureSelect">강의 선택</label>
+        <select id="lectureSelect" name="lectureId">
+            <option value="">강의를 선택하세요</option>
+            <option th:each="grade : ${grades}" th:value="${grade.selectedLectureId}" th:text="${grade.lectureName}">강의</option>
+        </select>
+    </div>
+
+    <!-- 성적 수정 폼 -->
+        <div class="input-group">
+    <form th:action="@{/iframe/grade/professor/edit/{memberId}(memberId=${studentId})}" method="post" id="gradeForm" style="display: none;">
+        <!-- 선택된 강의 ID 저장 -->
+        <input type="hidden" id="selectedLectureId" name="selectedLectureId" />
+        <input type="hidden" id="lectureId" name="lectureId"/> <!-- 추가된 부분 -->
+        <input type="hidden" name="memberId" th:value="${studentId}" />
+
+        <div>
+            <label for="gradeType">성적 유형</label>
+            <select name="gradeType" id="gradeType" required onchange="setGradeLimit(this)">
+                <option value="67">중간</option>
+                <option value="68">기말</option>
+                <option value="69">과제</option>
+                <option value="70">출석</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="score">점수</label>
+            <input type="number" name="score" id="score" required oninput="validateScore(this)" />
+        </div>
+
+        <button type="submit">성적 수정</button>
+    </form>
+        </div>
+
+    </div>
+
+    <!-- 성적 리스트 테이블을 Toast UI Grid로 표시할 요소 -->
+    <div id="grade-list"></div> <!-- 성적 데이터를 Toast UI Grid로 표시할 요소 -->
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+    <script>
+        let instance = null; // Toast UI Grid 인스턴스 저장
+        const gradeListDiv = document.getElementById('grade-list');
+        const lectureSelect = document.getElementById('lectureSelect');
+        const gradeForm = document.getElementById('gradeForm');
+        const selectedLectureIdInput = document.getElementById('selectedLectureId');
+        const lectureIdInput = document.getElementById('lectureId');
+        const gradeTypeSelect = document.getElementById('gradeType');
+        const scoreInput = document.getElementById('score');
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const studentId = window.location.pathname.split('/').pop();
+
+            fetch(`/api/grade/student-grade/${studentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const mappedData = data.map(item => ({
+                        professorName: item.professorName,
+                        lectureName: item.lectureName,
+                        'scores.중간': item.scores['중간'],
+                        'scores.기말': item.scores['기말'],
+                        'scores.과제': item.scores['과제'],
+                        'scores.출석': item.scores['출석'],
+                        totalScore: item.totalScore,
+                        finalGrade: item.finalGrade
+                    }));
+
+                    const columns = [
+                        {header: '교수', name: 'professorName', align: 'center'},
+                        {header: '강의', name: 'lectureName', align: 'center'},
+                        {header: '중간', name: 'scores.중간', align: 'center'},
+                        {header: '기말', name: 'scores.기말', align: 'center'},
+                        {header: '과제', name: 'scores.과제', align: 'center'},
+                        {header: '출석', name: 'scores.출석', align: 'center'},
+                        {header: '총점', name: 'totalScore', align: 'center'},
+                        {header: '등급', name: 'finalGrade', align: 'center'}
+                    ];
+
+                    instance = new tui.Grid({
+                        el: gradeListDiv,
+                        data: mappedData,
+                        columns: columns,
+                        scrollX: true,
+                        scrollY: true,
+                        pageOptions: {
+                            perPage: 10
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('성적 데이터를 불러오는 데 실패했습니다: ', error);
+                });
+
+            lectureSelect.addEventListener('change', function () {
+                const lectureId = this.value;
+                selectedLectureIdInput.value = lectureId;
+                lectureIdInput.value = lectureId;
+
+                if (lectureId.trim() !== "") {
+                    gradeForm.style.display = 'block';
+                } else {
+                    gradeForm.style.display = 'none';
+                }
+            });
+        });
+
+        function setGradeLimit(selectElement) {
+            var gradeType = selectElement.value;
+            var scoreInput = document.getElementById('score');
+            scoreInput.max = 100;
+            scoreInput.min = 0;
+            scoreInput.value = ''; // 성적 입력칸 초기화
+
+            if (gradeType === '67' || gradeType === '68') {
+                scoreInput.max = 40;
+            } else if (gradeType === '69' || gradeType === '70') {
+                scoreInput.max = 10;
+            }
+        }
+
+        function validateScore(inputElement) {
+            var gradeType = document.getElementById('gradeType').value;
+            var maxScore = 100;
+
+            if (gradeType === '67' || gradeType === '68') {
+                maxScore = 40;
+            } else if (gradeType === '69' || gradeType === '70') {
+                maxScore = 10;
+            }
+
+            if (parseInt(inputElement.value) > maxScore) {
+                alert('점수는 ' + maxScore + '점을 초과할 수 없습니다.');
+                inputElement.value = maxScore;
+            }
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

@@ -13,6 +13,24 @@
     .modal-body p {
       margin-bottom: 10px;
     }
+    .fc-left {
+      display: flex;
+      align-items: center;
+    }
+    #showEventList {
+      margin-left: 10px;
+    }
+    .event-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .event-item {
+      padding: 10px;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .event-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -41,6 +59,30 @@
   </div>
 </div>
 
+<!-- 일정 목록 모달 -->
+<div class="modal fade" id="eventListModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">학사 일정 목록</h5>
+        <div class="ml-auto mr-2">
+          <select id="yearFilter" class="form-control">
+            <option value="all">전체 년도</option>
+          </select>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="event-list" id="eventListContainer">
+          <!-- 일정 목록이 여기에 동적으로 추가됩니다 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
@@ -50,16 +92,25 @@
 
 <script>
   $(document).ready(function() {
-    $('#calendar').fullCalendar({
+    var calendar = $('#calendar').fullCalendar({
       header: {
-        left: 'prev,next today',
+        left: 'showEventList',
         center: 'title',
-
+        right: 'prev,next today'
+      },
+      customButtons: {
+        showEventList: {
+          text: '일정 목록',
+          click: function() {
+            updateEventList(calendar.fullCalendar('clientEvents'));
+            $('#eventListModal').modal('show');
+          }
+        }
       },
       defaultView: 'month',
       allDayDefault: true,
       displayEventEnd: true,
-      locale: 'ko' ,
+      locale: 'ko',
 
       events: function(start, end, timezone, callback) {
         $.ajax({
@@ -67,11 +118,14 @@
           type: 'GET',
           success: function(response) {
             var events = response.map(function(event) {
+              var endDate = moment(event.endDate).isValid() ?
+                      moment(event.endDate) : moment(event.startDate);
+
               return {
                 id: event.calendarId,
                 title: event.title.replace(/^\d+a\s*/, ''),
-                start: moment(event.startDate).format('YYYY-MM-DD'),
-                end: moment(event.endDate).format('YYYY-MM-DD'),
+                start: moment(event.startDate).startOf('day').format('YYYY-MM-DD'),
+                end: endDate.startOf('day').format('YYYY-MM-DD'),
                 description: event.description,
                 allDay: true
               };
@@ -89,24 +143,103 @@
         });
       },
       eventClick: function(event) {
-        // 일정 클릭 시 모달에 정보 표시
         $('#eventTitle').text(event.title);
         $('#eventStart').text(moment(event.start).format('YYYY년 MM월 DD일'));
-        $('#eventEnd').text(moment(event.end).format('YYYY년 MM월 DD일'));
+        var endDate = moment(event.end).isValid() ?
+                moment(event.end).format('YYYY년 MM월 DD일') :
+                moment(event.start).format('YYYY년 MM월 DD일');
+        $('#eventEnd').text(endDate);
         $('#eventDescription').text(event.description || '설명 없음');
         $('#eventModal').modal('show');
       },
       dayRender: function(date, cell) {
-        // 토요일과 일요일에 배경색 적용
-        if (date.day() === 6) { // 토요일
+        if (date.day() === 6) {
           cell.css("background-color", "rgba(0, 123, 255, 0.5)");
           cell.css("color", "white");
-        } else if (date.day() === 0) { // 일요일
+        } else if (date.day() === 0) {
           cell.css("background-color", "rgba(220, 53, 69, 0.5)");
           cell.css("color", "white");
         }
       }
     });
+
+    // 일정 목록 업데이트 함수
+    function updateEventList(events) {
+      var container = $('#eventListContainer');
+      container.empty();
+
+      // 년도별로 이벤트 그룹화
+      var eventsByYear = {};
+      var years = new Set();
+
+      events.forEach(function(event) {
+        var year = moment(event.start).year();
+        years.add(year);
+        if (!eventsByYear[year]) {
+          eventsByYear[year] = [];
+        }
+        eventsByYear[year].push(event);
+      });
+
+      // 년도 필터 옵션 업데이트
+      var yearFilter = $('#yearFilter');
+      yearFilter.empty();
+      yearFilter.append('<option value="all">전체 년도</option>');
+      Array.from(years).sort().reverse().forEach(function(year) {
+        yearFilter.append(`<option value="${year}">${year}년</option>`);
+      });
+
+      // 선택된 년도에 따라 이벤트 필터링
+      function displayEvents(selectedYear) {
+        container.empty();
+        var yearsToShow = selectedYear === 'all' ? Object.keys(eventsByYear) : [selectedYear];
+        
+        yearsToShow.sort().reverse().forEach(function(year) {
+          if (eventsByYear[year]) {
+            // 년도 헤더 추가
+            container.append(`
+              <div class="year-header">
+                <h4 class="mt-3 mb-3 text-primary">${year}년</h4>
+              </div>
+            `);
+
+            // 해당 년도의 이벤트를 날짜순으로 정렬
+            eventsByYear[year].sort(function(a, b) {
+              return moment(a.start).valueOf() - moment(b.start).valueOf();
+            });
+
+            // 이벤트 표시
+            eventsByYear[year].forEach(function(event) {
+              var startDate = moment(event.start).format('YYYY년 MM월 DD일');
+              var endDate = moment(event.end).isValid() ?
+                      moment(event.end).format('YYYY년 MM월 DD일') :
+                      moment(event.start).format('YYYY년 MM월 DD일');
+
+              var eventHtml = `
+                <div class="event-item">
+                  <h5>${event.title}</h5>
+                  <p class="mb-1">
+                    <strong>기간:</strong> ${startDate} ~ ${endDate}
+                  </p>
+                  <p class="mb-0">
+                    <strong>설명:</strong> ${event.description || '설명 없음'}
+                  </p>
+                </div>
+              `;
+              container.append(eventHtml);
+            });
+          }
+        });
+      }
+
+      // 년도 필터 변경 이벤트 핸들러
+      yearFilter.off('change').on('change', function() {
+        displayEvents($(this).val());
+      });
+
+      // 초기 표시
+      displayEvents('all');
+    }
   });
 </script>
 </body>

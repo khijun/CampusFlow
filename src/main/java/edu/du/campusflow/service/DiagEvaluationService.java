@@ -41,7 +41,7 @@ public class DiagEvaluationService {
         );
     }
 
-    private Long getGradeCodeId(String grade) { // 중복코드 최적화는 나중에
+    private Long getGradeCodeId(String grade) {
         switch (grade) {
             case "1": return 97L;  // 1학년
             case "2": return 98L;  // 2학년

@@ -73,7 +73,7 @@
                     data: data,
                     columns: [
                        { header: '교육과정 교과목 ID', name: 'curriculumSubjectId', align: 'center', width: 140, readOnly: true },
-                       { header: '교육과정명', name: 'curriculumName', align: 'center', width: 300, readOnly: true },
+                       { header: '교육과정명', name: 'curriculumName', align: 'center', width: 400, readOnly: true },
                        { header: '과목명', name: 'subjectName', align: 'center', width: 200, readOnly: true },
                        { header: '이수학점', name: 'subjectCredits', align: 'center', width: 80, readOnly: true },
                        {
@@ -82,7 +82,7 @@
                           formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
                           editor: { type: "select", options: { listItems: subjectTypeList } },
                           align: 'center',
-                          width: 120
+                          width: 150
                        },
                        {
                           header: '평가 방법',
@@ -95,7 +95,7 @@
                        { header: '학년', name: 'grade', align: 'center', width: 100, readOnly: true },
                        { header: '학기', name: 'semester', align: 'center', width: 100, readOnly: true },
                        { header: '주야 구분', name: 'dayNight', align: 'center', width: 100, readOnly: true },
-                       { header: '교육과정 상태', name: 'curriculumStatus', align: 'center', width: 130, readOnly: true }
+                       { header: '교육과정 상태', name: 'curriculumStatus', align: 'center', width: 192, readOnly: true }
                     ],
                     rowHeaders: ["checkbox"],
                     bodyHeight: 'fitToParent',

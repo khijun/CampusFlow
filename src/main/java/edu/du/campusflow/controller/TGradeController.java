@@ -1,11 +1,13 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.GradeDTO;
+import edu.du.campusflow.dto.GradeProfessorDTO;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.GradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +34,17 @@ public class TGradeController {
 
         List<GradeDTO> grades = gradeService.getGroupedGradesByRole(memberId, gradeTypeList);
 
+        return ResponseEntity.ok(grades);
+    }
+
+    @GetMapping("/api/grade/student-grade/{studentId}")
+    public ResponseEntity<List<GradeProfessorDTO>> getStudentGrade(@PathVariable Long studentId) {
+        Long memberId = authService.getCurrentMemberId();
+        // 해당 학생의 성적을 조회
+        List<GradeProfessorDTO> grades = gradeService.getStudentGradesByProfessor(
+                authService.getCurrentMemberId(), studentId, Arrays.asList(67L, 68L, 69L, 70L));
+
+        // 성적 데이터를 반환
         return ResponseEntity.ok(grades);
     }
 }

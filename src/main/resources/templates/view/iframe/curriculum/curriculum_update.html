@@ -86,7 +86,7 @@
                { header: "상태", name: "curriculumStatus", formatter: item => statusList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: statusList } }, align: "center", width: 100 },
                { header: "학기", name: "semester", formatter: item => semesterList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: semesterList } }, align: "center", width: 100 },
                { header: "주야 구분", name: "dayNight", formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: dayNightList } }, align: "center", width: 100 },
-               { header: "사유", name: "reason", editor: "text", width: 430 }
+               { header: "비고", name: "reason", editor: "text", width: 470 }
             ],
             bodyHeight: "fitToParent",
             rowHeaders: ["checkbox"],

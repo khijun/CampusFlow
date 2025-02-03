@@ -3,134 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <title>교수 성적 관리</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
-    <style>
-        /* styles.css */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 30px;
-            background-color: #ffffff;
-        }
-
-        /* 제목 스타일 */
-        h1 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 20px;
-            font-weight: bold;
-            color: #444;
-            margin-bottom: 15px;
-        }
-
-        /* 폼 스타일 */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            font-weight: bold;
-            font-size: 16px;
-            color: #555;
-        }
-
-        select, input {
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-        }
-
-        /* 학생 목록 스타일 */
-        #studentListSection {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fdfdfd;
-            min-height: 150px;
-            text-align: left;
-        }
-
-        /* 버튼 스타일 */
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* 테이블 스타일 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f4f4f4;
-            font-weight: bold;
-        }
-
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-                padding: 15px;
-            }
-
-            select, input {
-                font-size: 14px;
-            }
-        }
-    </style>
 </head>
 <body>
-<div class="container">
-    <h1>성적 관리</h1>
 
+    <h1>성적 관리</h1>
+    <div class="search-container">
     <section>
         <h2>강의 선택</h2>
+        <div class="input-group">
         <form action="#" method="get" th:action="@{/iframe/grade/professor/professor_view}" th:method="get">
             <label for="lectureId">강의:</label>
-            <select id="lectureId" name="lectureId" onchange="loadStudents()">
+            <select id="lectureId" name="lectureId" onchange="loadStudents()" onclick="updateGradeTypeForAllStudents()">
+                <option value="">강의를 선택하세요</option>
                 <th:block th:each="lecture : ${lectures}">
                     <option th:value="${lecture.lectureId}" th:text="${lecture.lectureName}">강의명</option>
                 </th:block>
@@ -144,13 +34,15 @@
                 <option value="70">출석</option>
             </select>
         </form>
+        </div>
     </section>
+</div>
 
+    <div class="search-container">
     <section id="studentListSection">
         <!-- 학생 목록은 AJAX로 불러옴 -->
     </section>
-
-</div>
+    </div>
 
 <script>
     // AJAX로 강의에 해당하는 학생 목록을 불러오는 함수
@@ -159,6 +51,8 @@
 
         // 강의가 선택되지 않은 경우는 무시
         if (!lectureId) {
+            $("#studentListSection").html("<p>강의를 선택하세요.</p>");
+            $("#gradeTypeSelect").val("67"); // 성적 유형 초기화
             return;
         }
 
@@ -192,7 +86,67 @@
             select.value = selectedGradeType;
         });
     }
-</script>
 
+    function setGradeLimit(selectElement) {
+        // 성적 유형에 따른 점수 제한 설정
+        var gradeType = selectElement.value;
+        var scoreInputs = selectElement.closest('tr').querySelectorAll('input[name="score"]');
+
+        scoreInputs.forEach(function(input) {
+            // 기본 최대값을 100으로 설정
+            input.max = 100;
+            input.min = 0;
+
+            // gradeType에 따른 점수 제한 설정
+            if (gradeType === '67' || gradeType === '68') {
+                input.max = 40; // 중간, 기말은 40점 이하
+            } else if (gradeType === '69' || gradeType === '70') {
+                input.max = 10; // 과제, 출석은 10점 이하
+            }
+        });
+    }
+
+    function validateScore(inputElement) {
+        var gradeType = inputElement.closest('tr').querySelector('select[name="gradeType"]').value;
+        var maxScore = 100;
+
+        // 성적 유형에 따른 점수 최대값 설정
+        if (gradeType === '67' || gradeType === '68') {
+            maxScore = 40; // 중간, 기말은 40점 이하
+        } else if (gradeType === '69' || gradeType === '70') {
+            maxScore = 10; // 과제, 출석은 10점 이하
+        }
+
+        // 입력한 점수가 최대값을 초과하면 경고창 표시하고 점수 제한
+        if (parseInt(inputElement.value) > maxScore) {
+            alert('점수는 ' + maxScore + '점을 초과할 수 없습니다.');
+            inputElement.value = maxScore; // 입력값을 최대값으로 제한
+        }
+    }
+
+    function updateGradeTypeForAllStudents() {
+        var selectedGradeType = document.getElementById('gradeTypeSelect').value;
+
+        // 모든 학생의 성적 유형 select box와 hidden 값을 변경
+        var gradeTypeInputs = document.querySelectorAll('.gradeTypeForAll');
+        gradeTypeInputs.forEach(function(input) {
+            input.value = selectedGradeType;
+        });
+
+        // 각 학생의 성적 유형 select box도 변경
+        var studentSelects = document.querySelectorAll('.individualGradeType');
+        studentSelects.forEach(function(select) {
+            select.value = selectedGradeType;
+        });
+
+        // 성적 유형이 변경되면 점수 input을 비운다
+        var scoreInputs = document.querySelectorAll('input[name="score"]');
+        scoreInputs.forEach(function(input) {
+            input.value = '';  // 점수 입력란을 빈칸으로 설정
+        });
+    }
+
+
+</script>
 </body>
 </html>

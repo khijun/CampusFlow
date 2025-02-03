@@ -92,7 +92,7 @@ public class InquiryService {
         if (currentMember == null || currentMember.getMemberType() == null) {
             return false;
         }
-        return "ADMIN".equals(currentMember.getMemberType().getCodeValue());
+        return "STAFF".equals(currentMember.getMemberType().getCodeValue());
     }
 
     // 학생 여부 확인
