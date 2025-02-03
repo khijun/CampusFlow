@@ -30,7 +30,7 @@
          <p th:text="${logoutMessage}"></p>
       </div>
 
-      <form th:action="@{/perform_login}" method="POST">
+      <form th:action="@{/perform_login}" method="POST" onsubmit="saveUsername()">
          <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="username">아이디</label>
             <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -43,10 +43,16 @@
                    type="password" id="password" name="password" placeholder="비밀번호 입력">
          </div>
 
+         <div class="mb-4 flex items-center">
+            <input type="checkbox" id="rememberMe" class="mr-2">
+            <label for="rememberMe" class="text-gray-700 text-sm">아이디 저장</label>
+         </div>
+
          <button class="w-full bg-[#3b4f63] text-white py-2 rounded-lg border border-gray-600 hover:bg-[#2a3b4c] transition duration-300">
             로그인
          </button>
       </form>
+
       <div class="mt-4 text-center text-sm">
          <a href="#" class="text-gray-600 hover:underline mr-3">2차 인증 안내</a>
          <a href="#" class="text-gray-600 hover:underline mr-3">교번/학번 찾기</a>
@@ -65,24 +71,47 @@
    </div>
 </div>
 
-<footer class="absolute bottom-0 w-full bg-transparent text-[#3b4f63] py-1">
+<footer class="absolute bottom-0 w-full bg-gray-800 text-gray-300 py-1">
    <div class="w-full flex justify-between px-6 items-center text-sm">
+
       <div class="flex space-x-3">
-         <a href="#" class="hover:text-black">개인정보처리방침</a>
+         <a href="#" class="text-gray-400 hover:text-white">개인정보처리방침</a>
          <span>|</span>
-         <a href="#" class="hover:text-black">이용약관</a>
+         <a href="#" class="text-gray-400 hover:text-white">이용약관</a>
          <span>|</span>
-         <a href="#" class="hover:text-black">고객지원</a>
+         <a href="#" class="text-gray-400 hover:text-white">고객지원</a>
       </div>
+
       <div class="text-xs flex items-center space-x-4">
          <p>© 2025 두인대학교. All Rights Reserved.</p>
+
          <div class="text-right">
             <p>아산캠퍼스: 충청남도 아산시 배방읍 두인로 11번길 20 | ☎ 123-456-7890</p>
             <p>서울캠퍼스: 서울특별시 서초구 남부순환로 8452 | ☎ 12-2345-6789</p>
          </div>
       </div>
+
    </div>
 </footer>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+      const savedUsername = localStorage.getItem("savedUsername");
+      if (savedUsername) {
+         document.getElementById("username").value = savedUsername;
+         document.getElementById("rememberMe").checked = true;
+      }
+   });
 
+   function saveUsername() {
+      const username = document.getElementById("username").value;
+      const rememberMe = document.getElementById("rememberMe").checked;
+
+      if (rememberMe) {
+         localStorage.setItem("savedUsername", username);  // 아이디 저장
+      } else {
+         localStorage.removeItem("savedUsername");  // 저장된 아이디 삭제
+      }
+   }
+</script>
 </body>
 </html>
