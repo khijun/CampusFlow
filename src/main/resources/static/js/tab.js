@@ -236,6 +236,9 @@ function switchTab(url) {
     if (activeTab) {
         activeTab.classList.add('active');
     }
+    // iframe-name-span 아이디를 가진 탭 이름을 수정
+    const iframeNameSpan = document.querySelector('#iframe-name-span');
+    iframeNameSpan.textContent = activeTab.querySelector('span').textContent;
     // iframe 내용 로드 및 상태 저장
     loadIframe(url);
     saveTabState();
