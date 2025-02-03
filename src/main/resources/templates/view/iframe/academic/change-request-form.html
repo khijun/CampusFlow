@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>휴학/복학 신청</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-  <link th:href="@{/css/iframe/curriculum/iframe-container.css}" rel="stylesheet">
 
   <script>
     function toggleLeaveDates() {
@@ -30,7 +28,6 @@
   </script>
 </head>
 <body>
-<h2>휴학/복학 신청</h2>
 <div class="search-container">
   <div class="input-group">
 <form th:action="@{/iframe/academic/process-change-request}" th:object="${changeRequestDto}" method="post">

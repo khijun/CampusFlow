@@ -4,13 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
   <title>사용자 정보 조회</title>
   <style>
-    #change-request-list {
-      width: 100%;
-      margin-top: 20px;
-    }
-
     .cancel-btn {
       background-color: red;
       color: white;
@@ -29,7 +25,6 @@
       display: inline-block; /* 인라인 블록으로 배치 */
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
       font-family: 'Arial', sans-serif; /* 귀여운 폰트 */
-      margin-top: 20px; /* 위쪽 여백 */
     }
 
     .academic-status strong {
@@ -44,15 +39,13 @@
   </style>
 </head>
 <body>
-<h2>학적 조회</h2>
-
 <!-- 학적 상태 표시 부분 -->
-<div class="academic-status">
+<div class="academic-status container">
   <div>현재 학적 상태:<span th:text="${member.academicStatus.codeName}" style="color: gray"></span></div>
 </div>
 
 
-<div id="change-request-list"></div>
+<div id="change-request-list" class="container"></div>
 <!-- TOAST UI Grid를 표시할 요소 -->
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>

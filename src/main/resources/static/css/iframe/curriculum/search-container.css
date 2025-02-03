@@ -1,31 +1,3 @@
-/* 공통 스타일 */
-html, body {
-   margin: 0;
-   padding: 0;
-   height: 100%;
-}
-
-.container {
-   width: 100%;
-   box-sizing: border-box;
-}
-
-/* 공통 아이프레임 스타일 */
-.iframe-container {
-   width: 100%;
-   height: calc(100vh - 150px); /* 헤더 및 기타 여백 제외 */
-   box-sizing: border-box;
-   padding: 10px;
-   overflow: hidden; /* 스크롤바 제거 */
-}
-
-iframe {
-   width: 100%;
-   height: 100%;
-   border: none;
-   display: block;
-}
-
 /* 검색 컨테이너 스타일 */
 .search-container {
    display: flex;
