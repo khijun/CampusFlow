@@ -21,7 +21,6 @@ public class LoginController {
             model.addAttribute("logoutMessage", "로그아웃 되었습니다.");
         }
 
-        // ✅ 변경: "view/main_view/login"을 반환해야 올바르게 찾아짐
         return "view/main_view/login";
     }
 }
