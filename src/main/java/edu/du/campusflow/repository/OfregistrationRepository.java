@@ -79,4 +79,6 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     @Modifying
     @Query("DELETE FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId AND o.member.memberId = :memberId")
     void deleteByLectureIdAndMemberMemberId(@Param("lectureId") Long lectureId, @Param("memberId") Long memberId);
+
+    Optional<Ofregistration> findByLectureIdAndMember_MemberId(Long lectureId, Long memberId);
 }
