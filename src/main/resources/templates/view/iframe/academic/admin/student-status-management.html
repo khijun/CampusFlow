@@ -79,17 +79,20 @@
         { header: '학적 상태', name: 'academicStatus', align: 'center' },
         { header: '학과', name: 'deptName', align: 'center' },
         {
-          header: '퇴학/제적 처리',
+          header: '퇴학/제적/졸업 처리',
           name: 'actions',
           align: 'center',
           formatter: (cellInfo) => {
             const id = cellInfo.row.memberId;
             return `
               <form action="/members/${id}/withdraw" method="post" style="display:inline;">
-                <button type="submit">퇴학</button>
+                <button type="submit">제적</button>
               </form>
               <form action="/members/${id}/expel" method="post" style="display:inline;">
-                <button type="submit">제적</button>
+                <button type="submit">퇴학</button>
+              </form>
+              <form action="/members/${id}/graduate" method="post" style="display: inline">
+              <button type="submit">졸업</button>
               </form>
             `;
           }

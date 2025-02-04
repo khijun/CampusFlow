@@ -43,14 +43,21 @@ public class ChangeHistoryController {
     }
 
     @PostMapping("/members/{memberId}/expel")
-    public String withdrawMember(@PathVariable Long memberId) {
-        changeHistoryService.processExpulsionOrWithdrawal(memberId, false); // 제적 처리
+    public String expelMember(@PathVariable Long memberId) {
+        changeHistoryService.processExpulsionOrWithdrawalOrGraduation(memberId, "expulsion"); // 퇴학 처리
         return "redirect:/iframe/academic/admin/student_status_management";
     }
 
     @PostMapping("/members/{memberId}/withdraw")
-    public String expelMember(@PathVariable Long memberId) {
-        changeHistoryService.processExpulsionOrWithdrawal(memberId, true); // 퇴학 처리
+    public String withdrawMember(@PathVariable Long memberId) {
+        changeHistoryService.processExpulsionOrWithdrawalOrGraduation(memberId, "withdrawal"); // 제적 처리
         return "redirect:/iframe/academic/admin/student_status_management";
     }
+
+    @PostMapping("/members/{memberId}/graduate")
+    public String graduateMember(@PathVariable Long memberId) {
+        changeHistoryService.processExpulsionOrWithdrawalOrGraduation(memberId, "graduation"); // 졸업 처리
+        return "redirect:/iframe/academic/admin/student_status_management";
+    }
+
 }
