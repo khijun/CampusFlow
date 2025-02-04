@@ -18,14 +18,12 @@
 
 
 <!-- 병역 추가 버튼 -->
-<div>
-  <span class="add-button" onclick="toggleForm()">+ 병역 정보 추가</span>
-</div>
+<div class="search-container">
+  <button onclick="toggleForm()">병역 추가</button>
 
 <!-- 병역 정보 추가 폼 -->
-<div class="search-container">
 <div id="addForm" class="hidden">
-  <div class="input-group">
+  <div class="input-group" style="width: 2000px;">
   <form id="military-form">
     <label for="dischargeType">전역 구분:</label>
     <select id="dischargeType" name="dischargeType" required>
@@ -44,7 +42,6 @@
   </div>
 </div>
 </div>
-
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
   let instance = null;

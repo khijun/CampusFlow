@@ -21,14 +21,12 @@
 <div id="family-info-list"></div>
 
 <!-- 가족 추가 버튼 -->
-<div>
-  <span class="add-button" onclick="toggleForm()">+ 가족 추가</span>
-</div>
+<div class="search-container">
+  <button onclick="toggleForm()">가족 추가</button>
 
 <!-- 가족 추가 폼 -->
-<div class="search-container">
 <div id="addForm" class="hidden">
-  <div class="input-group">
+  <div class="input-group" style="width: 2000px">
   <form id="family-form">
     <label for="familyRelation">관계:</label>
     <select id="familyRelation" name="familyRelation" required>

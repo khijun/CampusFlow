@@ -17,14 +17,12 @@
 <div id="education-list"></div>
 
 <!-- 학력 추가 버튼 -->
-<div>
-  <span class="add-button" onclick="toggleForm()">+ 학력 추가</span>
-</div>
+<div class="search-container">
+  <button onclick="toggleForm()">학력 추가</button>
 
 <!-- 학력 추가 폼 -->
-<div class="search-container">
 <div id="addForm" class="hidden">
-  <div class="input-group">
+  <div class="input-group" style="width: 2000px">
   <form id="education-form">
     <label for="schoolName">학교명:</label>
     <input type="text" id="schoolName" name="schoolName" required>
