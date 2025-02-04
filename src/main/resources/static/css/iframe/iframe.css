@@ -1,24 +1,39 @@
-html{
+html {
     width: 100%;
     height: auto;
     padding: 0;
     margin: 0;
 }
 
-body{
+body {
     margin: 20px;
 }
 
-.mb-10{
+.mb-10 {
     margin-bottom: 10px;
 }
 
-.btn-container{
-    margin: 0 20px;
-    text-align: right;
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
-.grid-container{
+.btn-container .save-button {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 80px;
+    height: 50px;
+    font-size: 1.0rem; /* 글자 크기 조정 */
+    border: 1px solid #ccc; /* 테두리 */
+    border-radius: 2px; /* 모서리 둥글게 */
+}
+
+.btn-container .save-button:hover {
+    background-color: #f5f5f5; /* 호버 시 색상 변경 */
+}
+
+.grid-container {
 }
 
 .tui-grid-cell-has-input {
@@ -26,6 +41,6 @@ body{
     color: #333; /* 글자색 */
 }
 
-.tui-grid-cell-header{
+.tui-grid-cell-header {
     background-color: white;
 }

@@ -44,28 +44,11 @@
             border: 1px solid #ccc; /* 테두리 설정 */
             border-radius: 4px; /* 모서리 둥글게 */
         }
-
-        #btn-container{
-            text-align: right;
-        }
-
-        .submit-button {
-            font-size: 1.0rem; /* 글자 크기 조정 */
-            height: 2.3rem; /* 높이 조정 */
-            cursor: pointer; /* 커서 변경 */
-            border: 1px solid #ccc; /* 테두리 */
-            border-radius: 2px; /* 모서리 둥글게 */
-            margin: 5px;
-        }
-
-        .submit-button:hover {
-            background-color: #f5f5f5; /* 호버 시 색상 변경 */
-        }
     </style>
 </head>
 <body>
 <div id="member-info-container">
-    <div id="member-info">
+    <div id="member-info" class="mb-10">
         <div class="member-info-header">
             <label for="memberId">학번</label>
             <span id="memberId">학번</span>
@@ -105,7 +88,7 @@
     </div>
     <div>
         <div class="btn-container">
-            <button id="member-info-save" class="submit-button">저장</button>
+            <button id="member-info-save" class="save-button">저장</button>
         </div>
     </div>
 </div>

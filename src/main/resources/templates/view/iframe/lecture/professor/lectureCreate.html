@@ -3,16 +3,15 @@
 <meta charset="UTF-8">
 
 <head>
-  <title>과목 검색</title>
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <title>강의 개설</title>
+  <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
   <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-
-<hr style="border: none; margin: 20px 0;">
   <div class="search-container">
     <!-- 검색 섹션 컨테이너 -->
     <div class="input-group">
@@ -45,20 +44,17 @@
     <button type="submit" id="searchButton">검색</button>
   </div>
 
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+  <div class="mb-10">
     <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">교과목 목록</span>
+    <span>교과목 목록</span>
   </div>
-  <div id="curriculumSubjectGrid">
+  <div id="curriculumSubjectGrid" class="mb-10">
      <!--검색결과가 이곳에 나옴-->
   </div>
-
-  <hr style="border: none; margin: 20px 0;">
   <!-- 강의 생성 폼 -->
-  <div class="d-flex align-items-center mb-3">
+  <div class="mb-10">
     <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의 정보 입력</span>
+    <span class="mb-10">강의 정보 입력</span>
   </div>
   <div class="search-container">
     <div class="input-group">
