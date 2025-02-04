@@ -3,7 +3,6 @@ package edu.du.campusflow.controller;
 import edu.du.campusflow.dto.LectureDTO;
 import edu.du.campusflow.dto.OfregistrationDTO;
 import edu.du.campusflow.entity.FileInfo;
-import edu.du.campusflow.entity.Lecture;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class LectureController {
     @GetMapping("/iframe/lecture/create")
     public String lectureCreate(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/lecture/professor/lectureCreate";
+        return "view/iframe/lecture/professor/lectureCreate";
     }
 
     //강의 개설에 사용
@@ -74,7 +73,7 @@ public class LectureController {
     @GetMapping("/iframe/lecture/createList")
     public String lectureCreateList(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/lecture/professor/lectureCreate_List";
+        return "view/iframe/lecture/professor/lectureCreate_List";
     }
 
     @GetMapping("/api/lecture/approvedList")
@@ -96,7 +95,7 @@ public class LectureController {
     @GetMapping("/iframe/lecture/lectureUploadFile")
     public String lectureFile(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/lecture/professor/lecture_File";
+        return "view/iframe/lecture/professor/lecture_File";
     }
 
     @GetMapping("/api/lecture/lectureSearch")
@@ -124,7 +123,7 @@ public class LectureController {
     @GetMapping("/iframe/lecture/lectureFile_List")
     public String lectureFileList(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/lecture/professor/lectureFile_List";
+        return "view/iframe/lecture/professor/lectureFile_List";
     }
 
     //강의 계획서 조회 페이지 에서 사용할 검색

@@ -33,7 +33,7 @@ public class NoticeController {
     @GetMapping("/add")
     public String showAddNoticeForm() {
         checkStaffAccess();
-        return "/view/iframe/notice/addNotice";
+        return "view/iframe/notice/addNotice";
     }
 
     // 공지 추가 처리
@@ -52,7 +52,7 @@ public class NoticeController {
         checkStaffAccess();
         Notice notice = noticeService.getNoticeById(id);
         model.addAttribute("notice", notice);
-        return "/view/iframe/notice/editNotice";
+        return "view/iframe/notice/editNotice";
     }
 
     // 공지사항 수정 처리
@@ -91,7 +91,7 @@ public class NoticeController {
         }
         model.addAttribute("noticePage", noticePage);
         model.addAttribute("isStaff", noticeService.isStaff());
-        return "/view/iframe/notice/viewNotice";
+        return "view/iframe/notice/viewNotice";
     }
 
     // 특정 공지사항 상세 조회
@@ -105,6 +105,6 @@ public class NoticeController {
         model.addAttribute("notice", notice);
         model.addAttribute("noticeNumber", noticeNumber);
         model.addAttribute("isStaff", noticeService.isStaff());
-        return "/view/iframe/notice/noticeDetail";
+        return "view/iframe/notice/noticeDetail";
     }
 }

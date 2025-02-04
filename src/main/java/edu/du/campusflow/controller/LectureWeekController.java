@@ -39,7 +39,7 @@ public class LectureWeekController {
         model.addAttribute("member", authService.getCurrentMember());
         model.addAttribute("classStatus",
                 lectureWeekService.getClassStatusCodes());
-        return "/view/iframe/lecture/professor/lectureWeek_Time";
+        return "view/iframe/lecture/professor/lectureWeek_Time";
     }
 
     //강의 주차랑 시간 검색해서 불러오는 컨트롤러
