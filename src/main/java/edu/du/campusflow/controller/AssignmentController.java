@@ -1,11 +1,9 @@
 package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.AssignmentDTO;
-import edu.du.campusflow.entity.FileInfo;
 import edu.du.campusflow.entity.Member;
 import edu.du.campusflow.service.AssignmentService;
 import edu.du.campusflow.service.AuthService;
-import edu.du.campusflow.service.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,7 @@ public class AssignmentController {
     @GetMapping("/iframe/assignment/create")
     public String create(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/assignment/assignmentCreate";
+        return "view/iframe/assignment/assignmentCreate";
     }
 
     //과제 생성 컨트롤러
@@ -51,7 +49,7 @@ public class AssignmentController {
     @GetMapping("/iframe/assignment/student/submission")
     public String submission(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/assignment/student/assignmentSubmission";
+        return "view/iframe/assignment/student/assignmentSubmission";
     }
 
     //강의아이디로 연결된 과제 리스트 검색
@@ -92,7 +90,7 @@ public class AssignmentController {
     @GetMapping("/iframe/assignment/submissionList")
     public String submissionList(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
-        return "/view/iframe/assignment/submissionList";
+        return "view/iframe/assignment/submissionList";
     }
 
     @GetMapping("/api/assignment/professor/list")
