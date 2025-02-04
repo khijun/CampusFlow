@@ -119,4 +119,15 @@ function update() {
             }
             return response.json();
         })
+        .then(data => {
+            alert("수정 완료되었습니다");
+            createDeptGrid(listDiv)
+        })
+        .catch(error => {
+            console.error("Error saving subjects:", error);
+            alert("오류가 발생했습니다");
+        })
+        .finally(data => {
+            deptUpdateBtn.disabled = false;
+        });
 }
