@@ -32,11 +32,40 @@
     .btn-secondary {
       margin-left: 0.5rem;
     }
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
+    .btn-gray {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-gray:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    .btn-cancel {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      color: var(--primary-color);
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-cancel:hover {
+      background-color: #f8f9fa;
+      border-color: var(--primary-color);
+    }
   </style>
 </head>
 <body>
 <div class="container mt-3">
-  <h1>게시물 수정</h1>
   <form th:action="@{|/iframe/posts/${post.postId}/edit|}" method="post" onsubmit="return handleSubmit(this)">
     <div class="form-group">
       <label for="title">제목</label>
@@ -47,8 +76,8 @@
       <textarea class="form-control" id="content" name="content" rows="15" required th:text="${post.content}"></textarea>
     </div>
     <div class="text-center">
-      <button type="submit" class="btn btn-primary" id="submitBtn">수정</button>
-      <a th:href="@{|/iframe/posts/detail-view/${post.postId}|}" class="btn btn-secondary" id="cancelBtn">취소</a>
+      <a th:href="@{|/iframe/posts/detail-view/${post.postId}|}" class="btn btn-cancel" id="cancelBtn">취소</a>
+      <button type="submit" class="btn btn-gray" id="submitBtn">수정</button>
     </div>
   </form>
 </div>

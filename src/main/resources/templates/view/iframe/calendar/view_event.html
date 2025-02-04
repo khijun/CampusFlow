@@ -31,11 +31,21 @@
     .event-item:last-child {
       border-bottom: none;
     }
+    .container {
+      max-width: 100%;
+      padding: 15px;
+      margin: 0 auto;
+      margin-bottom: 50px;
+    }
+    @media (min-width: 768px) {
+      .container {
+        max-width: 90%;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="mb-10 mt-5">
-  <h1 class="text-center mb-4">학사 일정</h1>
+<div class="container mt-5">
   <div id="calendar"></div>
 </div>
 

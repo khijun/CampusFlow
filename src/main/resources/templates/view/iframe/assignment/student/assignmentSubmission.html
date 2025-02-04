@@ -104,67 +104,59 @@
         <span class="close">&times;</span>
 
         <!-- 과제명 섹션 -->
-        <div class="info-section">
-            <hr style="border: none; margin: 20px 0;">
-            <div class="d-flex align-items-center mb-3">
-                <i class="fas fa-clipboard-list mr-2"></i>
-                <span class="h6 mb-0">과제명</span>
-            </div>
-            <div class="section-content">
+        <div class="mb-10">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="">과제명</span>
+        </div>
+        <div class="search-container">
+            <div class="input-group" style="width: 100%;">
                 <input type="text" id="modalAssignmentName" class="form-control" readonly>
             </div>
-        </div>
 
-        <!-- 제출기한 섹션 -->
-        <div class="info-section">
-            <hr style="border: none; margin: 20px 0;">
-            <div class="d-flex align-items-center mb-3">
-                <i class="fas fa-calendar-alt mr-2"></i>
-                <span class="h6 mb-0">제출기한</span>
-            </div>
-            <div class="section-content">
-                <input type="text" id="modalDueDate" class="form-control" readonly>
-            </div>
-        </div>
+            <!-- 제출기한 섹션 -->
+                <hr style="border: none; margin: 20px 0;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-calendar-alt mr-2"></i>
+                    <span class="h6 mb-0">제출기한</span>
+                </div>
+                <div class="input-group" style="width: 100%;">
+                    <input type="text" id="modalDueDate" class="form-control" readonly>
+                </div>
 
-        <!-- 과제설명 섹션 -->
-        <div class="info-section">
-            <hr style="border: none; margin: 20px 0;">
-            <div class="">
-                <i class="fas fa-info-circle mr-2"></i>
-                <span class="h6 mb-0">과제설명</span>
-            </div>
-            <div class="section-content">
-                <textarea id="modalDescription" class="form-control" readonly rows="4"></textarea>
-            </div>
-        </div>
+            <!-- 과제설명 섹션 -->
+                <hr style="border: none; margin: 20px 0;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <span class="h6 mb-0">과제설명</span>
+                </div>
+                <div class="input-group" style="width: 100%">
+                    <textarea id="modalDescription" class="form-control" readonly rows="4"></textarea>
+                </div>
 
-        <!-- 첨부파일 섹션 -->
-        <div class="info-section">
-            <hr style="border: none; margin: 20px 0;">
-            <div class="d-flex align-items-center mb-3">
-                <i class="fas fa-paperclip mr-2"></i>
-                <span class="h6 mb-0">첨부파일</span>
-            </div>
-            <div class="section-content" id="attachedFile">
-                <!-- 첨부파일 정보가 여기에 표시됩니다 -->
-            </div>
-        </div>
+            <!-- 첨부파일 섹션 -->
+                <hr style="border: none; margin: 20px 0;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-paperclip mr-2"></i>
+                    <span class="h6 mb-0">첨부파일</span>
+                </div>
+                <div class="input-group" id="attachedFile" style="width: 100%;">
+                    <!-- 첨부파일 정보가 여기에 표시됩니다 -->
+                </div>
 
-        <!-- 과제 제출 섹션 -->
-        <div class="info-section">
-            <hr style="border: none; margin: 20px 0;">
-            <div class="">
-                <i class="fas fa-upload mr-2"></i>
-                <span class="">과제 제출</span>
-            </div>
-            <div class="section-content">
-                <input type="file" id="submissionFile" class="">
+            <!-- 과제 제출 섹션 -->
+                <hr style="border: none; margin: 20px 0;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-upload mr-2"></i>
+                    <span class="h6 mb-0">과제 제출</span>
+                </div>
+                <div class="input-group" style="width: 100%">
+                    <input type="file" id="submissionFile" class="form-control-file mb-3">
+                </div>
+                <div class="input-group"></div>
                 <button type="button" class="btn btn-primary" id="submitButton">제출하기</button>
             </div>
         </div>
     </div>
-</div>
 
 <script>
     // Toast UI Grid 초기화 - 강의 목록
