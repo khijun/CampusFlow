@@ -22,7 +22,7 @@ body {
 .btn-container .save-button {
     padding: 10px;
     box-sizing: border-box;
-    width: 80px;
+    min-width: 80px;
     height: 50px;
     font-size: 1.0rem; /* 글자 크기 조정 */
     border: 1px solid #ccc; /* 테두리 */

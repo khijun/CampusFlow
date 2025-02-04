@@ -6,7 +6,8 @@
   <title>과제 제출 현황</title>
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
   <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
@@ -57,7 +58,6 @@
 
 <body>
   <!-- 섹션 1: 검색 영역 -->
-  <hr style="border: none; margin: 20px 0;">
   <div class="search-container">
     <div class="input-group">
       <label for="Semester">학기</label>
@@ -79,20 +79,18 @@
   </div>
 
   <!-- 섹션 2: 과제 목록 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+  <div class="mb-10">
     <i class="fas fa-clipboard-list mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">과제 목록</span>
+    <span class="">과제 목록</span>
   </div>
-  <div id="assignmentGrid"></div>
+  <div id="assignmentGrid" class="mb-10"></div>
 
   <!-- 섹션 3: 제출 학생 목록 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+  <div class="mb-10">
     <i class="fas fa-users mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">제출 학생 목록</span>
+    <span class="">제출 학생 목록</span>
   </div>
-  <div id="submissionGrid"></div>
+  <div id="submissionGrid" class="mb-10"></div>
 
   <!-- 파일 뷰어 모달 추가 -->
   <div id="fileViewerModal" class="modal">

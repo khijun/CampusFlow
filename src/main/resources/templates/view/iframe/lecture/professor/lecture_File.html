@@ -3,16 +3,16 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>강의계획서 업로드</title>
+  <title>강의계획서 등록</title>
+  <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 </head>
 
 <body>
   <!-- 검색 조건 -->
-  <hr style="border: none; margin: 20px 0;">
   <div class="search-container">
     <div class="input-group">
       <label for="Semester">학기</label>
@@ -28,18 +28,14 @@
     <div class="input-group"></div>
     <button type="button" id="searchButton">조회</button>
   </div>
-
   <!-- 검색 결과 그리드 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+  <div class="mb-10">
     <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의 목록</span>
+    <span class="">강의 목록</span>
   </div>
-  <div id="lectureGrid"></div>
-
+  <div id="lectureGrid" class="mb-10"></div>
   <!-- 파일 업로드 폼 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+  <div class="mb-10">
     <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
     <span class="h6 mb-0">강의 계획서 등록</span>
   </div>
@@ -52,6 +48,7 @@
       <label for="lectureFile">강의 계획서</label>
       <input type="file" id="lectureFile">
     </div>
+    <div class="input-group"></div>
     <button type="button" id="uploadButton">업로드</button>
   </div>
   <script>

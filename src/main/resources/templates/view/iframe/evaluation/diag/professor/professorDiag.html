@@ -7,19 +7,12 @@
   <link href="https://uicdn.toast.com/grid/latest/tui-grid.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css" th:href="@{/css/iframe/curriculum/search-container.css}">
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
   <style>
-    .mb-10 {
-      margin: 0 auto;
-      padding: 20px;
-    }
     #evaluation-grid {
-      margin-top: 20px;
       width: 100%;
       height: 550px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -55,6 +48,7 @@
       <label for="name">학생명</label>
       <input id="name" name="name" type="text">
     </div>
+    <div class="input-group"></div>
     <div>
       <button type="submit">검색</button>
     </div>
@@ -103,9 +97,9 @@
           align: 'center',
         }
       ],
-      scrollX: false,
+      scrollX: true,
       scrollY: true,
-      bodyHeight: 500,
+      bodyHeight: 'auto',
       minBodyHeight: 400,
       rowHeaders: ['rowNum'],
       sortable: true,

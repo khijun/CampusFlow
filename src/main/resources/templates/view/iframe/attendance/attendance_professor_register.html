@@ -5,25 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>출석 등록 (교수용)</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-    <style>
-        .save-button {
-            background-color: whitesmoke;
-            color: black;
-            padding: 10px 15px;
-            border: solid 1px lightgrey;
-            border-radius: 5px;
-            cursor: pointer;
-            float: right;
-            margin-top: 10px;
-        }
-
-        .save-button:hover {
-            background-color: #f5f5f5;
-            border-color: grey;
-        }
-    </style>
+    <link href="/static/css/iframe/curriculum/subject/toastUi_grid.css"
+          th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}">
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
 </head>
 <body>
 <div>
@@ -57,11 +43,17 @@
         </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -10px; padding: 0 15px;">
-        <div class="attendance-legend" style="margin-bottom: -20px;">
-            <span>※ 출석: P</span> <span>지각: L</span> <span>결석: A</span>
+    <div style="display: flex; flex-direction: row;" class="mb-10">
+        <div class="right" style="display: flex; flex-direction: column; align-items: flex-start; height: 100%">
+            <div class="attendance-legend" style="display: flex; width: 100%; padding: 0 15px; flex-direction: row; gap:6px;">
+                <span>※ 출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
+            </div>
+            <div class="space" style="display: flex; flex:1; width: 100%"></div>
         </div>
-        <button id="save-attendance-btn" class="save-button">출석 저장</button>
+        <div class="legend-divider" style="display: flex; flex:1;"></div>
+        <div class="btn-container">
+            <button id="save-attendance-btn" class="save-button">출석 저장</button>
+        </div>
     </div>
 
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
@@ -105,7 +97,8 @@
                             name: `week${i + 1}`,
                             width: 50,
                             align: 'center',
-                            editor: {type: 'select',
+                            editor: {
+                                type: 'select',
                                 options: {
                                     listItems: [{text: "P", value: "P"}, {text: "L", value: "L"}, {
                                         text: "A",
