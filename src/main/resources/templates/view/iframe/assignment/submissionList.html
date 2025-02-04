@@ -175,11 +175,11 @@
     const assignmentGrid = new tui.Grid({
         el: document.getElementById('assignmentGrid'),
         columns: [
-            {header: '과제코드', name: 'assignmentId', sortable: false},
-            {header: '강의명', name: 'lectureName', sortable: false},
-            {header: '과제명', name: 'assignmentName', sortable: false},
-            {header: '제출기한', name: 'dueDate', sortable: false},
-            {header: '제출인원', name: 'submissionCount', sortable: false}
+            {header: '과제코드', name: 'assignmentId', sortable: false, align: 'center'},
+            {header: '강의명', name: 'lectureName', sortable: false, align: 'center'},
+            {header: '과제명', name: 'assignmentName', sortable: false, align: 'center'},
+            {header: '제출기한', name: 'dueDate', sortable: false, align: 'center'},
+            {header: '제출인원', name: 'submissionCount', sortable: false, align: 'center'}
         ],
         bodyHeight: 300
     });
