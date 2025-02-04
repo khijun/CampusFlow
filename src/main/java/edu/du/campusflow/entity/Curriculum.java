@@ -30,6 +30,10 @@ public class Curriculum {
    @Column(name = "curriculum_year")
    private Integer curriculumYear;
 
+   //학생정원
+   @Column(name = "grade_capacity")
+   private Integer gradeCapacity;
+
    @Column(name = "created_at")
    private LocalDateTime createdAt;
 
