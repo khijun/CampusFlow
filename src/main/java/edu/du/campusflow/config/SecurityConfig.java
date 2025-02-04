@@ -59,7 +59,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/js/**", "/css/**", "/assets/**").permitAll() // 정적 리소스 허용
+                .antMatchers("/js/**", "/css/**", "/assets/**", "/view/main_view/login").permitAll() // 로그인 페이지 및 정적 리소스 허용
 //                .antMatchers("/login").permitAll() // 로그인 페이지 허용
                 .anyRequest().authenticated() // 그 외 요청은 인증 필요
 //                .anyRequest().permitAll() // 실험코드
@@ -68,13 +68,15 @@ public class SecurityConfig {
                 .frameOptions().sameOrigin() // X-Frame-Options 설정
                 .and()
                 .formLogin() // 폼 로그인 활성화
-//                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
-                .defaultSuccessUrl("/") // 로그인 성공 후 이동할 페이지
+                .loginPage("/login") // 커스텀 로그인 페이지 설정 (필요 시)
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/", true) // 로그인 성공 후 이동할 페이지
+                .failureUrl("/login?error=true") // 로그인 실패 시 이동할 페이지
                 .permitAll()
                 .and()
                 .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/login?logout=true")
                 .and()
                 .exceptionHandling()
                 .accessDeniedPage("/access-denied") // 403 접근 거부 시 리다이렉트 설정
