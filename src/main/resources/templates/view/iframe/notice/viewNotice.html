@@ -85,31 +85,37 @@
         
         .search-form .btn-outline-success {
             color: var(--primary-color);
-            border-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            background-color: transparent;
+            transition: all 0.2s ease;
         }
         
         .search-form .btn-outline-success:hover {
             background-color: var(--primary-color);
+            border-color: var(--primary-color);
             color: white;
+        }
+        .search-form .btn-outline-success:focus {
+            box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.25);
+        }
+        /* 등록일 칼럼 스타일 */
+        .date-column {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
         }
     </style>
 </head>
 <body>
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>공지사항</h1>
-        <div th:if="${isStaff}">
-            <a href="/iframe/notice/add" class="btn btn-write">작성</a>
-        </div>
-    </div>
-    
     <table class="table table-hover">
         <thead>
         <tr>
             <th style="width: 10%;">번호</th>
             <th style="width: 50%;">제목</th>
-            <th style="width: 20%;">작성자</th>
-            <th style="width: 20%;">등록일</th>
+            <th style="width: 15%;">작성자</th>
+            <th style="width: 25%;">등록일</th>
         </tr>
         </thead>
         <tbody>
@@ -121,7 +127,7 @@
                    class="notice-link"></a>
             </td>
             <td th:text="${notice.member.name}"></td>
-            <td>
+            <td class="date-column">
                 <span th:if="${notice.updatedAt == null}"
                       th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
                 <span th:if="${notice.updatedAt != null}"
@@ -131,8 +137,9 @@
         </tbody>
     </table>
 
-    <nav>
-        <ul class="pagination justify-content-center">
+    <div class="d-flex justify-content-between align-items-center">
+        <nav class="flex-grow-1">
+            <ul class="pagination justify-content-center mb-0">
             <li class="page-item" th:classappend="${noticePage.isFirst()} ? 'disabled'">
                 <a class="page-link" 
                    th:href="@{/iframe/notice/view(page=${noticePage.getNumber() - 1}, size=${noticePage.getSize()}, searchType=${param.searchType}, keyword=${param.keyword})}">이전</a>
@@ -149,6 +156,10 @@
             </li>
         </ul>
     </nav>
+        <div th:if="${isStaff}" class="ml-3">
+            <a href="/iframe/notice/add" class="btn btn-write">작성</a>
+        </div>
+    </div>
 
     <div class="d-flex justify-content-center mt-4">
         <form class="form-inline search-form" action="/iframe/notice/view" method="get">
@@ -161,6 +172,8 @@
                    aria-label="Search" th:value="${param.keyword}">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
         </form>
+        </div>
+
     </div>
 </div>
 
