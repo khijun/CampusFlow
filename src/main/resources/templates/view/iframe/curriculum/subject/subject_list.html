@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-   <title>과목 조회</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <title>과목 조회</title>
 </head>
 <body>
 <div>
-   <div class="search-container">
-      <div class="input-group">
-         <label for="subject-name-input">과목 이름:</label>
-         <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" class="input-field"/>
-      </div>
+    <div class="search-container">
+        <div class="input-group">
+            <label for="subject-name-input">과목 이름:</label>
+            <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" class="input-field"/>
+        </div>
 
-      <div>
-         <button id="subject-list-select-btn" class="btn">조회</button>
-      </div>
-   </div>
+        <button id="subject-list-select-btn" class="btn">조회</button>
+    </div>
 
-   <div id="subject-grid-container" style="height: 700px;"></div>
+    <div id="subject-grid-container" style="height: 700px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>

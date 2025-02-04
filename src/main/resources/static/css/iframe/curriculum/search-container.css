@@ -2,10 +2,8 @@
 .search-container {
    display: flex;
    flex-wrap: wrap; /* 내용이 많아질 경우 줄바꿈 */
-   align-items: flex-start; /* 상단 정렬 */
    justify-content: space-between; /* 공간 분배 */
    padding: 15px 15px;
-   min-height: 100px; /* 기본 높이 설정 */
    width: 100%; /* main-content의 너비에 맞춤 */
    margin-bottom: 10px; /* 아래 공간을  */
    background-color: white;

@@ -1,43 +1,35 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>교육과정 교과목 등록</title>
-   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>교육과정 교과목 등록</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
 </head>
 <body>
 <div id="container">
-   <div id="curriculum-list-table-container">
-      <hr class="divider">
-      <div class="search-container">
-         <div class="input-group">
-            <label for="curriculum-name-input">교육과정명:</label>
-            <input type="text" id="curriculum-name-input" class="input-field"/>
-         </div>
-         <div class="input-group">
-            <label for="curriculum-name-input">교육과정명:</label>
-            <input type="text" id="curriculum-name-input2" class="input-field"/>
-         </div>
-
-         <div>
+    <div id="curriculum-list-table-container">
+        <div class="search-container">
+            <div class="input-group">
+                <label for="curriculum-name-input">교육과정명:</label>
+                <input type="text" id="curriculum-name-input" class="input-field"/>
+            </div>
             <button id="curriculum-list-select-btn" class="btn">조회</button>
-         </div>
-      </div>
-      <div id="curriculum-list-grid" style="height: 300px;"></div>
-   </div>
+        </div>
+        <div id="curriculum-list-grid" class="mb-10"></div>
+    </div>
 
-   <div id="curriculum-subject-register-container" style="margin-top: 60px;">
-      <hr class="divider">
-      <div id="curriculum-subject-button-container" class="list-option-container">
-         <button id="add-row-btn" class="btn">행 추가</button>
-         <button id="delete-row-btn" class="btn">행 삭제</button>
-         <button id="save-subjects-btn" class="btn">저장</button>
-      </div>
-      <div id="curriculum-subject-grid-container" style="height: 500px;"></div>
-   </div>
+    <div id="curriculum-subject-register-container">
+        <div id="curriculum-subject-button-container" class="btn-container mb-10">
+            <button id="add-row-btn" class="edit-button">행 추가</button>
+            <button id="delete-row-btn" class="edit-button">행 삭제</button>
+            <button id="save-subjects-btn" class="edit-button">저장</button>
+        </div>
+        <div id="curriculum-subject-grid-container" style="height: 500px;"></div>
+    </div>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
@@ -69,7 +61,7 @@
                 const response = await fetch(`/api/subjects/by-dept/${deptId}`);
                 if (!response.ok) throw new Error();
                 const data = await response.json();
-                subjectList = data.map(subject => ({ text: subject.subjectName, value: subject.subjectId }));
+                subjectList = data.map(subject => ({text: subject.subjectName, value: subject.subjectId}));
             } catch (error) {
                 console.error("Error fetching subjects:", error);
             }
@@ -82,7 +74,7 @@
             ]);
 
             function transformOptions(options) {
-                return (options ?? []).map(opt => ({ text: opt.codeName, value: opt.codeValue }));
+                return (options ?? []).map(opt => ({text: opt.codeName, value: opt.codeValue}));
             }
 
             subjectTypeList = transformOptions(subjectTypeOptions);
@@ -94,15 +86,15 @@
                 el: document.getElementById("curriculum-list-grid"),
                 data: [],
                 columns: [
-                    { header: "교육과정 ID", name: "curriculumId", align: "center" },
-                    { header: "학과 ID", name: "deptId", align: "center" },
-                    { header: "교육과정명", name: "curriculumName", width: 400 },
-                    { header: "연도", name: "curriculumYear",  align: "center" },
-                    { header: "학년", name: "grade",  align: "center" },
-                    { header: "학기", name: "semester",  align: "center" },
-                    { header: "주야 구분", name: "dayNight",  align: "center" }
+                    {header: "교육과정 ID", name: "curriculumId", align: "center"},
+                    {header: "학과 ID", name: "deptId", align: "center"},
+                    {header: "교육과정명", name: "curriculumName", width: 400},
+                    {header: "연도", name: "curriculumYear", align: "center"},
+                    {header: "학년", name: "grade", align: "center"},
+                    {header: "학기", name: "semester", align: "center"},
+                    {header: "주야 구분", name: "dayNight", align: "center"}
                 ],
-                bodyHeight: 300,
+                bodyHeight: 260,
                 rowHeaders: ["rowNum"]
             });
 
@@ -110,17 +102,23 @@
                 el: document.getElementById("curriculum-subject-grid-container"),
                 data: [],
                 columns: [
-                    { header: "교육과정명", name: "curriculumName", width: 400, readOnly: true },
-                    { header: "과목명", name: "subjectId",
+                    {header: "교육과정명", name: "curriculumName", width: 400, readOnly: true},
+                    {
+                        header: "과목명", name: "subjectId",
                         formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: subjectList } },
-                        align: "center" },
-                    { header: "이수 구분", name: "subjectTypeName",
+                        editor: {type: "select", options: {listItems: subjectList}},
+                        align: "center"
+                    },
+                    {
+                        header: "이수 구분", name: "subjectTypeName",
                         formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: subjectTypeList } }, align: "center" },
-                    { header: "평가 방법", name: "gradingMethod",
+                        editor: {type: "select", options: {listItems: subjectTypeList}}, align: "center"
+                    },
+                    {
+                        header: "평가 방법", name: "gradingMethod",
                         formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
-                        editor: { type: "select", options: { listItems: gradingMethodList } }, align: "center" }
+                        editor: {type: "select", options: {listItems: gradingMethodList}}, align: "center"
+                    }
                 ],
                 bodyHeight: "fitToParent",
                 rowHeaders: ["checkbox"],
@@ -150,19 +148,25 @@
                     await loadSubjects(selectedCurriculum.deptId);
 
                     subjectGrid.setColumns([
-                        { header: "교육과정명", name: "curriculumName", width: 400, readOnly: true },
-                        { header: "과목명", name: "subjectId",
+                        {header: "교육과정명", name: "curriculumName", width: 400, readOnly: true},
+                        {
+                            header: "과목명", name: "subjectId",
                             formatter: item => subjectList.find(opt => opt.value == item.value)?.text || item.value,
-                            editor: { type: "select", options: { listItems: subjectList } },
-                            align: "center" },
-                        { header: "이수 구분", name: "subjectTypeName",
+                            editor: {type: "select", options: {listItems: subjectList}},
+                            align: "center"
+                        },
+                        {
+                            header: "이수 구분", name: "subjectTypeName",
                             formatter: item => subjectTypeList.find(opt => opt.value === item.value)?.text || item.value,
-                            editor: { type: "select", options: { listItems: subjectTypeList } },
-                            align: "center" },
-                        { header: "평가 방법", name: "gradingMethod",
+                            editor: {type: "select", options: {listItems: subjectTypeList}},
+                            align: "center"
+                        },
+                        {
+                            header: "평가 방법", name: "gradingMethod",
                             formatter: item => gradingMethodList.find(opt => opt.value === item.value)?.text || item.value,
-                            editor: { type: "select", options: { listItems: gradingMethodList } },
-                            align: "center" }
+                            editor: {type: "select", options: {listItems: gradingMethodList}},
+                            align: "center"
+                        }
                     ]);
                 }
             });
@@ -199,7 +203,7 @@
 
                 fetch("/api/curriculum-subjects/register", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(formattedData)
                 })
                     .then(response => response.json())

@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-   <title>교육과정 교과목 목록</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <title>교과목 조회</title>
 </head>
 <body>
 <div class="search-container">
-   <div class="input-group">
-      <label for="curriculum-name-input">교육과정명:</label>
-      <input id="curriculum-name-input" type="text" placeholder="교육과정 이름을 입력하세요" class="input-field"/>
-   </div>
+    <div class="input-group">
+        <label for="curriculum-name-input">교육과정명:</label>
+        <input id="curriculum-name-input" type="text" placeholder="교육과정 이름을 입력하세요" class="input-field"/>
+    </div>
 
-   <div style="display: flex; justify-content: flex-end; width: 100%;">
-      <button id="curriculum-subject-list-select-btn" class="btn">조회</button>
-   </div>
+    <button id="curriculum-subject-list-select-btn" class="btn">조회</button>
 </div>
 
 <div id="curriculum-subject-grid-container" style="height: 700px;"></div>
@@ -40,16 +39,16 @@
                     el: document.getElementById('curriculum-subject-grid-container'),
                     data: data,
                     columns: [
-                        { header: '교과목 ID', name: 'curriculumSubjectId', align: 'center'},
-                        { header: '교육과정명', name: 'curriculumName', align: 'center', width: 400},
-                        { header: '과목명', name: 'subjectName', align: 'center'},
-                        { header: '이수학점', name: 'subjectCredits', align: 'center'},
-                        { header: '이수 구분', name: 'subjectTypeName', align: 'center'},
-                        { header: '평가 방법', name: 'gradingMethod', align: 'center'},
-                        { header: '학년', name: 'grade', align: 'center'},
-                        { header: '학기', name: 'semester', align: 'center'},
-                        { header: '주야 구분', name: 'dayNight', align: 'center'},
-                        { header: '교육과정 상태', name: 'curriculumStatus', align: 'center'}
+                        {header: '교과목 ID', name: 'curriculumSubjectId', align: 'center'},
+                        {header: '교육과정명', name: 'curriculumName', align: 'center', width: 400},
+                        {header: '과목명', name: 'subjectName', align: 'center'},
+                        {header: '이수학점', name: 'subjectCredits', align: 'center'},
+                        {header: '이수 구분', name: 'subjectTypeName', align: 'center'},
+                        {header: '평가 방법', name: 'gradingMethod', align: 'center'},
+                        {header: '학년', name: 'grade', align: 'center'},
+                        {header: '학기', name: 'semester', align: 'center'},
+                        {header: '주야 구분', name: 'dayNight', align: 'center'},
+                        {header: '교육과정 상태', name: 'curriculumStatus', align: 'center'}
                     ],
                     bodyHeight: 'fitToParent'
                 });

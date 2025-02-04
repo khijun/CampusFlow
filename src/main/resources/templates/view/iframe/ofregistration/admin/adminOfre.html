@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
           th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <title>수강신청 관리</title>
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <title>수강 신청 조회</title>
 </head>
 <body>
 
@@ -41,9 +42,7 @@
         </label>
         <input type="text" id="subjectType"/>
     </div>
-    <div>
     <button id="searchButton">조회</button>
-    </div>
 </div>
 
 <div id="registration-list"></div>
@@ -60,7 +59,7 @@
     });
 
     // 검색 버튼 클릭 이벤트 처리
-    document.getElementById('searchButton').addEventListener('click', function() {
+    document.getElementById('searchButton').addEventListener('click', function () {
         const lectureName = document.getElementById('lectureName').value;
         const studentId = document.getElementById('studentId').value;
         const studentName = document.getElementById('studentName').value;
@@ -151,7 +150,7 @@
     class CustomButtonRenderer {
         constructor(props) {
             const el = document.createElement('div');
-            const { lectureId, memberId, regStatus } = props.value;
+            const {lectureId, memberId, regStatus} = props.value;
 
             if (regStatus !== 'APPROVED' && regStatus !== 'REJECTED') {
                 // 승인 버튼

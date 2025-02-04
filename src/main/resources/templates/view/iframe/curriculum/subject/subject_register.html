@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-   <title>과목 등록</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
+          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <title>과목 등록</title>
 </head>
 <body>
 <div>
-   <div class="list-option-container">
-      <button id="add-row-btn">행 추가</button>
-      <button id="delete-row-btn">행 삭제</button>
-      <button id="save-subjects-btn">저장</button>
-   </div>
-   <div id="subject-grid-container" style="height: 700px;"></div>
+    <div class="btn-container mb-10">
+        <button id="add-row-btn" class="edit-button">행 추가</button>
+        <button id="delete-row-btn" class="edit-button">행 삭제</button>
+        <button id="save-subjects-btn" class="edit-button">저장</button>
+    </div>
+    <div id="subject-grid-container" style="height: 700px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
@@ -60,7 +62,7 @@
         );
 
         if (hasData) {
-               const confirmDelete = confirm("선택한 행에 작성중인 사항이 있습니다. 정말 삭제하시겠습니까?");
+            const confirmDelete = confirm("선택한 행에 작성중인 사항이 있습니다. 정말 삭제하시겠습니까?");
             if (!confirmDelete) {
                 return; // 사용자가 삭제를 취소하면 종료
             }
