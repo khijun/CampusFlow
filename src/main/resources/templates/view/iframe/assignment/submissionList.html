@@ -2,232 +2,231 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8">
-  <title>과제 제출 현황</title>
-  <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-  <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <meta charset="UTF-8">
+    <title>과제 제출 현황</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 
 <style>
-  #fileViewerModal .modal-content {
-    background-color: #fefefe;
-    margin: 2% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 90%;
-    height: 90%;
-  }
+    #fileViewerModal .modal-content {
+        background-color: #fefefe;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        height: 90%;
+    }
 
-  #fileViewer {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-  }
+    #fileViewer {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
 
-  /* 추가할 스타일 */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
-  }
+    /* 추가할 스타일 */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
 
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-  }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 </style>
 
 <body>
-  <!-- 섹션 1: 검색 영역 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="search-container">
+<!-- 섹션 1: 검색 영역 -->
+<div class="search-container">
     <div class="input-group">
-      <label for="Semester">학기</label>
-      <select id="Semester">
-        <option value="FIRST_SEMESTER">1학기</option>
-        <option value="SECOND_SEMESTER">2학기</option>
-      </select>
+        <label for="Semester">학기</label>
+        <select id="Semester">
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+        </select>
     </div>
     <div class="input-group">
-      <label for="professorId">교번</label>
-      <input type="text" id="professorId" th:value="${member.memberId}" readonly>
+        <label for="professorId">교번</label>
+        <input type="text" id="professorId" th:value="${member.memberId}" readonly>
     </div>
     <div class="input-group">
-      <label for="lectureName">강의명</label>
-      <select id="lectureName">
-      </select>
+        <label for="lectureName">강의명</label>
+        <select id="lectureName">
+        </select>
     </div>
     <button type="button" id="searchButton">조회</button>
-  </div>
+</div>
 
-  <!-- 섹션 2: 과제 목록 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+<!-- 섹션 2: 과제 목록 -->
+<div class="mb-10">
     <i class="fas fa-clipboard-list mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">과제 목록</span>
-  </div>
-  <div id="assignmentGrid"></div>
+    <span class="">과제 목록</span>
+</div>
+<div id="assignmentGrid" class="mb-10"></div>
 
-  <!-- 섹션 3: 제출 학생 목록 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+<!-- 섹션 3: 제출 학생 목록 -->
+<div class="mb-10">
     <i class="fas fa-users mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">제출 학생 목록</span>
-  </div>
-  <div id="submissionGrid"></div>
+    <span class="">제출 학생 목록</span>
+</div>
+<div id="submissionGrid" class="mb-10"></div>
 
-  <!-- 파일 뷰어 모달 추가 -->
-  <div id="fileViewerModal" class="modal">
+<!-- 파일 뷰어 모달 추가 -->
+<div id="fileViewerModal" class="modal">
     <div class="modal-content" style="width: 90%; height: 90%;">
-      <span class="close">&times;</span>
-      <div id="fileViewer" style="width: 100%; height: 90%;"></div>
+        <span class="close">&times;</span>
+        <div id="fileViewer" style="width: 100%; height: 90%;"></div>
     </div>
-  </div>
+</div>
 
-  <script>
+<script>
 
     // 커스텀 렌더러 클래스 정의
     class CustomScoreRenderer {
-      constructor(props) {
-        const el = document.createElement('div');
-        el.style.display = 'flex';
-        el.style.gap = '5px';
-        el.style.alignItems = 'center';
+        constructor(props) {
+            const el = document.createElement('div');
+            el.style.display = 'flex';
+            el.style.gap = '5px';
+            el.style.alignItems = 'center';
 
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.className = 'score-input';
-        input.value = props.value || '';
-        input.min = '0';
-        input.max = '100';
-        input.style.width = '60px';
-        input.style.padding = '2px 5px';
-        input.style.border = '1px solid #ddd';
-        input.style.borderRadius = '4px';
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'score-input';
+            input.value = props.value || '';
+            input.min = '0';
+            input.max = '100';
+            input.style.width = '60px';
+            input.style.padding = '2px 5px';
+            input.style.border = '1px solid #ddd';
+            input.style.borderRadius = '4px';
 
-        // 편집 가능하도록 설정
-        input.setAttribute('contenteditable', 'true');
+            // 편집 가능하도록 설정
+            input.setAttribute('contenteditable', 'true');
 
-        // 이벤트 리스너 추가
-        ['click', 'keydown', 'focus', 'mousedown', 'mouseup', 'dblclick'].forEach(eventType => {
-          input.addEventListener(eventType, (e) => {
-            e.stopPropagation();
-          });
-        });
+            // 이벤트 리스너 추가
+            ['click', 'keydown', 'focus', 'mousedown', 'mouseup', 'dblclick'].forEach(eventType => {
+                input.addEventListener(eventType, (e) => {
+                    e.stopPropagation();
+                });
+            });
 
-        // 셀 클릭시 input에 포커스
-        el.addEventListener('click', () => {
-          input.focus();
-        });
+            // 셀 클릭시 input에 포커스
+            el.addEventListener('click', () => {
+                input.focus();
+            });
 
-        const button = document.createElement('button');
-        button.className = 'score-submit-btn';
-        button.textContent = '등록';
-        button.style.padding = '2px 8px';
-        button.style.backgroundColor = '#007bff';
-        button.style.color = 'white';
-        button.style.border = 'none';
-        button.style.borderRadius = '4px';
-        button.style.cursor = 'pointer';
+            const button = document.createElement('button');
+            button.className = 'score-submit-btn';
+            button.textContent = '등록';
+            button.style.padding = '2px 8px';
+            button.style.backgroundColor = '#007bff';
+            button.style.color = 'white';
+            button.style.border = 'none';
+            button.style.borderRadius = '4px';
+            button.style.cursor = 'pointer';
 
-        button.onclick = (e) => {
-          e.stopPropagation();
-          submitScore(props.rowKey);
-        };
+            button.onclick = (e) => {
+                e.stopPropagation();
+                submitScore(props.rowKey);
+            };
 
-        el.appendChild(input);
-        el.appendChild(button);
-        this.el = el;
+            el.appendChild(input);
+            el.appendChild(button);
+            this.el = el;
 
-        // 셀이 렌더링된 후 input에 포커스
-        setTimeout(() => {
-          input.focus();
-        }, 0);
-      }
+            // 셀이 렌더링된 후 input에 포커스
+            setTimeout(() => {
+                input.focus();
+            }, 0);
+        }
 
-      getElement() {
-        return this.el;
-      }
+        getElement() {
+            return this.el;
+        }
 
-      getValue() {
-        return this.el.querySelector('.score-input').value;
-      }
+        getValue() {
+            return this.el.querySelector('.score-input').value;
+        }
     }
 
     // Toast UI Grid 초기화 - 과제 목록
     const assignmentGrid = new tui.Grid({
-      el: document.getElementById('assignmentGrid'),
-      columns: [
-        { header: '과제코드', name: 'assignmentId', sortable: false },
-        { header: '강의명', name: 'lectureName', sortable: false },
-        { header: '과제명', name: 'assignmentName', sortable: false },
-        { header: '제출기한', name: 'dueDate', sortable: false },
-        { header: '제출인원', name: 'submissionCount', sortable: false }
-      ],
-      bodyHeight: 300
+        el: document.getElementById('assignmentGrid'),
+        columns: [
+            {header: '과제코드', name: 'assignmentId', sortable: false, align: 'center'},
+            {header: '강의명', name: 'lectureName', sortable: false, align: 'center'},
+            {header: '과제명', name: 'assignmentName', sortable: false, align: 'center'},
+            {header: '제출기한', name: 'dueDate', sortable: false, align: 'center'},
+            {header: '제출인원', name: 'submissionCount', sortable: false, align: 'center'}
+        ],
+        bodyHeight: 300
     });
 
     // Toast UI Grid 초기화 - 제출 학생 목록
     const submissionGrid = new tui.Grid({
-      el: document.getElementById('submissionGrid'),
-      columns: [
-        { header: '학번', name: 'studentId', sortable: false },
-        { header: '학과', name: 'deptName', sortable: false },
-        { header: '이름', name: 'studentName', sortable: false },
-        { header: '제출일시', name: 'submissionDate', sortable: false },
-        {
-          header: '첨부파일',
-          name: 'fileInfo',
-          sortable: false,
-          formatter: function (props) {
-            const fileId = props.value;
-            if (!fileId) return '';
-            return `<button class="file-button" onclick="showFileViewer(${JSON.stringify(fileId)})">보기</button>`;
-          }
-        },
-        {
-          header: '과제 점수',
-          name: 'assignmentScore',
-          sortable: false,
-          renderer: {
-            type: CustomScoreRenderer
-          }
-        }
-      ],
-      bodyHeight: 300
+        el: document.getElementById('submissionGrid'),
+        columns: [
+            {header: '학번', name: 'studentId', sortable: false},
+            {header: '학과', name: 'deptName', sortable: false},
+            {header: '이름', name: 'studentName', sortable: false},
+            {header: '제출일시', name: 'submissionDate', sortable: false},
+            {
+                header: '첨부파일',
+                name: 'fileInfo',
+                sortable: false,
+                formatter: function (props) {
+                    const fileId = props.value;
+                    if (!fileId) return '';
+                    return `<button class="file-button" onclick="showFileViewer(${JSON.stringify(fileId)})">보기</button>`;
+                }
+            },
+            {
+                header: '과제 점수',
+                name: 'assignmentScore',
+                sortable: false,
+                renderer: {
+                    type: CustomScoreRenderer
+                }
+            }
+        ],
+        bodyHeight: 300
     });
 
     // 페이지 로드 시 초기화
     document.addEventListener('DOMContentLoaded', function () {
-      const currentMonth = new Date().getMonth() + 1;
-      const semesterSelect = document.getElementById('Semester');
+        const currentMonth = new Date().getMonth() + 1;
+        const semesterSelect = document.getElementById('Semester');
 
-      // 현재 월에 따라 학기 설정
-      if (currentMonth >= 8 || currentMonth <= 1) {
-        semesterSelect.value = 'SECOND_SEMESTER';
-      } else {
-        semesterSelect.value = 'FIRST_SEMESTER';
-      }
+        // 현재 월에 따라 학기 설정
+        if (currentMonth >= 8 || currentMonth <= 1) {
+            semesterSelect.value = 'SECOND_SEMESTER';
+        } else {
+            semesterSelect.value = 'FIRST_SEMESTER';
+        }
 
-      loadLectureList(); // 강의 목록 로드
+        loadLectureList(); // 강의 목록 로드
     });
 
     // 검색 버튼 클릭 이벤트
@@ -235,66 +234,66 @@
 
     // 강의 목록 로드
     function loadLectureList() {
-      const semesterCode = document.getElementById('Semester').value;
-      const professorId = document.getElementById('professorId').value;
+        const semesterCode = document.getElementById('Semester').value;
+        const professorId = document.getElementById('professorId').value;
 
-      fetch(`/api/lecture/professorId?semesterCode=${semesterCode}&professorId=${professorId}`)
-        .then(response => response.json())
-        .then(lectures => {
-          const lectureSelect = document.getElementById('lectureName');
-          lectureSelect.innerHTML = '<option value="">강의를 선택해주세요</option>';
-          lectures.forEach(lecture => {
-            lectureSelect.innerHTML += `<option value="${lecture.lectureId}">${lecture.lectureName}</option>`;
-          });
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('강의 목록을 불러오는데 실패했습니다.');
-        });
+        fetch(`/api/lecture/professorId?semesterCode=${semesterCode}&professorId=${professorId}`)
+            .then(response => response.json())
+            .then(lectures => {
+                const lectureSelect = document.getElementById('lectureName');
+                lectureSelect.innerHTML = '<option value="">강의를 선택해주세요</option>';
+                lectures.forEach(lecture => {
+                    lectureSelect.innerHTML += `<option value="${lecture.lectureId}">${lecture.lectureName}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('강의 목록을 불러오는데 실패했습니다.');
+            });
     }
 
     // 과제 목록 검색
     function searchAssignments() {
-      const semesterCode = document.getElementById('Semester').value;
-      const professorId = document.getElementById('professorId').value;
-      const lectureId = document.getElementById('lectureName').value;
+        const semesterCode = document.getElementById('Semester').value;
+        const professorId = document.getElementById('professorId').value;
+        const lectureId = document.getElementById('lectureName').value;
 
-      if (lectureId === "") {
-        alert('강의를 선택해주세요.');
-        return;
-      }
+        if (lectureId === "") {
+            alert('강의를 선택해주세요.');
+            return;
+        }
 
-      fetch(`/api/assignment/professor/list?semesterCode=${semesterCode}&professorId=${professorId}&lectureId=${lectureId}`)
-        .then(response => response.json())
-        .then(assignments => {
-          assignmentGrid.resetData(assignments);
-          submissionGrid.resetData([]); // 제출 목록 초기화
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('과제 목록을 불러오는데 실패했습니다.');
-        });
+        fetch(`/api/assignment/professor/list?semesterCode=${semesterCode}&professorId=${professorId}&lectureId=${lectureId}`)
+            .then(response => response.json())
+            .then(assignments => {
+                assignmentGrid.resetData(assignments);
+                submissionGrid.resetData([]); // 제출 목록 초기화
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('과제 목록을 불러오는데 실패했습니다.');
+            });
     }
 
     // 과제 선택 시 제출 목록 조회
     assignmentGrid.on('click', (ev) => {
-      const rowData = assignmentGrid.getRow(ev.rowKey);
-      if (rowData) {
-        loadSubmissions(rowData.assignmentId);
-      }
+        const rowData = assignmentGrid.getRow(ev.rowKey);
+        if (rowData) {
+            loadSubmissions(rowData.assignmentId);
+        }
     });
 
     // 제출 목록 조회
     function loadSubmissions(assignmentId) {
-      fetch(`/api/assignment/submissions/${assignmentId}`)
-        .then(response => response.json())
-        .then(submissions => {
-          submissionGrid.resetData(submissions);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('제출 목록을 불러오는데 실패했습니다.');
-        });
+        fetch(`/api/assignment/submissions/${assignmentId}`)
+            .then(response => response.json())
+            .then(submissions => {
+                submissionGrid.resetData(submissions);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('제출 목록을 불러오는데 실패했습니다.');
+            });
     }
 
     // 학기 변경 시 강의 목록 다시 로드
@@ -305,72 +304,72 @@
     const fileViewerCloseBtn = fileViewerModal.getElementsByClassName('close')[0];
 
     function showFileViewer(fileId) {
-      const fileViewer = document.getElementById('fileViewer');
+        const fileViewer = document.getElementById('fileViewer');
 
-      fetch(`/api/file/submissionViewer/${fileId}`)
-        .then(response => response.json())
-        .then(data => {
-          fileViewer.innerHTML = data.html;
-          fileViewerModal.style.display = 'block';
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('파일 뷰어를 불러오는데 실패했습니다.');
-        });
+        fetch(`/api/file/submissionViewer/${fileId}`)
+            .then(response => response.json())
+            .then(data => {
+                fileViewer.innerHTML = data.html;
+                fileViewerModal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('파일 뷰어를 불러오는데 실패했습니다.');
+            });
     }
 
     fileViewerCloseBtn.onclick = function () {
-      fileViewerModal.style.display = 'none';
+        fileViewerModal.style.display = 'none';
     }
 
     window.onclick = function (event) {
-      if (event.target == fileViewerModal) {
-        fileViewerModal.style.display = 'none';
-      }
+        if (event.target == fileViewerModal) {
+            fileViewerModal.style.display = 'none';
+        }
     }
 
     // 점수 등록 함수 추가
     function submitScore(rowKey) {
-      const row = submissionGrid.getRow(rowKey);
-      const scoreInput = submissionGrid.getElement(rowKey, 'assignmentScore').querySelector('.score-input');
-      const score = parseInt(scoreInput.value);
+        const row = submissionGrid.getRow(rowKey);
+        const scoreInput = submissionGrid.getElement(rowKey, 'assignmentScore').querySelector('.score-input');
+        const score = parseInt(scoreInput.value);
 
-      // 점수 유효성 검사
-      if (isNaN(score) || score < 0 || score > 100) {
-        alert('점수는 0-100 사이의 숫자여야 합니다.');
-        return;
-      }
+        // 점수 유효성 검사
+        if (isNaN(score) || score < 0 || score > 100) {
+            alert('점수는 0-100 사이의 숫자여야 합니다.');
+            return;
+        }
 
-      // 확인 대화상자 표시
-      if (confirm(`${row.studentName} 학생의 점수를 ${score}점으로 등록하시겠습니까?`)) {
-        // 서버에 점수 업데이트 요청
-        fetch('/api/assignment/score', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            submissionId: row.submissionId,
-            score: score
-          })
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('점수 업데이트 실패');
-            }
-            return response.text();
-          })
-          .then((message) => {
-            alert(message);
-            submissionGrid.setValue(rowKey, 'assignmentScore', score);
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('점수 업데이트에 실패했습니다.');
-          });
-      }
+        // 확인 대화상자 표시
+        if (confirm(`${row.studentName} 학생의 점수를 ${score}점으로 등록하시겠습니까?`)) {
+            // 서버에 점수 업데이트 요청
+            fetch('/api/assignment/score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    submissionId: row.submissionId,
+                    score: score
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('점수 업데이트 실패');
+                    }
+                    return response.text();
+                })
+                .then((message) => {
+                    alert(message);
+                    submissionGrid.setValue(rowKey, 'assignmentScore', score);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('점수 업데이트에 실패했습니다.');
+                });
+        }
     }
-  </script>
+</script>
 </body>
 
 </html>

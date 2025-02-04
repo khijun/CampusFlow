@@ -1,39 +1,9 @@
-/* 공통 스타일 */
-html, body {
-   margin: 0;
-   padding: 0;
-   height: 100%;
-}
-
-.container {
-   width: 100%;
-   box-sizing: border-box;
-}
-
-/* 공통 아이프레임 스타일 */
-.iframe-container {
-   width: 100%;
-   height: calc(100vh - 150px); /* 헤더 및 기타 여백 제외 */
-   box-sizing: border-box;
-   padding: 10px;
-   overflow: hidden; /* 스크롤바 제거 */
-}
-
-iframe {
-   width: 100%;
-   height: 100%;
-   border: none;
-   display: block;
-}
-
 /* 검색 컨테이너 스타일 */
 .search-container {
    display: flex;
    flex-wrap: wrap; /* 내용이 많아질 경우 줄바꿈 */
-   align-items: flex-start; /* 상단 정렬 */
    justify-content: space-between; /* 공간 분배 */
    padding: 15px 15px;
-   min-height: 100px; /* 기본 높이 설정 */
    width: 100%; /* main-content의 너비에 맞춤 */
    margin-bottom: 10px; /* 아래 공간을  */
    background-color: white;
@@ -92,10 +62,7 @@ iframe {
 
 /* 버튼 그룹 스타일 */
 .button-group {
-   display: flex;
-   gap: 10px;
    justify-content: flex-end;
-   margin-top: 15px;
 }
 
 .add-form .button-group {

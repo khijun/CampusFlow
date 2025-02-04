@@ -2,252 +2,253 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8">
-  <title>강의실 시간표</title>
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-  <link rel="stylesheet" href="https://uicdn.toast.com/tui.grid/latest/tui-grid.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
-  <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+    <meta charset="UTF-8">
+    <title>강의 시간표 조회</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
 </head>
 <style>
-  .timetable {
-    width: 100%;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  }
+    .timetable {
+        width: 100%;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
 
-  .timetable table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    table-layout: fixed;
-  }
+    .timetable table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+    }
 
-  .timetable th {
-    background-color: #f8f9fa;
-    color: #495057;
-    font-weight: 600;
-    padding: 12px;
-    border-bottom: 2px solid #dee2e6;
-    text-align: center;
-    /* 가운데 정렬 추가 */
-    vertical-align: middle;
-    /* 세로 중앙 정렬도 추가 */
-  }
+    .timetable th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        padding: 12px;
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        /* 가운데 정렬 추가 */
+        vertical-align: middle;
+        /* 세로 중앙 정렬도 추가 */
+    }
 
-  .timetable td {
-    border: 1px solid #e9ecef;
-    padding: 0;
-    vertical-align: top;
-    height: 90px;
-  }
+    .timetable td {
+        border: 1px solid #e9ecef;
+        padding: 0;
+        vertical-align: top;
+        height: 90px;
+    }
 
-  /* 첫 번째 열(시간) 스타일 */
-  .timetable td:first-child {
-    background-color: #f8f9fa;
-    font-weight: 500;
-    color: #495057;
-    width: 50px;
-    text-align: center;
-    vertical-align: middle;
-  }
+    /* 첫 번째 열(시간) 스타일 */
+    .timetable td:first-child {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        color: #495057;
+        width: 50px;
+        text-align: center;
+        vertical-align: middle;
+    }
 
-  .lecture-cell {
-    transition: all 0.2s ease;
-  }
+    .lecture-cell {
+        transition: all 0.2s ease;
+    }
 
-  .lecture-cell:hover {
-    background-color: #f8f9fa;
-  }
+    .lecture-cell:hover {
+        background-color: #f8f9fa;
+    }
 
   .lecture-info {
-    padding: 8px;
-    height: 90%;
+    padding: 5px;
+    height: 80%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: #e3f2fd;
+    text-align: center;
     /* 연한 파란색 배경 */
     border-radius: 4px;
     margin: 4px;
   }
 
-  .lecture-name {
-    font-weight: 500;
-    color: #1976d2;
-    margin-bottom: 4px;
-    font-size: 0.9em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    .lecture-name {
+        font-weight: 500;
+        color: #1976d2;
+        margin-bottom: 4px;
+        font-size: 0.9em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  .professor-name {
-    color: #666;
-    font-size: 0.8em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    .professor-name {
+        color: #666;
+        font-size: 0.8em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  /* 요일별 색상 구분 */
-  .lecture-info.monday {
-    background-color: #e3f2fd;
-  }
+    /* 요일별 색상 구분 */
+    .lecture-info.monday {
+        background-color: #e3f2fd;
+    }
 
-  /* 월요일 */
-  .lecture-info.tuesday {
-    background-color: #f3e5f5;
-  }
+    /* 월요일 */
+    .lecture-info.tuesday {
+        background-color: #f3e5f5;
+    }
 
-  /* 화요일 */
-  .lecture-info.wednesday {
-    background-color: #e8f5e9;
-  }
+    /* 화요일 */
+    .lecture-info.wednesday {
+        background-color: #e8f5e9;
+    }
 
-  /* 수요일 */
-  .lecture-info.thursday {
-    background-color: #fff3e0;
-  }
+    /* 수요일 */
+    .lecture-info.thursday {
+        background-color: #fff3e0;
+    }
 
-  /* 목요일 */
-  .lecture-info.friday {
-    background-color: #fce4ec;
-  }
+    /* 목요일 */
+    .lecture-info.friday {
+        background-color: #fce4ec;
+    }
 
-  /* 금요일 */
+    /* 금요일 */
 </style>
 
 <body>
-  <!-- 검색 조건 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="search-container">
+<!-- 검색 조건 -->
+<div class="search-container">
     <div class="input-group">
-      <label for="buildingName">건물명</label>
-      <select id="buildingName">
-        <option value="">선택</option>
-        <th:block th:each="building : ${building}">
-          <option th:value="${building.codeValue}" th:text="${building.codeName}"></option>
-        </th:block>
-      </select>
+        <label for="buildingName">건물명</label>
+        <select id="buildingName">
+            <option value="">선택</option>
+            <th:block th:each="building : ${building}">
+                <option th:value="${building.codeValue}" th:text="${building.codeName}"></option>
+            </th:block>
+        </select>
     </div>
     <div class="input-group">
-      <label for="facilityName">강의실</label>
-      <select id="facilityName">
-        <option value="">선택</option>
-      </select>
+        <label for="facilityName">강의실</label>
+        <select id="facilityName">
+            <option value="">선택</option>
+        </select>
     </div>
     <div class="input-group"></div>
     <button type="button" id="searchButton">조회</button>
-  </div>
+</div>
 
-  <!-- 시간표 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+<!-- 시간표 -->
+<div class="mb-10">
     <i class="fas fa-calendar mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의실 시간표</span>
-  </div>
-  <div class="timetable">
+    <span class="">강의실 시간표</span>
+</div>
+<div class="timetable mb-10">
     <table>
       <thead>
         <tr>
-          <th></th>
-          <th>월요일</th>
-          <th>화요일</th>
-          <th>수요일</th>
-          <th>목요일</th>
-          <th>금요일</th>
+            <th></th>
+            <th>월요일</th>
+            <th>화요일</th>
+            <th>수요일</th>
+            <th>목요일</th>
+            <th>금요일</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         <!-- 1교시부터 9교시까지 -->
         <tr th:each="period : ${#numbers.sequence(1, 9)}">
-          <td th:text="${period + '교시'}"></td>
-          <td class="lecture-cell" data-day="월요일" th:attr="data-period=${period}"></td>
-          <td class="lecture-cell" data-day="화요일" th:attr="data-period=${period}"></td>
-          <td class="lecture-cell" data-day="수요일" th:attr="data-period=${period}"></td>
-          <td class="lecture-cell" data-day="목요일" th:attr="data-period=${period}"></td>
-          <td class="lecture-cell" data-day="금요일" th:attr="data-period=${period}"></td>
+            <td th:text="${period + '교시'}"></td>
+            <td class="lecture-cell" data-day="월요일" th:attr="data-period=${period}"></td>
+            <td class="lecture-cell" data-day="화요일" th:attr="data-period=${period}"></td>
+            <td class="lecture-cell" data-day="수요일" th:attr="data-period=${period}"></td>
+            <td class="lecture-cell" data-day="목요일" th:attr="data-period=${period}"></td>
+            <td class="lecture-cell" data-day="금요일" th:attr="data-period=${period}"></td>
         </tr>
-      </tbody>
+        </tbody>
     </table>
-  </div>
+</div>
 
-  <script>
+<script>
 
     // 건물 선택 시 강의실 목록 업데이트
     document.getElementById('buildingName').addEventListener('change', function () {
-      const buildingCode = this.value;
-      if (!buildingCode) return;
+        const buildingCode = this.value;
+        if (!buildingCode) return;
 
-      fetch(`/api/facility/${buildingCode}`)
-        .then(response => response.json())
-        .then(facilities => {
-          const facilitySelect = document.getElementById('facilityName');
-          facilitySelect.innerHTML = '<option value="">선택</option>';
-          facilities.forEach(facility => {
-            facilitySelect.innerHTML += `<option value="${facility.facilityId}">${facility.facilityName}</option>`;
-          });
-        });
+        fetch(`/api/facility/${buildingCode}`)
+            .then(response => response.json())
+            .then(facilities => {
+                const facilitySelect = document.getElementById('facilityName');
+                facilitySelect.innerHTML = '<option value="">선택</option>';
+                facilities.forEach(facility => {
+                    facilitySelect.innerHTML += `<option value="${facility.facilityId}">${facility.facilityName}</option>`;
+                });
+            });
     });
 
     // 검색 버튼 클릭 시 시간표 조회
     document.getElementById('searchButton').addEventListener('click', function () {
-      const facilityId = document.getElementById('facilityName').value;
-      if (!facilityId) {
-        alert('강의실을 선택해주세요.');
-        return;
-      }
+        const facilityId = document.getElementById('facilityName').value;
+        if (!facilityId) {
+            alert('강의실을 선택해주세요.');
+            return;
+        }
 
       // 모든 셀 초기화
       document.querySelectorAll('.lecture-cell').forEach(cell => {
         cell.innerHTML = '';
       });
 
-      // API 호출
-      fetch(`/api/facility/lectures/${facilityId}`)
-        .then(response => response.json())
-        .then(lectures => {
-          console.log('Received lectures:', lectures);
+        // API 호출
+        fetch(`/api/facility/lectures/${facilityId}`)
+            .then(response => response.json())
+            .then(lectures => {
+                console.log('Received lectures:', lectures);
 
-          // 데이터가 없는 경우 alert로 메시지 표시
-          if (!lectures || lectures.length === 0) {
-            alert('강의실에 배정된 강의가 없습니다.');
-            return;
-          }
+                // 데이터가 없는 경우 alert로 메시지 표시
+                if (!lectures || lectures.length === 0) {
+                    alert('강의실에 배정된 강의가 없습니다.');
+                    return;
+                }
 
-          lectures.forEach(lecture => {
-            console.log('Processing lecture:', lecture);
-            const startPeriod = parseInt(lecture.startTime.replace(/[^0-9]/g, ''));
-            const endPeriod = parseInt(lecture.endTime.replace(/[^0-9]/g, ''));
+                lectures.forEach(lecture => {
+                    console.log('Processing lecture:', lecture);
+                    const startPeriod = parseInt(lecture.startTime.replace(/[^0-9]/g, ''));
+                    const endPeriod = parseInt(lecture.endTime.replace(/[^0-9]/g, ''));
 
-            // 시작 교시부터 종료 교시까지 반복
-            for (let period = startPeriod; period <= endPeriod; period++) {
-              // 해당하는 셀 찾기
-              const cell = document.querySelector(
-                `.lecture-cell[data-day="${lecture.lectureDay}"][data-period="${period}"]`
-              );
+                    // 시작 교시부터 종료 교시까지 반복
+                    for (let period = startPeriod; period <= endPeriod; period++) {
+                        // 해당하는 셀 찾기
+                        const cell = document.querySelector(
+                            `.lecture-cell[data-day="${lecture.lectureDay}"][data-period="${period}"]`
+                        );
 
-              if (cell) {
-                cell.innerHTML = `
+                        if (cell) {
+                            cell.innerHTML = `
                                 <div class="lecture-info">
                                     <div class="lecture-name">${lecture.lectureName}</div>
                                     <div class="professor-name">${lecture.professorName}</div>
                                 </div>
                             `;
-              }
-            }
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching lectures:', error);
-          alert('강의 데이터를 가져오는 도중 오류가 발생했습니다.');
-        });
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching lectures:', error);
+                alert('강의 데이터를 가져오는 도중 오류가 발생했습니다.');
+            });
     });
 
-  </script>
+</script>
 </body>
 
 </html>

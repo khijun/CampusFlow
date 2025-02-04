@@ -1,192 +1,180 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>진단평가 조회</title>
-  <link href="https://uicdn.toast.com/grid/latest/tui-grid.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-  <style>
-    .container {
-      margin: 0 auto;
-      padding: 20px;
-    }
-    #evaluation-grid {
-      margin-top: 20px;
-      width: 100%;
-      height: 550px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>진단평가 조회</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
 </head>
 <body>
 <div class="container">
-  <!-- 검색 컨테이너 -->
-  <form class="search-container" id="searchForm">
-    <div class="input-group">
-      <label for="deptSelect">학과</label>
-      <select id="deptSelect" name="deptId"></select>
-    </div>
-    <div class="input-group">
-      <label for="gradeSelect">학년</label>
-      <select id="gradeSelect" name="grade">
-        <option value="">학년을 선택해주세요</option>
-        <option value="1">1학년</option>
-        <option value="2">2학년</option>
-        <option value="3">3학년</option>
-        <option value="4">4학년</option>
-      </select>
-    </div>
-    <div class="input-group">
-      <label for="lectureSelect">강의명</label>
-      <select id="lectureSelect" name="lectureName">
-        <option value="">강의를 선택해주세요</option>
-        <option th:each="lecture : ${lectures}"
-                th:text="${lecture.lectureName}"
-                th:value="${lecture.lectureName}">
-        </option>
-      </select>
-    </div>
-    <div class="input-group">
-      <label for="name">학생명</label>
-      <input id="name" name="name" type="text">
-    </div>
-    <div>
-      <button type="submit">검색</button>
-    </div>
-  </form>
+    <!-- 검색 컨테이너 -->
+    <form class="search-container" id="searchForm">
+        <div class="input-group">
+            <label for="deptSelect">학과</label>
+            <select id="deptSelect" name="deptId"></select>
+        </div>
+        <div class="input-group">
+            <label for="gradeSelect">학년</label>
+            <select id="gradeSelect" name="grade">
+                <option value="">학년을 선택해주세요</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+                <option value="4">4학년</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="lectureSelect">강의명</label>
+            <select id="lectureSelect" name="lectureName">
+                <option value="">강의를 선택해주세요</option>
+                <option th:each="lecture : ${lectures}"
+                        th:text="${lecture.lectureName}"
+                        th:value="${lecture.lectureName}">
+                </option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="name">학생명</label>
+            <input id="name" name="name" type="text">
+        </div>
+        <div class="input-group"></div>
+        <div>
+            <button type="submit">조회</button>
+        </div>
+    </form>
 
-  <!-- TOAST UI Grid가 렌더링될 컨테이너 -->
-  <div id="evaluation-grid"></div>
+    <!-- TOAST UI Grid가 렌더링될 컨테이너 -->
+    <div id="evaluation-grid"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const grid = new tui.Grid({
-      el: document.getElementById('evaluation-grid'),
-      data: [],
-      columns: [
-        {
-          header: '강의명',
-          name: 'lectureName',
-          align: 'center',
-        },
-        {
-          header: '학번',
-          name: 'memberId',
-          align: 'center',
-        },
-        {
-          header: '이름',
-          name: 'name',
-          align: 'center',
-        },
-        {
-          header: '학년',
-          name: 'grade',
-          align: 'center',
-          formatter: ({value}) => value ? value + '학년' : '-'
-        },
-        {
-          header: '문항',
-          name: 'questionName',
-          width: 'auto',
-        },
-        {
-          header: '점수',
-          name: 'score',
-          align: 'center',
-        }
-      ],
-      scrollX: false,
-      scrollY: true,
-      bodyHeight: 500,
-      minBodyHeight: 400,
-      rowHeaders: ['rowNum'],
-      sortable: true,
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const grid = new tui.Grid({
+            el: document.getElementById('evaluation-grid'),
+            data: [],
+            columns: [
+                {
+                    header: '강의명',
+                    name: 'lectureName',
+                    align: 'center',
+                },
+                {
+                    header: '학번',
+                    name: 'memberId',
+                    align: 'center',
+                },
+                {
+                    header: '이름',
+                    name: 'name',
+                    align: 'center',
+                },
+                {
+                    header: '학년',
+                    name: 'grade',
+                    align: 'center',
+                    formatter: ({value}) => value ? value + '학년' : '-'
+                },
+                {
+                    header: '문항',
+                    name: 'questionName',
+                    width: 'auto',
+                },
+                {
+                    header: '점수',
+                    name: 'score',
+                    align: 'center',
+                }
+            ],
+            scrollX: true,
+            scrollY: true,
+            bodyHeight: 'auto',
+            minBodyHeight: 400,
+            rowHeaders: ['rowNum'],
+            sortable: true,
+        });
 
-    // 교수의 학과 정보 가져오기
-    fetch('/iframe/evaluation/diag/professor/departments')
+        // 교수의 학과 정보 가져오기
+        fetch('/iframe/evaluation/diag/professor/departments')
             .then(response => {
-              if (!response.ok) throw new Error('Network response was not ok');
-              return response.json();
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
             })
             .then(departments => {
-              const deptSelect = document.querySelector('#deptSelect');
-              if (!deptSelect) return;
+                const deptSelect = document.querySelector('#deptSelect');
+                if (!deptSelect) return;
 
-              // 기본 옵션 제거
-              deptSelect.innerHTML = '';  // "학과를 선택해주세요" 옵션 제거
+                // 기본 옵션 제거
+                deptSelect.innerHTML = '';  // "학과를 선택해주세요" 옵션 제거
 
-              // 교수의 학과만 추가
-              departments.forEach(dept => {
-                const option = document.createElement('option');
-                option.value = dept.deptId;
-                option.textContent = dept.deptName;
-                deptSelect.appendChild(option);
-              });
+                // 교수의 학과만 추가
+                departments.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.deptId;
+                    option.textContent = dept.deptName;
+                    deptSelect.appendChild(option);
+                });
 
-              // 첫 번째(유일한) 학과 자동 선택
-              if (departments.length === 1) {
-                deptSelect.value = departments[0].deptId;
-              }
+                // 첫 번째(유일한) 학과 자동 선택
+                if (departments.length === 1) {
+                    deptSelect.value = departments[0].deptId;
+                }
             })
             .catch(error => {
-              console.error('학과 목록 로딩 실패:', error);
+                console.error('학과 목록 로딩 실패:', error);
             });
 
-    // 검색 폼 제출 처리
-    const searchForm = document.getElementById('searchForm');
-    if (searchForm) {
-      searchForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+        // 검색 폼 제출 처리
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function (e) {
+                e.preventDefault();
 
-        const deptId = document.querySelector('#deptSelect')?.value;
-        const grade = document.querySelector('#gradeSelect')?.value;
-        const lectureName = document.querySelector('#lectureSelect')?.value;
-        const name = document.querySelector('#name')?.value;
+                const deptId = document.querySelector('#deptSelect')?.value;
+                const grade = document.querySelector('#gradeSelect')?.value;
+                const lectureName = document.querySelector('#lectureSelect')?.value;
+                const name = document.querySelector('#name')?.value;
 
-        // 학년 선택 여부 체크
-        if (!grade) {
-          alert('학년을 선택해주세요.');
-          return;
+                // 학년 선택 여부 체크
+                if (!grade) {
+                    alert('학년을 선택해주세요.');
+                    return;
+                }
+
+                const searchParams = new URLSearchParams();
+                if (deptId) searchParams.append('deptId', deptId);
+                if (grade) searchParams.append('grade', grade);
+                if (lectureName) searchParams.append('lectureName', lectureName);
+                if (name) searchParams.append('name', name);
+
+                fetch(`/api/evaluation/diag/search?${searchParams.toString()}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Search result:', result);
+
+                        if (result?.data && result.data.length > 0) {
+                            grid.resetData(result.data);
+                        } else {
+                            grid.resetData([]);
+                            alert('검색 결과가 없습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        grid.resetData([]);
+                        alert('검색 중 오류가 발생했습니다.');
+                    });
+            });
         }
-
-        const searchParams = new URLSearchParams();
-        if (deptId) searchParams.append('deptId', deptId);
-        if (grade) searchParams.append('grade', grade);
-        if (lectureName) searchParams.append('lectureName', lectureName);
-        if (name) searchParams.append('name', name);
-
-        fetch(`/api/evaluation/diag/search?${searchParams.toString()}`)
-                .then(response => {
-                  if (!response.ok) throw new Error('Network response was not ok');
-                  return response.json();
-                })
-                .then(result => {
-                  console.log('Search result:', result);
-
-                  if (result?.data && result.data.length > 0) {
-                    grid.resetData(result.data);
-                  } else {
-                    grid.resetData([]);
-                    alert('검색 결과가 없습니다.');
-                  }
-                })
-                .catch(error => {
-                  console.error('Search error:', error);
-                  grid.resetData([]);
-                  alert('검색 중 오류가 발생했습니다.');
-                });
-      });
-    }
-  });
+    });
 </script>
 </body>
 </html>

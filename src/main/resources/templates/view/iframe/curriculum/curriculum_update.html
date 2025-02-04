@@ -1,158 +1,186 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-   <title>교육과정 수정</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>교육과정 정보 수정</title>
 </head>
 <body>
 <div>
-   <div class="search-container">
-      <div class="input-group">
-         <label for="curriculum-name-input">교육과정명:</label>
-         <input id="curriculum-name-input" type="text" placeholder="교육과정 이름을 입력하세요" class="input-field"/>
-      </div>
-      <div>
-         <button id="curriculum-list-select-btn" class="btn">조회</button>
-         <button id="save-updates-btn" class="btn">수정 저장</button>
-         <button id="delete-selected-btn" class="btn">삭제</button>
-      </div>
-   </div>
-   <div id="curriculum-grid-container" style="height: 700px;"></div>
+    <div class="search-container">
+        <div class="input-group">
+            <label for="curriculum-name-input">교육과정명</label>
+            <input id="curriculum-name-input" type="text" placeholder="교육과정 이름을 입력하세요" class="input-field"/>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end">
+            <div class="spacer" style="display: flex; flex:1;"></div>
+            <div id="bottom" style="display: flex; gap: 10px;">
+                <button id="curriculum-list-select-btn" class="edit-button">조회</button>
+                <button id="save-updates-btn" class="edit-button">수정 저장</button>
+                <button id="delete-selected-btn" class="edit-button">삭제</button>
+            </div>
+        </div>
+    </div>
+    <div id="curriculum-grid-container" style="height: 700px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
-   let grid = null;
+    let grid = null;
 
-   document.addEventListener("DOMContentLoaded", async function () {
-      await loadCommonCodes();
-      setupEventListeners();
-   });
+    document.addEventListener("DOMContentLoaded", async function () {
+        await loadCommonCodes();
+        setupEventListeners();
+    });
 
-   async function fetchCommonCodes(groupCode) {
-      try {
-         const response = await fetch(`/api/common-codes/${groupCode}`);
-         return response.ok ? await response.json() : [];
-      } catch {
-         return [];
-      }
-   }
+    async function fetchCommonCodes(groupCode) {
+        try {
+            const response = await fetch(`/api/common-codes/${groupCode}`);
+            return response.ok ? await response.json() : [];
+        } catch {
+            return [];
+        }
+    }
 
-   async function loadCommonCodes() {
-      const [gradeOptions, statusOptions, semesterOptions, dayNightOptions] = await Promise.all([
-         fetchCommonCodes("GRADE"),
-         fetchCommonCodes("CURRICULUMSTATUS"),
-         fetchCommonCodes("SEMESTER"),
-         fetchCommonCodes("DAY_NIGHT")
-      ]);
+    async function loadCommonCodes() {
+        const [gradeOptions, statusOptions, semesterOptions, dayNightOptions] = await Promise.all([
+            fetchCommonCodes("GRADE"),
+            fetchCommonCodes("CURRICULUMSTATUS"),
+            fetchCommonCodes("SEMESTER"),
+            fetchCommonCodes("DAY_NIGHT")
+        ]);
 
-      function transformOptions(options) {
-         return (options ?? []).map(opt => ({ text: opt.codeName, value: opt.codeValue }));
-      }
+        function transformOptions(options) {
+            return (options ?? []).map(opt => ({text: opt.codeName, value: opt.codeValue}));
+        }
 
-      window.gradeList = transformOptions(gradeOptions);
-      window.statusList = transformOptions(statusOptions);
-      window.semesterList = transformOptions(semesterOptions);
-      window.dayNightList = transformOptions(dayNightOptions);
-   }
+        window.gradeList = transformOptions(gradeOptions);
+        window.statusList = transformOptions(statusOptions);
+        window.semesterList = transformOptions(semesterOptions);
+        window.dayNightList = transformOptions(dayNightOptions);
+    }
 
-   function getCodeValue(codeList, codeValue) {
-      return codeList?.find(opt => opt.value === codeValue)?.value || null;
-   }
+    function getCodeValue(codeList, codeValue) {
+        return codeList?.find(opt => opt.value === codeValue)?.value || null;
+    }
 
-   function setupEventListeners() {
-      document.getElementById("curriculum-list-select-btn").addEventListener("click", fetchCurriculums);
-      document.getElementById("save-updates-btn").addEventListener("click", saveUpdates);
-      document.getElementById("delete-selected-btn").addEventListener("click", deleteSelectedRows);
-   }
+    function setupEventListeners() {
+        document.getElementById("curriculum-list-select-btn").addEventListener("click", fetchCurriculums);
+        document.getElementById("save-updates-btn").addEventListener("click", saveUpdates);
+        document.getElementById("delete-selected-btn").addEventListener("click", deleteSelectedRows);
+    }
 
-   async function fetchCurriculums() {
-      const keyword = document.getElementById("curriculum-name-input").value.trim();
+    async function fetchCurriculums() {
+        const keyword = document.getElementById("curriculum-name-input").value.trim();
 
-      try {
-         const response = await fetch(`/api/curriculums?keyword=${encodeURIComponent(keyword)}`);
-         const data = response.ok ? await response.json() : [];
+        try {
+            const response = await fetch(`/api/curriculums?keyword=${encodeURIComponent(keyword)}`);
+            const data = response.ok ? await response.json() : [];
 
-         if (grid) grid.destroy();
+            if (grid) grid.destroy();
 
-         grid = new tui.Grid({
-            el: document.getElementById("curriculum-grid-container"),
-            data: data,
-            columns: [
-               { header: "교육과정 ID", name: "curriculumId", align: "center", readOnly: true },
-               { header: "학과 ID", name: "deptId", align: "center", readOnly: true },
-               { header: "학과명", name: "deptName", align: "center",  readOnly: true },
-               { header: "교육과정명", name: "curriculumName", editor: "text", width: 400 },
-               { header: "연도", name: "curriculumYear", align: "center", editor: "text" },
-               { header: "학년", name: "grade", formatter: item => gradeList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: gradeList } }, align: "center" },
-               { header: "상태", name: "curriculumStatus", formatter: item => statusList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: statusList } }, align: "center" },
-               { header: "학기", name: "semester", formatter: item => semesterList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: semesterList } }, align: "center" },
-               { header: "주야 구분", name: "dayNight", formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: dayNightList } }, align: "center" },
-               { header: "비고", name: "reason", editor: "text", width: 300 }
-            ],
-            bodyHeight: "fitToParent",
-            rowHeaders: ["checkbox"],
-            editingEvent: "click"
-         });
+            grid = new tui.Grid({
+                el: document.getElementById("curriculum-grid-container"),
+                data: data,
+                columns: [
+                    {header: "교육과정 ID", name: "curriculumId", align: "center", readOnly: true, width: 'auto'},
+                    {header: "학과 ID", name: "deptId", align: "center", readOnly: true},
+                    {header: "학과명", name: "deptName", align: "center", readOnly: true, width: 'auto'},
+                    {header: "교육과정명", name: "curriculumName", editor: "text", width: 400},
+                    {header: "연도", name: "curriculumYear", align: "center", editor: "text"},
+                    {
+                        header: "학년",
+                        name: "grade",
+                        formatter: item => gradeList.find(opt => opt.value === item.value)?.text || item.value,
+                        editor: {type: "select", options: {listItems: gradeList}},
+                        align: "center"
+                    },
+                    {
+                        header: "상태",
+                        name: "curriculumStatus",
+                        formatter: item => statusList.find(opt => opt.value === item.value)?.text || item.value,
+                        editor: {type: "select", options: {listItems: statusList}},
+                        align: "center"
+                    },
+                    {
+                        header: "학기",
+                        name: "semester",
+                        formatter: item => semesterList.find(opt => opt.value === item.value)?.text || item.value,
+                        editor: {type: "select", options: {listItems: semesterList}},
+                        align: "center"
+                    },
+                    {
+                        header: "주야",
+                        name: "dayNight",
+                        formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value,
+                        editor: {type: "select", options: {listItems: dayNightList}},
+                        align: "center"
+                    },
+                    {header: "비고", name: "reason", editor: "text", width: 'auto', minWidth: 300}
+                ],
+                bodyHeight: "fitToParent",
+                rowHeaders: ["checkbox"],
+                editingEvent: "click"
+            });
 
-      } catch {
-         alert("데이터를 불러오는 데 실패했습니다.");
-      }
-   }
+        } catch {
+            alert("데이터를 불러오는 데 실패했습니다.");
+        }
+    }
 
-   function saveUpdates() {
-      const updatedRows = grid.getModifiedRows().updatedRows;
-      if (updatedRows.length === 0) return alert("수정된 데이터가 없습니다.");
+    function saveUpdates() {
+        const updatedRows = grid.getModifiedRows().updatedRows;
+        if (updatedRows.length === 0) return alert("수정된 데이터가 없습니다.");
 
-      const formattedData = updatedRows.map(row => ({
-         curriculumId: row.curriculumId || null,
-         deptId: row.deptId || null,
-         curriculumName: row.curriculumName || "미정",
-         curriculumYear: row.curriculumYear || new Date().getFullYear(),
-         grade: getCodeValue(gradeList, row.grade) || "GRADE_1",
-         curriculumStatus: getCodeValue(statusList, row.curriculumStatus) || "ACTIVE",
-         semester: getCodeValue(semesterList, row.semester) || "FIRST_SEMESTER",
-         dayNight: getCodeValue(dayNightList, row.dayNight) || "DAY",
-         reason: row.reason || "기본값"
-      }));
+        const formattedData = updatedRows.map(row => ({
+            curriculumId: row.curriculumId || null,
+            deptId: row.deptId || null,
+            curriculumName: row.curriculumName || "미정",
+            curriculumYear: row.curriculumYear || new Date().getFullYear(),
+            grade: getCodeValue(gradeList, row.grade) || "GRADE_1",
+            curriculumStatus: getCodeValue(statusList, row.curriculumStatus) || "ACTIVE",
+            semester: getCodeValue(semesterList, row.semester) || "FIRST_SEMESTER",
+            dayNight: getCodeValue(dayNightList, row.dayNight) || "DAY",
+            reason: row.reason || "기본값"
+        }));
 
-      fetch("/api/curriculums/update", {
-         method: "PUT",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(formattedData)
-      })
-              .then(response => response.ok ? response.json() : Promise.reject())
-              .then(() => {
-                 alert("데이터가 수정되었습니다");
-                 fetchCurriculums();
-              })
-              .catch(() => alert("수정 저장 중 오류가 발생했습니다."));
-   }
+        fetch("/api/curriculums/update", {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(formattedData)
+        })
+            .then(response => response.ok ? response.json() : Promise.reject())
+            .then(() => {
+                alert("데이터가 수정되었습니다");
+                fetchCurriculums();
+            })
+            .catch(() => alert("수정 저장 중 오류가 발생했습니다."));
+    }
 
-   function deleteSelectedRows() {
-      if (!grid) return alert("먼저 교육과정을 조회하세요.");
+    function deleteSelectedRows() {
+        if (!grid) return alert("먼저 교육과정을 조회하세요.");
 
-      const selectedRows = grid.getCheckedRows();
-      if (selectedRows.length === 0) return alert("삭제할 데이터를 선택하세요.");
+        const selectedRows = grid.getCheckedRows();
+        if (selectedRows.length === 0) return alert("삭제할 데이터를 선택하세요.");
 
-      const idsToDelete = selectedRows.map(row => row.curriculumId);
+        const idsToDelete = selectedRows.map(row => row.curriculumId);
 
-      fetch("/api/curriculums/delete", {
-         method: "DELETE",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(idsToDelete)
-      })
-              .then(response => response.ok ? response.json() : Promise.reject())
-              .then(() => {
-                 alert("데이터가 삭제되었습니다");
-                 grid.resetData(grid.getData().filter(row => !idsToDelete.includes(row.curriculumId)));
-              })
-              .catch(() => alert("데이터 삭제 중 오류가 발생했습니다."));
-   }
+        fetch("/api/curriculums/delete", {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(idsToDelete)
+        })
+            .then(response => response.ok ? response.json() : Promise.reject())
+            .then(() => {
+                alert("데이터가 삭제되었습니다");
+                grid.resetData(grid.getData().filter(row => !idsToDelete.includes(row.curriculumId)));
+            })
+            .catch(() => alert("데이터 삭제 중 오류가 발생했습니다."));
+    }
 </script>
 </body>
 </html>

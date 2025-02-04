@@ -10,6 +10,13 @@ body, html {
     overflow: auto;
 }
 
+.front-main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column
+}
+
 /* 헤더를 제외한 나머지 요소 */
 .main-content {
     display: flex;

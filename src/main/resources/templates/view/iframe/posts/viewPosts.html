@@ -5,6 +5,13 @@
   <title>게시물 목록</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --danger-color: #868e96;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
     .comment-count {
       display: inline-block;
       margin-left: 8px;
@@ -25,18 +32,21 @@
       gap: 8px;
     }
     .post-title a {
-      color: #212529;
+      color: var(--primary-color);
       text-decoration: none;
     }
     .post-title a:hover {
-      color: #007bff;
+      color: var(--hover-color);
+      text-decoration: none;
     }
     .table th {
-      border-top: 2px solid #dee2e6;
       background-color: #f8f9fa;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--border-color);
     }
     .card {
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      box-shadow: none;
+      border: none;
     }
     .card-body {
       padding: 0;
@@ -46,42 +56,74 @@
     }
     .table td {
       vertical-align: middle;
+      color: var(--primary-color);
+      border-color: var(--border-color);
     }
     .btn-write {
-      padding: 0.5rem 1.5rem;
-      font-size: 0.95rem;
+      padding: 8px 16px;
       border-radius: 4px;
-      background-color: #6c757d;
-      border-color: #6c757d;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
     .btn-write:hover {
-      background-color: #5a6268;
-      border-color: #545b62;
+      background-color: var(--hover-color);
+      color: white;
+      text-decoration: none;
+    }
+
+    /* 페이징 스타일 */
+    .pagination .page-link {
+      color: var(--primary-color);
+      border-color: var(--border-color);
+      background-color: white;
+      transition: all 0.2s ease;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+
+    .pagination .page-item.disabled .page-link {
+      color: var(--secondary-color);
+      background-color: #f8f9fa;
+      border-color: var(--border-color);
+    }
+
+    .pagination .page-link:hover {
+      background-color: var(--hover-color);
+      border-color: var(--hover-color);
+      color: white;
+    }
+
+    .pagination .page-link:focus {
+      box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.25);
     }
   </style>
 </head>
 <body>
 <div class="container mt-5">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>학과 게시판</h1>
-    <a th:if="${isStudent}" th:href="@{/iframe/posts/add}" class="btn btn-secondary btn-write">작성</a>
+  <div class="d-flex justify-content-between align-items-center mb-4">
   </div>
 
   <div th:if="${userDepartment != null}">
     <div class="card">
       <div class="card-body">
-        <table class="table table-bordered table-hover">
-          <thead class="thead-dark">
+        <table class="table table-hover">
+          <thead>
           <tr>
             <th style="width: 10%">번호</th>
-            <th style="width: 45%">제목</th>
+            <th style="width: 50%">제목</th>
             <th style="width: 15%">작성자</th>
-            <th style="width: 20%">작성일</th>
+            <th style="width: 25%">작성일</th>
           </tr>
           </thead>
           <tbody>
-          <tr th:each="post, status : ${posts}">
+          <tr th:if="${!posts.empty}" th:each="post, status : ${posts}">
             <td th:text="${posts.totalElements - (posts.number * posts.size) - status.index}"></td>
             <td class="post-title">
               <a th:href="@{/iframe/posts/detail-view/{id}(id=${post.postId})}">
@@ -93,14 +135,18 @@
             <td>익명</td>
             <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
+          <tr th:if="${posts.empty}">
+            <td colspan="4" class="text-center">게시물이 없습니다.</td>
+          </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- 페이징 -->
-    <nav class="mt-3">
-      <ul class="pagination justify-content-center">
+    <!-- 페이징과 작성 버튼 -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <nav th:if="${!posts.empty}" class="flex-grow-1">
+        <ul class="pagination justify-content-center mb-0">
         <li class="page-item" th:classappend="${posts.first} ? 'disabled'">
           <a class="page-link" th:href="@{/iframe/posts/view(page=${posts.number - 1}, size=${posts.size})}">이전</a>
         </li>
@@ -115,6 +161,11 @@
         </li>
       </ul>
     </nav>
+      <div th:if="${posts.empty}" class="flex-grow-1"></div>
+      <div th:if="${isStudent}" class="ml-3">
+        <a th:href="@{/iframe/posts/add}" class="btn btn-write">작성</a>
+      </div>
+    </div>
   </div>
 
   <div th:if="${userDepartment == null}" class="alert alert-warning">

@@ -4,37 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
-          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
     <title>회원 생성 페이지</title>
-    <style>
-        body{
-            margin: 0 20px 20px;
-        }
-        .tui-grid-cell {
-            background-color: #f5f5f5 !important; /* 연한 회색 배경 */
-            color: #333; /* 글자색 */
-        }
-        #member-input-grid{
-            margin-bottom: 20px;
-        }
-        /* button 태그 크기 조정 */
-        .submit-button {
-            font-size: 1.0rem; /* 글자 크기 조정 */
-            height: 2.3rem; /* 높이 조정 */
-            cursor: pointer; /* 커서 변경 */
-            border: 1px solid #ccc; /* 테두리 */
-            border-radius: 2px; /* 모서리 둥글게 */
-        }
-        /* 버튼 호버 효과 */
-        .submit-button:hover {
-            background-color: #f5f5f5; /* 호버 시 색상 변경 */
-        }
-        .btn-container{
-            margin: 20px;
-            text-align: right;
-        }
-    </style>
 </head>
 <body>
 <div id="member-input-container">
@@ -50,26 +23,27 @@
             <input type="date" id="start-date-input" required>
         </div>
         <div class="input-group">
-            <label for="member-type-input">멤버 타입</label>
+            <label for="member-type-input">회원 구분</label>
             <select id="member-type-input" required>
-                <option th:each="memberType : ${memberTypes}" th:value="${memberType.codeId}" th:text="${memberType.codeName}"></option>
+                <option th:each="memberType : ${memberTypes}" th:value="${memberType.codeId}"
+                        th:text="${memberType.codeName}"></option>
             </select>
         </div>
     </div>
-    <div id="member-input-grid"></div>
-<!--  요소를 보여줄 그리드  -->
+    <div id="member-input-grid" class="mb-10"></div>
+    <!--  요소를 보여줄 그리드  -->
 
     <div class="btn-container">
-        <input type="button" id="add-row-button" class="submit-button" value="열 추가"/>
-        <input type="button" id="delete-row-button" class="submit-button" value="열 삭제"/>
-        <input type="button" id="grid-add-member-button" class="submit-button" value="계정 생성"/>
+        <input type="button" id="add-row-button" class="edit-button" value="열 추가"/>
+        <input type="button" id="delete-row-button" class="edit-button" value="열 삭제"/>
+        <input type="button" id="grid-add-member-button" class="edit-button" value="계정 생성"/>
     </div>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 <script>
     const columns = [
-        {header: "이름", name: "name", editor: 'text'},
+        {header: "이름", name: "name", editor: 'text', align: 'center'},
         {header: "전화번호", name: "tel", editor: 'text'},
         {header: "주소", name: "address", editor: 'text'},
         {header: "생년월일", name: "birthday", editor: 'text'},
@@ -94,7 +68,7 @@
         data: [], // 초기 데이터 없음
         columns: columns,
         columnOptions: {
-          width: 'auto',
+            width: 'auto',
         },
         bodyHeight: 400,
         bodyWidth: 1300,
@@ -155,9 +129,9 @@
 
         postBtn.disabled = true;
 
-        const deptId = document.querySelector("#dept-id-input").value||null;
-        const startDate = document.querySelector("#start-date-input").value||null;
-        const memberTypeId = document.querySelector("#member-type-input").value||null;
+        const deptId = document.querySelector("#dept-id-input").value || null;
+        const startDate = document.querySelector("#start-date-input").value || null;
+        const memberTypeId = document.querySelector("#member-type-input").value || null;
 
         fetch(`/api/member`, {
             method: 'post',
@@ -165,7 +139,7 @@
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                memberDTOs : grid.getCheckedRows(),
+                memberDTOs: grid.getCheckedRows(),
                 deptId: deptId,
                 isActive: null,
                 academicStatusId: null,
@@ -173,7 +147,7 @@
                 startDate: startDate,
             })
         })
-            .then(response=> {
+            .then(response => {
                 if (!response.ok) {
                     alert("멤버 추가 실패!");
                     postBtn.disabled = false;
