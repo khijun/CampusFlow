@@ -363,7 +363,7 @@ public class OfregistrationService {
             lectureRepository.save(lecture);
             
             // Completion 생성
-            completionService.createCompletion(registration);
+//            completionService.createCompletion(registration);
         }
         // 현재 상태가 승인이고, 새로운 상태가 거절일 경우 수강인원 감소
         else if ("APPROVED".equals(currentStatus) && "REJECTED".equals(status)) {
