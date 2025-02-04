@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// feature/evaluation.css ㅁㄴㅇㅁㄴㅇㅁㅁㄴㅇ
+// feature/evaluation ㅁㄴㅇㅁㄴㅇㅁㅁㄴㅇ
 
 @Service
 @RequiredArgsConstructor
