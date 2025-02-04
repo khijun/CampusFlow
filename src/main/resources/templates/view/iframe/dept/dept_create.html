@@ -31,16 +31,16 @@
 <script src="/js/create_grid.js"></script>
 <script>
     const columns = [
-        {header: "학과명", name: "deptName", editor: 'text'},
-        {header: "최대 인원수", name: "maxStudents", editor: 'text'},
+        {header: "학과명", name: "deptName", editor: 'text', align: 'center'},
+        {header: "최대 인원수", name: "maxStudents", editor: 'text', align: 'right'},
         // {header: "학과 상태", name: "deptStatus",
         //     editor: {
         //
         //     }
         // },
-        {header: "필요 교양 학점", name: "generalCredits", editor: 'text'},
-        {header: "필요 전공 학점", name: "majorCredits", editor: 'text'},
-        {header: "졸업 필요 학점", name: "graduationCredits", editor: 'text'},
+        {header: "필요 교양 학점", name: "generalCredits", editor: 'text', align: 'right'},
+        {header: "필요 전공 학점", name: "majorCredits", editor: 'text', align: 'right'},
+        {header: "졸업 필요 학점", name: "graduationCredits", editor: 'text', align: 'right'},
     ]
 
     let grid = new tui.Grid({

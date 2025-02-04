@@ -14,7 +14,7 @@
     <div id="member-list-option-container" class="mb-10 search-container">
         <div class="input-group">
             <label for="member-type-select">
-                멤버 :
+                회원 구분
             </label>
             <select id="member-type-select">
                 <option th:value="0" th:text="전체" th:selected="${filter.memberType==null}"></option>
@@ -36,7 +36,7 @@
         </div>
         <div class="input-group">
             <label for="active-select">
-                멤버 상태 :
+                회원 상태 :
             </label>
             <select id="active-select">
                 <option th:value="true">
