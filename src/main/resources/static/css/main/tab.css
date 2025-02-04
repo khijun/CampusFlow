@@ -5,7 +5,7 @@
     justify-content: space-between;
     background-color: whitesmoke;
     padding: 7px 30px;
-    margin: 0 20px;
+    /*margin: 0 20px;*/
     color: black;
     border: 1px solid #ddd;
     border-radius: 2px;
@@ -100,4 +100,23 @@
 
 .close-all i {
     font-size: 20px;
+}
+
+.iframe-name-container{
+    padding: 5px;
+    display: flex;
+    /*background: #007bff;*/
+    margin: 0 20px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.iframe-name{
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.iframe-name span{
+    font-weight: bold;
+    font-size: 24px;
 }

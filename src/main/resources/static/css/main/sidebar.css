@@ -8,8 +8,10 @@
     align-items: flex-start;
     /* 너비는 고정값 */
     width: 260px;
+    overflow: visible;
     height: 100%;
     padding: 20px;
+    flex-shrink: 0;
 
     background-color: var(--secondary-color);
     /* 스크롤바 */

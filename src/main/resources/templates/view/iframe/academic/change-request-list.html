@@ -1,165 +1,160 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <title>사용자 정보 조회</title>
-  <style>
-    #change-request-list {
-      width: 100%;
-      margin-top: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>사용자 정보 조회</title>
+    <style>
+        .cancel-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
 
-    .cancel-btn {
-      background-color: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
+        .cancel-btn:hover {
+            background-color: darkred;
+        }
 
-    .cancel-btn:hover {
-      background-color: darkred;
-    }
+        .academic-status {
+            border-radius: 20px; /* 둥근 모서리 */
+            padding: 10px 20px; /* 여백 */
+            display: inline-block; /* 인라인 블록으로 배치 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+            font-family: 'Arial', sans-serif; /* 귀여운 폰트 */
+        }
 
-    .academic-status {
-      border-radius: 20px; /* 둥근 모서리 */
-      padding: 10px 20px; /* 여백 */
-      display: inline-block; /* 인라인 블록으로 배치 */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
-      font-family: 'Arial', sans-serif; /* 귀여운 폰트 */
-      margin-top: 20px; /* 위쪽 여백 */
-    }
+        .academic-status strong {
+            font-size: 1.2em; /* 제목 글씨 크기 */
+            margin-right: 10px; /* 제목과 상태 사이 여백 */
+        }
 
-    .academic-status strong {
-      font-size: 1.2em; /* 제목 글씨 크기 */
-      margin-right: 10px; /* 제목과 상태 사이 여백 */
-    }
-
-    #academic-status {
-      font-size: 1.1em; /* 상태 글씨 크기 */
-      font-weight: bold; /* 글씨 두껍게 */
-    }
-  </style>
+        #academic-status {
+            font-size: 1.1em; /* 상태 글씨 크기 */
+            font-weight: bold; /* 글씨 두껍게 */
+        }
+    </style>
 </head>
 <body>
-<h2>학적 조회</h2>
-
 <!-- 학적 상태 표시 부분 -->
-<div class="academic-status">
-  <div>현재 학적 상태:<span th:text="${member.academicStatus.codeName}" style="color: gray"></span></div>
+<div class="academic-status mb-10">
+    <div>현재 학적 상태:<span th:text="${member.academicStatus.codeName}" style="color: gray"></span></div>
 </div>
 
 
-<div id="change-request-list"></div>
-<!-- TOAST UI Grid를 표시할 요소 -->
+<div id="change-request-list" class="mb-10"></div>
+<!-- TOAST UI Grid 를 표시할 요소 -->
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 <script>
-  let instance = null; // Grid 인스턴스를 저장해둘 변수
+    let instance = null; // Grid 인스턴스를 저장해둘 변수
 
 
-  const changeRequestListDiv = document.querySelector('#change-request-list');
-  const academicStatusSpan = document.querySelector('#academic-status');
+    const changeRequestListDiv = document.querySelector('#change-request-list');
+    const academicStatusSpan = document.querySelector('#academic-status');
 
-  document.addEventListener('DOMContentLoaded', () => {
-    createChangeRequestGrid(changeRequestListDiv);
-    fetchAcademicStatus();
-  });
+    document.addEventListener('DOMContentLoaded', () => {
+        createChangeRequestGrid(changeRequestListDiv);
+        fetchAcademicStatus();
+    });
 
-  function createChangeRequestGrid(targetDiv) {
-    const columns = [
-      { header: '변경 전 상태', name: 'beforeCodeName', align: 'center' },
-      { header: '변경 후 상태', name: 'afterCodeName', align: 'center' },
-      { header: '신청 일자', name: 'requestDate', align: 'center' },
-      { header: '상태', name: 'applicationStatus', align: 'center' },
-      { header: '사유', name: 'reason', align: 'center' },
-      {
-        header: '신청 취소',
-        name: 'cancel',
-        align: 'center',
-        formatter: ({ row }) => {
-          return row.applicationStatus !== '승인'
-                  ? `<button data-id="${row.id}" class="cancel-btn">신청 취소</button>`
-                  : '';
-        },
-      },
-    ];
+    function createChangeRequestGrid(targetDiv) {
+        const columns = [
+            {header: '변경 전 상태', name: 'beforeCodeName', align: 'center'},
+            {header: '변경 후 상태', name: 'afterCodeName', align: 'center'},
+            {header: '신청 일자', name: 'requestDate', align: 'center'},
+            {header: '상태', name: 'applicationStatus', align: 'center'},
+            {header: '사유', name: 'reason', align: 'center'},
+            {
+                header: '신청 취소',
+                name: 'cancel',
+                align: 'center',
+                formatter: ({row}) => {
+                    return row.applicationStatus !== '승인'
+                        ? `<button data-id="${row.id}" class="cancel-btn">신청 취소</button>`
+                        : '';
+                },
+            },
+        ];
 
-    fetch('/api/academic-change-request')
+        fetch('/api/academic-change-request')
             .then(response => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
-              }
-              return response.json();
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
             })
             .then(data => {
-              // 마지막 학적 상태 찾기 (requestDate 기준으로 마지막 상태를 선택)
-              const lastRequest = data.reduce((last, current) => {
-                return new Date(current.requestDate) > new Date(last.requestDate) ? current : last;
-              }, data[0]);
+                // 마지막 학적 상태 찾기 (requestDate 기준으로 마지막 상태를 선택)
+                const lastRequest = data.reduce((last, current) => {
+                    return new Date(current.requestDate) > new Date(last.requestDate) ? current : last;
+                }, data[0]);
 
 
-              return data.map(request => ({
-                id: request.id,
-                beforeCodeName: request.beforeCode.codeName,
-                afterCodeName: request.afterCode.codeName,
-                requestDate: new Date(request.requestDate).toISOString().split('T')[0], // 날짜 형식 변환
-                applicationStatus: request.applicationStatus.codeName,
-                reason: request.reason,
-              }));
+                return data.map(request => ({
+                    id: request.id,
+                    beforeCodeName: request.beforeCode.codeName,
+                    afterCodeName: request.afterCode.codeName,
+                    requestDate: new Date(request.requestDate).toISOString().split('T')[0], // 날짜 형식 변환
+                    applicationStatus: request.applicationStatus.codeName,
+                    reason: request.reason,
+                }));
             })
             .then(mappedData => {
-              if (instance != null) {
-                instance.destroy();
-                instance = null;
-              }
-              instance = new tui.Grid({
-                el: targetDiv,
-                data: mappedData,
-                columns: columns,
-                bodyHeight: 400,
-              });
-
-              // 신청 취소 버튼 클릭 이벤트 위임
-              targetDiv.addEventListener('click', event => {
-                if (event.target.classList.contains('cancel-btn')) {
-                  const applicationId = event.target.getAttribute('data-id');
-                  cancelChangeRequest(applicationId);
+                if (instance != null) {
+                    instance.destroy();
+                    instance = null;
                 }
-              });
+                instance = new tui.Grid({
+                    el: targetDiv,
+                    data: mappedData,
+                    columns: columns,
+                    bodyHeight: 400,
+                });
+
+                // 신청 취소 버튼 클릭 이벤트 위임
+                targetDiv.addEventListener('click', event => {
+                    if (event.target.classList.contains('cancel-btn')) {
+                        const applicationId = event.target.getAttribute('data-id');
+                        cancelChangeRequest(applicationId);
+                    }
+                });
             })
             .catch(error => {
-              console.error('Error fetching change requests:', error);
+                console.error('Error fetching change requests:', error);
             });
-  }
-
-
-  window.cancelChangeRequest = function(applicationId) {
-    console.log('신청 취소 시도:', applicationId);
-    if (confirm('정말 신청을 취소하시겠습니까?')) {
-      fetch('/iframe/academic/delete-change-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ applicationId }),
-      })
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                alert('신청이 취소되었습니다.');
-                createChangeRequestGrid(changeRequestListDiv); // 갱신
-              })
-              .catch(error => {
-                console.error('Error cancelling request:', error);
-                alert('신청 취소에 실패했습니다.');
-              });
     }
-  };
+
+
+    window.cancelChangeRequest = function (applicationId) {
+        console.log('신청 취소 시도:', applicationId);
+        if (confirm('정말 신청을 취소하시겠습니까?')) {
+            fetch('/iframe/academic/delete-change-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({applicationId}),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    alert('신청이 취소되었습니다.');
+                    createChangeRequestGrid(changeRequestListDiv); // 갱신
+                })
+                .catch(error => {
+                    console.error('Error cancelling request:', error);
+                    alert('신청 취소에 실패했습니다.');
+                });
+        }
+    };
 </script>
 
 

@@ -1,273 +1,133 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>강의평가</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background-color: #f5f5f5;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 30px;
-    }
-
-    .lecture-select {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-    }
-
-    .lecture-select h3 {
-      color: black;
-      margin-bottom: 15px;
-      font-size: 1.4em;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1em;
-      background-color: white;
-    }
-
-    .evaluation-form {
-      background-color: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .question-item {
-      background-color: #f8f9fa;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-    }
-
-    .question-item h4 {
-      color: black;
-      margin-bottom: 15px;
-      font-size: 1.2em;
-    }
-
-    .score-options {
-      display: flex;
-      gap: 30px;
-      margin-top: 10px;
-    }
-
-    .score-option {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .score-option input[type="radio"] {
-      margin-right: 5px;
-    }
-
-    .submit-button {
-      background-color: #2196F3;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 4px;
-      font-size: 1em;
-      cursor: pointer;
-      margin-top: 20px;
-      width: 100%;
-    }
-
-    .submit-button:hover {
-      background-color: #1976D2;
-    }
-
-    .completed-message {
-      text-align: center;
-      padding: 30px;
-      background-color: #e8f5e9;
-      border-radius: 8px;
-      color: #2e7d32;
-      margin-bottom: 20px;
-      margin-top: 20px;
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 30px;
-      color: #666;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    /* 라디오 버튼 기본 스타일 */
-    input[type="radio"] {
-      accent-color: #1976d2;
-      width: 16px;
-      height: 16px;
-    }
-
-    /* disabled된 라디오 버튼 스타일 */
-    input[type="radio"]:disabled {
-      opacity: 1 !important;
-      -webkit-appearance: none;
-      appearance: none;
-      background-color: #f5f5f5;  /* 밝은 회색 배경 */
-      border: 2px solid #90a4ae;  /* 회색빛 테두리 */
-      border-radius: 50%;
-    }
-
-    /* disabled이면서 체크된 라디오 버튼 스타일 */
-    input[type="radio"]:disabled:checked {
-      background-color: #78909c;  /* 중간 톤의 회색 */
-      border-color: #546e7a;      /* 진한 회색 테두리 */
-      opacity: 1 !important;
-    }
-
-    /* disabled된 라디오 버튼의 라벨 스타일 */
-    input[type="radio"]:disabled + label {
-      color: #333;
-      opacity: 1;
-      cursor: default;
-    }
-
-    /* 라디오 버튼 컨테이너 스타일 */
-    .score-option {
-      opacity: 1 !important;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>강의평가</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/evaluation/evaluation.css" th:href="@{/css/iframe/evaluation/evaluation.css}">
 </head>
 <body>
-<div class="container">
-  <!-- 강의 선택 드롭다운 -->
-  <div class="lecture-select">
-    <h3>강의 선택</h3>
-    <select onchange="if(this.value) location.href='/iframe/evaluation/lec/student/' + this.value">
-      <option value="">강의를 선택하세요</option>
-      <option th:each="lecture : ${lectures}"
-              th:selected="${lecture.get('ofregistrationId') == selectedOfregistrationId}"
-              th:text="${lecture.get('lectureName')}"
-              th:value="${lecture.get('ofregistrationId')}">
-      </option>
-    </select>
-  </div>
+<div class="flex-div">
+    <div id="content">
+        <!-- 강의 선택 드롭다운 -->
+        <div class="lecture-select">
+            <div class="select-title-container mb-10">
+                <span class="select-title-lecture">강의 선택</span>
+            </div>
+            <select onchange="if(this.value) location.href='/iframe/evaluation/lec/student/' + this.value">
+                <option value="">강의를 선택하세요</option>
+                <option th:each="lecture : ${lectures}"
+                        th:selected="${lecture.get('ofregistrationId') == selectedOfregistrationId}"
+                        th:text="${lecture.get('lectureName')}"
+                        th:value="${lecture.get('ofregistrationId')}">
+                </option>
+            </select>
+        </div>
 
-  <!-- 강의가 선택되지 않았을 때 -->
-  <div class="no-results" th:if="${!showForm}">
-    <p>강의를 선택하면 강의평가 문항이 표시됩니다.</p>
-  </div>
+        <!-- 강의가 선택되지 않았을 때 -->
+        <div class="no-results" th:if="${!showForm}">
+            <p>강의를 선택하면 강의평가 문항이 표시됩니다.</p>
+        </div>
 
-  <!-- 강의평가 폼 -->
-  <form class="evaluation-form"
-        method="post"
-        th:action="@{/iframe/evaluation/lec/student/submit}"
-        th:if="${showForm}">
-    <input name="id" th:value="${selectedOfregistrationId}" type="hidden">
+        <!-- 강의평가 폼 -->
+        <form class="evaluation-form"
+              method="post"
+              th:action="@{/iframe/evaluation/lec/student/submit}"
+              th:if="${showForm}">
+            <input name="id" th:value="${selectedOfregistrationId}" type="hidden">
 
-    <div class="question-item" th:each="question : ${questions}">
-      <h4 th:text="${question.questionName}">문항</h4>
-      <div class="score-options">
-        <div class="score-option">
-          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 1}"
-                 th:disabled="${evaluated}"
-                 th:name="'scores[' + ${question.questionId} + ']'"
-                 type="radio"
-                 value="1">
-          <label>매우 그렇지 않다(1)</label>
+            <div class="question-item" th:each="question : ${questions}">
+                <div class="select-title-container mb-10">
+                    <span class="select-title-question" th:text="${question.questionName}">문항
+                </div>
+                <div class="score-options">
+                    <div class="score-option">
+                        <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 1}"
+                               th:disabled="${evaluated}"
+                               th:name="'scores[' + ${question.questionId} + ']'"
+                               type="radio"
+                               value="1">
+                        <label>매우 그렇지 않다(1)</label>
+                    </div>
+                    <div class="score-option">
+                        <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 2}"
+                               th:disabled="${evaluated}"
+                               th:name="'scores[' + ${question.questionId} + ']'"
+                               type="radio"
+                               value="2">
+                        <label>그렇지 않다(2)</label>
+                    </div>
+                    <div class="score-option">
+                        <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 3}"
+                               th:disabled="${evaluated}"
+                               th:name="'scores[' + ${question.questionId} + ']'"
+                               type="radio"
+                               value="3">
+                        <label>보통이다(3)</label>
+                    </div>
+                    <div class="score-option">
+                        <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 4}"
+                               th:disabled="${evaluated}"
+                               th:name="'scores[' + ${question.questionId} + ']'"
+                               type="radio"
+                               value="4">
+                        <label>그렇다(4)</label>
+                    </div>
+                    <div class="score-option">
+                        <input required
+                               th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 5}"
+                               th:disabled="${evaluated}"
+                               th:name="'scores[' + ${question.questionId} + ']'"
+                               type="radio"
+                               value="5">
+                        <label>매우 그렇다(5)</label>
+                    </div>
+                </div>
+            </div>
+            <button class="submit-button" th:if="${!evaluated}" type="submit">제출하기</button>
+        </form>
+
+
+        <!-- 이미 평가를 완료한 경우 -->
+        <div class="completed-message" th:if="${evaluated}">
+            <p>완료된 강의평가 입니다.</p>
         </div>
-        <div class="score-option">
-          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 2}"
-                 th:disabled="${evaluated}"
-                 th:name="'scores[' + ${question.questionId} + ']'"
-                 type="radio"
-                 value="2">
-          <label>그렇지 않다(2)</label>
-        </div>
-        <div class="score-option">
-          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 3}"
-                 th:disabled="${evaluated}"
-                 th:name="'scores[' + ${question.questionId} + ']'"
-                 type="radio"
-                 value="3">
-          <label>보통이다(3)</label>
-        </div>
-        <div class="score-option">
-          <input th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 4}"
-                 th:disabled="${evaluated}"
-                 th:name="'scores[' + ${question.questionId} + ']'"
-                 type="radio"
-                 value="4">
-          <label>그렇다(4)</label>
-        </div>
-        <div class="score-option">
-          <input required
-                 th:checked="${evaluated and previousAnswers != null and previousAnswers.get(question.questionId) == 5}"
-                 th:disabled="${evaluated}"
-                 th:name="'scores[' + ${question.questionId} + ']'"
-                 type="radio"
-                 value="5">
-          <label>매우 그렇다(5)</label>
-        </div>
-      </div>
     </div>
-    <button class="submit-button" th:if="${!evaluated}" type="submit">제출하기</button>
-  </form>
-
-
-  <!-- 이미 평가를 완료한 경우 -->
-  <div class="completed-message" th:if="${evaluated}">
-    <p>완료된 강의평가 입니다.</p>
-  </div>
 </div>
 
 <script>
-  function validateAndLog(form) {
-    // 폼 데이터 로깅
-    const formData = new FormData(form);
-    console.log('=== Form Data ===');
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
+    function validateAndLog(form) {
+        // 폼 데이터 로깅
+        const formData = new FormData(form);
+        console.log('=== Form Data ===');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
 
-    // 폼 데이터 검증
-    if (!formData.get('id')) {
-      console.error('Error: ID is missing');
-      return false;
-    }
+        // 폼 데이터 검증
+        if (!formData.get('id')) {
+            console.error('Error: ID is missing');
+            return false;
+        }
 
-    let hasScores = false;
-    for (let pair of formData.entries()) {
-      if (pair[0].startsWith('scores[')) {
-        hasScores = true;
-        console.log('Found score:', pair[0], pair[1]);
-      }
-    }
+        let hasScores = false;
+        for (let pair of formData.entries()) {
+            if (pair[0].startsWith('scores[')) {
+                hasScores = true;
+                console.log('Found score:', pair[0], pair[1]);
+            }
+        }
 
-    if (!hasScores) {
-      console.error('Error: No scores found');
-      return false;
-    }
+        if (!hasScores) {
+            console.error('Error: No scores found');
+            return false;
+        }
 
-    return true;
-  }
+        return true;
+    }
 </script>
 </body>
 </html>

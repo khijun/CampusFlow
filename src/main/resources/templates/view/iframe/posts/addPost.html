@@ -5,6 +5,36 @@
   <title>게시물 작성</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+    :root {
+      --primary-color: #495057;
+      --secondary-color: #6c757d;
+      --border-color: #dee2e6;
+      --hover-color: #343a40;
+    }
+    .btn-gray {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-gray:hover {
+      background-color: var(--hover-color);
+      color: white;
+    }
+    .btn-cancel {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      color: var(--primary-color);
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-cancel:hover {
+      background-color: #f8f9fa;
+      border-color: var(--primary-color);
+    }
     .form-group label {
       font-weight: 500;
       margin-bottom: 0.5rem;
@@ -17,7 +47,7 @@
       border-color: #80bdff;
       box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
     }
-    .container {
+    .mb-10 {
       max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
@@ -26,25 +56,23 @@
       font-size: 1.75rem;
       margin-bottom: 1.5rem;
     }
-    .btn-primary {
-      padding: 0.5rem 2rem;
-    }
+
   </style>
 </head>
 <body>
-<div class="container mt-3">
-  <h1>게시물 작성</h1>
-  <form th:action="@{/iframe/posts}" method="post" th:object="${post}" onsubmit="return handleSubmit(event)">
-    <div class="form-group">
+<div class="container mt-5">
+    <form th:action="@{/iframe/posts}" method="post">
+<div class="form-group">
       <label for="title">제목</label>
-      <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
+      <input type="text" class="form-control" id="title" name="title" required>
     </div>
     <div class="form-group">
       <label for="content">내용</label>
-      <textarea class="form-control" id="content" name="content" th:field="*{content}" rows="15" required></textarea>
+      <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
     </div>
-    <div class="text-center">
-      <button type="submit" class="btn btn-primary" id="submitBtn">작성</button>
+    <div class="text-right mt-3">
+      <a href="javascript:history.back()" class="btn btn-cancel">취소</a>
+      <button type="submit" class="btn btn-gray">등록</button>
     </div>
   </form>
 </div>
@@ -58,12 +86,12 @@ function handleSubmit(event) {
         event.preventDefault();
         return false;
     }
-    
+
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 처리중...';
     isSubmitting = true;
-    
+
     // 3초 후에도 응답이 없으면 버튼 상태 복구
     setTimeout(() => {
         if (isSubmitting) {
@@ -72,7 +100,7 @@ function handleSubmit(event) {
             isSubmitting = false;
         }
     }, 3000);
-    
+
     return true;
 }
 </script>

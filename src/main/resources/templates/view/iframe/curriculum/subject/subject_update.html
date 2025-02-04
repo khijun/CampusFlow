@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-   <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-   <title>과목 수정</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>과목 수정</title>
 </head>
 <body>
 <div>
-   <div class="search-container">
-      <div class="input-group">
-         <label for="subject-name-input">과목 이름:</label>
-         <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" class="input-field"/>
-      </div>
+    <div class="search-container">
+        <div class="input-group">
+            <label for="subject-name-input">과목명</label>
+            <input id="subject-name-input" type="text" placeholder="과목 이름을 입력하세요" class="input-field"/>
+        </div>
 
-      <div>
-         <button id="subject-list-select-btn" class="btn">조회</button>
-         <button id="save-updates-btn" class="btn">수정 저장</button>
-         <button id="delete-selected-btn" class="btn">삭제</button>
-      </div>
-   </div>
+        <div style="display: flex; flex-direction: column; justify-content: flex-end">
+            <div class="spacer" style="display: flex; flex:1;"></div>
+            <div id="bottom" style="display: flex; gap: 10px;">
+                <button id="subject-list-select-btn" class="edit-button">조회</button>
+                <button id="save-updates-btn" class="edit-button">수정 저장</button>
+                <button id="delete-selected-btn" class="edit-button">삭제</button>
+            </div>
+        </div>
+    </div>
 
-   <div id="subject-grid-container" style="height: 700px;"></div>
+    <div id="subject-grid-container" style="height: 700px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
@@ -48,7 +52,7 @@
                     el: document.getElementById('subject-grid-container'),
                     data: data,
                     columns: [
-                        {header: '과목ID', name: 'subjectId', align: 'center', width: 100,  readOnly: true}, // 수정 불가
+                        {header: '과목ID', name: 'subjectId', align: 'center', width: 100, readOnly: true}, // 수정 불가
                         {header: '과목명', name: 'subjectName', align: 'center', editor: 'text', width: 400}, // 수정 가능
                         {header: '과목설명', name: 'subjectDesc', editor: 'text'}, // 수정 가능
                         {header: '이수학점', name: 'subjectCredits', align: 'center', editor: 'text', width: 100} // 수정 가능

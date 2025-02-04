@@ -29,13 +29,13 @@ memberListSelectButton.addEventListener('click', () => {
 
 function createMemberGrid(memberListDiv) {
     const columns = [
-        {header: '아이디', name: 'memberId', width: 'auto'},
-        {header: '학과', name: 'deptName', width: 'auto'},
-        {header: '이름', name: 'name', width: 'auto', editor: 'text'},
-        {header: '전화 번호', name: 'tel', width: 'auto', editor: 'text'},
-        {header: '주소', name: 'address', width: 'auto', editor: 'text'},
-        {header: '생년월일', name: 'birthDate', width: 'auto', editor: 'text'},
-        {header: '계정 상태', name: 'isActive', width: 'auto', editor: {
+        {header: '아이디', name: 'memberId', width: 'auto', align: 'center'},
+        {header: '학과', name: 'deptName', width: 'auto', align: 'center'},
+        {header: '이름', name: 'name', width: 'auto', editor: 'text', align: 'center'},
+        {header: '전화 번호', name: 'tel', width: 'auto', editor: 'text', align: 'left'},
+        {header: '주소', name: 'address', width: 'auto', editor: 'text', align: 'left'},
+        {header: '생년월일', name: 'birthDate', width: 'auto', editor: 'text', align: 'center'},
+        {header: '계정 상태', name: 'isActive', width: 'auto', align: 'center', editor: {
                 customStyle: false, // 기본 스타일 제거 (적용 가능한 경우)
                 type: 'select',
                 options: {
@@ -45,16 +45,15 @@ function createMemberGrid(memberListDiv) {
                     ]
                 }
             }},
-        {header: '생성일', name: 'createAt', width: 'auto'},
-        {header: '최근 수정일', name: 'updateAt', width: 'auto'},
-        {header: '개인 이메일', name: 'email', width: 'auto', editor: 'text'},
-        {header: '증명사진', name: 'fileInfo', width: 'auto'},
-        {header: '성별', name: 'genderStr', width: 'auto'},
-        {header: '학적 상태', name: 'academicStatusStr', width: 'auto'},
-        {header: '학년', name: 'gradeStr', width: 'auto'},
-        {header: '회원 구분', name: 'memberTypeStr', width: 'auto'},
-        {header: '입학/입사 일자', name: 'startDate', width: 'auto', editor: 'text'},
-        {header: '졸업 일자', name: 'endDate', width: 'auto', editor: 'text'}];
+        {header: '생성일', name: 'createAt', width: 'auto', align: 'center'},
+        {header: '최근 수정일', name: 'updateAt', width: 'auto', align: 'center'},
+        {header: '개인 이메일', name: 'email', width: 'auto', align: 'left', editor: 'text'},
+        {header: '성별', name: 'genderStr', width: 'auto', align: 'center'},
+        {header: '학적 상태', name: 'academicStatusStr', width: 'auto', align: 'center'},
+        {header: '학년', name: 'gradeStr', width: 'auto', align: 'center'},
+        {header: '회원 구분', name: 'memberTypeStr', width: 'auto', align: 'center'},
+        {header: '입학/입사 일자', name: 'startDate', width: 'auto', align: 'center', editor: 'text'},
+        {header: '졸업 일자', name: 'endDate', width: 'auto', align: 'center', editor: 'text'}];
 
     // 필터 객체 정의
     const filter = {
