@@ -7,11 +7,6 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
     <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-    <style>
-        .search-wrapper {
-            margin: 20px;
-        }
-    </style>
 </head>
 <body>
 <div>
@@ -48,14 +43,14 @@
                 </select>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; width: 100%;">
+            <div>
                 <button id="attendance-search-btn" class="btn">조회</button>
             </div>
         </div>
     </div>
 
-    <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
-        <span>출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
+    <div class="attendance-legend" style="text-align: left; margin-left: 15px;">
+        <span>※ 출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
     </div>
 
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
@@ -144,18 +139,18 @@
                     el: document.getElementById('attendance-grid-container'),
                     data: data,
                     columns: [
-                        {header: '학번', name: 'studentId', width: 202, align: 'center'},
-                        {header: '학생 이름', name: 'studentName', width: 200, align: 'center'},
-                        {header: '출석', name: 'attendanceCount', width: 100, align: 'center'},
-                        {header: '지각', name: 'lateCount', width: 100, align: 'center'},
-                        {header: '결석', name: 'absentCount', width: 100, align: 'center'},
+                        {header: '학번', name: 'studentId', align: 'center'},
+                        {header: '학생 이름', name: 'studentName', align: 'center'},
+                        {header: '출석', name: 'attendanceCount', align: 'center'},
+                        {header: '지각', name: 'lateCount', align: 'center'},
+                        {header: '결석', name: 'absentCount', align: 'center'},
                         ...Array.from({length: 15}, (_, i) => ({
                             header: `${i + 1}주차`,
                             name: `week${i + 1}`,
                             width: 50,
                             align: 'center'
                         })),
-                        {header: '출석 점수', name: 'attendanceScore', width: 200, align: 'center'}
+                        {header: '출석 점수', name: 'attendanceScore', align: 'center'}
                     ],
                     bodyHeight: 'fitToParent'
                 });

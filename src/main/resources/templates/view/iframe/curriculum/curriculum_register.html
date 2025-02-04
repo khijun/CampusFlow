@@ -6,24 +6,29 @@
    <title>교육과정 등록</title>
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
 </head>
 <body>
 <div id="container">
    <div id="dept-list-table-container">
-      <h2>학과 조회</h2>
       <hr class="divider">
-      <div class="list-option-container">
-         <label for="dept-id-input">학과 코드:</label>
-         <input type="text" id="dept-id-input" class="input-field"/>
-         <label for="dept-name-input">학과명:</label>
-         <input type="text" id="dept-name-input" class="input-field"/>
-         <button id="dept-list-select-btn" class="btn">조회</button>
+      <div class="search-container">
+         <div class="input-group">
+            <label for="dept-id-input">학과 코드:</label>
+            <input type="text" id="dept-id-input" class="input-field"/>
+         </div>
+         <div class="input-group">
+            <label for="dept-name-input">학과명:</label>
+            <input type="text" id="dept-name-input" class="input-field"/>
+         </div>
+         <div >
+            <button id="dept-list-select-btn" class="btn">조회</button>
+         </div>
       </div>
       <div id="dept-list-grid" style="height: 300px;"></div>
    </div>
 
    <div id="curriculum-register-container" style="margin-top: 60px;">
-      <h2>교육과정 추가</h2>
       <hr class="divider">
       <div id="curriculum-button-container" class="list-option-container">
          <button id="add-row-btn" class="btn">행 추가</button>
@@ -70,13 +75,12 @@
             el: document.getElementById("dept-list-grid"),
             data: [],
             columns: [
-                { header: "학과 ID", name: "deptId", width: 250, align: "center" },
-                { header: "학과명", name: "deptName", width: 500 },
-                { header: "학생 수", name: "maxStudents", width: 400, align: "center" },
+                { header: "학과 ID", name: "deptId", align: "center" },
+                { header: "학과명", name: "deptName", },
+                { header: "학생 수", name: "maxStudents", align: "center" },
                {
                   header: "상태",
                   name: "deptStatus",
-                  width: 462,
                   align: "center",
                   formatter: function(item) {
                      const statusMap = {
@@ -118,14 +122,14 @@
             el: document.getElementById("curriculum-grid-container"),
             data: [],
             columns: [
-                { header: "학과명", name: "deptName", align: "center", width: 200 },
-                { header: "교육과정명", name: "curriculumName", editor: "text", width: 300 },
-                { header: "연도", name: "curriculumYear", editor: "text", align: "center", width: 100 },
-                { header: "학년", name: "grade", formatter: item => gradeList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: gradeList } }, align: "center", width: 100 },
-                { header: "상태", name: "curriculumStatus", formatter: item => statusList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: statusList } }, align: "center", width: 200 },
-                { header: "학기", name: "semester", formatter: item => semesterList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: semesterList } }, align: "center", width: 100 },
-                { header: "주야 구분", name: "dayNight", formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: dayNightList } }, align: "center", width: 150 },
-                { header: "비고", name: "reason", editor: "text", width: 462 }
+                { header: "학과명", name: "deptName", align: "center"},
+                { header: "교육과정명", name: "curriculumName", editor: "text", width: 400 },
+                { header: "연도", name: "curriculumYear", editor: "text", align: "center"},
+                { header: "학년", name: "grade", formatter: item => gradeList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: gradeList } }, align: "center"},
+                { header: "상태", name: "curriculumStatus", formatter: item => statusList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: statusList } }, align: "center"},
+                { header: "학기", name: "semester", formatter: item => semesterList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: semesterList } }, align: "center"},
+                { header: "주야 구분", name: "dayNight", formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value, editor: { type: "select", options: { listItems: dayNightList } }, align: "center"},
+                { header: "비고", name: "reason", editor: "text", width: 300}
             ],
             bodyHeight: 400,
             rowHeaders: ["checkbox"],
