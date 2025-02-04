@@ -7,6 +7,8 @@ import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.InquiryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -23,25 +25,25 @@ public class InquiryService {
     private AuthService authService;
 
     // 사용자 권한에 따른 문의 조회
-    public List<Inquiry> getInquiriesByUserRole() {
+    public Page<Inquiry> getInquiriesByUserRole(Pageable pageable) {
         var currentMember = authService.getCurrentMember();
         if (currentMember == null) {
-            return Collections.emptyList();
+            return Page.empty(pageable);
         }
 
         // 교직원인 경우 모든 문의사항 조회
         if (isStaff()) {
-            return getAllInquiries();
+            return getAllInquiries(pageable);
         }
         
         // 학생인 경우 자신의 문의사항만 조회
-        return inquiryRepository.findByMemberAndRelatedInquiryIsNullOrderByCreatedAtDesc(currentMember);
+        return inquiryRepository.findByMemberAndRelatedInquiryIsNullOrderByCreatedAtDesc(currentMember, pageable);
     }
 
     // 모든 문의 조회 (교직원용)
-    public List<Inquiry> getAllInquiries() {
+    public Page<Inquiry> getAllInquiries(Pageable pageable) {
         // 원본 문의사항만 조회 (relatedInquiry가 null인 것만)
-        List<Inquiry> inquiries = inquiryRepository.findByRelatedInquiryIsNullOrderByCreatedAtDesc();
+        Page<Inquiry> inquiries = inquiryRepository.findByRelatedInquiryIsNullOrderByCreatedAtDesc(pageable);
 
         // 기본 상태 코드 조회
         CommonCode defaultStatus = commonCodeRepository.findByCodeValue("AWAITING");
@@ -50,7 +52,7 @@ public class InquiryService {
         }
 
         // 각 문의사항의 상태 확인 및 설정
-        for (Inquiry inquiry : inquiries) {
+        for (Inquiry inquiry : inquiries.getContent()) {
             if (inquiry.getInquiryStatus() == null) {
                 inquiry.setInquiryStatus(defaultStatus);
                 inquiryRepository.save(inquiry);

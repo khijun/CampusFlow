@@ -10,10 +10,23 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/ko.js"></script>
+    <style>
+
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            margin: 0 auto;
+            margin-bottom: 50px;
+        }
+        @media (min-width: 768px) {
+            .container {
+                max-width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="text-center">학사 일정 추가</h1>
     <div id="calendar"></div>
 </div>
 

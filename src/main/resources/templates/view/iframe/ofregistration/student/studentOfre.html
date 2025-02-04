@@ -159,7 +159,7 @@
         constructor(props) {
             const el = document.createElement('div');
             const { lectureId, isFull, regStatus } = props.value;
-            
+
             console.log('버튼 렌더링:', { lectureId, isFull, regStatus }); // 디버깅용 로그
 
             if (isFull && regStatus !== 'REQUESTED') {
