@@ -103,6 +103,7 @@ function addTab(title, url, saveState = true) {
     const newTab = document.createElement('li');
     newTab.className = 'tab-item';
     newTab.setAttribute('data-url', url);
+    newTab.setAttribute('title', title);
     newTab.innerHTML = `
         <span>${title}</span>
         <button class="close-tab" onclick="closeTab(this)">×</button>

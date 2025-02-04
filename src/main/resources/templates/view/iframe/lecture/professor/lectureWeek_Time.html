@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>강의 주차/시간</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
@@ -14,10 +13,6 @@
 <body>
     <!-- Section 1: 검색 조건 -->
     <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-        <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-        <span class="h6 mb-0">강의 검색</span>
-    </div>
     <div class="search-container">
         <div class="input-group">
             <label for="Semester">학기</label>
@@ -39,12 +34,13 @@
         <button type="button" id="searchButton">조회</button>
     </div>
 
+    <hr style="border: none; margin: 20px 0;">
     <!-- Section 2: 검색 결과 (Toast UI Grid) -->
     <div class="d-flex align-items-center mb-3">
         <i class="fas fa-clock mr-2" style="margin-left: 10px"></i>
         <span class="h6 mb-0">강의 시간</span>
     </div>
-    <div id="searchGrid" style="margin: 20px;">
+    <div id="searchGrid">
 
     </div>
 
@@ -95,15 +91,15 @@
         const grid = new tui.Grid({
             el: document.getElementById('searchGrid'),
             columns: [
-                { header: '강의 코드', name: 'lectureId', sortable: false },
-                { header: '강의명', name: 'lectureName', sortable: false },
-                { header: '강의 주차', name: 'lectureWeekName', sortable: false },
-                { header: '학기', name: 'semesterName', sortable: false },
-                { header: '강의실', name: 'facilityName', sortable: false },
-                { header: '강의 요일', name: 'lectureDays', sortable: false },
-                { header: '시작 교시', name: 'startTime', sortable: false },
-                { header: '종료 교시', name: 'endTime', sortable: false },
-                { header: '수업 상태', name: 'classStatus', sortable: false },
+                { header: '강의 코드', name: 'lectureId', sortable: false, align:'center' },
+                { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
+                { header: '강의 주차', name: 'lectureWeekName', sortable: false, align:'center' },
+                { header: '학기', name: 'semesterName', sortable: false, align:'center' },
+                { header: '강의실', name: 'facilityName', sortable: false, align:'center' },
+                { header: '강의 요일', name: 'lectureDays', sortable: false, align:'center' },
+                { header: '시작 교시', name: 'startTime', sortable: false, align:'center' },
+                { header: '종료 교시', name: 'endTime', sortable: false, align:'center' },
+                { header: '수업 상태', name: 'classStatus', sortable: false, align:'center' },
             ],
             bodyHeight: 300
         });

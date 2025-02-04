@@ -7,7 +7,7 @@
   <link href="https://uicdn.toast.com/grid/latest/tui-grid.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/iframe/evaluation/search-container.css}">
+  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <style>
     .container {
       margin: 0 auto;
@@ -21,15 +21,6 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .no-results {
-      text-align: center;
-      padding: 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-top: 20px;
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -38,9 +29,7 @@
   <form class="search-container" id="searchForm">
     <div class="input-group">
       <label for="deptSelect">학과</label>
-      <select id="deptSelect" name="deptId">
-        <option value="">학과를 선택해주세요</option>
-      </select>
+      <select id="deptSelect" name="deptId"></select>
     </div>
     <div class="input-group">
       <label for="gradeSelect">학년</label>
@@ -62,15 +51,10 @@
         </option>
       </select>
     </div>
-    <div class="button-group">
+    <div class="searchButton">
       <button type="submit">검색</button>
     </div>
   </form>
-
-  <!-- 검색 결과가 없을 때 -->
-  <div class="no-results" id="noResults">
-    <p>학년을 먼저 선택해주세요.</p>
-  </div>
 
   <!-- TOAST UI Grid가 렌더링될 컨테이너 -->
   <div id="evaluation-grid"></div>
@@ -86,20 +70,18 @@
         {
           header: '강의명',
           name: 'lectureName',
-          align: 'center',
-          width: 200
+          align: 'center'
         },
         {
           header: '문항',
           name: 'questionName',
           align: 'left',
-          width: 'auto'
+          width: 900
         },
         {
           header: '평균 점수',
           name: 'averageScore',
           align: 'center',
-          width: 100,
           formatter: ({value}) => {
             return value ? value.toFixed(2) : '0.00';
           }
@@ -108,7 +90,6 @@
           header: '응답자 수',
           name: 'respondentCount',
           align: 'center',
-          width: 100,
           formatter: ({value}) => {
             return `${value || 0}명`;
           }
@@ -124,69 +105,117 @@
 
     // 교수의 학과 정보 가져오기
     fetch('/iframe/evaluation/lec/professor/departments')
-            .then(response => response.json())
+            .then(response => {
+              if (!response.ok) throw new Error('Network response was not ok');
+              return response.json();
+            })
             .then(departments => {
               const deptSelect = document.querySelector('#deptSelect');
+              if (!deptSelect) return;
+
+              // 기본 옵션 제거
+              deptSelect.innerHTML = '';  // "학과를 선택해주세요" 옵션 제거
+
+              // 교수의 학과만 추가
               departments.forEach(dept => {
                 const option = document.createElement('option');
                 option.value = dept.deptId;
                 option.textContent = dept.deptName;
                 deptSelect.appendChild(option);
               });
+
+              // 첫 번째(유일한) 학과 자동 선택
               if (departments.length === 1) {
                 deptSelect.value = departments[0].deptId;
-                deptSelect.disabled = true;
               }
             })
-            .catch(error => console.error('학과 목록 로딩 실패:', error));
+            .catch(error => {
+              console.error('학과 목록 로딩 실패:', error);
+            });
 
     // 검색 폼 제출 처리
-    document.getElementById('searchForm').addEventListener('submit', function (e) {
-      e.preventDefault();
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+      searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-      const searchParams = new URLSearchParams();
-      const deptId = document.querySelector('#deptSelect').value;
-      const grade = document.querySelector('#gradeSelect').value;
-      const lectureName = document.querySelector('#lectureSelect').value;
+        const deptId = document.querySelector('#deptSelect')?.value;
+        const grade = document.querySelector('#gradeSelect')?.value;
+        const lectureName = document.querySelector('#lectureSelect')?.value;
 
-      if (deptId) searchParams.append('deptId', deptId);
-      if (grade) searchParams.append('grade', grade);
-      if (lectureName) searchParams.append('lectureName', lectureName);
+        // 학년 선택 여부 체크
+        if (!grade) {
+          alert('학년을 선택해주세요.');
+          return;
+        }
 
-      fetch(`/api/evaluation/lec/search?${searchParams.toString()}`)
-              .then(response => response.json())
-              .then(result => {
-                if (result.result && result.data.contents.length > 0) {
-                  // 데이터 가공
-                  const processedData = result.data.contents.map(item => {
-                    // 전체 응답자 수 계산
-                    const totalRespondents = item.score1Count +
-                            item.score2Count +
-                            item.score3Count +
-                            item.score4Count +
-                            item.score5Count;
+        const searchParams = new URLSearchParams();
+        if (deptId) searchParams.append('deptId', deptId);
+        if (grade) searchParams.append('grade', grade);
+        if (lectureName) searchParams.append('lectureName', lectureName);
 
-                    return {
-                      lectureName: item.lectureName,
-                      questionName: item.questionName,
-                      averageScore: item.averageScore || item.score || 0,
-                      respondentCount: totalRespondents
-                    };
-                  });
+        fetch(`/api/evaluation/lec/search?${searchParams.toString()}`)
+                .then(response => {
+                  if (!response.ok) throw new Error('Network response was not ok');
+                  return response.json();
+                })
+                .then(result => {
+                  console.log('Search result:', result);
 
-                  grid.resetData(processedData);
-                  document.getElementById('noResults').style.display = 'none';
-                } else {
+                  if (result?.data) {
+                    // 강의명과 문항으로 그룹화하여 평균 계산
+                    const groupedData = {};
+
+                    result.data.forEach(item => {
+                      const key = `${item.lectureName}-${item.questionName}`;
+
+                      if (!groupedData[key]) {
+                        groupedData[key] = {
+                          lectureName: item.lectureName,
+                          questionName: item.questionName,
+                          totalScore: 0,
+                          totalRespondents: 0,
+                          count: 0
+                        };
+                      }
+
+                      const respondents = (item.score1Count || 0) +
+                              (item.score2Count || 0) +
+                              (item.score3Count || 0) +
+                              (item.score4Count || 0) +
+                              (item.score5Count || 0);
+
+                      groupedData[key].totalScore += (item.averageScore || item.score || 0);
+                      groupedData[key].totalRespondents += respondents;
+                      groupedData[key].count++;
+                    });
+
+                    // 최종 데이터 생성
+                    const processedData = Object.values(groupedData).map(group => ({
+                      lectureName: group.lectureName,
+                      questionName: group.questionName,
+                      averageScore: group.totalScore / group.count,
+                      respondentCount: group.totalRespondents
+                    }));
+
+                    if (processedData.length > 0) {
+                      grid.resetData(processedData);
+                    } else {
+                      grid.resetData([]);
+                      alert('검색 결과가 없습니다.');
+                    }
+                  } else {
+                    grid.resetData([]);
+                    alert('검색 결과가 없습니다.');
+                  }
+                })
+                .catch(error => {
+                  console.error('Search error:', error);
                   grid.resetData([]);
-                  document.getElementById('noResults').style.display = 'block';
-                }
-              })
-              .catch(error => {
-                console.error('Search error:', error);
-                grid.resetData([]);
-                document.getElementById('noResults').style.display = 'block';
-              });
-    });
+                  alert('검색 중 오류가 발생했습니다.');
+                });
+      });
+    }
   });
 </script>
 </body>
