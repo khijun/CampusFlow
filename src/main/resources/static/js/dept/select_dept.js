@@ -17,11 +17,11 @@ listSelectButton.addEventListener('click', () => {
 
 function createDeptGrid(listDiv) {
     const columns = [
-        {header: '학과 코드', name: 'deptId'},
-        {header: '학과 이름', name: 'deptName', editor: 'text'},
-        {header: '최대 수용 인원', name: 'maxStudents', editor: 'text'},
+        {header: '학과 코드', name: 'deptId', align: 'center'},
+        {header: '학과 이름', name: 'deptName', editor: 'text', align: 'center'},
+        {header: '최대 수용 인원', name: 'maxStudents', editor: 'text', align: 'right'},
         {
-            header: '학과 상태', name: 'deptStatus',
+            header: '학과 상태', name: 'deptStatus', align: 'center',
             editor: {
                 type: 'select',
                 options: {
@@ -33,9 +33,9 @@ function createDeptGrid(listDiv) {
                 }
             }
         },
-        {header: '교양 학점', name: 'generalCredits', editor: 'text'},
-        {header: '전공 학점', name: 'majorCredits', editor: 'text'},
-        {header: '졸업 학점', name: 'graduationCredits', editor: 'text'},
+        {header: '교양 학점', name: 'generalCredits', editor: 'text', align: 'right'},
+        {header: '전공 학점', name: 'majorCredits', editor: 'text', align: 'right'},
+        {header: '졸업 학점', name: 'graduationCredits', editor: 'text', align: 'right'},
 
     ];
 

@@ -1,5 +1,5 @@
 /* 고정형 설정 */
-.container {
+.mb-10 {
     width: 100%; /* 고정된 전체 레이아웃 너비 */
     height: 100%;
     margin: 0 auto; /* 화면 중앙 정렬 */

@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>과제 제출</title>
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-    <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 
@@ -25,7 +27,7 @@
 
     .modal-content {
         background-color: #fefefe;
-        margin: 5% auto;
+        margin: 10px auto;
         padding: 20px;
         border: 1px solid #888;
         width: 80%;
@@ -43,16 +45,6 @@
 
     .close:hover {
         color: black;
-    }
-
-    .assignment-info h5 {
-        margin-bottom: 10px;
-        color: #495057;
-    }
-
-    .assignment-info p {
-        margin-bottom: 8px;
-        color: #6c757d;
     }
 
     .section-content input[readonly],
@@ -75,56 +67,51 @@
 </style>
 
 <body>
-    <!-- 섹션 1: 검색 영역 -->
-    <hr style="border: none; margin: 20px 0;">
-    <div class="search-container">
-        <div class="input-group">
-            <label for="Semester">학기</label>
-            <select id="Semester">
-                <option value="FIRST_SEMESTER">1학기</option>
-                <option value="SECOND_SEMESTER">2학기</option>
-            </select>
+<!-- 섹션 1: 검색 영역 -->
+<div class="search-container">
+    <div class="input-group">
+        <label for="Semester">학기</label>
+        <select id="Semester">
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label for="studentId">학번</label>
+        <input type="text" id="studentId" th:value="${member.memberId}" readonly>
+    </div>
+    <div class="input-group"></div>
+    <button type="button" id="searchButton">조회</button>
+</div>
+
+<!-- 섹션 2: 강의 목록 -->
+<div class="mb-10">
+    <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
+    <span>수강 중인 강의</span>
+</div>
+<div id="lectureGrid" class="mb-10"></div>
+
+<!-- 섹션 3: 과제 목록 -->
+<div class="mb-10">
+    <i class="fas fa-tasks mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">과제 목록</span>
+</div>
+<div id="assignmentGrid" class="mb-10"></div>
+
+<!-- 과제 제출 모달 -->
+<div id="assignmentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+
+        <!-- 과제명 섹션 -->
+        <div class="mb-10">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="">과제명</span>
         </div>
-        <div class="input-group">
-            <label for="studentId">학번</label>
-            <input type="text" id="studentId" th:value="${member.memberId}" readonly>
-        </div>
-        <div class="input-group"></div>
-        <button type="button" id="searchButton">조회</button>
-    </div>
-
-    <!-- 섹션 2: 강의 목록 -->
-    <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-        <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
-        <span class="h6 mb-0">수강 중인 강의</span>
-    </div>
-    <div id="lectureGrid"></div>
-
-    <!-- 섹션 3: 과제 목록 -->
-    <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-        <i class="fas fa-tasks mr-2" style="margin-left: 10px"></i>
-        <span class="h6 mb-0">과제 목록</span>
-    </div>
-    <div id="assignmentGrid"></div>
-
-    <!-- 과제 제출 모달 -->
-    <div id="assignmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-
-            <!-- 과제명 섹션 -->
-            <div class="search-container">
-                <div class="input-group" style="width: 100%;"></div>
-                <hr style="border: none; margin: 20px 0;">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-clipboard-list mr-2"></i>
-                    <span class="h6 mb-0">과제명</span>
-                </div>
-                <div class="input-group" style="width: 100%;">
-                    <input type="text" id="modalAssignmentName" class="form-control" readonly>
-                </div>
+        <div class="search-container">
+            <div class="input-group" style="width: 100%;">
+                <input type="text" id="modalAssignmentName" class="form-control" readonly>
+            </div>
 
             <!-- 제출기한 섹션 -->
                 <hr style="border: none; margin: 20px 0;">
@@ -171,204 +158,204 @@
         </div>
     </div>
 
-    <script>
-        // Toast UI Grid 초기화 - 강의 목록
-        const lectureGrid = new tui.Grid({
-            el: document.getElementById('lectureGrid'),
-            columns: [
-                { header: '강의코드', name: 'lectureId', sortable: false, align:'center' },
-                { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
-                { header: '교수명', name: 'name', sortable: false, align:'center' },
-                { header: '학점', name: 'subjectCredits', sortable: false, align:'center' },
-                { header: '강의 요일', name: 'lectureDay', sortable: false, align:'center' },
-                { header: '강의실', name: 'facilityName', sortable: false, align:'center' },
-            ],
-            bodyHeight: 300
-        });
+<script>
+    // Toast UI Grid 초기화 - 강의 목록
+    const lectureGrid = new tui.Grid({
+        el: document.getElementById('lectureGrid'),
+        columns: [
+            {header: '강의코드', name: 'lectureId', sortable: false, align: 'center'},
+            {header: '강의명', name: 'lectureName', sortable: false, align: 'center'},
+            {header: '교수명', name: 'name', sortable: false, align: 'center'},
+            {header: '학점', name: 'subjectCredits', sortable: false, align: 'center'},
+            {header: '강의 요일', name: 'lectureDay', sortable: false, align: 'center'},
+            {header: '강의실', name: 'facilityName', sortable: false, align: 'center'},
+        ],
+        bodyHeight: 300
+    });
 
-        // Toast UI Grid 초기화 - 과제 목록
-        const assignmentGrid = new tui.Grid({
-            el: document.getElementById('assignmentGrid'),
-            columns: [
-                { header: '과제코드', name: 'assignmentId', sortable: false, align:'center' },
-                { header: '강의명', name: 'lectureName', sortable: false, align:'center'},
-                { header: '교수명', name: 'professorName', sortable: false, align:'center' },
-                { header: '과제명', name: 'assignmentName', sortable: false, align:'center' },
-                { header: '제출기한', name: 'dueDate', sortable: false, align:'center' },
-            ],
-            bodyHeight: 300
-        });
+    // Toast UI Grid 초기화 - 과제 목록
+    const assignmentGrid = new tui.Grid({
+        el: document.getElementById('assignmentGrid'),
+        columns: [
+            {header: '과제코드', name: 'assignmentId', sortable: false, align: 'center'},
+            {header: '강의명', name: 'lectureName', sortable: false, align: 'center'},
+            {header: '교수명', name: 'professorName', sortable: false, align: 'center'},
+            {header: '과제명', name: 'assignmentName', sortable: false, align: 'center'},
+            {header: '제출기한', name: 'dueDate', sortable: false, align: 'center'},
+        ],
+        bodyHeight: 300
+    });
 
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentMonth = new Date().getMonth() + 1;
-            const semesterSelect = document.getElementById('Semester');
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentMonth = new Date().getMonth() + 1;
+        const semesterSelect = document.getElementById('Semester');
 
-            if (currentMonth >= 8 || currentMonth <= 1) {
-                semesterSelect.value = 'SECOND_SEMESTER';
-            } else {
-                semesterSelect.value = 'FIRST_SEMESTER';
-            }
-
-            // 초기 검색 실행
-            searchLectures();
-        });
-
-        // 검색 버튼 클릭 이벤트
-        document.getElementById('searchButton').addEventListener('click', searchLectures);
-
-        function searchLectures() {
-            const semesterCode = document.getElementById('Semester').value;
-            const studentId = document.getElementById('studentId').value;
-
-            fetch(`/api/lecture/student?semesterCode=${semesterCode}&studentId=${studentId}`)
-                .then(response => response.json())
-                .then(lectures => {
-                    if (lectures.length === 0) {
-                        alert('수강 중인 강의가 없습니다.');
-                    }
-                    lectureGrid.resetData(lectures);
-                    assignmentGrid.resetData([]); // 과제 목록 초기화
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('강의 목록을 불러오는데 실패했습니다.');
-                });
+        if (currentMonth >= 8 || currentMonth <= 1) {
+            semesterSelect.value = 'SECOND_SEMESTER';
+        } else {
+            semesterSelect.value = 'FIRST_SEMESTER';
         }
 
-        // 강의 선택 시 과제 목록 조회
-        lectureGrid.on('click', (ev) => {
-            const rowData = lectureGrid.getRow(ev.rowKey);
-            if (rowData) {
-                loadAssignments(rowData.lectureId);
-            }
-        });
+        // 초기 검색 실행
+        searchLectures();
+    });
 
-        //과제 목록 조회 함수
-        function loadAssignments(lectureId) {
-            fetch(`/api/assignment/student?lectureId=${lectureId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length === 0) {
-                        alert('등록된 과제가 없습니다.');
-                    }
-                    if (!Array.isArray(data)) {
-                        data = [];
-                    }
-                    assignmentGrid.resetData(data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    assignmentGrid.resetData([]);
-                });
+    // 검색 버튼 클릭 이벤트
+    document.getElementById('searchButton').addEventListener('click', searchLectures);
+
+    function searchLectures() {
+        const semesterCode = document.getElementById('Semester').value;
+        const studentId = document.getElementById('studentId').value;
+
+        fetch(`/api/lecture/student?semesterCode=${semesterCode}&studentId=${studentId}`)
+            .then(response => response.json())
+            .then(lectures => {
+                if (lectures.length === 0) {
+                    alert('수강 중인 강의가 없습니다.');
+                }
+                lectureGrid.resetData(lectures);
+                assignmentGrid.resetData([]); // 과제 목록 초기화
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('강의 목록을 불러오는데 실패했습니다.');
+            });
+    }
+
+    // 강의 선택 시 과제 목록 조회
+    lectureGrid.on('click', (ev) => {
+        const rowData = lectureGrid.getRow(ev.rowKey);
+        if (rowData) {
+            loadAssignments(rowData.lectureId);
+        }
+    });
+
+    //과제 목록 조회 함수
+    function loadAssignments(lectureId) {
+        fetch(`/api/assignment/student?lectureId=${lectureId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    alert('등록된 과제가 없습니다.');
+                }
+                if (!Array.isArray(data)) {
+                    data = [];
+                }
+                assignmentGrid.resetData(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                assignmentGrid.resetData([]);
+            });
+    }
+
+    // 모달 관련 변수
+    const modal = document.getElementById('assignmentModal');
+    const closeBtn = document.getElementsByClassName('close')[0];
+    let currentAssignmentId = null;
+
+    // 과제 선택 시 모달 표시
+    assignmentGrid.on('click', (ev) => {
+        const rowData = assignmentGrid.getRow(ev.rowKey);
+        if (rowData) {
+            currentAssignmentId = rowData.assignmentId;
+            showAssignmentModal(rowData);
+        }
+    });
+
+    // 모달 표시 함수
+    function showAssignmentModal(assignment) {
+        console.log('Assignment Data:', assignment); // 데이터 확인용 로그
+
+        if (assignment.assignmentName) {
+            document.getElementById('modalAssignmentName').value = assignment.assignmentName;
         }
 
-        // 모달 관련 변수
-        const modal = document.getElementById('assignmentModal');
-        const closeBtn = document.getElementsByClassName('close')[0];
-        let currentAssignmentId = null;
+        if (assignment.dueDate) {
+            const date = new Date(assignment.dueDate);
+            const formattedDate = date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            document.getElementById('modalDueDate').value = formattedDate;
+        }
 
-        // 과제 선택 시 모달 표시
-        assignmentGrid.on('click', (ev) => {
-            const rowData = assignmentGrid.getRow(ev.rowKey);
-            if (rowData) {
-                currentAssignmentId = rowData.assignmentId;
-                showAssignmentModal(rowData);
-            }
-        });
+        if (assignment.description) {
+            document.getElementById('modalDescription').value = assignment.description;
+        }
 
-        // 모달 표시 함수
-        function showAssignmentModal(assignment) {
-            console.log('Assignment Data:', assignment); // 데이터 확인용 로그
-
-            if (assignment.assignmentName) {
-                document.getElementById('modalAssignmentName').value = assignment.assignmentName;
-            }
-
-            if (assignment.dueDate) {
-                const date = new Date(assignment.dueDate);
-                const formattedDate = date.toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                });
-                document.getElementById('modalDueDate').value = formattedDate;
-            }
-
-            if (assignment.description) {
-                document.getElementById('modalDescription').value = assignment.description;
-            }
-
-            // 첨부파일 표시
-            const attachedFileDiv = document.getElementById('attachedFile');
-            if (assignment.fileInfo) {
-                attachedFileDiv.innerHTML = `
+        // 첨부파일 표시
+        const attachedFileDiv = document.getElementById('attachedFile');
+        if (assignment.fileInfo) {
+            attachedFileDiv.innerHTML = `
                     <a href="/api/file/view/${assignment.fileInfo}" target="_blank">
                         첨부파일 보기
                     </a>`;
-            } else {
-                attachedFileDiv.innerHTML = '첨부된 파일이 없습니다.';
-            }
-
-            modal.style.display = 'block';
+        } else {
+            attachedFileDiv.innerHTML = '첨부된 파일이 없습니다.';
         }
 
-        // 모달 닫기
-        closeBtn.onclick = function () {
+        modal.style.display = 'block';
+    }
+
+    // 모달 닫기
+    closeBtn.onclick = function () {
+        modal.style.display = 'none';
+        resetSubmissionForm();
+    }
+
+    // 모달 외부 클릭시 닫기
+    window.onclick = function (event) {
+        if (event.target == modal) {
             modal.style.display = 'none';
             resetSubmissionForm();
         }
+    }
 
-        // 모달 외부 클릭시 닫기
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-                resetSubmissionForm();
-            }
+    // 과제 제출 버튼 클릭 이벤트
+    document.getElementById('submitButton').addEventListener('click', function () {
+        const file = document.getElementById('submissionFile').files[0];
+
+        if (!file) {
+            alert('제출할 파일을 선택해주세요.');
+            return;
         }
 
-        // 과제 제출 버튼 클릭 이벤트
-        document.getElementById('submitButton').addEventListener('click', function () {
-            const file = document.getElementById('submissionFile').files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('assignmentId', currentAssignmentId);
 
-            if (!file) {
-                alert('제출할 파일을 선택해주세요.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('assignmentId', currentAssignmentId);
-
-            fetch('/api/assignment/submit', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.text())
-                .then(message => {
-                    alert(message);
-                    if (message.includes('성공')) {
-                        modal.style.display = 'none';
-                        resetSubmissionForm();
-                        // 과제 목록 새로고침
-                        const selectedRow = lectureGrid.getRow(lectureGrid.getFocusedCell().rowKey);
-                        if (selectedRow) {
-                            loadAssignments(selectedRow.lectureId);
-                        }
+        fetch('/api/assignment/submit', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                if (message.includes('성공')) {
+                    modal.style.display = 'none';
+                    resetSubmissionForm();
+                    // 과제 목록 새로고침
+                    const selectedRow = lectureGrid.getRow(lectureGrid.getFocusedCell().rowKey);
+                    if (selectedRow) {
+                        loadAssignments(selectedRow.lectureId);
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('과제 제출 중 오류가 발생했습니다.');
-                });
-        });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('과제 제출 중 오류가 발생했습니다.');
+            });
+    });
 
-        // 제출 폼 초기화
-        function resetSubmissionForm() {
-            document.getElementById('submissionFile').value = '';
-            currentAssignmentId = null;
-        }
-    </script>
+    // 제출 폼 초기화
+    function resetSubmissionForm() {
+        document.getElementById('submissionFile').value = '';
+        currentAssignmentId = null;
+    }
+</script>
 </body>
 
 </html>

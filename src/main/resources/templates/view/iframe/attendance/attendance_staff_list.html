@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>관리자 출결 조회</title>
+    <title>강의별 출석 조회(관리자 출결 조회)</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
 </head>
 <body>
 <div>
     <div class="search-wrapper">
         <div class="search-container">
             <div class="input-group">
-                <label for="dept-select">학과:</label>
+                <label for="dept-select">학과</label>
                 <select id="dept-select" class="input-field">
                     <option value="">학과 선택</option>
                 </select>
             </div>
 
             <div class="input-group">
-                <label for="year-select">년도:</label>
+                <label for="year-select">연도</label>
                 <select id="year-select" class="input-field">
                     <option value="2023">2023</option>
                     <option value="2024">2024</option>
@@ -29,7 +30,7 @@
             </div>
 
             <div class="input-group">
-                <label for="semester-select">학기:</label>
+                <label for="semester-select">학기</label>
                 <select id="semester-select" class="input-field">
                     <option value="88">1학기</option>
                     <option value="89">2학기</option>
@@ -37,23 +38,21 @@
             </div>
 
             <div class="input-group">
-                <label for="lecture-select">강의:</label>
+                <label for="lecture-select">강의</label>
                 <select id="lecture-select" class="input-field">
                     <option value="">강의 선택</option>
                 </select>
             </div>
-
-            <div>
-                <button id="attendance-search-btn" class="btn">조회</button>
-            </div>
+            <div class="input-group"></div>
+            <button id="attendance-search-btn" class="btn">조회</button>
         </div>
     </div>
 
-    <div class="attendance-legend" style="text-align: left; margin-left: 15px;">
+    <div class="attendance-legend mb-10" style="text-align: left; margin-left: 15px;">
         <span>※ 출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
     </div>
 
-    <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
+    <div id="attendance-grid-container" style="height: 700px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>

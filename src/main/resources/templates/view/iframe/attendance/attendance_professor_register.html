@@ -5,32 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>출석 등록 (교수용)</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
-    <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-    <style>
-        .save-button {
-            background-color: whitesmoke;
-            color: black;
-            padding: 10px 15px;
-            border: solid 1px lightgrey;
-            border-radius: 5px;
-            cursor: pointer;
-            float: right;
-            margin-top: 10px;
-        }
-
-        .save-button:hover {
-            background-color: #f5f5f5;
-            border-color: grey;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
 </head>
 <body>
 <div>
     <div class="search-wrapper">
         <div class="search-container">
             <div class="input-group">
-                <label for="year-select">년도:</label>
+                <label for="year-select">연도</label>
                 <select id="year-select" class="input-field">
                     <option>2023</option>
                     <option>2024</option>
@@ -39,7 +23,7 @@
             </div>
 
             <div class="input-group">
-                <label for="semester-select">학기:</label>
+                <label for="semester-select">학기</label>
                 <select id="semester-select" class="input-field">
                     <option value="88">1학기</option>
                     <option value="89">2학기</option>
@@ -47,21 +31,26 @@
             </div>
 
             <div class="input-group">
-                <label for="lecture-select">강의:</label>
+                <label for="lecture-select">강의</label>
                 <select id="lecture-select" class="input-field"></select>
             </div>
 
-            <div>
-                <button id="attendance-search-btn" class="btn">조회</button>
-            </div>
+            <button id="attendance-search-btn" class="btn">조회</button>
         </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -10px; padding: 0 15px;">
-        <div class="attendance-legend" style="margin-bottom: -20px;">
-            <span>※ 출석: P</span> <span>지각: L</span> <span>결석: A</span>
+    <div style="display: flex; flex-direction: row;" class="mb-10">
+        <div class="right" style="display: flex; flex-direction: column; align-items: flex-start; height: 100%">
+            <div class="attendance-legend"
+                 style="display: flex; width: 100%; padding: 0 15px; flex-direction: row; gap:6px;">
+                <span>※ 출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
+            </div>
+            <div class="space" style="display: flex; flex:1; width: 100%"></div>
         </div>
-        <button id="save-attendance-btn" class="save-button">출석 저장</button>
+        <div class="legend-divider" style="display: flex; flex:1;"></div>
+        <div class="btn-container">
+            <button id="save-attendance-btn" class="save-button">출석 저장</button>
+        </div>
     </div>
 
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
@@ -105,7 +94,8 @@
                             name: `week${i + 1}`,
                             width: 50,
                             align: 'center',
-                            editor: {type: 'select',
+                            editor: {
+                                type: 'select',
                                 options: {
                                     listItems: [{text: "P", value: "P"}, {text: "L", value: "L"}, {
                                         text: "A",

@@ -4,46 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css"
-          th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <title>수강신청 관리</title>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>수강 신청 조회</title>
 </head>
 <body>
 
 <div id="registration-option-container" class="search-container">
     <div class="input-group">
         <label for="lectureName">
-            강의명 :
+            강의명
         </label>
         <input type="text" id="lectureName"/>
     </div>
     <div class="input-group">
         <label for="studentId">
-            학번 :
+            학번
         </label>
         <input type="text" id="studentId"/>
     </div>
     <div class="input-group">
         <label for="studentName">
-            학생명 :
+            학생명
         </label>
         <input type="text" id="studentName"/>
     </div>
     <div class="input-group">
         <label for="deptName">
-            학과 :
+            학과명
         </label>
         <input type="text" id="deptName"/>
     </div>
     <div class="input-group">
         <label for="subjectType">
-            이수구분 :
+            이수 구분
         </label>
         <input type="text" id="subjectType"/>
     </div>
-    <div>
     <button id="searchButton">조회</button>
-    </div>
 </div>
 
 <div id="registration-list"></div>
@@ -60,7 +59,7 @@
     });
 
     // 검색 버튼 클릭 이벤트 처리
-    document.getElementById('searchButton').addEventListener('click', function() {
+    document.getElementById('searchButton').addEventListener('click', function () {
         const lectureName = document.getElementById('lectureName').value;
         const studentId = document.getElementById('studentId').value;
         const studentName = document.getElementById('studentName').value;
@@ -151,7 +150,7 @@
     class CustomButtonRenderer {
         constructor(props) {
             const el = document.createElement('div');
-            const { lectureId, memberId, regStatus } = props.value;
+            const {lectureId, memberId, regStatus} = props.value;
 
             if (regStatus !== 'APPROVED' && regStatus !== 'REJECTED') {
                 // 승인 버튼

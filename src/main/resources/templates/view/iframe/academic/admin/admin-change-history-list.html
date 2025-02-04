@@ -1,133 +1,134 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-        th:href="@{/css/iframe/curriculum/search-container.css}"/>
-  <title>변동 신청 승인</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>변동 신청 승인</title>
 </head>
 <body>
 
 <div class="search-container">
-  <div class="input-group">
-    <label for="deptFilter">학과 선택:</label>
-    <select id="deptFilter">
-      <option value="">전체</option>
-      <th:block th:each="dept : ${deptList}">
-        <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
-      </th:block>
-    </select>
-  </div>
+    <div class="input-group">
+        <label for="deptFilter">학과 선택</label>
+        <select id="deptFilter">
+            <option value="">전체</option>
+            <th:block th:each="dept : ${deptList}">
+                <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+            </th:block>
+        </select>
+    </div>
 
-  <div class="input-group">
-    <label for="nameFilter">이름 검색:</label>
-    <input type="text" id="nameFilter" placeholder="이름 입력">
-  </div>
+    <div class="input-group">
+        <label for="nameFilter">이름 검색</label>
+        <input type="text" id="nameFilter" placeholder="이름 입력">
+    </div>
 
-  <div class="input-group">
-    <label for="afterStateFilter">변경 후 상태:</label>
-    <select id="afterStateFilter">
-      <option value="">전체</option>
-      <option value="휴학">휴학</option>
-      <option value="재학">재학</option>
-      <option value="자퇴">자퇴</option>
-      <option value="퇴학">퇴학</option>
-      <option value="졸업">졸업</option>
-      <option value="제적">제적</option>
-    </select>
-  </div>
+    <div class="input-group">
+        <label for="afterStateFilter">변경 후 상태</label>
+        <select id="afterStateFilter">
+            <option value="">전체</option>
+            <option value="휴학">휴학</option>
+            <option value="재학">재학</option>
+            <option value="자퇴">자퇴</option>
+            <option value="퇴학">퇴학</option>
+            <option value="졸업">졸업</option>
+            <option value="제적">제적</option>
+        </select>
+    </div>
 
-  <button id="searchBtn">조회</button>
+    <button id="searchBtn">조회</button>
 </div>
 
 <div id="change-request-history-grid" style="display: none;"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector('#change-request-history-grid');
-    const deptFilter = document.querySelector('#deptFilter');
-    const nameFilter = document.querySelector('#nameFilter');
-    const afterStateFilter = document.querySelector('#afterStateFilter');
-    const searchBtn = document.querySelector('#searchBtn');
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridDiv = document.querySelector('#change-request-history-grid');
+        const deptFilter = document.querySelector('#deptFilter');
+        const nameFilter = document.querySelector('#nameFilter');
+        const afterStateFilter = document.querySelector('#afterStateFilter');
+        const searchBtn = document.querySelector('#searchBtn');
 
-    let originalData = [];
-    let instance = null;
+        let originalData = [];
+        let instance = null;
 
-    searchBtn.addEventListener('click', () => {
-      if (instance === null) {
-        createChangeHistoryGrid(gridDiv);
-      } else {
-        filterGrid();
-      }
-      gridDiv.style.display = 'block';
+        searchBtn.addEventListener('click', () => {
+            if (instance === null) {
+                createChangeHistoryGrid(gridDiv);
+            } else {
+                filterGrid();
+            }
+            gridDiv.style.display = 'block';
+        });
+
+        function createChangeHistoryGrid(gridDiv) {
+            const columns = [
+                {header: '학번', name: 'memberId', align: 'center'},
+                {header: '이름', name: 'name', align: 'center'},
+                {header: '학년', name: 'grade', align: 'center'},
+                {header: '학과', name: 'deptName', align: 'center'},
+                {header: '변경 전 상태', name: 'beforeState', align: 'center'},
+                {header: '변경 후 상태', name: 'afterState', align: 'center'},
+                {header: '승인 날짜', name: 'approvalDate', align: 'center'}
+            ];
+
+            fetch('/api/admin/change-request-history')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 실패했습니다.' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    originalData = data.map(history => ({
+                        memberId: history.memberId,
+                        name: history.name,
+                        grade: history.grade,
+                        deptId: history.deptId,
+                        deptName: history.deptName,
+                        beforeState: history.beforeState,
+                        afterState: history.afterState,
+                        approvalDate: history.approvalDate
+                    }));
+
+                    renderGrid(gridDiv, originalData, columns);
+                })
+                .catch(error => {
+                    console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
+                });
+        }
+
+        function renderGrid(gridDiv, data, columns) {
+            if (instance !== null) {
+                instance.destroy();
+                instance = null;
+            }
+            instance = new tui.Grid({
+                el: gridDiv,
+                columns: columns,
+                data: data
+            });
+        }
+
+        function filterGrid() {
+            const selectedDeptId = deptFilter.value;
+            const nameKeyword = nameFilter.value.trim().toLowerCase();
+            const selectedAfterState = afterStateFilter.value;
+
+            const filteredData = originalData.filter(item => {
+                return (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
+                    (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword)) &&
+                    (selectedAfterState === "" || item.afterState === selectedAfterState);
+            });
+
+            renderGrid(gridDiv, filteredData, instance.getColumns());
+        }
     });
-
-    function createChangeHistoryGrid(gridDiv) {
-      const columns = [
-        {header: '학번', name: 'memberId', align: 'center'},
-        {header: '이름', name: 'name', align: 'center'},
-        {header: '학년', name: 'grade', align: 'center'},
-        {header: '학과', name: 'deptName', align: 'center'},
-        {header: '변경 전 상태', name: 'beforeState', align: 'center'},
-        {header: '변경 후 상태', name: 'afterState', align: 'center'},
-        {header: '승인 날짜', name: 'approvalDate', align: 'center'}
-      ];
-
-      fetch('/api/admin/change-request-history')
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('네트워크 응답이 실패했습니다.' + response.statusText);
-                }
-                return response.json();
-              })
-              .then(data => {
-                originalData = data.map(history => ({
-                  memberId: history.memberId,
-                  name: history.name,
-                  grade: history.grade,
-                  deptId: history.deptId,
-                  deptName: history.deptName,
-                  beforeState: history.beforeState,
-                  afterState: history.afterState,
-                  approvalDate: history.approvalDate
-                }));
-
-                renderGrid(gridDiv, originalData, columns);
-              })
-              .catch(error => {
-                console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
-              });
-    }
-
-    function renderGrid(gridDiv, data, columns) {
-      if (instance !== null) {
-        instance.destroy();
-        instance = null;
-      }
-      instance = new tui.Grid({
-        el: gridDiv,
-        columns: columns,
-        data: data
-      });
-    }
-
-    function filterGrid() {
-      const selectedDeptId = deptFilter.value;
-      const nameKeyword = nameFilter.value.trim().toLowerCase();
-      const selectedAfterState = afterStateFilter.value;
-
-      const filteredData = originalData.filter(item => {
-        return (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
-                (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword)) &&
-                (selectedAfterState === "" || item.afterState === selectedAfterState);
-      });
-
-      renderGrid(gridDiv, filteredData, instance.getColumns());
-    }
-  });
 </script>
 </body>
 </html>
