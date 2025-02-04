@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>강의계획서 목록</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
@@ -49,10 +48,6 @@
 <body>
     <!-- 검색 조건 -->
     <hr style="border: none; margin: 20px 0;">
-    <div class="d-flex align-items-center mb-3">
-        <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-        <span class="h6 mb-0">강의 검색</span>
-    </div>
     <div class="search-container">
         <div class="input-group">
             <label for="Semester">학기</label>
@@ -65,6 +60,7 @@
             <label for="professorId">교번</label>
             <input type="text" id="professorId" th:value="${member.memberId}" readonly>
         </div>
+        <div class="input-group"></div>
         <button type="button" id="searchButton">조회</button>
     </div>
 
@@ -88,14 +84,15 @@
         const lectureList = new tui.Grid({
             el: document.getElementById('lectureGrid'),
             columns: [
-                { header: '강의코드', name: 'lectureId', sortable: false },
-                { header: '강의명', name: 'lectureName', sortable: false },
-                { header: '학점', name: 'subjectCredits', sortable: false },
-                { header: '학기', name: 'semesterName', sortable: false },
-                { header: '최대 인원', name: 'maxStudents', sortable: false },
+                { header: '강의코드', name: 'lectureId', sortable: false, align:'center' },
+                { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
+                { header: '학점', name: 'subjectCredits', sortable: false, align:'center' },
+                { header: '학기', name: 'semesterName', sortable: false, align:'center' },
+                { header: '최대 인원', name: 'maxStudents', sortable: false, align:'center' },
                 {
                     header: '강의계획서',
                     name: 'fileInfo',
+                    align:'center',
                     formatter: function (data) {
                         if (data.value) {
                             return '<button type="button" class="download-btn">강의계획서</button>';

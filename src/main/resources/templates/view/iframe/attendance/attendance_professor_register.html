@@ -8,11 +8,21 @@
     <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
     <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
     <style>
-        .search-wrapper {
-            margin: 20px; /* 위아래, 좌우 여백 추가 */
+        .save-button {
+            background-color: whitesmoke;
+            color: black;
+            padding: 10px 15px;
+            border: solid 1px lightgrey;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            margin-top: 10px;
         }
-        .save-button { background-color: whitesmoke; color: black; padding: 10px 15px; border: solid 1px lightgrey; border-radius: 5px; cursor: pointer; float: right; margin-top: 10px; }
-        .save-button:hover { background-color: #f5f5f5; border-color: grey;}
+
+        .save-button:hover {
+            background-color: #f5f5f5;
+            border-color: grey;
+        }
     </style>
 </head>
 <body>
@@ -20,32 +30,40 @@
     <div class="search-wrapper">
         <div class="search-container">
             <div class="input-group">
-                <label>년도:</label>
+                <label for="year-select">년도:</label>
                 <select id="year-select" class="input-field">
                     <option>2023</option>
                     <option>2024</option>
                     <option selected>2025</option>
                 </select>
             </div>
+
             <div class="input-group">
-                <label>학기:</label>
+                <label for="semester-select">학기:</label>
                 <select id="semester-select" class="input-field">
                     <option value="88">1학기</option>
                     <option value="89">2학기</option>
                 </select>
             </div>
+
             <div class="input-group">
-                <label>강의:</label>
+                <label for="lecture-select">강의:</label>
                 <select id="lecture-select" class="input-field"></select>
             </div>
 
-            <button id="attendance-search-btn" class="btn">조회</button>
+            <div>
+                <button id="attendance-search-btn" class="btn">조회</button>
+            </div>
         </div>
     </div>
-    <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
-        <span>출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -10px; padding: 0 15px;">
+        <div class="attendance-legend" style="margin-bottom: -20px;">
+            <span>※ 출석: P</span> <span>지각: L</span> <span>결석: A</span>
+        </div>
+        <button id="save-attendance-btn" class="save-button">출석 저장</button>
     </div>
-    <button id="save-attendance-btn" class="save-button" style="margin-bottom: 10px; margin-right: 20px;">출석 저장</button>
+
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
 </div>
 
@@ -77,19 +95,26 @@
                     data,
                     rowHeaders: ["checkbox"],
                     columns: [
-                        { header: '학번', name: 'studentId', width: 202, align: 'center', readOnly: true },
-                        { header: '학생 이름', name: 'studentName', width: 200, align: 'center', readOnly: true },
-                        { header: '출석', name: 'attendanceCount', width: 100, align: 'center', readOnly: true },
-                        { header: '지각', name: 'lateCount', width: 100, align: 'center', readOnly: true },
-                        { header: '결석', name: 'absentCount', width: 100, align: 'center', readOnly: true },
-                        ...Array.from({ length: 15 }, (_, i) => ({
+                        {header: '학번', name: 'studentId', width: 202, align: 'center', readOnly: true},
+                        {header: '학생 이름', name: 'studentName', width: 200, align: 'center', readOnly: true},
+                        {header: '출석', name: 'attendanceCount', width: 100, align: 'center', readOnly: true},
+                        {header: '지각', name: 'lateCount', width: 100, align: 'center', readOnly: true},
+                        {header: '결석', name: 'absentCount', width: 100, align: 'center', readOnly: true},
+                        ...Array.from({length: 15}, (_, i) => ({
                             header: `${i + 1}주차`,
                             name: `week${i + 1}`,
                             width: 50,
                             align: 'center',
-                            editor: { type: 'select', options: { listItems: [{ text: "P", value: "P" }, { text: "L", value: "L" }, { text: "A", value: "A" }, { text: "-", value: "-" }] } }
+                            editor: {type: 'select',
+                                options: {
+                                    listItems: [{text: "P", value: "P"}, {text: "L", value: "L"}, {
+                                        text: "A",
+                                        value: "A"
+                                    }, {text: "-", value: "-"}]
+                                }
+                            }
                         })),
-                        { header: '출석 점수', name: 'attendanceScore', width: 160, align: 'center', readOnly: true }
+                        {header: '출석 점수', name: 'attendanceScore', width: 160, align: 'center', readOnly: true}
                     ],
                     bodyHeight: 'fitToParent'
                 });
@@ -114,7 +139,7 @@
             try {
                 const response = await fetch(`/attendance/api/professor/update?lectureId=${lectureId}`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(payload)
                 });
 

@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>강의 개설 승인</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
   <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -15,10 +14,6 @@
 <body>
   <!-- 검색 섹션 -->
   <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
-    <i class="fas fa-search mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의 검색</span>
-  </div>
   <div class="search-container">
     <div class="input-group">
       <label for="deptName">학과명</label>
@@ -145,11 +140,11 @@
     const grid = new tui.Grid({
       el: document.getElementById('lectureGrid'),
       columns: [
-        { header: '강의명', name: 'lectureName' },
-        { header: '교수명', name: 'professorName' },
-        { header: '최대 인원', name: 'maxStudents' },
-        { header: '학과명', name: 'deptName' },
-        { header: '학기', name: 'semesterName' },
+        { header: '강의명', name: 'lectureName', sortable: false, align:'center'},
+        { header: '교수명', name: 'professorName',sortable: false, align:'center'},
+        { header: '최대 인원', name: 'maxStudents',sortable: false, align:'center'},
+        { header: '학과명', name: 'deptName', sortable: false, align:'center'},
+        { header: '학기', name: 'semesterName', sortable: false, align:'center'},
       ],
       bodyHeight: 300,      // 그리드 바디의 높이를 300px로 설정
       rowClassName: function (rowData) {
