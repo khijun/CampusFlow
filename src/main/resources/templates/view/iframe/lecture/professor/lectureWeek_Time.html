@@ -4,251 +4,254 @@
 <head>
     <meta charset="UTF-8">
     <title>강의 주차 및 강의 시간</title>
-    <link rel="stylesheet" href="/static/css/iframe/curriculum/search-container.css" th:href="@{/css/iframe/curriculum/search-container.css}">
-    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
     <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 </head>
 
 <body>
-    <!-- Section 1: 검색 조건 -->
-    <div class="search-container">
-        <div class="input-group">
-            <label for="Semester">학기</label>
-            <select id="Semester">
-                <option value="FIRST_SEMESTER">1학기</option>
-                <option value="SECOND_SEMESTER">2학기</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label for="professorId">교번</label>
-            <input type="text" id="professorId" th:value="${member.memberId}" readonly>
-        </div>
-        <div class="input-group">
-            <label for="lectureName">강의명</label>
-            <select id="lectureName">
-
-            </select>
-        </div>
-        <button type="button" id="searchButton">조회</button>
+<!-- Section 1: 검색 조건 -->
+<div class="search-container">
+    <div class="input-group">
+        <label for="Semester">학기</label>
+        <select id="Semester">
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+        </select>
     </div>
-    <!-- Section 2: 검색 결과 (Toast UI Grid) -->
-    <div class="mb-10">
-        <i class="fas fa-clock mr-2" style="margin-left: 10px"></i>
-        <span class="h6 mb-0">강의 시간</span>
+    <div class="input-group">
+        <label for="professorId">교번</label>
+        <input type="text" id="professorId" th:value="${member.memberId}" readonly>
     </div>
-    <div id="searchGrid" class="mb-10">
+    <div class="input-group">
+        <label for="lectureName">강의명</label>
+        <select id="lectureName">
 
+        </select>
     </div>
+    <button type="button" id="searchButton">조회</button>
+</div>
+<!-- Section 2: 검색 결과 (Toast UI Grid) -->
+<div class="mb-10">
+    <i class="fas fa-clock mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">강의 시간</span>
+</div>
+<div id="searchGrid" class="mb-10">
 
-    <!-- Section 3: 강의 정보 입력 -->
-    <div class="mb-10">
-        <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
-        <span class="h6 mb-0">수업 상태 수정</span>
+</div>
+
+<!-- Section 3: 강의 정보 입력 -->
+<div class="mb-10">
+    <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
+    <span class="h6 mb-0">수업 상태 수정</span>
+</div>
+<div class="search-container">
+    <div class="input-group">
+        <label for="selectedLectureName">강의명</label>
+        <input type="text" id="selectedLectureName" readonly>
     </div>
-    <div class="search-container">
-        <div class="input-group">
-            <label for="selectedLectureName">강의명</label>
-            <input type="text" id="selectedLectureName" readonly>
-        </div>
-        <div class="input-group">
-            <label for="lectureWeek">강의 주차</label>
-            <input type="text" id="lectureWeek" readonly>
-        </div>
-        <div class="input-group">
-            <label for="startTime">시작 교시</label>
-            <input type="text" id="startTime" readonly>
-        </div>
-        <div class="input-group">
-            <label for="endTime">종료 교시</label>
-            <input type="text" id="endTime" readonly>
-        </div>
-        <div class="input-group">
-            <label for="facilityName">강의실</label>
-            <input type="text" id="facilityName" readonly>
-        </div>
-        <div class="input-group">
-            <label for="lectureDay">강의 요일</label>
-            <input type="text" id="lectureDay" readonly>
-        </div>
-        <div class="input-group">
-            <label for="classStatus">수업 상태</label>
-            <select id="classStatus" name="classStatus">
-                <option value="">수업 상태 선택</option>
-                <option th:each="status : ${classStatus}" th:value="${status.codeValue}" th:text="${status.codeName}">
-                </option>
-            </select>
-        </div>
-        <button type="button" id="submitButton">수정</button>
+    <div class="input-group">
+        <label for="lectureWeek">강의 주차</label>
+        <input type="text" id="lectureWeek" readonly>
     </div>
+    <div class="input-group">
+        <label for="startTime">시작 교시</label>
+        <input type="text" id="startTime" readonly>
+    </div>
+    <div class="input-group">
+        <label for="endTime">종료 교시</label>
+        <input type="text" id="endTime" readonly>
+    </div>
+    <div class="input-group">
+        <label for="facilityName">강의실</label>
+        <input type="text" id="facilityName" readonly>
+    </div>
+    <div class="input-group">
+        <label for="lectureDay">강의 요일</label>
+        <input type="text" id="lectureDay" readonly>
+    </div>
+    <div class="input-group">
+        <label for="classStatus">수업 상태</label>
+        <select id="classStatus" name="classStatus">
+            <option value="">수업 상태 선택</option>
+            <option th:each="status : ${classStatus}" th:value="${status.codeValue}" th:text="${status.codeName}">
+            </option>
+        </select>
+    </div>
+    <button type="button" id="submitButton">수정</button>
+</div>
 
-    <script>
-        // Toast UI Grid 초기화
-        const grid = new tui.Grid({
-            el: document.getElementById('searchGrid'),
-            columns: [
-                { header: '강의 코드', name: 'lectureId', sortable: false, align:'center' },
-                { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
-                { header: '강의 주차', name: 'lectureWeekName', sortable: false, align:'center' },
-                { header: '학기', name: 'semesterName', sortable: false, align:'center' },
-                { header: '강의실', name: 'facilityName', sortable: false, align:'center' },
-                { header: '강의 요일', name: 'lectureDays', sortable: false, align:'center' },
-                { header: '시작 교시', name: 'startTime', sortable: false, align:'center' },
-                { header: '종료 교시', name: 'endTime', sortable: false, align:'center' },
-                { header: '수업 상태', name: 'classStatus', sortable: false, align:'center' },
-            ],
-            bodyHeight: 300
-        });
+<script>
+    // Toast UI Grid 초기화
+    const grid = new tui.Grid({
+        el: document.getElementById('searchGrid'),
+        columns: [
+            {header: '강의 코드', name: 'lectureId', sortable: false, align: 'center'},
+            {header: '강의명', name: 'lectureName', sortable: false, align: 'center'},
+            {header: '강의 주차', name: 'lectureWeekName', sortable: false, align: 'center'},
+            {header: '학기', name: 'semesterName', sortable: false, align: 'center'},
+            {header: '강의실', name: 'facilityName', sortable: false, align: 'center'},
+            {header: '강의 요일', name: 'lectureDays', sortable: false, align: 'center'},
+            {header: '시작 교시', name: 'startTime', sortable: false, align: 'center'},
+            {header: '종료 교시', name: 'endTime', sortable: false, align: 'center'},
+            {header: '수업 상태', name: 'classStatus', sortable: false, align: 'center'},
+        ],
+        bodyHeight: 300
+    });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
-            const semesterSelect = document.getElementById('Semester');
-            const professorIdInput = document.getElementById('professorId');
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+        const semesterSelect = document.getElementById('Semester');
+        const professorIdInput = document.getElementById('professorId');
 
-            if (currentMonth >= 8 || currentMonth <= 1) {
-                semesterSelect.value = 'SECOND_SEMESTER';
-            } else {
-                semesterSelect.value = 'FIRST_SEMESTER';
-            }
-            // 학기가 변경될 때마다 강의 목록 업데이트
-            function updateLectureList() {
-                const semesterCode = semesterSelect.value;
-                const professorId = professorIdInput.value;
-                const lectureSelect = document.getElementById('lectureName');
+        if (currentMonth >= 8 || currentMonth <= 1) {
+            semesterSelect.value = 'SECOND_SEMESTER';
+        } else {
+            semesterSelect.value = 'FIRST_SEMESTER';
+        }
 
-                fetch(`/api/lecture/professor-lectures?professorId=${professorId}&semesterCode=${semesterCode}`)
-                    .then(response => response.json())
-                    .then(lectures => {
-                        // 기존 옵션 제거
-                        lectureSelect.innerHTML = '<option value="">강의를 선택해주세요</option>';
+        // 학기가 변경될 때마다 강의 목록 업데이트
+        function updateLectureList() {
+            const semesterCode = semesterSelect.value;
+            const professorId = professorIdInput.value;
+            const lectureSelect = document.getElementById('lectureName');
 
-                        // 새로운 강의 옵션 추가
-                        lectures.forEach(lecture => {
-                            const option = document.createElement('option');
-                            option.value = lecture.lectureName;
-                            option.textContent = lecture.lectureName;
-                            lectureSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('강의 목록을 불러오는 중 오류가 발생했습니다.');
-                    });
-            }
-            // 초기 강의 목록 로드
-            updateLectureList();
-            // 학기 변경 시 강의 목록 업데이트
-            semesterSelect.addEventListener('change', updateLectureList);
-        });
-
-        // 검색 버튼 클릭 이벤트 처리
-        document.getElementById('searchButton').addEventListener('click', function () {
-            const semesterCode = document.getElementById('Semester').value;
-            const professorId = document.getElementById('professorId').value;
-            const lectureName = document.getElementById('lectureName').value;
-
-            if (lectureName === "") {
-                alert('강의를 선택해주세요');
-                return
-            }
-
-            // API 호출
-            fetch(`/api/lecture/week-time?semesterCode=${semesterCode}&professorId=${professorId}&lectureName=${encodeURIComponent(lectureName)}`)
+            fetch(`/api/lecture/professor-lectures?professorId=${professorId}&semesterCode=${semesterCode}`)
                 .then(response => response.json())
-                .then(data => {
-                    if (!data || data.length === 0) {
-                        alert('선택하신 강의의 강의 주차 정보가 없습니다.');
-                    } else {
-                        grid.resetData(data);
-                    }
+                .then(lectures => {
+                    // 기존 옵션 제거
+                    lectureSelect.innerHTML = '<option value="">강의를 선택해주세요</option>';
+
+                    // 새로운 강의 옵션 추가
+                    lectures.forEach(lecture => {
+                        const option = document.createElement('option');
+                        option.value = lecture.lectureName;
+                        option.textContent = lecture.lectureName;
+                        lectureSelect.appendChild(option);
+                    });
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('검색 중 오류가 발생했습니다.');
+                    alert('강의 목록을 불러오는 중 오류가 발생했습니다.');
                 });
+        }
 
-        });
+        // 초기 강의 목록 로드
+        updateLectureList();
+        // 학기 변경 시 강의 목록 업데이트
+        semesterSelect.addEventListener('change', updateLectureList);
+    });
 
-        // 전역 변수로 선택된 강의 시간 ID 저장
-        let selectedLectureTimeId = null;
+    // 검색 버튼 클릭 이벤트 처리
+    document.getElementById('searchButton').addEventListener('click', function () {
+        const semesterCode = document.getElementById('Semester').value;
+        const professorId = document.getElementById('professorId').value;
+        const lectureName = document.getElementById('lectureName').value;
 
-        grid.on('click', (ev) => {
-            if (ev.rowKey === undefined) return;
-            const rowData = grid.getRow(ev.rowKey);
+        if (lectureName === "") {
+            alert('강의를 선택해주세요');
+            return
+        }
 
-            selectedLectureTimeId = rowData.lectureTimeId;
-
-            // Section 3의 입력 필드에 데이터 설정
-            document.getElementById('selectedLectureName').value = rowData.lectureName;
-            document.getElementById('lectureWeek').value = rowData.lectureWeekName;
-            document.getElementById('startTime').value = rowData.startTime;
-            document.getElementById('endTime').value = rowData.endTime;
-            document.getElementById('facilityName').value = rowData.facilityName;
-            document.getElementById('lectureDay').value = rowData.lectureDays;
-
-            // 수업 상태 설정
-            const classStatusSelect = document.getElementById('classStatus');
-            const options = Array.from(classStatusSelect.options);
-            const matchingOption = options.find(option => option.text === rowData.classStatus);
-            if (matchingOption) {
-                classStatusSelect.value = matchingOption.value;
-            }
-
-
-        });
-
-        // 수정 버튼 클릭 이벤트
-        document.getElementById('submitButton').addEventListener('click', function () {
-            if (!selectedLectureTimeId) {
-                alert('수정할 강의를 선택해주세요.');
-                return;
-            }
-
-            const classStatusSelect = document.getElementById('classStatus');
-            const classStatus = classStatusSelect.value;
-            const classStatusText = classStatusSelect.options[classStatusSelect.selectedIndex].text;
-
-            if (!classStatus) {
-                alert('수업 상태를 선택해주세요.');
-                return;
-            }
-
-            // 종료 상태 선택 시 추가 경고
-            if (classStatus === 'LECTURE_COMPLETED') {
-                if (!confirm('종료 상태로 변경 시 다시 상태를 변경할 수 없습니다.\n정말 변경하시겠습니까?')) {
-                    return;
+        // API 호출
+        fetch(`/api/lecture/week-time?semesterCode=${semesterCode}&professorId=${professorId}&lectureName=${encodeURIComponent(lectureName)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    alert('선택하신 강의의 강의 주차 정보가 없습니다.');
+                } else {
+                    grid.resetData(data);
                 }
-            } else {
-                // 일반적인 상태 변경 확인
-                if (!confirm('수업 상태를 ' + classStatusText + '상태로 변경하시겠습니까?')) {
-                    return;
-                }
-            }
-
-            // API 호출
-            fetch('/api/lecture/update-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `lectureTimeId=${selectedLectureTimeId}&classStatus=${classStatus}`
             })
-                .then(response => response.text())
-                .then(message => {
-                    alert(message);
-                    if (message.includes('성공')) {
-                        // 성공 시 그리드 데이터 갱신
-                        document.getElementById('searchButton').click();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('수업 상태 변경 중 오류가 발생했습니다.');
-                });
-        });
+            .catch(error => {
+                console.error('Error:', error);
+                alert('검색 중 오류가 발생했습니다.');
+            });
 
-    </script>
+    });
+
+    // 전역 변수로 선택된 강의 시간 ID 저장
+    let selectedLectureTimeId = null;
+
+    grid.on('click', (ev) => {
+        if (ev.rowKey === undefined) return;
+        const rowData = grid.getRow(ev.rowKey);
+
+        selectedLectureTimeId = rowData.lectureTimeId;
+
+        // Section 3의 입력 필드에 데이터 설정
+        document.getElementById('selectedLectureName').value = rowData.lectureName;
+        document.getElementById('lectureWeek').value = rowData.lectureWeekName;
+        document.getElementById('startTime').value = rowData.startTime;
+        document.getElementById('endTime').value = rowData.endTime;
+        document.getElementById('facilityName').value = rowData.facilityName;
+        document.getElementById('lectureDay').value = rowData.lectureDays;
+
+        // 수업 상태 설정
+        const classStatusSelect = document.getElementById('classStatus');
+        const options = Array.from(classStatusSelect.options);
+        const matchingOption = options.find(option => option.text === rowData.classStatus);
+        if (matchingOption) {
+            classStatusSelect.value = matchingOption.value;
+        }
+
+
+    });
+
+    // 수정 버튼 클릭 이벤트
+    document.getElementById('submitButton').addEventListener('click', function () {
+        if (!selectedLectureTimeId) {
+            alert('수정할 강의를 선택해주세요.');
+            return;
+        }
+
+        const classStatusSelect = document.getElementById('classStatus');
+        const classStatus = classStatusSelect.value;
+        const classStatusText = classStatusSelect.options[classStatusSelect.selectedIndex].text;
+
+        if (!classStatus) {
+            alert('수업 상태를 선택해주세요.');
+            return;
+        }
+
+        // 종료 상태 선택 시 추가 경고
+        if (classStatus === 'LECTURE_COMPLETED') {
+            if (!confirm('종료 상태로 변경 시 다시 상태를 변경할 수 없습니다.\n정말 변경하시겠습니까?')) {
+                return;
+            }
+        } else {
+            // 일반적인 상태 변경 확인
+            if (!confirm('수업 상태를 ' + classStatusText + '상태로 변경하시겠습니까?')) {
+                return;
+            }
+        }
+
+        // API 호출
+        fetch('/api/lecture/update-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `lectureTimeId=${selectedLectureTimeId}&classStatus=${classStatus}`
+        })
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                if (message.includes('성공')) {
+                    // 성공 시 그리드 데이터 갱신
+                    document.getElementById('searchButton').click();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('수업 상태 변경 중 오류가 발생했습니다.');
+            });
+    });
+
+</script>
 </body>
 
 </html>

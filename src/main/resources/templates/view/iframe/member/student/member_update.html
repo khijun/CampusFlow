@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-          th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
     <title>개인 정보 조회</title>
     <style>
         #member-info-container {
@@ -14,7 +15,7 @@
             flex-direction: column;
         }
 
-        #member-info{
+        #member-info {
             border: 1px solid;
             display: flex;
             flex-direction: column;
@@ -132,7 +133,7 @@
     }
 
 
-    window.addEventListener('DOMContentLoaded', (event) => {
+    window.addEventListener('DOMContentLoaded', () => {
         fetchMemberData();
     });
 
@@ -152,7 +153,7 @@
         if (!memberData.name || !memberData.tel || !memberData.address || !memberData.birthDate || !memberData.email) {
             alert('빈 값이 있습니다.');
             return;
-        }else if(!memberData.currentPassword){
+        } else if (!memberData.currentPassword) {
             alert('비밀번호를 입력해야 합니다.');
             return;
         }

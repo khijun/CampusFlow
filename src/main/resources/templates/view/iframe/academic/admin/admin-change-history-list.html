@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-          th:href="@{/css/iframe/curriculum/search-container.css}"/>
-    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
     <title>변동 신청 승인</title>
 </head>
 <body>
 
 <div class="search-container">
     <div class="input-group">
-        <label for="deptFilter">학과 선택:</label>
+        <label for="deptFilter">학과 선택</label>
         <select id="deptFilter">
             <option value="">전체</option>
             <th:block th:each="dept : ${deptList}">
@@ -23,12 +23,12 @@
     </div>
 
     <div class="input-group">
-        <label for="nameFilter">이름 검색:</label>
+        <label for="nameFilter">이름 검색</label>
         <input type="text" id="nameFilter" placeholder="이름 입력">
     </div>
 
     <div class="input-group">
-        <label for="afterStateFilter">변경 후 상태:</label>
+        <label for="afterStateFilter">변경 후 상태</label>
         <select id="afterStateFilter">
             <option value="">전체</option>
             <option value="휴학">휴학</option>
