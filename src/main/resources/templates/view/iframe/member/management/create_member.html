@@ -23,7 +23,7 @@
             <input type="date" id="start-date-input" required>
         </div>
         <div class="input-group">
-            <label for="member-type-input">멤버 타입</label>
+            <label for="member-type-input">회원 구분</label>
             <select id="member-type-input" required>
                 <option th:each="memberType : ${memberTypes}" th:value="${memberType.codeId}"
                         th:text="${memberType.codeName}"></option>

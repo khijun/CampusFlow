@@ -13,21 +13,21 @@
 <div id="dept-list-table-container">
     <div id="dept-list-option-container" class="search-container">
         <div class="input-group">
-            <label for="dept-id-input">학과 코드 :</label>
+            <label for="dept-id-input">학과 코드</label>
             <input type="text" id="dept-id-input"/>
         </div>
         <div class="input-group">
-            <label for="dept-name-input">학과명 :</label>
+            <label for="dept-name-input">학과명</label>
             <input type="text" id="dept-name-input"/>
         </div>
         <div class="input-group">
-            <label for="dept-min-student-value-input">최소 인원 :</label>
+            <label for="dept-min-student-value-input">최소 인원</label>
             <input type="text" id="dept-min-student-value-input"/>
-            <label for="dept-max-student-value-input">최대 인원 :</label>
+            <label for="dept-max-student-value-input">최대 인원</label>
             <input type="text" id="dept-max-student-value-input"/>
         </div>
         <div class="input-group">
-            <label for="dept-status-input">상태 :</label>
+            <label for="dept-status-input">상태</label>
             <select id="dept-status-input">
                 <option th:value="${null}" th:text="전체" selected></option>
                 <option th:each="commonCode : ${deptStatus}" th:value="${commonCode.codeId}"
