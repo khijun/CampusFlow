@@ -87,9 +87,9 @@
                 el: document.getElementById("curriculum-grid-container"),
                 data: data,
                 columns: [
-                    {header: "교육과정 ID", name: "curriculumId", align: "center", readOnly: true},
+                    {header: "교육과정 ID", name: "curriculumId", align: "center", readOnly: true, width: 'auto'},
                     {header: "학과 ID", name: "deptId", align: "center", readOnly: true},
-                    {header: "학과명", name: "deptName", align: "center", readOnly: true},
+                    {header: "학과명", name: "deptName", align: "center", readOnly: true, width: 'auto'},
                     {header: "교육과정명", name: "curriculumName", editor: "text", width: 400},
                     {header: "연도", name: "curriculumYear", align: "center", editor: "text"},
                     {
@@ -114,13 +114,13 @@
                         align: "center"
                     },
                     {
-                        header: "주야 구분",
+                        header: "주야",
                         name: "dayNight",
                         formatter: item => dayNightList.find(opt => opt.value === item.value)?.text || item.value,
                         editor: {type: "select", options: {listItems: dayNightList}},
                         align: "center"
                     },
-                    {header: "비고", name: "reason", editor: "text", width: 300}
+                    {header: "비고", name: "reason", editor: "text", width: 'auto', minWidth: 300}
                 ],
                 bodyHeight: "fitToParent",
                 rowHeaders: ["checkbox"],
