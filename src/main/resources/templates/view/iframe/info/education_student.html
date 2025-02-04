@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
   <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
         th:href="@{/css/iframe/curriculum/search-container.css}"/>
+  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+
   <title>학력 정보 조회</title>
   <style>
     .hidden { display: none; }
@@ -13,16 +15,15 @@
 </head>
 <body>
 
-
-<div id="education-list"></div>
+<div id="education-list" class="mb-10"></div>
 
 <!-- 학력 추가 버튼 -->
-<div>
+<div class="mb-10">
   <span class="add-button" onclick="toggleForm()">+ 학력 추가</span>
 </div>
 
 <!-- 학력 추가 폼 -->
-<div class="search-container">
+<div class="search-container mb-10">
 <div id="addForm" class="hidden">
   <div class="input-group">
   <form id="education-form">
