@@ -7,11 +7,6 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
     <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
     <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
-    <style>
-        .search-wrapper {
-            margin: 20px; /* 위아래, 좌우 여백 추가 */
-        }
-    </style>
 </head>
 <body>
 <div>
@@ -39,105 +34,107 @@
                 <select id="lecture-select" class="input-field">
                 </select>
             </div>
-
-            <button id="attendance-search-btn" class="btn">조회</button>
-        </div>
+            <div>
+                <button id="attendance-search-btn" class="btn">조회</button>
+            </div>
+            </div>
     </div>
-    <div class="attendance-legend" style="text-align: right; margin-right: 20px;">
-        <span>출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
+    <div class="attendance-legend" style="text-align: left; margin-left: 15px;">
+        <span>※ 출석 : P</span> <span>지각 : L</span> <span>결석 : A</span>
     </div>
     <div id="attendance-grid-container" style="height: 700px; margin-top: 10px;"></div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
-<script>let grid;
+<script>
+    let grid;
 
-function formatAttendanceStatus(status) {
-    return status || "-";
-}
-
-function calculateAttendanceScore(attendance, late, absent) {
-    let penalty = Math.floor((late || 0) / 3) + (absent || 0);
-    return Math.max(10 - penalty * 0.5, 0).toFixed(1);
-}
-
-document.getElementById("attendance-search-btn").addEventListener("click", () => {
-    const year = document.getElementById("year-select").value;
-    const semester = document.getElementById("semester-select").value;
-    const lectureId = document.getElementById("lecture-select").value;
-
-    if (!lectureId) {
-        alert("강의를 선택해주세요.");
-        return;
+    function formatAttendanceStatus(status) {
+        return status || "-";
     }
 
-    fetch(`/attendance/api/professor?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}&lectureId=${encodeURIComponent(lectureId)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (grid) {
-                grid.destroy();
-            }
+    function calculateAttendanceScore(attendance, late, absent) {
+        let penalty = Math.floor((late || 0) / 3) + (absent || 0);
+        return Math.max(10 - penalty * 0.5, 0).toFixed(1);
+    }
 
-            data.forEach(row => {
-                row.attendanceScore = calculateAttendanceScore(row.attendanceCount, row.lateCount, row.absentCount);
-                for (let i = 1; i <= 15; i++) {
-                    row[`week${i}`] = formatAttendanceStatus(row[`week${i}`]);
+    document.getElementById("attendance-search-btn").addEventListener("click", () => {
+        const year = document.getElementById("year-select").value;
+        const semester = document.getElementById("semester-select").value;
+        const lectureId = document.getElementById("lecture-select").value;
+
+        if (!lectureId) {
+            alert("강의를 선택해주세요.");
+            return;
+        }
+
+        fetch(`/attendance/api/professor?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}&lectureId=${encodeURIComponent(lectureId)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (grid) {
+                    grid.destroy();
                 }
-            });
 
-            grid = new tui.Grid({
-                el: document.getElementById('attendance-grid-container'),
-                data: data,
-                columns: [
-                    { header: '학번', name: 'studentId', width: 202, align: 'center' },
-                    { header: '학생 이름', name: 'studentName', width: 200, align: 'center' },
-                    { header: '출석', name: 'attendanceCount', width: 100, align: 'center' },
-                    { header: '지각', name: 'lateCount', width: 100, align: 'center' },
-                    { header: '결석', name: 'absentCount', width: 100, align: 'center' },
-                    ...Array.from({ length: 15 }, (_, i) => ({
-                        header: `${i + 1}주차`,
-                        name: `week${i + 1}`,
-                        width: 50,
-                        align: 'center'
-                    })),
-                    { header: '출석 점수', name: 'attendanceScore', width: 200, align: 'center' }
-                ],
-                bodyHeight: 'fitToParent'
-            });
-        })
-        .catch(error => {
-            console.error("출결 데이터 로딩 실패:", error);
-            alert("출결 데이터를 불러오는 데 실패했습니다.");
-        });
-});
+                data.forEach(row => {
+                    row.attendanceScore = calculateAttendanceScore(row.attendanceCount, row.lateCount, row.absentCount);
+                    for (let i = 1; i <= 15; i++) {
+                        row[`week${i}`] = formatAttendanceStatus(row[`week${i}`]);
+                    }
+                });
 
-window.onload = function() {
-    fetch("/attendance/api/professor/lectures")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`서버 응답 오류: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(lectures => {
-            if (!Array.isArray(lectures)) {
-                throw new Error("강의 목록이 배열이 아닙니다.");
-            }
-            const lectureSelect = document.getElementById("lecture-select");
-            lectureSelect.innerHTML = "<option value=''>강의 선택</option>";
-
-            lectures.forEach(lecture => {
-                const option = document.createElement("option");
-                option.value = lecture.lectureId;
-                option.textContent = lecture.lectureName;
-                lectureSelect.appendChild(option);
+                grid = new tui.Grid({
+                    el: document.getElementById('attendance-grid-container'),
+                    data: data,
+                    columns: [
+                        {header: '학번', name: 'studentId', align: 'center'},
+                        {header: '학생 이름', name: 'studentName', align: 'center'},
+                        {header: '출석', name: 'attendanceCount', align: 'center'},
+                        {header: '지각', name: 'lateCount', align: 'center'},
+                        {header: '결석', name: 'absentCount', align: 'center'},
+                        ...Array.from({length: 15}, (_, i) => ({
+                            header: `${i + 1}주차`,
+                            name: `week${i + 1}`,
+                            width: 50,
+                            align: 'center'
+                        })),
+                        {header: '출석 점수', name: 'attendanceScore', align: 'center'}
+                    ],
+                    bodyHeight: 'fitToParent'
+                });
+            })
+            .catch(error => {
+                console.error("출결 데이터 로딩 실패:", error);
+                alert("출결 데이터를 불러오는 데 실패했습니다.");
             });
-        })
-        .catch(error => {
-            console.error("강의 목록 로딩 실패:", error);
-            alert(`강의 목록을 불러오는 데 실패했습니다: ${error.message}`);
-        });
-};
+    });
+
+    window.onload = function () {
+        fetch("/attendance/api/professor/lectures")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`서버 응답 오류: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(lectures => {
+                if (!Array.isArray(lectures)) {
+                    throw new Error("강의 목록이 배열이 아닙니다.");
+                }
+                const lectureSelect = document.getElementById("lecture-select");
+                lectureSelect.innerHTML = "<option value=''>강의 선택</option>";
+
+                lectures.forEach(lecture => {
+                    const option = document.createElement("option");
+                    option.value = lecture.lectureId;
+                    option.textContent = lecture.lectureName;
+                    lectureSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("강의 목록 로딩 실패:", error);
+                alert(`강의 목록을 불러오는 데 실패했습니다: ${error.message}`);
+            });
+    };
 </script>
 </body>
 </html>

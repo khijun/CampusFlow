@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>로그인 - 두인대학교</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen relative w-full">
+
+<div class="absolute inset-0 bg-cover bg-center bg-no-repeat filter blur-md -z-10"
+     style="background-image: url('/assets/logo/image/university_image_01.webp');">
+</div>
+
+<div class="relative bg-white shadow-lg rounded-lg flex w-[900px] h-[570px] backdrop-blur-md border border-gray-300">
+   <div class="w-1/2 bg-gray-100 flex flex-col items-center justify-center p-6">
+      <img src="/assets/logo/doinUniver_03.png" alt="두인대학교 로고" class="w-24 mb-4">
+      <h1 class="text-3xl font-bold text-gray-800">두인대학교</h1>
+      <p class="text-sm text-gray-600 mt-2">당신의 꿈을 응원합니다!</p>
+   </div>
+
+   <div class="w-1/2 p-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">포털 로그인</h2>
+
+      <div th:if="${errorMessage}" class="text-red-500 text-sm text-center mb-4">
+         <p th:text="${errorMessage}"></p>
+      </div>
+
+      <div th:if="${logoutMessage}" class="text-green-500 text-sm text-center mb-4">
+         <p th:text="${logoutMessage}"></p>
+      </div>
+
+      <form th:action="@{/perform_login}" method="POST" onsubmit="saveUsername()">
+         <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">아이디</label>
+            <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   type="text" id="username" name="username" placeholder="아이디 입력">
+         </div>
+
+         <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="password">비밀번호</label>
+            <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   type="password" id="password" name="password" placeholder="비밀번호 입력">
+         </div>
+
+         <div class="mb-4 flex items-center">
+            <input type="checkbox" id="rememberMe" class="mr-2">
+            <label for="rememberMe" class="text-gray-700 text-sm">아이디 저장</label>
+         </div>
+
+         <button class="w-full bg-[#3b4f63] text-white py-2 rounded-lg border border-gray-600 hover:bg-[#2a3b4c] transition duration-300">
+            로그인
+         </button>
+      </form>
+
+<!--      <div class="mt-4 text-center text-sm">-->
+<!--         <a href="#" class="text-gray-600 hover:underline mr-3">2차 인증 안내</a>-->
+<!--         <a href="#" class="text-gray-600 hover:underline mr-3">교번/학번 찾기</a>-->
+<!--         <a href="#" class="text-gray-600 hover:underline">비밀번호 초기화</a>-->
+<!--      </div>-->
+
+      <div class="mt-6 border-t pt-4">
+         <h3 class="text-md font-bold text-gray-700 mb-2">📢 공지사항</h3>
+         <ul class="text-sm text-gray-600 space-y-2">
+            <li>📌 2025학년도 1학기 전자출결 시스템 안내</li>
+            <li>📌 2025학년도 2학기 휴보강 일정 안내</li>
+            <li>📌 2025학년도 유고결석 신청 및 처리 방법</li>
+            <li>📌 채용 사이트 이용 안내</li>
+         </ul>
+      </div>
+   </div>
+</div>
+
+<footer class="absolute bottom-0 w-full bg-gray-800 text-gray-300 py-1">
+   <div class="w-full flex justify-between px-6 items-center text-sm">
+
+      <div class="flex space-x-3">
+         <a href="#" class="text-gray-400 hover:text-white">개인정보처리방침</a>
+         <span>|</span>
+         <a href="#" class="text-gray-400 hover:text-white">이용약관</a>
+         <span>|</span>
+         <a href="#" class="text-gray-400 hover:text-white">고객지원</a>
+      </div>
+
+      <div class="text-xs flex items-center space-x-4">
+         <p>© 2025 두인대학교. All Rights Reserved.</p>
+
+         <div class="text-right">
+            <p>아산캠퍼스: 충청남도 아산시 배방읍 두인로 11번길 20 | ☎ 123-456-7890</p>
+            <p>서울캠퍼스: 서울특별시 서초구 남부순환로 8452 | ☎ 12-2345-6789</p>
+         </div>
+      </div>
+
+   </div>
+</footer>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+      const savedUsername = localStorage.getItem("savedUsername");
+      if (savedUsername) {
+         document.getElementById("username").value = savedUsername;
+         document.getElementById("rememberMe").checked = true;
+      }
+   });
+
+   function saveUsername() {
+      const username = document.getElementById("username").value;
+      const rememberMe = document.getElementById("rememberMe").checked;
+
+      if (rememberMe) {
+         localStorage.setItem("savedUsername", username);  // 아이디 저장
+      } else {
+         localStorage.removeItem("savedUsername");  // 저장된 아이디 삭제
+      }
+   }
+</script>
+</body>
+</html>

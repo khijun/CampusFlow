@@ -5,14 +5,23 @@
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
    <link th:href="@{/css/iframe/curriculum/subject/toastUi_grid.css}" rel="stylesheet">
+   <link th:href="@{/css/iframe/curriculum/search-container.css}" rel="stylesheet">
    <title>교육과정 목록</title>
 </head>
 <body>
 <div>
-   <div class="list-option-container">
-      <input id="curriculum-name-input" type="text" placeholder="교육과정 이름을 입력하세요" />
-      <button id="curriculum-list-select-btn">조회</button>
+   <!-- search-container 적용 -->
+   <div class="search-container">
+      <div class="input-group">
+         <label for="curriculum-name-input">교육과정명:</label>
+         <input id="curriculum-name-input" type="text" placeholder="교육과정 이름을 입력하세요" class="input-field"/>
+      </div>
+
+      <div>
+         <button id="curriculum-list-select-btn" class="btn">조회</button>
+      </div>
    </div>
+
    <div id="curriculum-grid-container" style="height: 700px;"></div>
 </div>
 
@@ -34,16 +43,16 @@
                     el: document.getElementById('curriculum-grid-container'),
                     data: data,
                     columns: [
-                        {header: '교육과정 ID', name: 'curriculumId', align: 'center', width: 80},
-                        {header: '학과 ID', name: 'deptId', align: 'center', width: 80},
-                        {header: '학과명', name: 'deptName', align: 'center', width: 200},
-                        {header: '교육과정명', name: 'curriculumName', width: 300},
-                        {header: '연도', name: 'curriculumYear', align: 'center', width: 100},
-                        {header: '학년', name: 'grade', align: 'center', width: 100},
-                        {header: '상태', name: 'curriculumStatus', align: 'center', width: 100},
-                        {header: '학기', name: 'semester', align: 'center', width: 100},
-                        {header: '주야 구분', name: 'dayNight', align: 'center', width: 100},
-                        {header: '비고', name: 'reason', width: 505}
+                        {header: '교육과정 ID', name: 'curriculumId', align: 'center'},
+                        {header: '학과 ID', name: 'deptId', align: 'center'},
+                        {header: '학과명', name: 'deptName', align: 'center'},
+                        {header: '교육과정명', name: 'curriculumName', width: 400},
+                        {header: '연도', name: 'curriculumYear', align: 'center'},
+                        {header: '학년', name: 'grade', align: 'center'},
+                        {header: '상태', name: 'curriculumStatus', align: 'center'},
+                        {header: '학기', name: 'semester', align: 'center'},
+                        {header: '주야 구분', name: 'dayNight', align: 'center'},
+                        {header: '비고', name: 'reason'}
                     ],
                     bodyHeight: 'fitToParent'
                 });
