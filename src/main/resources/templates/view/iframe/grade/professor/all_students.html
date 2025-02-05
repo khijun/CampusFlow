@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>성적 조회</title>
     <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-    <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-          th:href="@{/css/iframe/curriculum/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
 </head>
 <body>
 
@@ -23,7 +24,7 @@
 
 <button id="update-button">성적 등록</button>
 </div>
-<div id="grade-list"></div>
+<div id="grade-list" class="mb-10"></div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -137,7 +138,10 @@
                 body: JSON.stringify(updateData)
             })
                 .then(response => response.json())
-                .then(data => alert(data.message))
+                .then(data => {
+                    alert(data.message);
+                    location.reload(); // 수정 후 새로고침
+                })
                 .catch(error => console.error("에러 발생:", error));
         });
 
