@@ -2,7 +2,6 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.GradeDTO;
 import edu.du.campusflow.dto.GradeForm;
-import edu.du.campusflow.dto.GradeFormProfessor;
 import edu.du.campusflow.dto.GradeProfessorDTO;
 import edu.du.campusflow.entity.*;
 import edu.du.campusflow.repository.*;
@@ -15,9 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,17 +30,34 @@ public class GradeController {
     private final CommonCodeRepository commonCodeRepository;
 
     @GetMapping("/iframe/grade/student_grade")
-    public String studentGrade(@RequestParam(required = false, defaultValue = "67,68,69,70") String gradeType, Model model) {
+    public String studentGrade(@RequestParam(required = false, defaultValue = "67,68,69,70") String gradeType,
+                               @RequestParam(required = false) Integer academicYear,
+                               Model model) {
         Long memberId = authService.getCurrentMemberId();
 
-        // gradeType 문자열을 Long 배열로 변환
         List<Long> gradeTypeList = Arrays.stream(gradeType.split(","))
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
 
         List<GradeDTO> grades = gradeService.getGroupedGradesByRole(memberId, gradeTypeList);
 
+        // 선택한 학년도만 필터링
+        if (academicYear != null) {
+            grades = grades.stream()
+                    .filter(grade -> grade.getAcademicYear() == academicYear)
+                    .collect(Collectors.toList());
+        }
+
+        // 모든 학년도 리스트 (중복 제거)
+        List<Integer> academicYears = grades.stream()
+                .map(GradeDTO::getAcademicYear)
+                .distinct()
+                .sorted(Comparator.reverseOrder()) // 최신 학년도부터 정렬
+                .collect(Collectors.toList());
+
         model.addAttribute("grades", grades);
+        model.addAttribute("academicYears", academicYears); // 학년도 리스트 추가
+        model.addAttribute("selectedYear", academicYear); // 선택한 학년도 추가
         return "view/iframe/grade/student_grade";
     }
 
@@ -137,28 +151,58 @@ public class GradeController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "학생 성적 정보를 조회하는 도중 오류가 발생했습니다.");
         }
-        return "view/iframe/grade/professor/student_grade"; // 학생 성적을 표시할 뷰
+        return "all_students"; // 학생 성적을 표시할 뷰
     }
-
-
-
-    @PostMapping("/iframe/grade/professor/edit/{memberId}")
-    public String updateGrade(@PathVariable Long memberId, @RequestParam Long lectureId,
-                              @RequestParam List<String> gradeType, @RequestParam List<Integer> score,
-                              @RequestParam Long selectedLectureId,  // 선택된 강의 ID 추가
-                              RedirectAttributes redirectAttributes) {
+    // 모든 학생 성적 조회
+    @GetMapping("/iframe/grade/professor/all_students")
+    public String getAllStudentGrades(Model model) {
+        Long memberId = authService.getCurrentMemberId();
         try {
-            // GradeForm 생성 시 lectureId와 selectedLectureId를 사용하여 생성
-            GradeFormProfessor gradeFormProfessor = new GradeFormProfessor(lectureId, selectedLectureId, createStudentGradesProfessor(Arrays.asList(memberId), gradeType, score));
-            gradeService.updateGrade(gradeFormProfessor);
+            // 교수가 담당하는 모든 학생의 성적 조회
+            List<GradeProfessorDTO> grades = gradeService.getAllStudentGradesByProfessor(memberId, Arrays.asList(67L, 68L, 69L, 70L));
 
-            redirectAttributes.addFlashAttribute("message", "성적이 성공적으로 수정되었습니다.");
+            // 성적이 부여된 강의가 없으면 에러 메시지 추가
+            if (grades.isEmpty()) {
+                model.addAttribute("errorMessage", "성적이 부여된 강의가 없습니다.");
+            } else {
+                model.addAttribute("grades", grades);
+            }
+
+            List<Long> lectureIds = lectureRepository.findLectureIdsByMemberId(memberId);
+            model.addAttribute("lectureIds", lectureIds);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            model.addAttribute("errorMessage", "학생 성적 정보를 조회하는 도중 오류가 발생했습니다.");
         }
-
-        return "redirect:/iframe/grade/professor/professor_view"; // 성적 수정 후 교수 뷰로 리다이렉트
+        return "view/iframe/grade/professor/all_students"; // 모든 학생 성적을 표시할 뷰
     }
+
+
+
+//    @PostMapping("/iframe/grade/professor/edit")
+//    @ResponseBody
+//    public ResponseEntity<Map<String, Object>> updateGrades(@RequestParam List<Long> memberIds,
+//                                                            @RequestParam Long lectureId,
+//                                                            @RequestParam List<String> gradeType,
+//                                                            @RequestParam List<Integer> score) {
+//        Map<String, Object> response = new HashMap<>();
+//
+//        try {
+//            // 여러 학생의 성적을 수정하기 위해 반복문 사용
+//            for (Long memberId : memberIds) {
+//                GradeFormProfessor gradeFormProfessor = new GradeFormProfessor(
+//                        lectureId,
+//                        createStudentGradesProfessor(Arrays.asList(memberId), score)
+//                );
+//                gradeService.updateGrade(gradeFormProfessor); // 각 학생의 성적을 업데이트
+//            }
+//
+//            response.put("message", "성적이 성공적으로 수정되었습니다.");
+//            return ResponseEntity.ok(response);  // HTTP 200 응답으로 메시지 반환
+//        } catch (Exception e) {
+//            response.put("error", e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);  // HTTP 500 응답으로 오류 메시지 반환
+//        }
+//    }
 
     // 학생 성적 리스트 생성
     private List<GradeForm.StudentGrade> createStudentGrades(List<Long> memberIds, List<String> gradeTypes, List<Integer> scores) {
@@ -171,12 +215,12 @@ public class GradeController {
 
 
     // 교수 성적 리스트 생성
-    private List<GradeFormProfessor.StudentGrade> createStudentGradesProfessor(List<Long> memberIds, List<String> gradeTypes, List<Integer> scores) {
-        List<GradeFormProfessor.StudentGrade> studentGrades = new ArrayList<>();
-        for (int i = 0; i < memberIds.size(); i++) {
-            studentGrades.add(new GradeFormProfessor.StudentGrade(memberIds.get(i), gradeTypes.get(i), scores.get(i)));
-        }
-        return studentGrades;
-    }
+//    private List<GradeFormProfessor.StudentGrade> createStudentGradesProfessor(List<Long> memberIds, List<Integer> scores) {
+//        List<GradeFormProfessor.StudentGrade> studentGrades = new ArrayList<>();
+//        for (int i = 0; i < memberIds.size(); i++) {
+//            studentGrades.add(new GradeFormProfessor.StudentGrade(memberIds.get(i),scores.get(i)));
+//        }
+//        return studentGrades;
+//    }
 
 }

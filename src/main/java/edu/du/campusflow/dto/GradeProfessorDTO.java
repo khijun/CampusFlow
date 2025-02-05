@@ -18,10 +18,12 @@ public class GradeProfessorDTO {
     private int totalScore;
     private int subjectCredits;
     private int earnedCredits;
+    private String studentName;
+    private Long studentId;
 
     public GradeProfessorDTO(List<Long> lectureIds, Long selectedLectureId, String professorName, String lectureName,
                              Map<String, Integer> scores, String finalGrade, int totalScore,
-                             int subjectCredits, int earnedCredits) {
+                             int subjectCredits, int earnedCredits, String studentName, Long studentId) {
         this.lectureIds = lectureIds;
         this.selectedLectureId = selectedLectureId; // 선택된 강의 ID 할당
         this.professorName = professorName;
@@ -31,6 +33,8 @@ public class GradeProfessorDTO {
         this.totalScore = totalScore;
         this.subjectCredits = subjectCredits;
         this.earnedCredits = earnedCredits;
+        this.studentName = studentName;
+        this.studentId = studentId;
     }
 
 }
