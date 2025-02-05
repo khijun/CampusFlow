@@ -12,20 +12,20 @@
 <body>
 
 <div class="search-container">
-  <div class="input-group">
-    <form method="get" action="/iframe/grade/student_grade">
+    <form method="get" action="/iframe/grade/student_grade" class="input-group">
+
       <label for="academic-year-filter">학년도 선택:</label>
       <select name="academicYear" id="academic-year-filter">
         <option value="">전체</option>
         <option th:each="year : ${academicYears}" th:value="${year}" th:text="${year}"
                 th:selected="${year == selectedYear}"></option>
       </select>
-      <button type="button" id="search-button">조회</button>
-    </form>
-  </div>
 
-  <div id="total-earned-credits">총 취득 학점: <span id="earned-credits-value"></span></div>
-</div>
+    </form>
+  <button type="button" id="search-button">조회</button>
+
+
+</div><div id="total-earned-credits">총 취득 학점: <span id="earned-credits-value"></span></div>
 <div id="grade-list" class="mb-10"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
