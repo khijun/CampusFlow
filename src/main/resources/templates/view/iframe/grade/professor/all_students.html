@@ -13,18 +13,25 @@
 
 <div class="search-container">
     <div class="input-group">
-    <input type="text" id="lecture-name" placeholder="강의명 입력">
+
+        <label for="lecture-name">강의 입력</label><input type="text" id="lecture-name" placeholder="강의명 입력">
     </div>
     <div class="input-group">
-    <input type="text" id="student-name" placeholder="학생 이름 입력">
+        <label for="student-name">학생 이름</label><input type="text" id="student-name" placeholder="학생 이름 입력">
     </div>
+
+
+    <div style="margin-left: auto;
+    display: block;">
     <button id="search-button">조회</button>
+</div>
 
 
-
-<button id="update-button">성적 등록</button>
 </div>
 <div id="grade-list" class="mb-10"></div>
+<div class="search-container mb-10" style="background: none; border: none; display: flex; justify-content: flex-end;">
+<button id="update-button">성적 등록</button>
+</div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
