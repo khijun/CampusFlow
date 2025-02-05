@@ -2,14 +2,12 @@ package edu.du.campusflow.controller;
 
 import edu.du.campusflow.dto.FacilityDTO;
 import edu.du.campusflow.dto.LectureTimeDTO;
-import edu.du.campusflow.entity.CommonCode;
-import edu.du.campusflow.entity.Facility;
-import edu.du.campusflow.entity.LectureTime;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.FacilityRepository;
 import edu.du.campusflow.service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +30,7 @@ public class FacilityController {
     public String facilityList(Model model) {
         model.addAttribute("building", facilityService.getFacilityBuilding());
         model.addAttribute("facilityStatus", facilityService.getFacilityStatus());
-        return "/view/iframe/facility/facility_List";
+        return "view/iframe/facility/facility_List";
     }
 
     //건물명 선택시 건물에 맞는 강의실 목록 드롭다운에 추가하는 컨트롤러
@@ -57,6 +55,7 @@ public class FacilityController {
 
     //강의실 상태 변경하는 컨트롤러
     @PostMapping("/api/facility/update-status")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<String> updateFacilityStatus(
             @RequestParam Long facilityId,

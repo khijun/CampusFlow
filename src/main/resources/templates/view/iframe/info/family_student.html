@@ -1,160 +1,175 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-        th:href="@{/css/iframe/curriculum/search-container.css}"/>
-  <title>가족 정보 조회</title>
-  <style>
-    .hidden { display: none; }
-    .form-container { margin-top: 20px; }
-    .form-container input, .form-container select { margin-right: 10px; }
-    .add-button { cursor: pointer; color: #007bff; font-size: 18px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>가족 정보 조회</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-container input, .form-container select {
+            margin-right: 10px;
+        }
+
+        .add-button {
+            cursor: pointer;
+            color: #007bff;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
 
 
-
-<div id="family-info-list"></div>
+<div id="family-info-list" class="mb-10"></div>
 
 <!-- 가족 추가 버튼 -->
-<div class="search-container">
-  <button onclick="toggleForm()">가족 추가</button>
+<div class="mb-10">
+    <span class="add-button" onclick="toggleForm()">+ 가족 추가</span>
+</div>
 
 <!-- 가족 추가 폼 -->
-<div id="addForm" class="hidden">
-  <div class="input-group" style="width: 2000px">
-  <form id="family-form">
-    <label for="familyRelation">관계:</label>
-    <select id="familyRelation" name="familyRelation" required>
-      <option value="41">부</option>
-      <option value="42">모</option>
-    </select>
+<div class="search-container">
+    <div id="addForm" class="hidden">
+        <div class="input-group">
+            <form id="family-form">
+                <label for="familyRelation">관계:</label>
+                <select id="familyRelation" name="familyRelation" required>
+                    <option value="41">부</option>
+                    <option value="42">모</option>
+                </select>
 
-    <label for="name">이름:</label>
-    <input type="text" id="name" name="name" required>
+                <label for="name">이름:</label>
+                <input type="text" id="name" name="name" required>
 
-    <label for="birthDate">생년월일:</label>
-    <input type="date" id="birthDate" name="birthDate" required>
+                <label for="birthDate">생년월일:</label>
+                <input type="date" id="birthDate" name="birthDate" required>
 
-    <label for="contact">전화번호:</label>
-    <input type="text" id="contact" name="contact" required>
+                <label for="contact">전화번호:</label>
+                <input type="text" id="contact" name="contact" required>
 
-    <button type="button" onclick="submitFamily()">저장</button>
-  </form>
-  </div>
-</div>
+                <button type="button" onclick="submitFamily()">저장</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
-  let instance = null;
+    let instance = null;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    createFamilyGrid();
-  });
-
-  function deleteFamily(id) {
-    console.log("삭제 요청 ID:", id);  // 삭제할 ID 확인
-
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-
-    fetch('/api/family_info/delete', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    })
-            .then(response => {
-              console.log("응답 상태:", response.status);  // 응답 상태 코드 확인
-              if (!response.ok) throw new Error('삭제 실패');
-              return response.json();
-            })
-            .then(data => {
-              alert(data.message);
-              createFamilyGrid(); // 데이터 새로고침
-            })
-            .catch(error => console.error("삭제 오류:", error));
-  }
-
-
-  function createFamilyGrid() {
-    const familyInfoListDiv = document.querySelector('#family-info-list');
-    const columns = [
-      { header: '관계', name: 'familyRelation', align: 'center' },
-      { header: '이름', name: 'name', align: 'center' },
-      { header: '생년월일', name: 'birthDate', align: 'center' },
-      { header: '전화번호', name: 'contact', align: 'center' },
-      {
-        header: '삭제',
-        name: 'delete',
-        align: 'center',
-        formatter: ({ row }) => `<button class="delete-btn" data-id="${row.id}">삭제</button>`
-      }
-    ];
-
-    if (instance) {
-      instance.destroy();
-    }
-
-    instance = new tui.Grid({
-      el: familyInfoListDiv,
-      rowHeight: 'auto',
-      columns: columns,
-      data: []
+    document.addEventListener('DOMContentLoaded', () => {
+        createFamilyGrid();
     });
 
-    fetch('/api/family_info')
+    function deleteFamily(id) {
+        console.log("삭제 요청 ID:", id);  // 삭제할 ID 확인
+
+        if (!confirm('정말 삭제하시겠습니까?')) return;
+
+        fetch('/api/family_info/delete', {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id})
+        })
+            .then(response => {
+                console.log("응답 상태:", response.status);  // 응답 상태 코드 확인
+                if (!response.ok) throw new Error('삭제 실패');
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                createFamilyGrid(); // 데이터 새로고침
+            })
+            .catch(error => console.error("삭제 오류:", error));
+    }
+
+
+    function createFamilyGrid() {
+        const familyInfoListDiv = document.querySelector('#family-info-list');
+        const columns = [
+            {header: '관계', name: 'familyRelation', align: 'center'},
+            {header: '이름', name: 'name', align: 'center'},
+            {header: '생년월일', name: 'birthDate', align: 'center'},
+            {header: '전화번호', name: 'contact', align: 'center'},
+            {
+                header: '삭제',
+                name: 'delete',
+                align: 'center',
+                formatter: ({row}) => `<button class="delete-btn" data-id="${row.id}">삭제</button>`
+            }
+        ];
+
+        if (instance) {
+            instance.destroy();
+        }
+
+        instance = new tui.Grid({
+            el: familyInfoListDiv,
+            rowHeight: 'auto',
+            columns: columns,
+            data: []
+        });
+
+        fetch('/api/family_info')
             .then(response => response.json())
             .then(data => {
-              const mappedData = data.map(info => ({
-                ...info,
-                familyRelation: info.familyRelation && info.familyRelation.codeId === 41 ? '부' : '모'
-              }));
-              instance.resetData(mappedData);
+                const mappedData = data.map(info => ({
+                    ...info,
+                    familyRelation: info.familyRelation && info.familyRelation.codeId === 41 ? '부' : '모'
+                }));
+                instance.resetData(mappedData);
             })
             .catch(error => console.error('가족 정보 처리 오류:', error));
-  }
-
-  // 이벤트 위임 방식으로 삭제 버튼 클릭 감지
-  document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('delete-btn')) {
-      const id = event.target.getAttribute('data-id');
-      deleteFamily(id);
     }
-  });
 
-  // 폼 토글 기능
-  function toggleForm() {
-    const form = document.getElementById("addForm");
-    form.classList.toggle("hidden");
-  }
+    // 이벤트 위임 방식으로 삭제 버튼 클릭 감지
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('delete-btn')) {
+            const id = event.target.getAttribute('data-id');
+            deleteFamily(id);
+        }
+    });
 
-  // 가족 추가 폼 제출
-  function submitFamily() {
-    const form = document.getElementById("family-form");
-    const formData = new FormData(form);
+    // 폼 토글 기능
+    function toggleForm() {
+        const form = document.getElementById("addForm");
+        form.classList.toggle("hidden");
+    }
 
-    fetch('/iframe/info/family_student/insert', {
-      method: 'POST',
-      body: new URLSearchParams(formData),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    // 가족 추가 폼 제출
+    function submitFamily() {
+        const form = document.getElementById("family-form");
+        const formData = new FormData(form);
+
+        fetch('/iframe/info/family_student/insert', {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
             .then(response => {
-              if (!response.ok) throw new Error('가족 추가 실패');
-              return response.text();
+                if (!response.ok) throw new Error('가족 추가 실패');
+                return response.text();
             })
             .then(() => {
-              alert('가족 추가 성공!');
-              toggleForm();
-              createFamilyGrid(); // 데이터 새로고침
+                alert('가족 추가 성공!');
+                toggleForm();
+                createFamilyGrid(); // 데이터 새로고침
             })
             .catch(error => alert(error.message));
-  }
+    }
 
 </script>
 

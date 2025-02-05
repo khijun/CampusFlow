@@ -8,6 +8,7 @@ import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.LectureWeekService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class LectureWeekController {
         model.addAttribute("member", authService.getCurrentMember());
         model.addAttribute("classStatus",
                 lectureWeekService.getClassStatusCodes());
-        return "/view/iframe/lecture/professor/lectureWeek_Time";
+        return "view/iframe/lecture/professor/lectureWeek_Time";
     }
 
     //강의 주차랑 시간 검색해서 불러오는 컨트롤러
@@ -78,6 +79,7 @@ public class LectureWeekController {
 
     //수업 상태를 변경하는 컨트롤러
     @PostMapping("/api/lecture/update-status")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<String> updateLectureStatus(
             @RequestParam Long lectureTimeId,

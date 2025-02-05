@@ -9,6 +9,7 @@ import edu.du.campusflow.repository.MemberRepository;
 import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.ChangeRequestService;
 import edu.du.campusflow.service.DeptService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class ChangeRequestController {
 
     // 관리자용 - 모든 학생의 신청서 조회
     @GetMapping("/iframe/academic/admin/admin-change-request-list")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String getAllChangeRequests(Model model, ChangeRequestDTO changeRequestDto) {
         List<ChangeRequest> changeRequests = changeRequestService.getALlChangeRequests();  // 모든 학생의 신청서 조회
         model.addAttribute("changeRequests", changeRequests);

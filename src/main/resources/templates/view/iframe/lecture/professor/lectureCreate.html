@@ -3,206 +3,202 @@
 <meta charset="UTF-8">
 
 <head>
-  <title>과목 검색</title>
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-  <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <title>강의 개설</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-
-<hr style="border: none; margin: 20px 0;">
-  <div class="search-container">
+<div class="search-container">
     <!-- 검색 섹션 컨테이너 -->
     <div class="input-group">
-      <label for="curriculumYear">연도</label>
-      <input type="number"
-             id="curriculumYear"
-             name="curriculumYear"
-             th:value="${#calendars.format(#calendars.createNow(), 'yyyy')}"
-             min="2000"
-             max="2099"
-             style="width: 80px;">
+        <label for="curriculumYear">연도</label>
+        <input type="number"
+               id="curriculumYear"
+               name="curriculumYear"
+               th:value="${#calendars.format(#calendars.createNow(), 'yyyy')}"
+               min="2000"
+               max="2099"
+               style="width: 80px;">
     </div>
     <div class="input-group">
-      <label for="Semester">학기</label>
-      <select id="Semester">
-        <option value="FIRST_SEMESTER">1학기</option>
-        <option value="SECOND_SEMESTER">2학기</option>
-      </select>
+        <label for="Semester">학기</label>
+        <select id="Semester">
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+        </select>
     </div>
     <div class="input-group">
-      <label for="deptName">학과명</label>
-      <input type="text" id="deptName" name="deptName" th:value="${member.dept.getDeptName()}">
+        <label for="deptName">학과명</label>
+        <input type="text" id="deptName" name="deptName" th:value="${member.dept.getDeptName()}">
     </div>
     <div class="input-group">
-      <label for="curriculumName">교육과정명</label>
-      <input type="text" id="curriculumName" name="curriculumName" placeholder="교육과정명을 입력하세요">
+        <label for="curriculumName">교육과정명</label>
+        <input type="text" id="curriculumName" name="curriculumName" placeholder="교육과정명을 입력하세요">
     </div>
     <div class="input-group">
     </div>
     <button type="submit" id="searchButton">검색</button>
-  </div>
+</div>
 
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+<div class="mb-10">
     <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">교과목 목록</span>
-  </div>
-  <div id="curriculumSubjectGrid">
-     <!--검색결과가 이곳에 나옴-->
-  </div>
-
-  <hr style="border: none; margin: 20px 0;">
-  <!-- 강의 생성 폼 -->
-  <div class="d-flex align-items-center mb-3">
+    <span>교과목 목록</span>
+</div>
+<div id="curriculumSubjectGrid" class="mb-10">
+    <!--검색결과가 이곳에 나옴-->
+</div>
+<!-- 강의 생성 폼 -->
+<div class="mb-10">
     <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의 정보 입력</span>
-  </div>
-  <div class="search-container">
+    <span class="mb-10">강의 정보 입력</span>
+</div>
+<div class="search-container">
     <div class="input-group">
-      <label for="lectureName">강의명</label>
-      <input type="text" id="lectureName" name="lectureName" placeholder="강의명을 입력하세요">
+        <label for="lectureName">강의명</label>
+        <input type="text" id="lectureName" name="lectureName" placeholder="강의명을 입력하세요">
     </div>
     <div class="input-group">
-      <label for="professorName">교수명</label>
-      <input type="text" id="professorName" name="professorName" th:value="${member.name}" readonly>
+        <label for="professorName">교수명</label>
+        <input type="text" id="professorName" name="professorName" th:value="${member.name}" readonly>
     </div>
     <div class="input-group">
-      <label for="maxStudents">인원수</label>
-      <input type="number" id="maxStudents" name="maxStudents" placeholder="인원수를 입력하세요">
+        <label for="maxStudents">인원수</label>
+        <input type="number" id="maxStudents" name="maxStudents" placeholder="인원수를 입력하세요">
     </div>
     <div class="input-group">
-      <label for="selectedSubjectName">과목명</label>
-      <input type="text" id="selectedSubjectName" name="subjectName" placeholder="선택한 과목명" readonly>
+        <label for="selectedSubjectName">과목명</label>
+        <input type="text" id="selectedSubjectName" name="subjectName" placeholder="선택한 과목명" readonly>
     </div>
     <div class="input-group">
-      <label for="selectedCurriculumName">교육과정명</label>
-      <input type="text" id="selectedCurriculumName" name="curriculumName" placeholder="선택한 교육과정명" readonly>
+        <label for="selectedCurriculumName">교육과정명</label>
+        <input type="text" id="selectedCurriculumName" name="curriculumName" placeholder="선택한 교육과정명" readonly>
     </div>
-    <input type="hidden" id="curriculumSubjectId" name="curriculumSubjectId" />
+    <input type="hidden" id="curriculumSubjectId" name="curriculumSubjectId"/>
     <div style="width: 100%; text-align: right; margin-top: 20px;">
-      <button type="submit" id="createButton">강의 개설</button>
+        <button type="submit" id="createButton">강의 개설</button>
     </div>
-  </div>
+</div>
 
-  <script>
+<script>
     // Toast UI Grid 초기화
     const grid = new tui.Grid({
-      el: document.getElementById('curriculumSubjectGrid'),
-      columns: [
-        { header: '교과목아이디', name: 'curriculumSubjectId', sortable: false, align:'center'},
-        { header: '과목명', name: 'subjectName', sortable: false },
-        { header: '교육과정명', name: 'curriculumName', sortable: false, width:'auto'},
-        { header: '학과명', name: 'deptName', sortable: false, align:'center'},
-        { header: '학점', name: 'subjectCredits', sortable: false, align:'center'},
-        { header: '학기', name: 'semesterName', sortable: false, align:'center'},
-        { header: '교육과정 연도', name: 'curriculumYear', sortable: false,align: 'center'},
-        { header: '이수 구분', name: 'subjectTypeName', sortable: false, align: 'center' }
-      ],
-      bodyHeight: 300,      // 그리드 바디의 높이를 300px로 설정
-      rowClassName: function(rowData) {
-        return rowData.curriculumSubjectId === document.getElementById('curriculumSubjectId').value ? 'selected-row' : '';
-      }
+        el: document.getElementById('curriculumSubjectGrid'),
+        columns: [
+            {header: '교과목아이디', name: 'curriculumSubjectId', sortable: false, align: 'center'},
+            {header: '과목명', name: 'subjectName', sortable: false},
+            {header: '교육과정명', name: 'curriculumName', sortable: false, width: 'auto'},
+            {header: '학과명', name: 'deptName', sortable: false, align: 'center'},
+            {header: '학점', name: 'subjectCredits', sortable: false, align: 'center'},
+            {header: '학기', name: 'semesterName', sortable: false, align: 'center'},
+            {header: '교육과정 연도', name: 'curriculumYear', sortable: false, align: 'center'},
+            {header: '이수 구분', name: 'subjectTypeName', sortable: false, align: 'center'}
+        ],
+        bodyHeight: 300,      // 그리드 바디의 높이를 300px로 설정
+        rowClassName: function (rowData) {
+            return rowData.curriculumSubjectId === document.getElementById('curriculumSubjectId').value ? 'selected-row' : '';
+        }
     });
 
     // 현재 월을 기준으로 학기 선택
     document.addEventListener('DOMContentLoaded', function () {
-      const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
-      const semesterSelect = document.getElementById('Semester');
-      const curriculumYear = document.getElementById('curriculumYear').value;
+        const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+        const semesterSelect = document.getElementById('Semester');
+        const curriculumYear = document.getElementById('curriculumYear').value;
 
-      if (currentMonth >= 8 || currentMonth <= 1) {
-        semesterSelect.value = 'SECOND_SEMESTER';
-      }else{
-        semesterSelect.value = 'FIRST_SEMESTER';
-      }
+        if (currentMonth >= 8 || currentMonth <= 1) {
+            semesterSelect.value = 'SECOND_SEMESTER';
+        } else {
+            semesterSelect.value = 'FIRST_SEMESTER';
+        }
 
-      const semesterCode = document.getElementById('Semester').value;
-      fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&curriculumYear=${curriculumYear}`)
-              .then(response => response.json())
-              .then(subjects => {
+        const semesterCode = document.getElementById('Semester').value;
+        fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&curriculumYear=${curriculumYear}`)
+            .then(response => response.json())
+            .then(subjects => {
                 grid.resetData(subjects);
-              })
-              .catch(error => {
+            })
+            .catch(error => {
                 console.error('Error:', error);
-              });
+            });
     });
-
 
 
     // 검색 버튼 클릭 이벤트 처리
     document.getElementById('searchButton').addEventListener('click', function () {
-      const semesterCode = document.getElementById('Semester').value;
-      const deptName = document.getElementById('deptName').value;
-      const curriculumName = document.getElementById('curriculumName').value;
-      const curriculumYear = document.getElementById('curriculumYear').value;
+        const semesterCode = document.getElementById('Semester').value;
+        const deptName = document.getElementById('deptName').value;
+        const curriculumName = document.getElementById('curriculumName').value;
+        const curriculumYear = document.getElementById('curriculumYear').value;
 
-      // 연도가 빈 값이거나 범위를 벗어나는지 체크
-      if (!curriculumYear || curriculumYear < 2000 || curriculumYear > 2099) {
-        alert('올바른 연도를 입력해주세요. (2000-2099)');
-        return;
-      }
-      // 검색 API 호출
-      fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&deptName=${encodeURIComponent(deptName)}&curriculumName=${encodeURIComponent(curriculumName)}&curriculumYear=${curriculumYear}`)
-              .then(response => response.json())
-              .then(subjects => {
+        // 연도가 빈 값이거나 범위를 벗어나는지 체크
+        if (!curriculumYear || curriculumYear < 2000 || curriculumYear > 2099) {
+            alert('올바른 연도를 입력해주세요. (2000-2099)');
+            return;
+        }
+        // 검색 API 호출
+        fetch(`/api/curriculum-subjects/search?semesterCode=${semesterCode}&deptName=${encodeURIComponent(deptName)}&curriculumName=${encodeURIComponent(curriculumName)}&curriculumYear=${curriculumYear}`)
+            .then(response => response.json())
+            .then(subjects => {
                 if (subjects.length === 0) {
-                  alert('검색 결과가 없습니다.');
+                    alert('검색 결과가 없습니다.');
                 } else {
-                  grid.resetData(subjects);
+                    grid.resetData(subjects);
                 }
-              })
-              .catch(error => {
+            })
+            .catch(error => {
                 alert('검색 중 오류가 발생했습니다.');
                 console.error('Error:', error);
-              });
+            });
     });
 
     // 그리드 행 클릭 이벤트 처리
-    grid.on('click', function(ev) {
-      if (ev.targetType === 'cell') {
-        const rowData = grid.getRow(ev.rowKey);
-        document.getElementById('selectedSubjectName').value = rowData.subjectName;
-        document.getElementById('selectedCurriculumName').value = rowData.curriculumName;
-        document.getElementById('curriculumSubjectId').value = rowData.curriculumSubjectId;
-        grid.refreshLayout();
-      }
+    grid.on('click', function (ev) {
+        if (ev.targetType === 'cell') {
+            const rowData = grid.getRow(ev.rowKey);
+            document.getElementById('selectedSubjectName').value = rowData.subjectName;
+            document.getElementById('selectedCurriculumName').value = rowData.curriculumName;
+            document.getElementById('curriculumSubjectId').value = rowData.curriculumSubjectId;
+            grid.refreshLayout();
+        }
     });
 
     // 강의 개설 버튼 클릭 이벤트 처리
     document.getElementById('createButton').addEventListener('click', function () {
-      const lectureName = document.getElementById('lectureName').value;
-      const maxStudents = document.getElementById('maxStudents').value;
-      const curriculumSubjectId = document.getElementById('curriculumSubjectId').value;
+        const lectureName = document.getElementById('lectureName').value;
+        const maxStudents = document.getElementById('maxStudents').value;
+        const curriculumSubjectId = document.getElementById('curriculumSubjectId').value;
 
-      const lectureData = {
-        lectureName: lectureName,
-        maxStudents: maxStudents,
-        curriculumSubjectId: curriculumSubjectId
-      };
+        const lectureData = {
+            lectureName: lectureName,
+            maxStudents: maxStudents,
+            curriculumSubjectId: curriculumSubjectId
+        };
 
-      // 강의 개설 API 호출
-      fetch('/api/lecture/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(lectureData)
-      })
-        .then(response => response.text())
-        .then(message => {
-          alert(message);
-          // 추가적인 성공 처리 로직 (예: 폼 초기화)
+        // 강의 개설 API 호출
+        fetch('/api/lecture/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(lectureData)
         })
-        .catch(error => {
-          error.text().then(errorMessage => {
-            alert(errorMessage);
-          });
-        });
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                // 추가적인 성공 처리 로직 (예: 폼 초기화)
+            })
+            .catch(error => {
+                error.text().then(errorMessage => {
+                    alert(errorMessage);
+                });
+            });
     });
-  </script>
+</script>
 </body>
 
 </html>

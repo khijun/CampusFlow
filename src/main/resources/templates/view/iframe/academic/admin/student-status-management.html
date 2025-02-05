@@ -1,90 +1,91 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-        th:href="@{/css/iframe/curriculum/search-container.css}"/>
-  <title>학생 상태 관리</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>학생 상태 관리</title>
 </head>
 <body>
 
 <div class="search-container">
-  <div class="input-group">
-    <label for="deptFilter">학과 선택:</label>
-    <select id="deptFilter">
-      <option value="">전체</option>
-      <th:block th:each="dept : ${deptList}">
-        <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
-      </th:block>
-    </select>
-  </div>
+    <div class="input-group">
+        <label for="deptFilter">학과 선택:</label>
+        <select id="deptFilter">
+            <option value="">전체</option>
+            <th:block th:each="dept : ${deptList}">
+                <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+            </th:block>
+        </select>
+    </div>
 
-  <div class="input-group">
-    <label for="nameFilter">이름 검색:</label>
-    <input type="text" id="nameFilter" placeholder="이름 입력">
-  </div>
+    <div class="input-group">
+        <label for="nameFilter">이름 검색:</label>
+        <input type="text" id="nameFilter" placeholder="이름 입력">
+    </div>
 
-  <button id="searchButton">조회</button>
+    <button id="searchButton">조회</button>
 </div>
 
 <div id="student-status-list" style="display: none;"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
-  let gridInstance = null;
-  let originalData = [];
+    let gridInstance = null;
+    let originalData = [];
 
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('#searchButton').addEventListener('click', fetchFilteredData);
-  });
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('#searchButton').addEventListener('click', fetchFilteredData);
+    });
 
-  function fetchFilteredData() {
-    fetch('/api/admin/academic-management')
+    function fetchFilteredData() {
+        fetch('/api/admin/academic-management')
             .then(response => response.json())
             .then(data => {
-              originalData = data.filter(member =>
-                      !['퇴학', '졸업', '제적'].includes(member.academicStatus)
-              );
-              applyFiltersAndRender();
+                originalData = data.filter(member =>
+                    !['퇴학', '졸업', '제적'].includes(member.academicStatus)
+                );
+                applyFiltersAndRender();
             })
             .catch(error => console.error('Error:', error));
-  }
-
-  function applyFiltersAndRender() {
-    const selectedDeptId = document.querySelector('#deptFilter').value;
-    const nameKeyword = document.querySelector('#nameFilter').value.trim().toLowerCase();
-
-    const filteredData = originalData.filter(item =>
-            (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
-            (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
-    );
-
-    document.querySelector('#student-status-list').style.display = 'block';
-    renderGrid(filteredData);
-  }
-
-  function renderGrid(data) {
-    if (gridInstance) {
-      gridInstance.destroy();
     }
 
-    gridInstance = new tui.Grid({
-      el: document.querySelector('#student-status-list'),
-      data: data,
-      columns: [
-        { header: '학번', name: 'memberId', align: 'center' },
-        { header: '이름', name: 'name', align: 'center' },
-        { header: '학적 상태', name: 'academicStatus', align: 'center' },
-        { header: '학과', name: 'deptName', align: 'center' },
-        {
-          header: '퇴학/제적/졸업 처리',
-          name: 'actions',
-          align: 'center',
-          formatter: (cellInfo) => {
-            const id = cellInfo.row.memberId;
-            return `
+    function applyFiltersAndRender() {
+        const selectedDeptId = document.querySelector('#deptFilter').value;
+        const nameKeyword = document.querySelector('#nameFilter').value.trim().toLowerCase();
+
+        const filteredData = originalData.filter(item =>
+            (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
+            (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
+        );
+
+        document.querySelector('#student-status-list').style.display = 'block';
+        renderGrid(filteredData);
+    }
+
+    function renderGrid(data) {
+        if (gridInstance) {
+            gridInstance.destroy();
+        }
+
+        gridInstance = new tui.Grid({
+            el: document.querySelector('#student-status-list'),
+            data: data,
+            columns: [
+                { header: '학번', name: 'memberId', align: 'center' },
+                { header: '이름', name: 'name', align: 'center' },
+                { header: '학적 상태', name: 'academicStatus', align: 'center' },
+                { header: '학과', name: 'deptName', align: 'center' },
+                {
+                    header: '퇴학/제적/졸업 처리',
+                    name: 'actions',
+                    align: 'center',
+                    formatter: (cellInfo) => {
+                        const id = cellInfo.row.memberId;
+                        return `
               <form action="/members/${id}/withdraw" method="post" style="display:inline;">
                 <button type="submit">제적</button>
               </form>
@@ -95,13 +96,13 @@
               <button type="submit">졸업</button>
               </form>
             `;
-          }
-        }
-      ],
-      rowHeaders: ['rowNum'],
-      bodyHeight: 400,
-    });
-  }
+                    }
+                }
+            ],
+            rowHeaders: ['rowNum'],
+            bodyHeight: 400,
+        });
+    }
 </script>
 
 </body>

@@ -1,79 +1,80 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <link rel="stylesheet" href="/css/iframe/curriculum/search-container.css"
-        th:href="@{/css/iframe/curriculum/search-container.css}"/>
-  <title>변동 신청 승인</title>
-  <style>
-    form {
-      display: inline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <title>변동 신청 승인</title>
+    <style>
+        form {
+            display: inline;
+        }
+    </style>
 </head>
 <body>
 <div class="search-container">
-  <div class="input-group">
-    <label for="deptFilter">학과 선택:</label>
-    <select id="deptFilter">
-      <option value="">전체</option>
-      <th:block th:each="dept : ${deptList}">
-        <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
-      </th:block>
-    </select>
-  </div>
+    <div class="input-group">
+        <label for="deptFilter">학과 선택:</label>
+        <select id="deptFilter">
+            <option value="">전체</option>
+            <th:block th:each="dept : ${deptList}">
+                <option th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+            </th:block>
+        </select>
+    </div>
 
-  <div class="input-group">
-    <label for="nameFilter">이름 검색:</label>
-    <input type="text" id="nameFilter" placeholder="이름 입력">
-  </div>
-  <button id="searchBtn">조회</button>
+    <div class="input-group">
+        <label for="nameFilter">이름 검색:</label>
+        <input type="text" id="nameFilter" placeholder="이름 입력">
+    </div>
+    <button id="searchBtn">조회</button>
 </div>
 
 <div id="change-request-list"></div>
 
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    let instance = null;
-    const changeRequestListDiv = document.querySelector('#change-request-list');
-    const deptFilter = document.querySelector('#deptFilter');
-    const nameFilter = document.querySelector('#nameFilter');
-    const searchBtn = document.querySelector('#searchBtn');
-    let originalData = [];
+    document.addEventListener('DOMContentLoaded', () => {
+        let instance = null;
+        const changeRequestListDiv = document.querySelector('#change-request-list');
+        const deptFilter = document.querySelector('#deptFilter');
+        const nameFilter = document.querySelector('#nameFilter');
+        const searchBtn = document.querySelector('#searchBtn');
+        let originalData = [];
 
-    searchBtn.addEventListener('click', () => {
-      if (instance === null) {
-        createChangeRequestGrid();
-      } else {
-        filterGrid();
-      }
-    });
+        searchBtn.addEventListener('click', () => {
+            if (instance === null) {
+                createChangeRequestGrid();
+            } else {
+                filterGrid();
+            }
+        });
 
-    function createChangeRequestGrid() {
-      const columns = [
-        {header: '학번', name: 'memberId', align: 'center'},
-        {header: '신청전 상태', name: 'beforeState', align: 'center'},
-        {header: '신청한 상태', name: 'afterState', align: 'center'},
-        {header: '신청 상태', name: 'applicationStatus', align: 'center'},
-        {header: '사유', name: 'reason', align: 'center'},
-        {header: '승인/거절', name: 'actions', align: 'center'}
-      ];
+        function createChangeRequestGrid() {
+            const columns = [
+                {header: '학번', name: 'memberId', align: 'center'},
+                {header: '신청전 상태', name: 'beforeState', align: 'center'},
+                {header: '신청한 상태', name: 'afterState', align: 'center'},
+                {header: '신청 상태', name: 'applicationStatus', align: 'center'},
+                {header: '사유', name: 'reason', align: 'center'},
+                {header: '승인/거절', name: 'actions', align: 'center'}
+            ];
 
-      fetch('/api/admin/academic-change-request')
-              .then(response => response.json())
-              .then(data => {
-                originalData = data
+            fetch('/api/admin/academic-change-request')
+                .then(response => response.json())
+                .then(data => {
+                    originalData = data
                         .filter(request => request.applicationStatus === '대기중')
                         .map(request => ({
-                          memberId: request.memberId,
-                          beforeState: request.beforeState,
-                          afterState: request.afterState,
-                          applicationStatus: request.applicationStatus,
-                          reason: request.reason,
-                          actions: `
+                            memberId: request.memberId,
+                            beforeState: request.beforeState,
+                            afterState: request.afterState,
+                            applicationStatus: request.applicationStatus,
+                            reason: request.reason,
+                            actions: `
                 <form action="/iframe/admin/academic/approve-change-request/${request.applicationId}" method="post">
                   <button type="submit">승인</button>
                 </form>
@@ -81,34 +82,34 @@
                   <button type="submit">거절</button>
                 </form>`
                         }));
-                renderGrid(originalData, columns);
-              })
-              .catch(error => console.error('데이터를 가져오는 중 오류가 발생했습니다:', error));
-    }
+                    renderGrid(originalData, columns);
+                })
+                .catch(error => console.error('데이터를 가져오는 중 오류가 발생했습니다:', error));
+        }
 
-    function renderGrid(data, columns) {
-      if (instance !== null) {
-        instance.destroy();
-      }
-      instance = new tui.Grid({
-        el: changeRequestListDiv,
-        columns: columns,
-        data: data
-      });
-    }
+        function renderGrid(data, columns) {
+            if (instance !== null) {
+                instance.destroy();
+            }
+            instance = new tui.Grid({
+                el: changeRequestListDiv,
+                columns: columns,
+                data: data
+            });
+        }
 
-    function filterGrid() {
-      const nameKeyword = nameFilter.value.trim().toLowerCase();
-      const selectedDeptId = deptFilter.value;
+        function filterGrid() {
+            const nameKeyword = nameFilter.value.trim().toLowerCase();
+            const selectedDeptId = deptFilter.value;
 
-      const filteredData = originalData.filter(item =>
-              (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
-              (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
-      );
+            const filteredData = originalData.filter(item =>
+                (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
+                (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
+            );
 
-      renderGrid(filteredData, instance.getColumns());
-    }
-  });
+            renderGrid(filteredData, instance.getColumns());
+        }
+    });
 </script>
 </body>
 </html>

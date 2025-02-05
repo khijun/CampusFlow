@@ -47,18 +47,67 @@
       background-color: var(--hover-color);
       color: white;
     }
+    /* 페이징 스타일 */
+    .pagination .page-link {
+      color: var(--primary-color);
+      border-color: var(--border-color);
+      background-color: white;
+      transition: all 0.2s ease;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+
+    .pagination .page-item.disabled .page-link {
+      color: var(--secondary-color);
+      background-color: #f8f9fa;
+      border-color: var(--border-color);
+    }
+
+    .pagination .page-link:hover {
+      background-color: var(--hover-color);
+      border-color: var(--hover-color);
+      color: white;
+    }
+
+    .pagination .page-link:focus {
+      box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.25);
+    }
+    .table th {
+      background-color: #f8f9fa;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .table td {
+      color: var(--primary-color);
+      border-color: var(--border-color);
+    }
+
+    .card {
+      border: none;
+      box-shadow: none;
+    }
+
+    .card-body {
+      padding: 0;
+    }
+
+    .table {
+      margin-bottom: 0;
+    }
   </style>
 </head>
 <body>
-<div class="container mt-3">
+<div class="mb-10 mt-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>문의 목록</h2>
-    <a th:if="${isStudent}" th:href="@{/iframe/inquiry/add}" class="btn btn-primary">문의 작성</a>
   </div>
-
   <div class="card">
     <div class="card-body">
-      <table class="table mb-0">
+      <table class="table table-hover">
         <thead>
         <tr>
           <th>번호</th>
@@ -68,8 +117,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="inquiry, inquiryStat : ${inquiries}">
-          <td th:text="${inquiryStat.size - inquiryStat.index}"></td>
+        <tr th:each="inquiry : ${inquiryPage.content}">
+          <td th:text="${inquiryPage.totalElements - (inquiryPage.number * inquiryPage.size) - inquiryStat.index}"></td>
           <td class="post-title">
             <a th:if="${isStaff} or ${#authentication.principal.username == inquiry.member.memberId.toString()}"
                th:href="@{/iframe/inquiry/detail-view/{id}(id=${inquiry.inquiryId})}" 
@@ -82,6 +131,29 @@
         </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+  <!-- 페이징 -->
+  <div class="d-flex justify-content-between align-items-center">
+    <nav class="flex-grow-1">
+      <ul class="pagination justify-content-center mb-0">
+      <li class="page-item" th:classappend="${inquiryPage.first} ? 'disabled'">
+        <a class="page-link" th:href="@{/iframe/inquiry/view(page=${inquiryPage.number - 1}, size=${inquiryPage.size})}">이전</a>
+      </li>
+      <li class="page-item"
+          th:each="pageNum : ${#numbers.sequence(0, inquiryPage.totalPages - 1)}"
+          th:classappend="${pageNum == inquiryPage.number} ? 'active'">
+        <a class="page-link"
+           th:href="@{/iframe/inquiry/view(page=${pageNum}, size=${inquiryPage.size})}"
+           th:text="${pageNum + 1}"></a>
+      </li>
+      <li class="page-item" th:classappend="${inquiryPage.last} ? 'disabled'">
+        <a class="page-link" th:href="@{/iframe/inquiry/view(page=${inquiryPage.number + 1}, size=${inquiryPage.size})}">다음</a>
+      </li>
+    </ul>
+  </nav>
+    <div th:if="${isStudent}" class="ml-3">
+      <a th:href="@{/iframe/inquiry/add}" class="btn btn-primary">문의 작성</a>
     </div>
   </div>
 </div>

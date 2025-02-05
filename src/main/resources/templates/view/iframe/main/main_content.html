@@ -3,103 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="css/main/main-content.css" rel="stylesheet">
-    <style>
-        .main-content-view {
-            display: none;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+    <link href="/css/main/main-content.css" rel="stylesheet">
 
-        .iframe-container iframe {
-            display: none;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .info-container {
-            display: flex;
-            flex-direction: column;
-            gap: 60px;
-            margin-top: 20px;
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            margin-left: auto;  /* 중앙 정렬을 위해 추가 */
-            margin-right: auto;  /* 중앙 정렬을 위해 추가 */
-            padding-top: 15px;
-        }
-
-        .notice-section, .schedule-section {
-            width: 90%;
-            padding: 20px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .iframe-container {
-            width: 100%;
-            height: calc(100vh - 140px);
-            position: relative;
-            min-width: 1024px;
-            display: none;  /* 초기에는 숨김 */
-        }
-
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;  /* iframe은 항상 block으로 표시 */
-        }
-    </style>
+<!--    캘린더 관련-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/index.global.min.js'></script>
 </head>
 <body>
 <!-- 정보 컨테이너 -->
 <div class="info-container">
-    <!-- 공지사항 -->
-    <div class="notice-section">
-        <div class="section-title">공지사항</div>
-        <ul class="info-list">
-            <li th:if="${memberDTO != null && memberDTO.memberTypeStr == '학생'}">
-                <a href="#" onclick="parent.openNewPage('수강신청', '/iframe/ofregistration/student/studentOfre')">
-                    <span>2025학년도 1학기 수강신청 안내</span>
-                    <span class="date">2025.01.21</span>
-                </a>
-            </li>
-            <li>
-                <span>졸업사정 결과 확인 안내</span>
-                <span class="date">2025.01.19</span>
-            </li>
-        </ul>
+
+    <!--    베너 이미지 섹션-->
+    <div class="banner-section">
+        <img alt="배너 이미지" class="banner-image" src="/assets/logo/image/library.png">
     </div>
 
-    <!-- 주요일정 -->
-    <div class="schedule-section">
-        <div class="section-title">주요일정</div>
-        <ul class="info-list">
-            <li>
-                <span>2025-1학기 수강신청 기간</span>
-                <span class="date">01.22 ~ 01.26</span>
-            </li>
-            <li>
-                <span>2024학년도 학위수여식</span>
-                <span class="date">02.15</span>
-            </li>
-            <li>
-                <span>2025학년도 신입생 입학식</span>
-                <span class="date">02.26</span>
-            </li>
-        </ul>
+    <div class="content-sections">
+        <div class="notice-section">
+            <h3>공지사항</h3>
+            <table class="notice-table">
+                <tbody>
+                <tr th:each="notice : ${noticePage.content}">
+                    <td class="notice-title">
+                        <a th:href="@{/iframe/notice/{id}(id=${notice.noticeId})}"
+                           th:text="${notice.subject}"></a>
+                    </td>
+                    <td class="notice-date"
+                        th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="calendar-section">
+            <h3 id="currentMonthYear"></h3>
+            <div id="calendar"></div>
+        </div>
+
+        <div class="post-section">
+            <h3>학과 게시판 </h3>
+            <table class="notice-table">
+                <tbody>
+                <tr th:each="post : ${postPage.content}">
+                    <td class="notice-title">
+                        <a th:href="@{/iframe/post/{id}(id=${post.postId})}"
+                           th:text="${post.title}"></a>
+                    </td>
+                    <td class="notice-date"
+                        th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 현재 날짜 가져오기
+        const now = new Date();
+
+        // 제목 업데이트
+        const monthNames = ["1월", "2월", "3월", "4월", "5월", "6월",
+            "7월", "8월", "9월", "10월", "11월", "12월"];
+        document.getElementById('currentMonthYear').textContent =
+            now.getFullYear() + "년 " + monthNames[now.getMonth()];
+
+        // 캘린더 초기화
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            height: 'auto',
+            firstDay: 0,
+            dayMaxEvents: true,
+            headerToolbar: false,
+            fixedWeekCount: false,
+            showNonCurrentDates: false,
+            selectable: false,
+            initialDate: now,
+            dayCellContent: function(info) {
+                // '일' 제거하고 숫자만 표시
+                return info.dayNumberText.replace('일', '');
+            }
+        });
+        calendar.render();
+    });
+</script>
 </html>

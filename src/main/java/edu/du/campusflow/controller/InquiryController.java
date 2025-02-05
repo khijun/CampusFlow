@@ -3,14 +3,14 @@ package edu.du.campusflow.controller;
 import edu.du.campusflow.entity.Inquiry;
 import edu.du.campusflow.service.InquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 @RequestMapping("/iframe/inquiry")
@@ -26,7 +26,7 @@ public class InquiryController {
         if (!inquiryService.isStudent()) {
             throw new AccessDeniedException("학생만 문의사항을 작성할 수 있습니다.");
         }
-        return "/view/iframe/inquiry/addInquiry"; // 문의 추가 페이지로 이동
+        return "view/iframe/inquiry/addInquiry"; // 문의 추가 페이지로 이동
     }
 
     // 문의 추가 처리
@@ -38,11 +38,17 @@ public class InquiryController {
 
     // 모든 문의 조회 페이지
     @GetMapping("/view")
-    public String viewInquiries(Model model) {
-        model.addAttribute("inquiries", inquiryService.getInquiriesByUserRole()); // 사용자 권한에 따른 문의사항 조회
-        model.addAttribute("isStaff", inquiryService.isStaff()); // 교직원 여부 추가
-        model.addAttribute("isStudent", inquiryService.isStudent()); // 학생 여부 추가
-        return "/view/iframe/inquiry/viewInquiries"; // 문의 목록 페이지로 이동
+    public String viewInquiries(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Inquiry> inquiryPage = inquiryService.getInquiriesByUserRole(pageable);
+
+        model.addAttribute("inquiryPage", inquiryPage);
+        model.addAttribute("isStaff", inquiryService.isStaff());
+        model.addAttribute("isStudent", inquiryService.isStudent());
+        return "view/iframe/inquiry/viewInquiries";
     }
 
     // 특정 문의 상세 조회 페이지
@@ -62,6 +68,7 @@ public class InquiryController {
         return "view/iframe/inquiry/inquiryDetail";
     }
     @PostMapping("/{id}/complete")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String completeInquiry(@PathVariable Long id) {
         try{
             inquiryService.completeInquiry(id);
@@ -71,6 +78,7 @@ public class InquiryController {
         }
     }
     @PostMapping("/{id}/reply")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String addInquiryReply(@PathVariable Long id, Inquiry response) {
         try {
             inquiryService.addResponse(id, response);

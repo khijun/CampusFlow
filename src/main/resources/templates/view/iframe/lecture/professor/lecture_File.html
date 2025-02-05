@@ -2,179 +2,177 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8">
-  <title>강의계획서 업로드</title>
-  <link rel="stylesheet" href="https://uicdn.toast.com/tui-grid/latest/tui-grid.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" th:href="@{/css/iframe/curriculum/search-container.css}">
-  <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
+    <meta charset="UTF-8">
+    <title>강의계획서 등록</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 </head>
 
 <body>
-  <!-- 검색 조건 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="search-container">
+<!-- 검색 조건 -->
+<div class="search-container">
     <div class="input-group">
-      <label for="Semester">학기</label>
-      <select id="Semester">
-        <option value="FIRST_SEMESTER">1학기</option>
-        <option value="SECOND_SEMESTER">2학기</option>
-      </select>
+        <label for="Semester">학기</label>
+        <select id="Semester">
+            <option value="FIRST_SEMESTER">1학기</option>
+            <option value="SECOND_SEMESTER">2학기</option>
+        </select>
     </div>
     <div class="input-group">
-      <label for="professorId">교번</label>
-      <input type="text" id="professorId" th:value="${member.memberId}" readonly>
+        <label for="professorId">교번</label>
+        <input type="text" id="professorId" th:value="${member.memberId}" readonly>
     </div>
     <div class="input-group"></div>
     <button type="button" id="searchButton">조회</button>
-  </div>
-
-  <!-- 검색 결과 그리드 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+</div>
+<!-- 검색 결과 그리드 -->
+<div class="mb-10">
     <i class="fas fa-book mr-2" style="margin-left: 10px"></i>
-    <span class="h6 mb-0">강의 목록</span>
-  </div>
-  <div id="lectureGrid"></div>
-
-  <!-- 파일 업로드 폼 -->
-  <hr style="border: none; margin: 20px 0;">
-  <div class="d-flex align-items-center mb-3">
+    <span class="">강의 목록</span>
+</div>
+<div id="lectureGrid" class="mb-10"></div>
+<!-- 파일 업로드 폼 -->
+<div class="mb-10">
     <i class="fas fa-pen mr-2" style="margin-left: 10px"></i>
     <span class="h6 mb-0">강의 계획서 등록</span>
-  </div>
-  <div class="search-container">
+</div>
+<div class="search-container">
     <div class="input-group">
-      <label for="selectedLecture">강의명</label>
-      <input type="text" id="selectedLecture" readonly>
+        <label for="selectedLecture">강의명</label>
+        <input type="text" id="selectedLecture" readonly>
     </div>
     <div class="input-group">
-      <label for="lectureFile">강의 계획서</label>
-      <input type="file" id="lectureFile">
+        <label for="lectureFile">강의 계획서</label>
+        <input type="file" id="lectureFile">
     </div>
+    <div class="input-group"></div>
     <button type="button" id="uploadButton">업로드</button>
-  </div>
-  <script>
+</div>
+<script>
 
     const lectureList = new tui.Grid({
-      el: document.getElementById('lectureGrid'),
-      columns: [
-        { header: '강의코드', name: 'lectureId', sortable: false, align:'center'},
-        { header: '강의명', name: 'lectureName', sortable: false, align:'center' },
-        { header: '학점', name: 'subjectCredits', sortable: false, align:'center' },
-        { header: '학기', name: 'semesterName', sortable: false, align:'center' },
-        { header: '최대 인원', name: 'maxStudents', sortable: false, align:'center' },
-      ],
-      bodyHeight: 300
+        el: document.getElementById('lectureGrid'),
+        columns: [
+            {header: '강의코드', name: 'lectureId', sortable: false, align: 'center'},
+            {header: '강의명', name: 'lectureName', sortable: false, align: 'center'},
+            {header: '학점', name: 'subjectCredits', sortable: false, align: 'center'},
+            {header: '학기', name: 'semesterName', sortable: false, align: 'center'},
+            {header: '최대 인원', name: 'maxStudents', sortable: false, align: 'center'},
+        ],
+        bodyHeight: 300
     });
 
     // 현재 월을 기준으로 학기 선택
     document.addEventListener('DOMContentLoaded', function () {
-      const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
-      const semesterSelect = document.getElementById('Semester');
-      const professorId = document.getElementById('professorId').value;
+        const currentMonth = new Date().getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
+        const semesterSelect = document.getElementById('Semester');
+        const professorId = document.getElementById('professorId').value;
 
-      if (currentMonth >= 8 || currentMonth <= 1) {
-        semesterSelect.value = 'SECOND_SEMESTER';
-      } else {
-        semesterSelect.value = 'FIRST_SEMESTER';
-      }
-      // 초기 데이터 로드
-      const semesterCode = semesterSelect.value;
+        if (currentMonth >= 8 || currentMonth <= 1) {
+            semesterSelect.value = 'SECOND_SEMESTER';
+        } else {
+            semesterSelect.value = 'FIRST_SEMESTER';
+        }
+        // 초기 데이터 로드
+        const semesterCode = semesterSelect.value;
 
-      // API 호출
-      fetch(`/api/lecture/lectureSearch?semesterCode=${semesterCode}&professorId=${professorId}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.length === 0) {
-            alert('검색 결과가 없습니다.');
-          }
-          lectureList.resetData(data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('강의 목록을 불러오는데 실패했습니다.');
-        });
+        // API 호출
+        fetch(`/api/lecture/lectureSearch?semesterCode=${semesterCode}&professorId=${professorId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    alert('검색 결과가 없습니다.');
+                }
+                lectureList.resetData(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('강의 목록을 불러오는데 실패했습니다.');
+            });
     });
 
     // 검색 버튼 클릭 이벤트
     document.getElementById('searchButton').addEventListener('click', function () {
-      const semesterCode = document.getElementById('Semester').value;
-      const professorId = document.getElementById('professorId').value;
+        const semesterCode = document.getElementById('Semester').value;
+        const professorId = document.getElementById('professorId').value;
 
-      if (!semesterCode) {
-        alert('학기를 선택해주세요.');
-        return;
-      }
+        if (!semesterCode) {
+            alert('학기를 선택해주세요.');
+            return;
+        }
 
-      // API 호출
-      fetch(`/api/lecture/lectureSearch?semesterCode=${semesterCode}&professorId=${professorId}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.length === 0) {
-            alert('검색 결과가 없습니다.');
-          }
-          lectureList.resetData(data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('강의 목록을 불러오는데 실패했습니다.');
-        });
+        // API 호출
+        fetch(`/api/lecture/lectureSearch?semesterCode=${semesterCode}&professorId=${professorId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0) {
+                    alert('검색 결과가 없습니다.');
+                }
+                lectureList.resetData(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('강의 목록을 불러오는데 실패했습니다.');
+            });
     });
 
     let selectedLectureId = null;
 
     // 그리드 클릭 이벤트
     lectureList.on('click', (ev) => {
-      if (ev.rowKey === undefined) return;
-      const rowData = lectureList.getRow(ev.rowKey);
+        if (ev.rowKey === undefined) return;
+        const rowData = lectureList.getRow(ev.rowKey);
 
-      // 선택된 강의 정보 저장
-      selectedLectureId = rowData.lectureId;
+        // 선택된 강의 정보 저장
+        selectedLectureId = rowData.lectureId;
 
-      // 선택된 강의 정보 표시
-      document.getElementById('selectedLecture').value = rowData.lectureName;
+        // 선택된 강의 정보 표시
+        document.getElementById('selectedLecture').value = rowData.lectureName;
     });
 
     // 업로드 버튼 클릭 이벤트
     document.getElementById('uploadButton').addEventListener('click', function () {
-      const selectedLecture = document.getElementById('selectedLecture').value;
-      const fileInput = document.getElementById('lectureFile');
+        const selectedLecture = document.getElementById('selectedLecture').value;
+        const fileInput = document.getElementById('lectureFile');
 
-      if (!selectedLecture) {
-        alert('강의를 선택해주세요.');
-        return;
-      }
+        if (!selectedLecture) {
+            alert('강의를 선택해주세요.');
+            return;
+        }
 
-      if (!fileInput.files || fileInput.files.length === 0) {
-        alert('파일을 선택해주세요.');
-        return;
-      }
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('파일을 선택해주세요.');
+            return;
+        }
 
-      const formData = new FormData();
-      formData.append('file', fileInput.files[0]);
-      formData.append('lectureId', selectedLectureId);  // 선택된 강의 ID도 전송
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('lectureId', selectedLectureId);  // 선택된 강의 ID도 전송
 
-      fetch('/api/lecture/upload-file', {
-        method: 'POST',
-        body: formData
-      })
-        .then(response => response.text())
-        .then(message => {
-          alert(message);
-          if (message.includes('성공')) {
-            // 파일 입력 필드 초기화
-            fileInput.value = '';
-            document.getElementById('selectedLecture').value = '';
-          }
+        fetch('/api/lecture/upload-file', {
+            method: 'POST',
+            body: formData
         })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('파일 업로드 중 오류가 발생했습니다.');
-        });
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                if (message.includes('성공')) {
+                    // 파일 입력 필드 초기화
+                    fileInput.value = '';
+                    document.getElementById('selectedLecture').value = '';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('파일 업로드 중 오류가 발생했습니다.');
+            });
     });
 
-  </script>
+</script>
 </body>
 
 </html>

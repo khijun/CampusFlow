@@ -9,6 +9,7 @@ import edu.du.campusflow.service.AuthService;
 import edu.du.campusflow.service.GradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,7 @@ public class GradeController {
     }
 
     @GetMapping("/iframe/grade/professor/professor_view")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String showAssignGradeForm(Model model) {
         Long memberId = authService.getCurrentMemberId(); // 현재 로그인된 교수의 ID
 
@@ -90,6 +92,7 @@ public class GradeController {
     }
 
     @GetMapping("/iframe/grade/professor/get_students")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String getStudentsByLectureId(@RequestParam Long lectureId, Model model) {
         // 선택한 강의 ID에 해당하는 수강 신청 학생 목록 조회
         List<Ofregistration> ofregistrations = ofregistrationRepository.findByLectureId(lectureId);
@@ -107,6 +110,7 @@ public class GradeController {
     }
 
     @PostMapping("/iframe/grade/professor/assign")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String assignGrade(@RequestParam("lectureId") Long lectureId,
                               @RequestParam List<Long> memberId,
                               @RequestParam List<String> gradeType,
@@ -132,6 +136,7 @@ public class GradeController {
 
     // 학생 성적 조회
     @GetMapping("/iframe/grade/professor/student_grade/{studentId}")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String getStudentGrade(@PathVariable Long studentId, Model model) {
         Long memberId = authService.getCurrentMemberId();
         try {
@@ -155,6 +160,7 @@ public class GradeController {
     }
     // 모든 학생 성적 조회
     @GetMapping("/iframe/grade/professor/all_students")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String getAllStudentGrades(Model model) {
         Long memberId = authService.getCurrentMemberId();
         try {

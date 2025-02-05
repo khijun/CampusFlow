@@ -15,13 +15,13 @@
     body {
       background-color: #f8f9fa;
     }
-    .container {
+    .mb-10 {
       max-width: 100%;
       padding: 15px;
       margin: 0 auto;
     }
     @media (min-width: 768px) {
-      .container {
+      .mb-10 {
         max-width: 90%;
       }
     }
@@ -107,34 +107,34 @@
       font-weight: 500;
       transition: all 0.2s ease;
     }
-    
+
     .btn-primary {
       background-color: var(--primary-color);
       border: none;
       color: white;
     }
-    
+
     .btn-primary:hover {
       background-color: var(--hover-color);
       color: white;
     }
-    
+
     .btn-secondary {
       background-color: var(--secondary-color);
       border: none;
       color: white;
     }
-    
+
     .btn-secondary:hover {
       background-color: var(--hover-color);
       color: white;
     }
-    
+
     .btn-outline-primary {
       color: var(--primary-color);
       border-color: var(--primary-color);
     }
-    
+
     .btn-outline-primary:hover {
       color: white;
       background-color: var(--primary-color);
@@ -151,7 +151,7 @@
       background-color: var(--danger-color);
       border-color: var(--danger-color);
     }
-    
+
     .btn-danger {
       background-color: var(--danger-color);
       border: none;
@@ -167,41 +167,69 @@
       padding: 4px 12px;
       font-size: 0.9rem;
     }
+    .btn-gray {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline-gray {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      color: var(--primary-color);
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline-gray:hover {
+      background-color: #f8f9fa;
+      border-color: var(--primary-color);
+    }
+
+    .post-content {
+      min-height: 200px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
-<div class="container mt-3">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>게시물 상세</h2>
-    <div class="post-actions">
-      <div th:if="${@postService.isPostAuthor(post)}">
-        <a th:href="@{/iframe/posts/{id}/edit(id=${post.postId})}" class="btn btn-outline-primary">수정</a>
-        <button type="button" class="btn btn-outline-danger" th:onclick="|confirmPostDelete(${post.postId})|">삭제</button>
-      </div>
-      <a th:href="@{/iframe/posts/view}" class="btn btn-secondary">목록으로</a>
+<div class="container mt-5">
+  <h2 th:text="${post.title}"></h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <span>익명</span>
+      <span class="mx-2">|</span>
+      <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <h3 class="card-title" th:text="${post.title}">제목</h3>
-      <div class="d-flex justify-content-between align-items-center post-info">
-        <span>작성자: 익명</span>
-        <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
-      </div>
+  <div class="post-content" th:text="${post.content}"></div>
+
+  <!-- 버튼 그룹 -->
+  <div class="d-flex justify-content-between mb-4">
+    <div>
+      <a th:href="@{/iframe/posts/view}" class="btn btn-gray">목록</a>
     </div>
-    <div class="card-body">
-      <p class="card-text" th:text="${post.content}">내용</p>
+    <div th:if="${@postService.isPostAuthor(post)}">
+      <a th:href="@{/iframe/posts/{id}/edit(id=${post.postId})}" class="btn btn-gray">수정</a>
+      <button type="button" class="btn btn-gray ml-2" th:onclick="|confirmPostDelete(${post.postId})|">삭제</button>
     </div>
   </div>
 
   <div class="comment-section">
+    <h4>댓글</h4>
     <div class="comment-form">
-      <h4 class="mb-3">댓글 작성</h4>
       <form th:action="@{/iframe/posts/{postId}/comments(postId=${post.postId})}" method="post" id="commentForm" onsubmit="return handleSubmit(event)">
         <textarea name="content" class="comment-textarea" id="commentInput" 
                   placeholder="댓글을 입력하세요" required></textarea>
-        <button type="submit" class="btn btn-primary" id="submitButton">댓글 등록</button>
+        <button type="submit" class="btn btn-gray" id="submitButton">댓글 등록</button>
       </form>
     </div>
 
@@ -215,14 +243,14 @@
         <form th:if="${@postService.isCommentAuthor(comment)}" 
               th:action="@{/iframe/posts/{postId}/comments/{commentId}/delete(postId=${post.postId}, commentId=${comment.postId})}" 
               method="post">
-          <button type="button" class="btn btn-danger btn-delete" onclick="confirmDelete(this.form)">삭제</button>
+          <button type="button" class="btn btn-gray btn-delete" onclick="confirmDelete(this.form)">삭제</button>
         </form>
       </div>
     </div>
   </div>
 </div>
 
-<script>
+<script th:inline="javascript">
   const commentForm = document.getElementById('commentForm');
   const commentInput = document.getElementById('commentInput');
   const submitButton = document.getElementById('submitButton');
@@ -313,13 +341,16 @@
 
   function confirmPostDelete(postId) {
     if (confirm('정말 삭제하시겠습니까?')) {
-        const deleteBtn = document.querySelector('.btn-outline-danger');
+      const deleteBtn = document.querySelector('.btn-gray');
         // 버튼 비활성화 및 로딩 표시
         deleteBtn.disabled = true;
         deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 삭제중...';
 
-        fetch(`/iframe/posts/${postId}/delete`, {
-            method: 'POST'
+      fetch(`/iframe/posts/delete/${postId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
         })
         .then(response => {
             if (response.ok) {

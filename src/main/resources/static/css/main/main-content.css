@@ -10,6 +10,13 @@ body, html {
     overflow: auto;
 }
 
+.front-main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column
+}
+
 /* 헤더를 제외한 나머지 요소 */
 .main-content {
     display: flex;
@@ -39,4 +46,197 @@ body, html {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+
+/*메인 컨텐트ㅇ*/
+.info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;           /* 간격 조정 */
+    margin: 20px;
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 40px);  /* 좌우 마진 고려 */
+}
+
+/*배너 이미지 관련*/
+.banner-section {
+    width: 100%;
+    min-width: 1420px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.banner-image {
+    width: 100%;
+    min-width: 1420px;
+    height: 250px;  /* 원하는 높이로 조정 */
+    object-fit: cover;  /* 이미지 비율 유지 */
+}
+
+/* 기존 섹션들을 감싸는 컨테이너 */
+.content-sections {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/*공지사항 관련*/
+.notice-section {
+    flex: 0 0 460px;  /* 가로 크기 420px로 통일 */
+    width: 460px;
+    height: 300px;    /* 세로 크기 320px로 통일 */
+    background: white;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.notice-section h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.more-link {
+    font-size: 14px;
+    color: #666;
+    text-decoration: none;
+}
+
+.notice-table {
+    width: 100%;
+}
+
+.notice-table td {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.notice-title {
+    width: 70%;
+}
+
+.notice-title a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notice-date {
+    width: 30%;
+    text-align: right;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/*캘린더 관련*/
+.calendar-section {
+    flex: 0 0 460px;
+    width: 460px;
+    height: 300px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    overflow: hidden;
+}
+
+#currentMonthYear {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.fc {
+    height: 230px !important;
+    font-size: 0.8rem !important;
+}
+
+/* 요일 헤더 스타일 */
+.fc-col-header-cell {
+    padding: 5px 0 !important;
+    font-weight: 600 !important;
+    color: #495057 !important;
+    background: #f8f9fa !important;
+    border: 1px solid #f1f3f5 !important;  /* 모든 방향 테두리 */
+}
+
+/* 날짜 셀 스타일 */
+.fc-daygrid-day {
+    height: 28px !important;
+    border: 1px solid #f1f3f5 !important;  /* 모든 방향 테두리 */
+}
+
+/* 날짜 숫자 스타일 */
+.fc-daygrid-day-number {
+    padding: 2px !important;
+    color: #495057;
+}
+
+/* 주말 색상 */
+.fc-day-sun .fc-daygrid-day-number {
+    color: #ff6b6b !important;
+}
+
+.fc-day-sat .fc-daygrid-day-number {
+    color: #339af0 !important;
+}
+
+/* 오늘 날짜 스타일 */
+.fc-day-today {
+    background: #fff9db !important;  /* 연한 노란색 배경 */
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    font-weight: bold;
+    color: #f59f00 !important;  /* 진한 노란색 텍스트 */
+}
+
+/* 이전/다음 달 날짜 */
+.fc-day-other .fc-daygrid-day-number {
+    opacity: 0.3;
+    color: #adb5bd !important;
+}
+
+/* 테이블 관련 */
+.fc .fc-scrollgrid {
+    border: 1px solid #f1f3f5 !important;
+}
+
+.fc .fc-daygrid-body {
+    width: 100% !important;
+}
+
+.fc .fc-daygrid-body table {
+    width: 100% !important;
+}
+
+.fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+    min-height: 1em !important;
+    position: relative;
+}
+
+.fc .fc-daygrid-body-natural .fc-daygrid-day-events {
+    margin-bottom: 0.5em;
+}
+
+/* 호버 효과 */
+.fc-daygrid-day:hover {
+    background: #f8f9fa !important;
+}
+
+/*게시판 관련*/
+.post-section {
+    flex: 0 0 460px;  /* 가로 크기 420px로 통일 */
+    width: 460px;
+    height: 300px;    /* 세로 크기 320px로 통일 */
+    background: white;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
