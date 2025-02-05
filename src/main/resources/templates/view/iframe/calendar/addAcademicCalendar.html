@@ -104,7 +104,6 @@
                     url: '/iframe/calendar/api/academic-calendar',
                     type: 'GET',
                     success: function(response) {
-                        console.log('Received calendar data:', response);
                         var events = response.map(function(event) {
                             // endDate가 null이거나 유효하지 않은 경우 startDate를 사용
                             var endDate = moment(event.endDate).isValid() ? 
@@ -196,7 +195,6 @@
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                     error: function(xhr, status, error) {
-                        console.log('일정 수정 상태:', status);
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                     complete: function() {
@@ -223,7 +221,6 @@
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                     error: function(xhr, status, error) {
-                        console.log('일정 추가 상태:', status);
                         $('#calendar').fullCalendar('refetchEvents');
                     },
                     complete: function() {

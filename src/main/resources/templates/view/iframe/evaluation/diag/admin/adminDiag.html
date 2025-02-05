@@ -127,11 +127,9 @@
         // 학과 선택 시 강의 목록 가져오기
         deptSelect.addEventListener('change', function () {
             const deptId = this.value;
-            console.log('Selected deptId:', deptId);
             if (deptId) {
                 fetch(`/iframe/evaluation/diag/admin/lectures?deptId=${deptId}`)
                     .then(response => {
-                        console.log('Response status:', response.status);
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }

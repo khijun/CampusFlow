@@ -91,7 +91,6 @@
         fetch('/api/ofregistration/available-lectures')
             .then(response => response.json())
             .then(data => {
-                console.log('서버 응답 데이터:', data); // 디버깅용 로그
                 originalData = data.map(lecture => ({
                     ...lecture,
                     lectureTime: `${lecture.startTime} - ${lecture.endTime}`,
@@ -161,8 +160,6 @@
         constructor(props) {
             const el = document.createElement('div');
             const {lectureId, isFull, regStatus} = props.value;
-
-            console.log('버튼 렌더링:', {lectureId, isFull, regStatus}); // 디버깅용 로그
 
             if (isFull && regStatus !== 'REQUESTED') {
                 el.innerHTML = '<span style="color: #ff4444;">마감</span>';
