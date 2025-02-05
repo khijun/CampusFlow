@@ -25,7 +25,7 @@ public class InquiryController {
         if (!inquiryService.isStudent()) {
             throw new AccessDeniedException("학생만 문의사항을 작성할 수 있습니다.");
         }
-        return "/view/iframe/inquiry/addInquiry"; // 문의 추가 페이지로 이동
+        return "view/iframe/inquiry/addInquiry"; // 문의 추가 페이지로 이동
     }
 
     // 문의 추가 처리
@@ -47,7 +47,7 @@ public class InquiryController {
         model.addAttribute("inquiryPage", inquiryPage);
         model.addAttribute("isStaff", inquiryService.isStaff());
         model.addAttribute("isStudent", inquiryService.isStudent());
-        return "/view/iframe/inquiry/viewInquiries";
+        return "view/iframe/inquiry/viewInquiries";
     }
 
     // 특정 문의 상세 조회 페이지

@@ -21,6 +21,12 @@ window.addEventListener('DOMContentLoaded', (event)=>{
  */
 function saveTabState() {
     const tabs = document.getElementById('tabs');
+    const iframeNameContainer = document.querySelector('#iframe-name-container');
+    if(tabs.children.length === 0){
+        iframeNameContainer.style.visibility = "hidden";
+    }else{
+        iframeNameContainer.style.visibility = "visible";
+    }
     const tabsData = Array.from(tabs.children).map(tab => ({
         title: tab.textContent.trim().replace('×', ''), // 닫기 버튼 텍스트 제거
         url: tab.getAttribute('data-url'),
@@ -229,6 +235,9 @@ function handleDragEnd(e) {
  * @param {string} url - 전환할 탭의 URL
  */
 function switchTab(url) {
+    if(url.trim() == null && url.trim().length === 0){
+
+    }
     const tabs = document.getElementById('tabs');
     // 모든 탭의 활성화 상태 제거
     Array.from(tabs.children).forEach(tab => tab.classList.remove('active'));
