@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class LectureController {
     AuthService authService;
 
     @GetMapping("/iframe/lecture/create")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String lectureCreate(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
         return "view/iframe/lecture/professor/lectureCreate";
@@ -36,6 +38,7 @@ public class LectureController {
 
     //강의 개설에 사용
     @PostMapping("/api/lecture/create")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public ResponseEntity<String> createLecture(@RequestBody LectureDTO lectureDTO) {
         try {
             lectureService.createLecture(lectureDTO);
@@ -46,6 +49,7 @@ public class LectureController {
     }
 
     @GetMapping("/iframe/lecture/lectureApproval")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String lectureApproval(Model model) {
         return "/view/iframe/lecture/admin/lectureApproval";
     }
@@ -60,6 +64,7 @@ public class LectureController {
     }
 
     @PostMapping("/api/lecture/approve")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<String> approveLecture(@RequestBody LectureDTO lectureDTO) {
         try {
@@ -71,12 +76,14 @@ public class LectureController {
     }
 
     @GetMapping("/iframe/lecture/createList")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String lectureCreateList(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
         return "view/iframe/lecture/professor/lectureCreate_List";
     }
 
     @GetMapping("/api/lecture/approvedList")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public List<LectureDTO> getApprovedLectures(
             @RequestParam(required = false) String semesterCode,
@@ -85,6 +92,7 @@ public class LectureController {
     }
 
     @GetMapping("/api/lecture/pendingList")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public List<LectureDTO> getPendingLectures(
             @RequestParam(required = false) String semesterCode,
@@ -93,6 +101,7 @@ public class LectureController {
     }
 
     @GetMapping("/iframe/lecture/lectureUploadFile")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String lectureFile(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
         return "view/iframe/lecture/professor/lecture_File";
@@ -107,6 +116,7 @@ public class LectureController {
     }
 
     @PostMapping("/api/lecture/upload-file")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<String> uploadLectureFile(
             @RequestParam("file") MultipartFile file,
@@ -121,6 +131,7 @@ public class LectureController {
     }
 
     @GetMapping("/iframe/lecture/lectureFile_List")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String lectureFileList(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
         return "view/iframe/lecture/professor/lectureFile_List";

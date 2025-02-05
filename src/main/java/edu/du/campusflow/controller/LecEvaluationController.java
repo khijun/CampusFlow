@@ -10,6 +10,7 @@ import edu.du.campusflow.service.LecQuestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +33,14 @@ public class LecEvaluationController {
 
     // 교직원용 강의평가 페이지 이동
     @GetMapping("/admin")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String showAdminLecList() {
         return "view/iframe/evaluation/lec/admin/adminLec";
     }
 
     // 관리자용 학과 목록 조회
     @GetMapping("/admin/departments")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<Map<String, Object>>> getDepartments() {
         return ResponseEntity.ok(lecQuestionService.getAllDepartments());
@@ -45,6 +48,7 @@ public class LecEvaluationController {
 
     // 관리자용 학과/학년 검색
     @GetMapping("/admin/search")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<LecQuestionDTO>> searchEvaluations(
             @RequestParam Long deptId,
@@ -64,6 +68,7 @@ public class LecEvaluationController {
 
     // 학과 선택에 따른 과목 선택
     @GetMapping("/admin/lectures")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<LectureDTO>> getLecturesByDepartment(@RequestParam Long deptId) {
         List<Lecture> lectures = lecQuestionService.getLecLecturesByDepartment(deptId);
@@ -81,6 +86,7 @@ public class LecEvaluationController {
 
     // 교수용 강의평가 페이지 이동
     @GetMapping("/professor")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String showProfessorLecturesList(Model model) {
         Member professor = authService.getCurrentMember();  // 현재 로그인한 교수 정보 가져오기
 
@@ -93,6 +99,7 @@ public class LecEvaluationController {
 
     // 교수의 학과 정보 조회
     @GetMapping("/professor/departments")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<Map<String, Object>>> getProfessorDepartment() {
         log.info("Getting professor department info");  // 로그 추가
@@ -101,6 +108,7 @@ public class LecEvaluationController {
 
     // 교수용 학과/학년 검색
     @GetMapping("/professor/search")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<LecQuestionDTO>> searchProfessorEvaluations(
             @RequestParam Long deptId,

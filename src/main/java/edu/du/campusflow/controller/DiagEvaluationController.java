@@ -10,6 +10,7 @@ import edu.du.campusflow.service.DiagEvaluationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +31,14 @@ public class DiagEvaluationController {
 
     // 관리자용 진단평가 페이지 이동
     @GetMapping("/admin")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String showAdminDiagnosticList() {
         return "view/iframe/evaluation/diag/admin/adminDiag";
     }
 
     // 관리자용 학과 목록 조회
     @GetMapping("/admin/departments")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<Map<String, Object>>> getDepartments() {
         return ResponseEntity.ok(diagEvaluationService.getAllDepartments());
@@ -43,6 +46,7 @@ public class DiagEvaluationController {
 
     // 관리자용 학과/학년 검색
     @GetMapping("/admin/search")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<DiagEvaluationDetailDTO>> searchEvaluations(
             @RequestParam Long deptId,
@@ -62,6 +66,7 @@ public class DiagEvaluationController {
 
     // 학과 선택에 따른 과목 선택
     @GetMapping("/admin/lectures")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<LectureDTO>> getLecturesByDepartment(@RequestParam Long deptId) {
         List<Lecture> lectures = diagEvaluationService.getDiagLecturesByDepartment(deptId);
@@ -80,6 +85,7 @@ public class DiagEvaluationController {
 
     // 교수용 진단평가 페이지 이동
     @GetMapping("/professor")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String showProfessorDiagnosticList(Model model) {
         Member professor = authService.getCurrentMember();  // 현재 로그인한 교수 정보 가져오기
 
@@ -92,6 +98,7 @@ public class DiagEvaluationController {
 
     // 교수의 학과 정보 조회
     @GetMapping("/professor/departments")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<Map<String, Object>>> getProfessorDepartment() {
         return ResponseEntity.ok(diagEvaluationService.getProfessorDepartment());
@@ -99,6 +106,7 @@ public class DiagEvaluationController {
 
     // 교수용 학과/학년 검색
     @GetMapping("/professor/search")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<DiagEvaluationDetailDTO>> searchProfessorEvaluations(
             @RequestParam Long deptId,

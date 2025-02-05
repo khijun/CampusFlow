@@ -7,6 +7,7 @@ import edu.du.campusflow.repository.FacilityRepository;
 import edu.du.campusflow.service.FacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,7 @@ public class FacilityController {
 
     //강의실 상태 변경하는 컨트롤러
     @PostMapping("/api/facility/update-status")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<String> updateFacilityStatus(
             @RequestParam Long facilityId,

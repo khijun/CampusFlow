@@ -4,6 +4,7 @@ import edu.du.campusflow.dto.*;
 import edu.du.campusflow.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,16 +23,19 @@ public class AttendanceController {
     }
 
     @GetMapping("/professor-search")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String getAttendanceProfessorSearchPage() {
         return "view/iframe/attendance/attendance_professor_list";
     }
 
     @GetMapping("/professor-register")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String getAttendanceProfessorRegisterPage() {
         return "view/iframe/attendance/attendance_professor_register";
     }
 
     @GetMapping("/staff-list")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String getAttendanceStaffListPage() {
         return "view/iframe/attendance/attendance_staff_list";
     }
@@ -45,6 +49,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/api/professor")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<ProfessorAttendanceDTO>> getProfessorAttendance(
             @RequestParam("semester") Long semesterCodeId,
@@ -54,12 +59,14 @@ public class AttendanceController {
     }
 
     @GetMapping("/api/professor/lectures")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<LectureListDTO>> getProfessorLectures() {
         return ResponseEntity.ok(attendanceService.getProfessorLectures());
     }
 
     @PostMapping("/api/professor/update")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<Void> updateAttendance(
             @RequestBody List<ProfessorAttendanceUpdateDTO> updateDTOList) {
@@ -73,6 +80,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/api/admin/departments")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<DeptDTO>> getDepartments() {
         List<DeptDTO> departments = attendanceService.getDepartments();
@@ -80,6 +88,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/api/admin/lectures")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<LectureListDTO>> getLecturesByDepartment(
             @RequestParam("deptId") Long deptId) {
@@ -87,6 +96,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/api/admin/attendance")
+    @PreAuthorize("hasAnyRole('STAFF')")
     @ResponseBody
     public ResponseEntity<List<ProfessorAttendanceDTO>> getAttendanceForAdmin(
             @RequestParam("semester") Long semesterCodeId,
