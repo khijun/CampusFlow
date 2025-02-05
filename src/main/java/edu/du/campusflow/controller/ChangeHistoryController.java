@@ -10,6 +10,7 @@ import edu.du.campusflow.service.ChangeHistoryService;
 import edu.du.campusflow.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ public class ChangeHistoryController {
 
 
     @GetMapping("/iframe/academic/admin/history_view")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String historyView(Model model) {
         List<ChangeHistory> changeHistoryList = changeHistoryService.findAll();
         model.addAttribute("changeHistoryList", changeHistoryList);
@@ -35,6 +37,7 @@ public class ChangeHistoryController {
     }
 
     @GetMapping("/iframe/academic/admin/student_status_management")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String studentStatusManagement(Model model) {
         List<Member> members = changeHistoryService.getMembersWithType101();
         model.addAttribute("members", members);
@@ -43,12 +46,14 @@ public class ChangeHistoryController {
     }
 
     @PostMapping("/members/{memberId}/expel")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String withdrawMember(@PathVariable Long memberId) {
         changeHistoryService.processExpulsionOrWithdrawal(memberId, false); // 제적 처리
         return "redirect:/iframe/academic/admin/student_status_management";
     }
 
     @PostMapping("/members/{memberId}/withdraw")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String expelMember(@PathVariable Long memberId) {
         changeHistoryService.processExpulsionOrWithdrawal(memberId, true); // 퇴학 처리
         return "redirect:/iframe/academic/admin/student_status_management";

@@ -158,8 +158,6 @@
                         return response.json();
                     })
                     .then(result => {
-                        console.log('Search result:', result);
-
                         if (result?.data && result.data.length > 0) {
                             grid.resetData(result.data);
                         } else {

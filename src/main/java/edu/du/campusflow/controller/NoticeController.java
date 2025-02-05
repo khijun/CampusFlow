@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ public class NoticeController {
 
     // 공지 추가 페이지
     @GetMapping("/add")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String showAddNoticeForm() {
         checkStaffAccess();
         return "view/iframe/notice/addNotice";
@@ -38,6 +40,7 @@ public class NoticeController {
 
     // 공지 추가 처리
     @PostMapping
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String addNotice(Notice notice, @AuthenticationPrincipal Member member) {
         checkStaffAccess();
         notice.setMember(member);
@@ -48,6 +51,7 @@ public class NoticeController {
 
     // 공지사항 수정 폼 표시
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String showEditNoticeForm(@PathVariable Long id, Model model) {
         checkStaffAccess();
         Notice notice = noticeService.getNoticeById(id);
@@ -57,6 +61,7 @@ public class NoticeController {
 
     // 공지사항 수정 처리
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String editNotice(@PathVariable Long id, Notice notice) {
         checkStaffAccess();
         noticeService.updateNotice(id, notice);
@@ -65,6 +70,7 @@ public class NoticeController {
 
     // 공지사항 삭제 처리
     @PostMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String deleteNotice(@PathVariable Long id) {
         checkStaffAccess();
         noticeService.deleteNotice(id);

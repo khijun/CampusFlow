@@ -211,7 +211,6 @@
         fetch(`/api/facility/lectures/${facilityId}`)
             .then(response => response.json())
             .then(lectures => {
-                console.log('Received lectures:', lectures);
 
                 // 데이터가 없는 경우 alert로 메시지 표시
                 if (!lectures || lectures.length === 0) {
@@ -220,7 +219,6 @@
                 }
 
                 lectures.forEach(lecture => {
-                    console.log('Processing lecture:', lecture);
                     const startPeriod = parseInt(lecture.startTime.replace(/[^0-9]/g, ''));
                     const endPeriod = parseInt(lecture.endTime.replace(/[^0-9]/g, ''));
 

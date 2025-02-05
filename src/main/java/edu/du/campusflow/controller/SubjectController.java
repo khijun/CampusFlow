@@ -4,6 +4,7 @@ import edu.du.campusflow.dto.SubjectDTO;
 import edu.du.campusflow.service.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +25,13 @@ public class SubjectController {
    }
 
    @GetMapping("/iframe/curriculum/subject/register")
+   @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
    public String registerSubject(Model model) {
       return "view/iframe/curriculum/subject/subject_register";
    }
 
    @GetMapping("/iframe/curriculum/subject/update")
+   @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
    public String updateSubject(Model model) {
       return "view/iframe/curriculum/subject/subject_update";
    }
@@ -45,18 +48,21 @@ public class SubjectController {
    }
 
    @PostMapping("/api/subjects")
+   @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
    public ResponseEntity<?> registerSubjects(@RequestBody List<SubjectDTO> subjects) {
       subjectService.saveAll(subjects);
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects saved successfully."));
    }
 
    @PutMapping("/api/subjects/update")
+   @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
    public ResponseEntity<?> updateSubjects(@RequestBody List<SubjectDTO> updatedSubjects) {
       subjectService.updateSubjects(updatedSubjects);
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects updated successfully."));
    }
 
    @DeleteMapping("/api/subjects/delete")
+   @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
    public ResponseEntity<?> deleteSubjects(@RequestBody List<Long> ids) {
       subjectService.deleteSubjects(ids);
       return ResponseEntity.ok(Map.of("status", "success", "message", "Subjects deleted successfully."));

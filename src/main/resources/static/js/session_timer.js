@@ -1,7 +1,9 @@
-let timeLeft = 1800; // 초기 30분 (1800초)
+const defaultSessionTime = 60 * 60 * 1;
+let timeLeft = defaultSessionTime;
+let flag = true;
 
 function updateTimer() {
-    if (timeLeft > 0) {
+    if (flag===true&&timeLeft > 0) {
         timeLeft--;
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
@@ -9,6 +11,7 @@ function updateTimer() {
     } else {
         // 세션 만료 처리
         alert("세션이 만료되었습니다.");
+        flag = false;
         window.location.href = '/logout'; // 로그아웃 페이지로 리다이렉트
     }
 }
@@ -18,7 +21,7 @@ document.getElementById('session-extension-btn').addEventListener('click', funct
     fetch('/api/session')
         .then(response => {
             if(response.ok) {
-                timeLeft = 1800; // 30분으로 초기화}
+                timeLeft = defaultSessionTime; // 초기화
             }else{
                 alert("세션 연장이 실패하였습니다.");
             }

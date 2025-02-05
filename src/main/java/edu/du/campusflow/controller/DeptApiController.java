@@ -61,8 +61,8 @@ public class DeptApiController {
       return ResponseEntity.ok(deptList);
    }
 
-   @PreAuthorize("hasAnyRole('STAFF')")
    @PostMapping
+   @PreAuthorize("hasAnyRole('STAFF')")
    public ResponseEntity<?> postDept(@RequestBody DeptCreateRequest deptCreateRequest) {
       try{
          return ResponseEntity.ok(deptService.create(deptCreateRequest));
@@ -72,6 +72,7 @@ public class DeptApiController {
    }
 
    @PutMapping("/all")
+   @PreAuthorize("hasAnyRole('STAFF')")
    public ResponseEntity<?> putDept(@RequestBody List<DeptDTO> deptDTOList) {
       try{
          return ResponseEntity.ok(deptService.update(deptDTOList));
