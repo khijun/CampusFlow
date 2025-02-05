@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class OfregistrationApiController {
      * 관리자용 수강신청 대기 목록 조회
      */
     @GetMapping("/admin/pending")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<List<OfregistrationDTO>> getPendingRegistrations() {
         try {
             List<OfregistrationDTO> registrations = ofregistrationService.getPendingRegistrations();
@@ -100,6 +102,7 @@ public class OfregistrationApiController {
      * 관리자용 수강신청 상태 업데이트
      */
     @PostMapping("/admin/update-status")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> updateRegistrationStatus(@RequestBody OfregistrationDTO ofregistrationDTO) {
         try {
             // 현재 로그인한 사용자가 관리자인지 확인

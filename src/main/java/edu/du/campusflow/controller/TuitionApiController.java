@@ -7,6 +7,7 @@ import edu.du.campusflow.service.TuitionService;
 import edu.du.campusflow.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class TuitionApiController {
      * 관리자용 등록금 대상자 목록 조회
      */
     @GetMapping("/admin/targets")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<List<TuitionDTO>> getTuitionTargets() {
         try {
             List<TuitionDTO> tuitionDTO = tuitionService.findAllTuitionDTO();
@@ -51,6 +53,7 @@ public class TuitionApiController {
      * 관리자용 납부 상태 업데이트
      */
     @PostMapping("/admin/update-status")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> updatePaymentStatus(@RequestBody TuitionDTO tuitionDTO) {
         try {
             Member member = memberRepository.findById(tuitionDTO.getMemberId())
@@ -66,6 +69,7 @@ public class TuitionApiController {
      * 관리자용 납부 금액 업데이트
      */
     @PostMapping("/admin/update-paid-amount")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> updatePaidAmount(@RequestBody TuitionDTO tuitionDTO) {
         try {
             Member member = memberRepository.findById(tuitionDTO.getMemberId())

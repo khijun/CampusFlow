@@ -151,8 +151,6 @@
                         return response.json();
                     })
                     .then(result => {
-                        console.log('Search result:', result);
-
                         if (result?.data) {
                             // 강의명과 문항으로 그룹화하여 평균 계산
                             const groupedData = {};

@@ -6,6 +6,7 @@ import edu.du.campusflow.dto.CurriculumSubjectRegisterDTO;
 import edu.du.campusflow.service.CurriculumSubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +22,13 @@ public class CurriculumSubjectController {
         return "view/iframe/curriculum/curriculum-subject/curriculumSubject_list";  // curriculumSubject_list.html 반환
     }
     @GetMapping("/iframe/curriculum/curriculum-subject/update")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String getCurriculumSubjectUpdatePage() {
         return "view/iframe/curriculum/curriculum-subject/curriculumSubject_update";  // curriculumSubject_update.html 반환
     }
 
     @GetMapping("/iframe/curriculum/curriculum-subject/register")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String getCurriculumSubjectRegisterPage() {
         return "view/iframe/curriculum/curriculum-subject/curriculumSubject_register";
     }
@@ -51,6 +54,7 @@ public class CurriculumSubjectController {
 
     // 교육과정 교과목 수정
     @PutMapping("/api/curriculum-subjects/update")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> updateCurriculumSubjects(@RequestBody List<CurriculumSubjectDetailDTO> updatedSubjects) {
         curriculumSubjectService.updateCurriculumSubjects(updatedSubjects);
         return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 수정되었습니다.\"}");
@@ -58,12 +62,14 @@ public class CurriculumSubjectController {
 
     // 교육과정 교과목 삭제
     @DeleteMapping("/api/curriculum-subjects/delete")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> deleteCurriculumSubjects(@RequestBody List<Long> curriculumSubjectIds) {
         curriculumSubjectService.deleteCurriculumSubjects(curriculumSubjectIds);
         return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 삭제되었습니다.\"}");
     }
 
     @PostMapping("/api/curriculum-subjects/register")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> registerCurriculumSubjects(@RequestBody List<CurriculumSubjectRegisterDTO> curriculumSubjects) {
         curriculumSubjectService.registerCurriculumSubjects(curriculumSubjects);
         return ResponseEntity.ok().body("{\"message\": \"교육과정 교과목이 성공적으로 추가되었습니다.\"}");

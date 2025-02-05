@@ -7,6 +7,7 @@ import edu.du.campusflow.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class AssignmentController {
     AssignmentService assignmentService;
 
     @GetMapping("/iframe/assignment/create")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     public String create(Model model) {
         model.addAttribute("member", authService.getCurrentMember());
         return "view/iframe/assignment/assignmentCreate";
@@ -34,6 +36,7 @@ public class AssignmentController {
 
     //과제 생성 컨트롤러
     @PostMapping("/api/assignment/create")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<String> createAssignment(
             @ModelAttribute AssignmentDTO assignmentDTO,
@@ -94,6 +97,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/api/assignment/professor/list")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<List<AssignmentDTO>> getProfessorAssignments(
             @RequestParam String semesterCode,
@@ -146,6 +150,7 @@ public class AssignmentController {
 
     //과제 점수 등록 컨트롤러
     @PostMapping("/api/assignment/score")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
     public ResponseEntity<String> updateAssignmentScore(@RequestBody Map<String, Object> request) {
         try {

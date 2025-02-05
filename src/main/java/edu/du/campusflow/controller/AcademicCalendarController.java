@@ -5,6 +5,7 @@ import edu.du.campusflow.service.AcademicCalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class AcademicCalendarController {
     private AcademicCalendarService academicCalendarService;
 
     @GetMapping("/addAcademicCalendar")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String showAddCalendarPage(Model model) {
         return "view/iframe/calendar/addAcademicCalendar";
     }
@@ -39,6 +41,7 @@ public class AcademicCalendarController {
 
     @PostMapping("/add")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> addAcademicCalendar(@RequestBody AcademicCalendar academicCalendar) {
         logger.info("Received request to add calendar: {}", academicCalendar);
         return academicCalendarService.addAcademicCalendar(academicCalendar);
@@ -46,6 +49,7 @@ public class AcademicCalendarController {
 
     @PutMapping("/api/academic-calendar/{id}")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> updateAcademicCalendar(
             @PathVariable("id") Long id,
             @RequestBody AcademicCalendar academicCalendar) {
@@ -79,6 +83,7 @@ public class AcademicCalendarController {
 
     @DeleteMapping("/api/academic-calendar/{id}")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> deleteAcademicCalendar(@PathVariable("id") Long id) {
         logger.info("Received request to delete calendar: {}", id);
         return academicCalendarService.deleteCalendar(id);

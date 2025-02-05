@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -127,6 +128,7 @@ public class OfregistrationController {
      * 관리자용 수강신청 관리 페이지 (페이지만 로드)
      */
     @GetMapping("/admin/adminOfre")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public String showAdminOfregistrations() {
         return "view/iframe/ofregistration/admin/adminOfre";
     }
@@ -148,6 +150,7 @@ public class OfregistrationController {
      * 수강신청 상태 업데이트 처리
      */
     @PostMapping("/admin/update-status")
+    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> updateRegistrationStatus(@RequestBody OfregistrationDTO ofregistrationDTO) {
         try {
             ofregistrationService.updateRegistrationStatus(
