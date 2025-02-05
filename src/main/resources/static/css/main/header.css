@@ -61,6 +61,7 @@
 .header-logo-container {
     display: flex;
     height: 100%;
+    cursor: pointer;
 }
 
 .header-logo-container .divider {

@@ -16,7 +16,7 @@
     <!-- Header -->
     <div class="header-nav">
         <!-- 로고 -->
-        <div class="header-logo-container">
+        <div id="header-logo-container" class="header-logo-container">
             <div class="header-logo">
                 <img src="/static/assets/logo/doinUniver_03.png" th:src="@{/assets/logo/doinUniver_03.png}" alt="">
             </div>
@@ -83,7 +83,7 @@
                 </div>
             </div>
 
-            <div class="iframe-name-container">
+            <div id="iframe-name-container" class="iframe-name-container">
                 <div class="iframe-name">
                     <span id="iframe-name-span">메인</span>
                 </div>
@@ -107,6 +107,10 @@
         // 시큐리티 로그아웃 URL로 이동
         window.location.href = '/logout';
     }
+
+    document.querySelector('#header-logo-container').addEventListener('click', ()=>{
+        openNewPage('메인', '/iframe/main/main-content');
+    });
 </script>
 </body>
 </html>
