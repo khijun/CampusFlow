@@ -29,7 +29,7 @@
 
 </div>
 <div id="grade-list" class="mb-10"></div>
-<div class="search-container mb-10" style="background: none; border: none; display: flex; justify-content: flex-end;">
+<div class="search-container" style="background: none; border: none; display: flex; justify-content: flex-end;">
 <button id="update-button">성적 등록</button>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
@@ -97,6 +97,46 @@
                 rowHeaders: ['checkbox'],
                 selectionUnit: 'row'
             });
+
+            instance.on('beforeChange', function(ev) {
+                console.log('beforeChange event fired');
+                const changes = ev.changes;
+                let isValid = true;
+
+                changes.forEach(change => {
+                    const { columnName, nextValue } = change;  // nextValue 사용
+
+                    if (!columnName) {
+                        console.error('columnName is undefined', change);
+                        return;
+                    }
+
+                    const key = columnName.split('.')[1];
+                    const scoreLimits = {
+                        '중간': 40,
+                        '기말': 40,
+                        '과제': 10,
+                        '출석': 10
+                    };
+
+                    const limit = scoreLimits[key];
+
+                    // 유효성 검사 (nextValue 기준)
+                    const numValue = parseInt(nextValue, 10);
+                    console.log(`Parsed nextValue: ${numValue}, limit: ${limit}`);
+
+                    if (isNaN(numValue) || numValue < 0 || numValue > limit) {
+                        alert(`${limit}점 이하로 입력하세요.`);
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    ev.stop();
+                }
+            });
+
+
         }
 
         document.getElementById('search-button').addEventListener('click', function () {
