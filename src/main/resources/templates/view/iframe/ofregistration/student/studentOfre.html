@@ -91,7 +91,6 @@
         fetch('/api/ofregistration/available-lectures')
             .then(response => response.json())
             .then(data => {
-                // 본인의 승인/거절된 강의만 필터링
                 const filteredData = data.filter(lecture => {
                     // 본인의 신청 상태가 승인이나 거절이 아닌 경우만 표시
                     if (lecture.regStatus === 'APPROVED' || lecture.regStatus === 'REJECTED') {
