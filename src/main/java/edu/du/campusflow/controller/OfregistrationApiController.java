@@ -77,7 +77,6 @@ public class OfregistrationApiController {
      * 수강신청 처리
      */
     @PostMapping("/register")
-    @PreAuthorize("hasAnyRole('STAFF')")
     public ResponseEntity<?> registerLecture(@RequestBody OfregistrationDTO ofregistrationDTO) {
         try {
             // 현재 로그인한 사용자의 ID 가져오기
