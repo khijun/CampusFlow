@@ -52,27 +52,11 @@ public class ChangeRequestController {
 
         Member member = memberRepository.findById(memberId).orElse(null);
         model.addAttribute("member", member);
-        return "view/iframe/academic/change-request-list"; // 학적 조회 페이지
-    }
 
-    // 휴학/복학 신청 폼
-    @GetMapping("/iframe/academic/change-request-form")
-    public String changeRequestForm(Model model) {
-        Long memberId = authService.getCurrentMemberId();
         ChangeRequestDTO changeRequestDto = new ChangeRequestDTO();
         changeRequestDto.setMemberId(memberId);
         model.addAttribute("changeRequestDto",changeRequestDto);
-        return "view/iframe/academic/change-request-form"; // 휴학/복학 신청 페이지
-    }
-
-    // 자퇴 신청 폼
-    @GetMapping("/iframe/academic/change-request-form-drop")
-    public String changeRequestForm2(Model model) {
-        Long memberId = authService.getCurrentMemberId();
-        ChangeRequestDTO changeRequestDto = new ChangeRequestDTO();
-        changeRequestDto.setMemberId(memberId);
-        model.addAttribute("changeRequestDto", changeRequestDto);
-        return "view/iframe/academic/change-request-form-drop"; // 휴학/복학 신청 페이지
+        return "view/iframe/academic/change-request-list"; // 학적 조회 페이지
     }
 
     // 휴학/복학 신청 처리

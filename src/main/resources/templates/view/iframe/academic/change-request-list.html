@@ -7,19 +7,9 @@
     <link rel="stylesheet" href="/css/iframe/global/search-container.css"
           th:href="@{/css/iframe/global/search-container.css}"/>
     <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
-    <title>사용자 정보 조회</title>
+    <title>학적 조회</title>
     <style>
-        .cancel-btn {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
 
-        .cancel-btn:hover {
-            background-color: darkred;
-        }
 
         .academic-status {
             border-radius: 20px; /* 둥근 모서리 */
@@ -38,6 +28,10 @@
             font-size: 1.1em; /* 상태 글씨 크기 */
             font-weight: bold; /* 글씨 두껍게 */
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -48,8 +42,49 @@
 
 
 <div id="change-request-list" class="mb-10"></div>
-<!-- TOAST UI Grid 를 표시할 요소 -->
 
+<!-- TOAST UI Grid 를 표시할 요소 -->
+<div id="addForm" class="search-container mb-10 hidden" style="max-width: 350px;">
+
+    <form th:action="@{/iframe/academic/process-change-request}" th:object="${changeRequestDto}" method="post">
+        <input type="hidden" name="memberId" th:value="${changeRequestDto.memberId}">
+
+        <div class="input-group" style="width: 100%;">
+            <label for="newStatusCodeId">신청</label>
+            <select id="newStatusCodeId" name="newStatusCodeId" th:field="*{newStatusCodeId}"
+                    onchange="toggleLeaveDates()">
+                <option value="2">휴학</option>
+                <option value="8">복학</option>
+                <option value="124">자퇴</option>
+            </select>
+        </div>
+
+        <div class="input-group" style="width: 100%;">
+            <label for="reason">사유:</label>
+            <input type="text" name="reason" id="reason">
+        </div>
+
+
+        <div id="leaveDates">
+            <div class="input-group" style="width: 100%;">
+                <label for="leaveStartDate">휴학 시작일:</label>
+                <input type="date" name="leaveStartDate" id="leaveStartDate">
+            </div>
+
+            <div class="input-group" style="width: 100%;">
+                <label for="leaveEndDate">휴학 종료일:</label>
+                <input type="date" name="leaveEndDate" id="leaveEndDate">
+            </div>
+        </div>
+
+        <div style="text-align: right">
+            <button type="submit">신청</button>
+        </div>
+    </form>
+</div>
+<div class="search-container mb-10" style="background: none;border: none; display: flex; justify-content: flex-end;">
+    <button id="add-request-button" onclick="toggleForm()">변동 신청</button>
+</div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 <script>
@@ -155,6 +190,49 @@
                 });
         }
     };
+
+    // 폼 토글 기능
+    function toggleForm() {
+        const form = document.getElementById("addForm");
+        const button = document.getElementById("add-request-button");
+
+        form.classList.toggle("hidden");
+
+        // 폼이 보이면 버튼 숨기기, 폼이 숨겨지면 버튼 보이기
+        if (!form.classList.contains("hidden")) {
+            button.style.display = "none";  // 버튼 숨기기
+        } else {
+            button.style.display = "inline-block";  // 버튼 보이기
+        }
+    }
+    // 폼 제출 전 알럿 창 띄우기
+    document.querySelector('form').addEventListener('submit', function(event) {
+        const reason = document.getElementById('reason').value;
+        if (!reason) {
+            alert('사유를 입력해주세요.');
+            event.preventDefault();  // 폼 제출을 막음
+            return;
+        }
+
+        alert('신청이 완료되었습니다!');
+    });
+    function toggleLeaveDates() {
+        const statusCode = document.getElementById('newStatusCodeId').value;
+        const leaveDates = document.getElementById('leaveDates');
+
+        console.log(statusCode)
+        // 휴학(2)을 선택했을 때만 시작일과 종료일을 보이도록 설정
+        if (statusCode === '2') {
+            leaveDates.style.display = 'block';
+        } else {
+            leaveDates.style.display = 'none';
+        }
+    }
+
+    // 페이지 로드 시 초기 상태 확인
+    window.onload = function () {
+        toggleLeaveDates(); // 초기 상태에 맞게 설정
+    }
 </script>
 
 

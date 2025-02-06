@@ -302,6 +302,8 @@ function closeAllTabs() {
     iframeCache.clear();
 
     sessionStorage.removeItem('tabState');
+    // 탭 이름을 숨김
+    document.querySelector('#iframe-name-container').style.visibility = "hidden";
 }
 
 /**

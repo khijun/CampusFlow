@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 public class GradeFormProfessor {
     private Long lectureId; // 강의 ID
-    private Long selectedLectureId;  // 선택된 강의 ID 추가
     private List<StudentGrade> studentGrades; // 학생별 성적 목록
 
     @Data
