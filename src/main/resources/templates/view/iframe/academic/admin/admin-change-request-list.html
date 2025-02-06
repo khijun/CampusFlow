@@ -69,18 +69,16 @@
                     originalData = data
                         .filter(request => request.applicationStatus === '대기중')
                         .map(request => ({
+                            applicationId: request.applicationId,
                             memberId: request.memberId,
                             beforeState: request.beforeState,
                             afterState: request.afterState,
                             applicationStatus: request.applicationStatus,
                             reason: request.reason,
                             actions: `
-                <form action="/iframe/admin/academic/approve-change-request/${request.applicationId}" method="post">
-                  <button type="submit">승인</button>
-                </form>
-                <form action="/iframe/admin/academic/reject-change-request/${request.applicationId}" method="post">
-                  <button type="submit">거절</button>
-                </form>`
+                                <button class="approve-btn" data-id="${request.applicationId}">승인</button>
+                                <button class="reject-btn" data-id="${request.applicationId}">거절</button>
+                            `
                         }));
                     renderGrid(originalData, columns);
                 })
@@ -103,13 +101,39 @@
             const selectedDeptId = deptFilter.value;
 
             const filteredData = originalData.filter(item =>
-                (selectedDeptId === "" || item.deptId.toString() === selectedDeptId) &&
-                (nameKeyword === "" || item.name.toLowerCase().includes(nameKeyword))
+                (selectedDeptId === "" || item.deptId?.toString() === selectedDeptId) &&
+                (nameKeyword === "" || item.name?.toLowerCase().includes(nameKeyword))
             );
 
             renderGrid(filteredData, instance.getColumns());
         }
+
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('approve-btn')) {
+                handleAction(event.target.dataset.id, 'approve');
+            } else if (event.target.classList.contains('reject-btn')) {
+                handleAction(event.target.dataset.id, 'reject');
+            }
+        });
+
+        function handleAction(applicationId, actionType) {
+            const actionUrl = actionType === 'approve'
+                ? `/iframe/admin/academic/approve-change-request/${applicationId}`
+                : `/iframe/admin/academic/reject-change-request/${applicationId}`;
+
+            fetch(actionUrl, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        alert(actionType === 'approve' ? '승인 처리 완료' : '거절 처리 완료');
+                        createChangeRequestGrid();
+                    } else {
+                        alert('처리에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('처리 중 오류 발생:', error));
+        }
     });
 </script>
+
 </body>
 </html>
