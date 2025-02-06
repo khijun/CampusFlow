@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
-  <link rel="stylesheet" href="/static/css/iframe/iframe.css" th:href="@{/css/iframe/iframe.css}"/>
+  <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
   <link rel="stylesheet" href="/css/iframe/global/search-container.css"
         th:href="@{/css/iframe/global/search-container.css}"/>
   <title>성적 조회</title>
+  <style>
+    .hidden{
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -25,9 +30,11 @@
   <button type="button" id="search-button">조회</button>
 
 
-</div><div id="total-earned-credits">총 취득 학점: <span id="earned-credits-value"></span></div>
+</div>
 <div id="grade-list" class="mb-10"></div>
-
+<div id= "earned-credit" class="hidden">
+<div id="total-earned-credits" >총 취득 학점: <span id="earned-credits-value"></span></div>
+</div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
 
@@ -37,10 +44,14 @@
     const searchButton = document.getElementById('search-button');
     const gradeListDiv = document.querySelector('#grade-list');
     const earnedCreditsValue = document.querySelector('#earned-credits-value');
+    const totalEarnedCredits = document.getElementById('earned-credit');
+
     let instance = null;
 
     searchButton.addEventListener('click', () => {
       createGradeGrid(gradeListDiv, academicYearFilter.value);
+      totalEarnedCredits.style.display = 'flex';
+      totalEarnedCredits.style.justifyContent = 'flex-end';
     });
 
     function createGradeGrid(gradeListDiv, selectedYear = '') {
@@ -93,6 +104,8 @@
               })
               .catch(error => console.error('Fetch error:', error));
     }
+
+
   });
 </script>
 </body>
