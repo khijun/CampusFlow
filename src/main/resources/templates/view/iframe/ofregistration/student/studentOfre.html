@@ -91,7 +91,16 @@
         fetch('/api/ofregistration/available-lectures')
             .then(response => response.json())
             .then(data => {
-                originalData = data.map(lecture => ({
+                // 본인의 승인/거절된 강의만 필터링
+                const filteredData = data.filter(lecture => {
+                    // 본인의 신청 상태가 승인이나 거절이 아닌 경우만 표시
+                    if (lecture.regStatus === 'APPROVED' || lecture.regStatus === 'REJECTED') {
+                        return false;  // 본인이 이미 승인/거절된 강의는 제외
+                    }
+                    return true;  // 그 외의 경우(다른 학생의 상태나 미신청 상태)는 표시
+                });
+                
+                originalData = filteredData.map(lecture => ({
                     ...lecture,
                     lectureTime: `${lecture.startTime} - ${lecture.endTime}`,
                     studentCount: `${lecture.currentStudents}/${lecture.maxStudents}`,
