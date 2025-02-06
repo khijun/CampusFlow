@@ -30,38 +30,47 @@ public class ChangeHistoryService {
     }
 
 
-    // 퇴학 또는 제적 처리
+    // 퇴학, 제적 또는 졸업 처리
     @Transactional
-    public void processExpulsionOrWithdrawal(Long memberId, boolean isExpulsion) {
+    public void processExpulsionOrWithdrawalOrGraduation(Long memberId, String statusType) {
         // 1. Member 조회
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
 
         // 2. member_type이 101인지 확인
         if (member.getMemberType().getCodeId() != 101L) {
-            throw new IllegalStateException("Only members with type 101 can be expelled or withdrawn.");
+            throw new IllegalStateException("Only members with type 101 can be processed.");
         }
 
-        // 3. 퇴학 또는 제적 상태 코드 설정
-        CommonCode statusCode;
-        if (isExpulsion) {
-            statusCode = commonCodeRepository.findById(5L) // 퇴학 코드
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid withdrawal status code"));
-        } else {
-            statusCode = commonCodeRepository.findById(4L) // 제적 코드
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid expulsion status code"));
+        // 3. 상태 코드 설정
+        Long statusCodeId;
+        switch (statusType) {
+            case "expulsion":
+                statusCodeId = 5L; // 퇴학 코드
+                break;
+            case "withdrawal":
+                statusCodeId = 4L; // 제적 코드
+                break;
+            case "graduation":
+                statusCodeId = 3L; // 졸업 코드
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid status type");
         }
+
+        CommonCode statusCode = commonCodeRepository.findById(statusCodeId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid status code"));
 
         // 4. Member 상태 변경
         CommonCode currentStatus = member.getAcademicStatus(); // 기존 학적 상태
-        member.setAcademicStatus(statusCode); // 퇴학 또는 제적 상태로 업데이트
+        member.setAcademicStatus(statusCode); // 변경된 상태로 업데이트
         memberRepository.save(member);
 
         // 5. ChangeHistory 생성 및 저장
         ChangeHistory changeHistory = ChangeHistory.builder()
                 .member(member)
                 .beforeCode(currentStatus) // 기존 학적 상태
-                .afterCode(statusCode) // 변경된 학적 상태 (퇴학/제적)
+                .afterCode(statusCode) // 변경된 학적 상태
                 .approvalDate(LocalDate.now()) // 처리 일자
                 .grade(member.getGrade()) // 학년 정보
                 .build();

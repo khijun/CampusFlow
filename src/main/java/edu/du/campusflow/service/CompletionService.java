@@ -2,14 +2,18 @@ package edu.du.campusflow.service;
 
 import edu.du.campusflow.entity.CommonCode;
 import edu.du.campusflow.entity.Completion;
+import edu.du.campusflow.entity.Grade;
 import edu.du.campusflow.entity.Ofregistration;
 import edu.du.campusflow.repository.CommonCodeRepository;
 import edu.du.campusflow.repository.CompletionRepository;
+import edu.du.campusflow.repository.GradeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ public class CompletionService {
     
     private final CompletionRepository completionRepository;
     private final CommonCodeRepository commonCodeRepository;
+    private final GradeRepository gradeRepository;
 
     @Transactional
     public void createCompletion(Ofregistration ofregistration) {
@@ -39,6 +44,23 @@ public class CompletionService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        completionRepository.save(completion);
+        completion = completionRepository.save(completion); // 저장 후 ID 획득
+
+        // 성적 유형 코드 ID (67: 중간, 68: 기말, 69: 과제, 70: 출석)
+        List<Long> gradeTypeIds = Arrays.asList(67L, 68L, 69L, 70L);
+
+        // 성적 테이블에 기본값 추가
+        for (Long codeId : gradeTypeIds) {
+            CommonCode gradeType = commonCodeRepository.findById(codeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid grade type ID: " + codeId));
+
+            Grade grade = Grade.builder()
+                    .completion(completion)
+                    .gradeType(gradeType)
+                    .score(-1)  // 기본값 null
+                    .build();
+
+            gradeRepository.save(grade);
+        }
     }
-} 
+}

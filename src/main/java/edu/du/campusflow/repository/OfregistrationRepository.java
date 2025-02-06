@@ -32,6 +32,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             "INNER JOIN common_code cc ON l.semester = cc.code_id " +
             "LEFT OUTER JOIN diag_items di ON di.ofregistration_id = o.id " +
             "WHERE o.member_id = :studentId " +
+            "AND o.reg_status = 86 " +
             "GROUP BY o.id, l.lecture_name, m.name, cc.code_value",
             nativeQuery = true)
     List<Map<String, Object>> findDiagLecturesWithEvalStatus(@Param("studentId") Long studentId);
@@ -49,6 +50,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             "INNER JOIN common_code cc ON l.semester = cc.code_id " +
             "LEFT OUTER JOIN lec_items li ON li.ofregistration_id = o.id " +
             "WHERE o.member_id = :studentId " +
+            "AND o.reg_status = 86 " +
             "GROUP BY o.id, l.lecture_name, m.name, cc.code_value",
             nativeQuery = true)
     List<Map<String, Object>> findLecEvalLecturesWithEvalStatus(@Param("studentId") Long studentId);

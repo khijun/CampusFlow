@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>성적 조회</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css"/>
+    <link rel="stylesheet" href="/static/css/iframe/global/iframe.css" th:href="@{/css/iframe/global/iframe.css}"/>
+    <link rel="stylesheet" href="/css/iframe/global/search-container.css"
+          th:href="@{/css/iframe/global/search-container.css}"/>
+</head>
+<body>
+
+<div class="search-container">
+    <div class="input-group">
+
+        <label for="lecture-name">강의 입력</label><input type="text" id="lecture-name" placeholder="강의명 입력">
+    </div>
+    <div class="input-group">
+        <label for="student-name">학생 이름</label><input type="text" id="student-name" placeholder="학생 이름 입력">
+    </div>
+
+
+    <div style="margin-left: auto;
+    display: block;">
+    <button id="search-button">조회</button>
+</div>
+
+
+</div>
+<div id="grade-list" class="mb-10"></div>
+<div class="search-container" style="background: none; border: none; display: flex; justify-content: flex-end;">
+<button id="update-button">성적 등록</button>
+</div>
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let instance = null;
+        const gradeListDiv = document.getElementById('grade-list');
+
+        function fetchData() {
+            fetch(`/api/grade/student-grades`)
+                .then(response => response.json())
+                .then(data => {
+                    renderGrid(data);
+                });
+        }
+
+        function renderGrid(data) {
+            const mappedData = data.map(item => {
+                const gradesFilled = [
+                    item.scores['중간'],
+                    item.scores['기말'],
+                    item.scores['과제'],
+                    item.scores['출석']
+                ];
+                const finalGrade = gradesFilled.every(score => score !== null) ? item.finalGrade : '미정';
+
+                return {
+                    studentId: item.studentId,
+                    studentName: item.studentName,
+                    selectedLectureId: item.selectedLectureId,
+                    lectureName: item.lectureName,
+                    'scores.중간': item.scores['중간'],
+                    'scores.기말': item.scores['기말'],
+                    'scores.과제': item.scores['과제'],
+                    'scores.출석': item.scores['출석'],
+                    totalScore: item.totalScore,
+                    finalGrade: finalGrade
+                };
+            });
+
+            const columns = [
+                {header: '학번', name: 'studentId', align: 'center'},
+                {header: '학생 이름', name: 'studentName', align: 'center'},
+                {header: '강의 ID', name: 'selectedLectureId', align: 'center', hidden: true},
+                {header: '강의', name: 'lectureName', align: 'center'},
+                {header: '중간', name: 'scores.중간', align: 'center', editor: 'text'},
+                {header: '기말', name: 'scores.기말', align: 'center', editor: 'text'},
+                {header: '과제', name: 'scores.과제', align: 'center', editor: 'text'},
+                {header: '출석', name: 'scores.출석', align: 'center', editor: 'text'},
+                {header: '총점', name: 'totalScore', align: 'center'},
+                {header: '등급', name: 'finalGrade', align: 'center'},
+            ];
+
+            if (instance) {
+                instance.destroy();
+            }
+
+            instance = new tui.Grid({
+                el: gradeListDiv,
+                data: mappedData,
+                columns: columns,
+                scrollX: true,
+                scrollY: true,
+                editingStack: true,
+                rowHeaders: ['checkbox'],
+                selectionUnit: 'row'
+            });
+
+            instance.on('beforeChange', function(ev) {
+                console.log('beforeChange event fired');
+                const changes = ev.changes;
+                let isValid = true;
+
+                changes.forEach(change => {
+                    const { columnName, nextValue } = change;  // nextValue 사용
+
+                    if (!columnName) {
+                        console.error('columnName is undefined', change);
+                        return;
+                    }
+
+                    const key = columnName.split('.')[1];
+                    const scoreLimits = {
+                        '중간': 40,
+                        '기말': 40,
+                        '과제': 10,
+                        '출석': 10
+                    };
+
+                    const limit = scoreLimits[key];
+
+                    // 유효성 검사 (nextValue 기준)
+                    const numValue = parseInt(nextValue, 10);
+                    console.log(`Parsed nextValue: ${numValue}, limit: ${limit}`);
+
+                    if (isNaN(numValue) || numValue < 0 || numValue > limit) {
+                        alert(`${limit}점 이하로 입력하세요.`);
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    ev.stop();
+                }
+            });
+
+
+        }
+
+        document.getElementById('search-button').addEventListener('click', function () {
+            const lectureName = document.getElementById('lecture-name').value.toLowerCase();
+            const studentName = document.getElementById('student-name').value.toLowerCase();
+
+            fetch(`/api/grade/student-grades`)
+                .then(response => response.json())
+                .then(data => {
+                    const filteredData = data.filter(item =>
+                        (!lectureName || item.lectureName.toLowerCase().includes(lectureName)) &&
+                        (!studentName || item.studentName.toLowerCase().includes(studentName))
+                    );
+                    renderGrid(filteredData);
+                });
+        });
+
+        document.getElementById('update-button').addEventListener('click', function () {
+            const checkedRows = instance.getCheckedRows();
+            if (checkedRows.length === 0) {
+                alert("수정할 학생을 선택하세요.");
+                return;
+            }
+
+            const getValidScore = (score) => {
+                const parsedScore = parseInt(score);
+                return isNaN(parsedScore) ? -1 : parsedScore;
+            };
+
+            const updateData = {
+                memberIds: checkedRows.map(row => row.studentId),
+                lectureIds: checkedRows.map(row => row.selectedLectureId),
+                scores: checkedRows.map(row => {
+                    return {
+                        중간: getValidScore(row['scores.중간']),
+                        기말: getValidScore(row['scores.기말']),
+                        과제: getValidScore(row['scores.과제']),
+                        출석: getValidScore(row['scores.출석'])
+                    };
+                })
+            };
+
+            fetch('/api/grade/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(updateData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload(); // 수정 후 새로고침
+                })
+                .catch(error => console.error("에러 발생:", error));
+        });
+
+        fetchData();
+    });
+</script>
+
+</body>
+</html>

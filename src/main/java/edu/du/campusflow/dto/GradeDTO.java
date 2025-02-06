@@ -15,4 +15,6 @@ public class GradeDTO {
     private int totalScore;                // 총점
     private int subjectCredits;            // 학점 정보
     private int earnedCredits;             // 취득 학점 (미이수시 0, 그 외는 subjectCredits와 동일)
+    private int academicYear;  // 추가된 필드
+    private int totalEarnedCredits;        // **총 취득 학점 (새로운 필드)**
 }

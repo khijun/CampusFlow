@@ -17,4 +17,6 @@ import java.util.Optional;
 public interface CompletionRepository extends JpaRepository<Completion, Long> {
     List<Completion> findAllByOfRegistration(Ofregistration ofRegistration);
     boolean existsByOfRegistration(Ofregistration ofregistration);
+
+    Optional<Completion> findByOfRegistration(Ofregistration ofregistration);
 }

@@ -12,58 +12,53 @@
         .hidden {
             display: none;
         }
-
-        .form-container {
-            margin-top: 20px;
-        }
-
-        .form-container input, .form-container select {
-            margin-right: 10px;
-        }
-
-        .add-button {
-            cursor: pointer;
-            color: #007bff;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
 
 
-<div id="family-info-list" class="mb-10"></div>
-
-<!-- 가족 추가 버튼 -->
-<div class="mb-10">
-    <span class="add-button" onclick="toggleForm()">+ 가족 추가</span>
+<div id="family-info-list" class="mb-10">
 </div>
 
+
+
+
 <!-- 가족 추가 폼 -->
-<div class="search-container">
-    <div id="addForm" class="hidden">
-        <div class="input-group">
+    <div id="addForm" class="search-container mb-10 hidden" style="max-width: 350px;">
+
             <form id="family-form">
+                <div class="input-group" style="width: 100%;">
                 <label for="familyRelation">관계:</label>
                 <select id="familyRelation" name="familyRelation" required>
                     <option value="41">부</option>
                     <option value="42">모</option>
                 </select>
+                </div>
 
+                <div class="input-group" style="width: 100%;">
                 <label for="name">이름:</label>
                 <input type="text" id="name" name="name" required>
+                </div>
 
+                <div class="input-group" style="width: 100%;">
                 <label for="birthDate">생년월일:</label>
                 <input type="date" id="birthDate" name="birthDate" required>
+                </div>
 
+                <div class="input-group" style="width: 100%;">
                 <label for="contact">전화번호:</label>
                 <input type="text" id="contact" name="contact" required>
-
-                <button type="button" onclick="submitFamily()">저장</button>
+                </div>
+                <!-- 버튼을 오른쪽 정렬 -->
+                <div style="text-align: right;">
+                    <button type="button" onclick="submitFamily()">저장</button>
+                </div>
             </form>
         </div>
-    </div>
+<!-- 가족 추가 버튼 -->
+<div class="search-container mb-10" style="background: none; border: none; display: flex; justify-content: flex-end; width: 100%;">
+    <button id="addFamilyButton" onclick="toggleForm()">가족 추가</button>
 </div>
-
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script>
     let instance = null;
@@ -144,7 +139,16 @@
     // 폼 토글 기능
     function toggleForm() {
         const form = document.getElementById("addForm");
+        const button = document.getElementById("addFamilyButton");
+
         form.classList.toggle("hidden");
+
+        // 폼이 보이면 버튼 숨기기, 폼이 숨겨지면 버튼 보이기
+        if (!form.classList.contains("hidden")) {
+            button.style.display = "none";  // 버튼 숨기기
+        } else {
+            button.style.display = "inline-block";  // 버튼 보이기
+        }
     }
 
     // 가족 추가 폼 제출

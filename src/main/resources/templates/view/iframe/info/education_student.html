@@ -19,37 +19,42 @@
 
 <div id="education-list" class="mb-10"></div>
 
-<!-- 학력 추가 버튼 -->
-<div class="mb-10">
-    <span class="add-button" onclick="toggleForm()">+ 학력 추가</span>
-</div>
+
 
 <!-- 학력 추가 폼 -->
-<div class="search-container mb-10">
-    <div id="addForm" class="hidden">
-        <div class="input-group">
+
+    <div id="addForm" class="search-container mb-10 hidden" style="max-width: 350px;">
+
             <form id="education-form">
+                <div class="input-group" style="width: 100%">
                 <label for="schoolName">학교명:</label>
                 <input type="text" id="schoolName" name="schoolName" required>
+                </div>
 
-
+                <div class="input-group" style="width: 100%">
                 <label for="enrollmentDate">입학일:</label>
                 <input type="date" id="enrollmentDate" name="enrollmentDate" required>
+                </div>
 
-
+                <div class="input-group" style="width: 100%">
                 <label for="graduationDate">졸업일:</label>
                 <input type="date" id="graduationDate" name="graduationDate">
+                </div>
 
-
+                <div class="input-group" style="width: 100%">
                 <label for="graduationStatus">졸업 상태:</label>
                 <select id="graduationStatus" name="graduationStatus" required>
                     <option value="3">졸업</option>
                     <option value="1">재학</option>
                 </select>
-                <button type="button" onclick="submitEducation()">저장</button>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" onclick="submitEducation()">저장</button>
+                </div>
             </form>
-        </div>
     </div>
+<div class="search-container mb-10" style="background: none; border: none; display: flex; justify-content: flex-end; width: 100%;">
+    <button id="addEducationButton" onclick="toggleForm()">학력 추가</button>
 </div>
 <script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
 <script src="/js/create_grid.js"></script>
@@ -129,8 +134,19 @@
         }
     });
 
+    // 폼 토글 기능
     function toggleForm() {
-        document.getElementById("addForm").classList.toggle("hidden");
+        const form = document.getElementById("addForm");
+        const button = document.getElementById("addEducationButton");
+
+        form.classList.toggle("hidden");
+
+        // 폼이 보이면 버튼 숨기기, 폼이 숨겨지면 버튼 보이기
+        if (!form.classList.contains("hidden")) {
+            button.style.display = "none";  // 버튼 숨기기
+        } else {
+            button.style.display = "inline-block";  // 버튼 보이기
+        }
     }
 
     function submitEducation() {

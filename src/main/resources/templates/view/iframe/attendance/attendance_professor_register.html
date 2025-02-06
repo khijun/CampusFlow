@@ -84,11 +84,11 @@
                     data,
                     rowHeaders: ["checkbox"],
                     columns: [
-                        {header: '학번', name: 'studentId', width: 202, align: 'center', readOnly: true},
-                        {header: '학생 이름', name: 'studentName', width: 200, align: 'center', readOnly: true},
-                        {header: '출석', name: 'attendanceCount', width: 100, align: 'center', readOnly: true},
-                        {header: '지각', name: 'lateCount', width: 100, align: 'center', readOnly: true},
-                        {header: '결석', name: 'absentCount', width: 100, align: 'center', readOnly: true},
+                        {header: '학번', name: 'studentId', align: 'center', readOnly: true},
+                        {header: '학생 이름', name: 'studentName', align: 'center', readOnly: true},
+                        {header: '출석', name: 'attendanceCount', align: 'center', readOnly: true},
+                        {header: '지각', name: 'lateCount', align: 'center', readOnly: true},
+                        {header: '결석', name: 'absentCount', align: 'center', readOnly: true},
                         ...Array.from({length: 15}, (_, i) => ({
                             header: `${i + 1}주차`,
                             name: `week${i + 1}`,
@@ -104,7 +104,7 @@
                                 }
                             }
                         })),
-                        {header: '출석 점수', name: 'attendanceScore', width: 160, align: 'center', readOnly: true}
+                        {header: '출석 점수', name: 'attendanceScore', align: 'center', readOnly: true}
                     ],
                     bodyHeight: 'fitToParent'
                 });

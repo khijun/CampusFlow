@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<div class="search-container">
+<div class="search-container" style="display: flex;justify-content: flex-end;">
     <div class="input-group">
         <label for="deptFilter">학과 선택:</label>
         <select id="deptFilter">
@@ -27,7 +27,6 @@
         <input type="text" id="nameFilter" placeholder="이름 입력">
     </div>
 
-    <div class="input-group"></div>
     <button id="searchButton">조회</button>
 </div>
 
@@ -76,23 +75,20 @@
             el: document.querySelector('#student-status-list'),
             data: data,
             columns: [
-                {header: '학번', name: 'memberId', align: 'center'},
-                {header: '이름', name: 'name', align: 'center'},
-                {header: '학적 상태', name: 'academicStatus', align: 'center'},
-                {header: '학과', name: 'deptName', align: 'center'},
+                { header: '학번', name: 'memberId', align: 'center' },
+                { header: '이름', name: 'name', align: 'center' },
+                { header: '학적 상태', name: 'academicStatus', align: 'center' },
+                { header: '학과', name: 'deptName', align: 'center' },
                 {
-                    header: '퇴학/제적 처리',
+                    header: '퇴학/제적/졸업 처리',
                     name: 'actions',
                     align: 'center',
                     formatter: (cellInfo) => {
                         const id = cellInfo.row.memberId;
                         return `
-              <form action="/members/${id}/withdraw" method="post" style="display:inline;">
-                <button type="submit">퇴학</button>
-              </form>
-              <form action="/members/${id}/expel" method="post" style="display:inline;">
-                <button type="submit">제적</button>
-              </form>
+              <button class="action-btn" data-url="/members/${id}/withdraw" data-action="제적">제적</button>
+        <button class="action-btn" data-url="/members/${id}/expel" data-action="퇴학">퇴학</button>
+        <button class="action-btn" data-url="/members/${id}/graduate" data-action="졸업">졸업</button>
             `;
                     }
                 }
@@ -101,6 +97,30 @@
             bodyHeight: 400,
         });
     }
+
+    function confirmAction(event, url, action) {
+        event.preventDefault();
+        if (confirm(`${action} 처리하시겠습니까?`)) {
+            fetch(url, { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        alert(`${action} 처리 완료되었습니다!`);
+                        fetchFilteredData();
+                    } else {
+                        alert(`${action} 처리에 실패했습니다.`);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    }
+    document.addEventListener("click", function (event) {
+        if (event.target.matches(".action-btn")) {
+            const url = event.target.dataset.url;
+            const action = event.target.dataset.action;
+            confirmAction(event, url, action);
+        }
+    });
+
 </script>
 
 </body>
