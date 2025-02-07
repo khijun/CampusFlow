@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,90 +49,55 @@ public class OfregistrationService {
      * @return 수강 가능한 강의 목록 (OfregistrationDTO 형태)
      */
     public List<OfregistrationDTO> getAllAvailableLectures(String studentDeptName) {
-        List<Lecture> lectures = lectureRepository.findAllWithFetch();
-        List<OfregistrationDTO> result = new ArrayList<>();
+        Long currentStudentId = authService.getCurrentMemberId();
+        List<Map<String, Object>> results = ofregistrationRepository.findAllAvailableLecturesForStudent(currentStudentId);
+        List<OfregistrationDTO> dtos = new ArrayList<>();
 
-        for (Lecture lecture : lectures) {
-            CurriculumSubject curriculumSubject = lecture.getCurriculumSubject();
-            Curriculum curriculum = curriculumSubject.getCurriculum();
-            Subject subject = curriculumSubject.getSubject();
-            Member professor = lecture.getMember();
-            List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
-
-            // 강의 상태가 대기 상태가 아닌 경우 건너뛰기
-            if (!lecture.getLectureStatus().getCodeValue().equals("LECTURE_PENDING")) {
-                continue;
-            }
-
+        for (Map<String, Object> row : results) {
             // 다른 학과의 전공 필수 과목인 경우 건너뛰기
-            if (!curriculum.getDept().getDeptName().equals(studentDeptName) &&
-                    curriculumSubject.getSubjectType().getCodeValue().equals("MAJOR_REQUIRED")) {
+            if (!row.get("deptName").toString().equals(studentDeptName) &&
+                    row.get("subjectType").toString().equals("전공 필수")) {
                 continue;
             }
 
             OfregistrationDTO dto = new OfregistrationDTO();
-
-            // 기존 DTO 설정 코드는 그대로 유지
-            dto.setLectureId(lecture.getLectureId());
-            dto.setLectureName(lecture.getLectureName());
-            dto.setDeptName(curriculum.getDept().getDeptName());
-            dto.setSubjectType(curriculumSubject.getSubjectType().getCodeValue());
-            dto.setGrade(curriculum.getGrade().getCodeName());
-            dto.setSubjectType(curriculumSubject.getSubjectType().getCodeName());
-            dto.setSubjectCredits(subject.getSubjectCredits());
-
-            // 교수 정보 설정
-            dto.setMemberId(professor.getMemberId());
-            dto.setName(professor.getName());
-
-            // 강의 시간 및 장소 정보 설정
-            if (!lectureTimes.isEmpty()) {
-                LectureTime lectureTime = lectureTimes.get(0);
-                dto.setLectureDay(lectureTime.getLectureDay().getCodeName());
-                dto.setStartTime(lectureTime.getStartTime().getCodeName());
-                dto.setEndTime(lectureTime.getEndTime().getCodeName());
-                dto.setFacilityName(lectureTime.getFacility().getFacilityName());
+            dto.setLectureId(((Number) row.get("lectureId")).longValue());
+            dto.setLectureName((String) row.get("lectureName"));
+            dto.setDeptName((String) row.get("deptName"));
+            dto.setSubjectType((String) row.get("subjectType"));
+            dto.setGrade((String) row.get("grade"));
+            dto.setSubjectCredits((Integer) row.get("subjectCredits"));
+            dto.setMemberId(((Number) row.get("professorId")).longValue());
+            dto.setName((String) row.get("professorName"));
+            
+            // 강의 시간 및 장소 정보가 있는 경우에만 설정
+            if (row.get("lectureDay") != null) {
+                dto.setLectureDay((String) row.get("lectureDay"));
+                dto.setStartTime((String) row.get("startTime"));
+                dto.setEndTime((String) row.get("endTime"));
+                dto.setFacilityName((String) row.get("facilityName"));
             }
 
-            // 수강 인원 정보 설정
-            dto.setMaxStudents(lecture.getMaxStudents());
-            dto.setCurrentStudents(lecture.getCurrentStudents());
+            dto.setMaxStudents((Integer) row.get("maxStudents"));
+            dto.setCurrentStudents((Integer) row.get("currentStudents"));
+            dto.setDayNight((String) row.get("dayNight"));
+            dto.setRegStatus((String) row.get("regStatus"));
 
-            // 기타 정보 설정
-            dto.setDayNight(curriculum.getDayNight().getCodeName());
-
-            // 현재 로그인한 학생의 수강신청 상태 확인
-            Long memberId = authService.getCurrentMemberId();
-            Optional<Ofregistration> existingRegistration = ofregistrationRepository
-                    .findByLectureIdAndMemberId(lecture.getLectureId(), memberId);
-
-            // 수강신청 상태 설정
-            if (existingRegistration.isPresent()) {
-                dto.setRegStatus(existingRegistration.get().getRegStatus().getCodeValue());
-            } else {
-                dto.setRegStatus("NOT_REQUESTED");
-            }
-
-            result.add(dto);
+            dtos.add(dto);
         }
 
-        // 학과명과 과목 유형으로 정렬
-        result.sort((a, b) -> {
-            // 먼저 본인 학과인지 확인
+        // 정렬 로직은 그대로 유지
+        dtos.sort((a, b) -> {
             if (!a.getDeptName().equals(studentDeptName) && b.getDeptName().equals(studentDeptName)) return 1;
             if (a.getDeptName().equals(studentDeptName) && !b.getDeptName().equals(studentDeptName)) return -1;
-
-            // 같은 학과인 경우 전공필수 여부로 정렬
             if (a.getDeptName().equals(studentDeptName) && b.getDeptName().equals(studentDeptName)) {
                 if (a.getSubjectType().equals("전공 필수") && !b.getSubjectType().equals("전공 필수")) return -1;
                 if (!a.getSubjectType().equals("전공 필수") && b.getSubjectType().equals("전공 필수")) return 1;
             }
-
-            // 그 외의 경우 학과명으로 정렬
             return a.getDeptName().compareTo(b.getDeptName());
         });
 
-        return result;
+        return dtos;
     }
 
     // 수강신청 처리 메서드 추가
