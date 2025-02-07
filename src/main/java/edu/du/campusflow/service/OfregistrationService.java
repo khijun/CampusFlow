@@ -202,64 +202,44 @@ public class OfregistrationService {
     }
 
     public List<OfregistrationDTO> getStudentRegistrations(Long memberId) {
-        // 회원 정보 조회
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+        List<Map<String, Object>> results = ofregistrationRepository.findStudentRegistrationsOptimized(memberId);
+        List<OfregistrationDTO> dtos = new ArrayList<>();
 
-        List<Ofregistration> registrations = ofregistrationRepository.findByMember(member);
-        List<OfregistrationDTO> result = new ArrayList<>();
-
-        for (Ofregistration registration : registrations) {
-            Lecture lecture = registration.getLectureId();
-            CurriculumSubject curriculumSubject = lecture.getCurriculumSubject();
-            Curriculum curriculum = curriculumSubject.getCurriculum();
-            Subject subject = curriculumSubject.getSubject();
-            Member professor = lecture.getMember();
-            List<LectureTime> lectureTimes = lectureTimeRepository.findByLectureWeek_Lecture(lecture);
-
+        for (Map<String, Object> row : results) {
             OfregistrationDTO dto = new OfregistrationDTO();
+            
+            // 기본 강의 정보 설정
+            dto.setLectureId(((Number) row.get("lectureId")).longValue());
+            dto.setLectureName((String) row.get("lectureName"));
+            dto.setDeptName((String) row.get("deptName"));
+            dto.setSubjectType((String) row.get("subjectType"));
+            dto.setGrade((String) row.get("grade"));
+            dto.setSubjectCredits((Integer) row.get("subjectCredits"));
 
-            // 기본 강의 정보
-            dto.setLectureId(lecture.getLectureId());
-            dto.setLectureName(lecture.getLectureName());
-            dto.setDeptName(curriculum.getDept().getDeptName());
-            dto.setSubjectType(curriculumSubject.getSubjectType().getCodeName());
-            dto.setGrade(curriculum.getGrade().getCodeName());
-            dto.setSubjectCredits(subject.getSubjectCredits());
+            // 교수 정보 설정
+            dto.setMemberId(((Number) row.get("professorId")).longValue());
+            dto.setName((String) row.get("professorName"));
 
-            // 교수 정보
-            dto.setMemberId(professor.getMemberId());
-            dto.setName(professor.getName());
-
-            // 강의 시간 및 장소 정보
-            if (!lectureTimes.isEmpty()) {
-                LectureTime lectureTime = lectureTimes.get(0);
-                dto.setLectureDay(lectureTime.getLectureDay().getCodeName());
-                dto.setStartTime(lectureTime.getStartTime().getCodeName());
-                dto.setEndTime(lectureTime.getEndTime().getCodeName());
-                dto.setFacilityName(lectureTime.getFacility().getFacilityName());
+            // 강의 시간 및 장소 정보 설정
+            if (row.get("lectureDay") != null) {
+                dto.setLectureDay((String) row.get("lectureDay"));
+                dto.setStartTime((String) row.get("startTime"));
+                dto.setEndTime((String) row.get("endTime"));
+                dto.setFacilityName((String) row.get("facilityName"));
             }
 
-            // 수강신청 상태 정보
-            String regStatus = registration.getRegStatus().getCodeValue();
-            switch (regStatus) {
-                case "REQUESTED":
-                    dto.setRegStatus("신청");
-                    break;
-                case "APPROVED":
-                    dto.setRegStatus("승인");
-                    break;
-                case "REJECTED":
-                    dto.setRegStatus("거절");
-                    break;
-                default:
-                    dto.setRegStatus("알 수 없음");
-            }
+            // 수강 인원 정보 설정
+            dto.setMaxStudents((Integer) row.get("maxStudents"));
+            dto.setCurrentStudents((Integer) row.get("currentStudents"));
+            
+            // 기타 정보 설정
+            dto.setDayNight((String) row.get("dayNight"));
+            dto.setRegStatus((String) row.get("regStatus")); // code_name을 직접 사용
 
-            result.add(dto);
+            dtos.add(dto);
         }
 
-        return result;
+        return dtos;
     }
 
     /**
