@@ -42,8 +42,6 @@
             fetch(`/api/grade/student-grades`)
                 .then(response => response.json())
                 .then(data => {
-                    // studentId 기준으로 오름차순 정렬
-                    data.sort((a, b) => a.studentId - b.studentId);
                     renderGrid(data);
                 });
         }
@@ -71,10 +69,10 @@
                     totalScore: item.totalScore,
                     finalGrade: finalGrade
                 };
-            });
+            }).sort((a, b) => a.studentId - b.studentId);
 
             const columns = [
-                {header: '학번', name: 'studentId', align: 'center',sortable: true},
+                {header: '학번', name: 'studentId', align: 'center'},
                 {header: '학생 이름', name: 'studentName', align: 'center'},
                 {header: '강의 ID', name: 'selectedLectureId', align: 'center', hidden: true},
                 {header: '강의', name: 'lectureName', align: 'center'},
@@ -154,8 +152,6 @@
                         (!studentName || item.studentName.toLowerCase().includes(studentName))
                     );
 
-                    // 필터링된 데이터도 studentId 기준으로 정렬
-                    filteredData.sort((a, b) => a.studentId - b.studentId);
 
                     renderGrid(filteredData);
                 });
