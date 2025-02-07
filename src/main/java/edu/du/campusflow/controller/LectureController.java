@@ -51,7 +51,7 @@ public class LectureController {
     @GetMapping("/iframe/lecture/lectureApproval")
     @PreAuthorize("hasAnyRole('STAFF')")
     public String lectureApproval(Model model) {
-        return "/view/iframe/lecture/admin/lectureApproval";
+        return "view/iframe/lecture/admin/lectureApproval";
     }
 
     @GetMapping("/api/lecture/search")  // lectures/search -> lecture/search
