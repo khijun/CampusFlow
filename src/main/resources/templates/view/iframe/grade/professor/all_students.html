@@ -153,9 +153,14 @@
                         (!lectureName || item.lectureName.toLowerCase().includes(lectureName)) &&
                         (!studentName || item.studentName.toLowerCase().includes(studentName))
                     );
+
+                    // 필터링된 데이터도 studentId 기준으로 정렬
+                    filteredData.sort((a, b) => a.studentId - b.studentId);
+
                     renderGrid(filteredData);
                 });
         });
+
 
         document.getElementById('update-button').addEventListener('click', function () {
             const checkedRows = instance.getCheckedRows();
