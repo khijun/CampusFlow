@@ -46,6 +46,7 @@
                 });
         }
 
+
         function renderGrid(data) {
             const mappedData = data.map(item => {
                 const gradesFilled = [
@@ -68,7 +69,7 @@
                     totalScore: item.totalScore,
                     finalGrade: finalGrade
                 };
-            });
+            }).sort((a, b) => a.studentId - b.studentId);
 
             const columns = [
                 {header: '학번', name: 'studentId', align: 'center'},
@@ -150,9 +151,12 @@
                         (!lectureName || item.lectureName.toLowerCase().includes(lectureName)) &&
                         (!studentName || item.studentName.toLowerCase().includes(studentName))
                     );
+
+
                     renderGrid(filteredData);
                 });
         });
+
 
         document.getElementById('update-button').addEventListener('click', function () {
             const checkedRows = instance.getCheckedRows();
