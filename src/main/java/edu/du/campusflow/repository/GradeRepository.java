@@ -19,13 +19,15 @@ public interface GradeRepository extends JpaRepository<Grade,Long> {
             "AND g.gradeType.codeId IN :gradeTypeList")
     List<Grade> findByMemberIdAndGradeTypes(@Param("memberId") Long memberId, @Param("gradeTypeList") List<Long> gradeTypeList);
 
-    // 교수/교직원이 강의의 모든 학생 성적 조회 (여러 gradeType 처리)
+    //교수 모든 학생 조회
     @Query("SELECT g FROM Grade g " +
             "JOIN g.completion c " +
             "JOIN c.ofRegistration o " +
             "WHERE o.lectureId.lectureId IN :lectureIds " +
-            "AND g.gradeType.codeId IN :gradeTypeList")
-    List<Grade> findByLectureIdsAndGradeTypes(@Param("lectureIds") List<Long> lectureIds, @Param("gradeTypeList") List<Long> gradeTypeList);
+            "AND g.gradeType.codeId IN :gradeTypeList " +
+            "ORDER BY o.member.memberId ASC")
+    List<Grade> findByLectureIdsAndGradeTypes(@Param("lectureIds") List<Long> lectureIds,
+                                              @Param("gradeTypeList") List<Long> gradeTypeList);
 
 
     List<Grade> findByCompletion(Completion completion);
