@@ -125,4 +125,48 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             "st.code_name, g.code_name, s.subject_credits, l.max_students, l.current_students, dn.code_name", 
             nativeQuery = true)
     List<Map<String, Object>> findAllAvailableLecturesForStudent(@Param("studentId") Long studentId);
+
+    @Query(value = "SELECT " +
+            "o.id as registrationId, " +
+            "l.lecture_id as lectureId, " +
+            "l.lecture_name as lectureName, " +
+            "m.member_id as studentId, " +
+            "m.name as studentName, " +
+            "d.dept_name as deptName, " +
+            "st.code_name as subjectType, " +
+            "g.code_name as grade, " +
+            "s.subject_credits as subjectCredits, " +
+            "MAX(ld.code_name) as lectureDay, " +
+            "MAX(st1.code_name) as startTime, " +
+            "MAX(et.code_name) as endTime, " +
+            "MAX(f.facility_name) as facilityName, " +
+            "l.max_students as maxStudents, " +
+            "l.current_students as currentStudents, " +
+            "dn.code_name as dayNight, " +
+            "rs.code_name as regStatus " +
+            "FROM ofregistration o " +
+            "JOIN lecture l ON o.lecture_id = l.lecture_id " +
+            "JOIN member m ON o.member_id = m.member_id " +
+            "JOIN curriculum_subject cs ON l.curriculum_subject_id = cs.curriculum_subject_id " +
+            "JOIN curriculum c ON cs.curriculum_id = c.curriculum_id " +
+            "JOIN dept d ON c.dept_id = d.dept_id " +
+            "JOIN subject s ON cs.subject_id = s.subject_id " +
+            "JOIN common_code st ON cs.subject_type = st.code_id " +
+            "JOIN common_code g ON c.grade = g.code_id " +
+            "JOIN common_code dn ON c.day_night = dn.code_id " +
+            "JOIN common_code rs ON o.reg_status = rs.code_id " +
+            "LEFT JOIN lecture_week lw ON l.lecture_id = lw.lecture_id " +
+            "LEFT JOIN lecture_time lt ON lw.lecture_week_id = lt.lecture_week_id " +
+            "LEFT JOIN common_code ld ON lt.lecture_day = ld.code_id " +
+            "LEFT JOIN common_code st1 ON lt.start_time = st1.code_id " +
+            "LEFT JOIN common_code et ON lt.end_time = et.code_id " +
+            "LEFT JOIN facility f ON lt.facility_id = f.facility_id " +
+            "WHERE l.lecture_status = (" +
+            "    SELECT code_id FROM common_code WHERE code_value = 'LECTURE_PENDING'" +
+            ") " +
+            "GROUP BY o.id, l.lecture_id, l.lecture_name, m.member_id, m.name, d.dept_name, " +
+            "st.code_name, g.code_name, s.subject_credits, l.max_students, l.current_students, " +
+            "dn.code_name, rs.code_name", 
+            nativeQuery = true)
+    List<Map<String, Object>> findAllPendingRegistrationsForAdmin();
 }
