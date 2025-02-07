@@ -154,6 +154,11 @@ public class OfregistrationService {
         // 5. 시간 중복 체크
         List<Ofregistration> studentLectures = ofregistrationRepository.findByMember(member);
         for (Ofregistration existingReg : studentLectures) {
+            // 거절된 강의는 시간 중복 체크에서 제외
+            if (existingReg.getRegStatus().getCodeValue().equals("REJECTED")) {
+                continue;
+            }
+            
             // 학생이 이미 신청한 강의 정보 가져오기
             Lecture existingLecture = existingReg.getLectureId();
 
@@ -169,15 +174,12 @@ public class OfregistrationService {
 
                 // 같은 요일에 진행되는 강의인 경우에만 시간 중복 체크
                 if (existingTime.getLectureDay().getCodeValue().equals(newTime.getLectureDay().getCodeValue())) {
-                    // 교시를 숫자로 변환 (예: PERIOD_FIRST -> 1, PERIOD_SECOND -> 2)
+                    // 교시를 숫자로 변환
                     int newStart = convertPeriodToNumber(newTime.getStartTime().getCodeValue());
                     int newEnd = convertPeriodToNumber(newTime.getEndTime().getCodeValue());
                     int existingStart = convertPeriodToNumber(existingTime.getStartTime().getCodeValue());
                     int existingEnd = convertPeriodToNumber(existingTime.getEndTime().getCodeValue());
 
-                    // 시간이 겹치는지 확인
-                    // (새 강의 시작 시간이 기존 강의 종료 시간보다 이르고,
-                    //  새 강의 종료 시간이 기존 강의 시작 시간보다 늦은 경우 겹침)
                     if (hasTimeOverlap(newStart, newEnd, existingStart, existingEnd)) {
                         throw new IllegalStateException(
                                 String.format("'%s' 강의와 시간이 겹칩니다.", existingLecture.getLectureName())
