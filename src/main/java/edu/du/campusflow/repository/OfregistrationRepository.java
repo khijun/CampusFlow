@@ -83,4 +83,9 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
     void deleteByLectureIdAndMemberMemberId(@Param("lectureId") Long lectureId, @Param("memberId") Long memberId);
 
     Optional<Ofregistration> findByLectureIdAndMember_MemberId(Long lectureId, Long memberId);
+
+    // 학생 1주차 출석 생성을 위한 승인상태체크
+    @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId AND o.regStatus.codeId = :approvedStatus")
+    List<Ofregistration> findApprovedRegistrations(@Param("lectureId") Long lectureId, @Param("approvedStatus") Long approvedStatus);
+
 }

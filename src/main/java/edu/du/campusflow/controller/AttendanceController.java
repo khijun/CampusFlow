@@ -65,6 +65,20 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.getProfessorLectures());
     }
 
+
+     // 1주차 출석 데이터 자동 생성 API
+    @PostMapping("/api/professor/create-week1")
+    @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
+    @ResponseBody
+    public ResponseEntity<?> createWeek1Attendance(@RequestParam Long lectureId) {
+        try {
+            attendanceService.createWeek1Attendance(lectureId);
+            return ResponseEntity.ok("1주차 출석 데이터가 생성되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("출석 데이터 생성 중 오류 발생: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/api/professor/update")
     @PreAuthorize("hasAnyRole('STAFF', 'PROFESSOR')")
     @ResponseBody
