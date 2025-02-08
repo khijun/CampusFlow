@@ -199,7 +199,7 @@
                 formatter: function (props) {
                     const fileId = props.value;
                     if (!fileId) return '';
-                    return `<button class="file-button" onclick="showFileViewer(${JSON.stringify(fileId)})">보기</button>`;
+                    return `<button class="file-button" data-file-id="${fileId}">보기</button>`;
                 }
             },
             {
@@ -293,7 +293,10 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('제출 목록을 불러오는데 실패했습니다.');
-            });
+            })
+            .finally(()=>{
+                addFileButtonEvent();
+            })
     }
 
     // 학기 변경 시 강의 목록 다시 로드
@@ -368,6 +371,13 @@
                     alert('점수 업데이트에 실패했습니다.');
                 });
         }
+    }
+
+    // 파일 버튼에 이벤트 부여 함수
+    function addFileButtonEvent(){
+        document.querySelector('.file-button').addEventListener('click', (event)=>{
+            showFileViewer(event.target.getAttribute('data-file-id'));
+        });
     }
 </script>
 </body>
