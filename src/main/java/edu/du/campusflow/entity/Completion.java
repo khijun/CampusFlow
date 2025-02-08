@@ -19,7 +19,7 @@ public class Completion {
    private Long completionId;
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "ofregistration_id") // 외래 키 매핑ㅋ
+   @JoinColumn(name = "ofregistration_id") // 외래 키 매핑
    private Ofregistration ofRegistration;
 
    @ManyToOne(fetch = FetchType.LAZY)
