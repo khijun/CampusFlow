@@ -1,14 +1,16 @@
 package edu.du.campusflow.service;
 
 import edu.du.campusflow.dto.*;
+import edu.du.campusflow.entity.Attendance;
 import edu.du.campusflow.entity.Lecture;
-import edu.du.campusflow.repository.AttendanceRepository;
-import edu.du.campusflow.repository.DeptRepository;
-import edu.du.campusflow.repository.LectureRepository;
+import edu.du.campusflow.entity.LectureTime;
+import edu.du.campusflow.entity.Ofregistration;
+import edu.du.campusflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,8 @@ public class AttendanceService {
     private final LectureRepository lectureRepository;
     private final AuthService authService;
     private final DeptRepository deptRepository;
+    private final OfregistrationRepository ofregistrationRepository;
+    private final LectureTimeRepository lectureTimeRepository;
 
     public List<AttendanceDTO> getStudentAttendance(Long semesterCodeId, Integer year) {
         Long memberId = authService.getCurrentMemberId();
@@ -52,6 +56,46 @@ public class AttendanceService {
 
     public List<ProfessorAttendanceDTO> getProfessorAttendanceForAdmin(Integer year, Long semesterCodeId, Long lectureId) {
         return attendanceRepository.findAttendanceByProfessor(lectureId, semesterCodeId, year);
+    }
+
+    @Transactional
+    public void createWeek1Attendance(Long lectureId) {
+        // 1. 1주차 강의 시간 조회
+        List<LectureTime> week1LectureTimes = lectureTimeRepository.findByLectureWeek_Lecture_LectureIdAndLectureWeek_Week(lectureId, 1);
+        if (week1LectureTimes.isEmpty()) {
+            throw new IllegalArgumentException("해당 강의에 1주차 강의 시간이 존재하지 않습니다.");
+        }
+
+        // 2. 'APPROVED' 상태(86)인 학생만 조회
+        Long approvedStatus = Long.valueOf(86); // Integer에서 Long으로 변환
+        List<Ofregistration> approvedRegistrations = ofregistrationRepository.findApprovedRegistrations(lectureId, approvedStatus);
+
+        if (approvedRegistrations.isEmpty()) {
+            throw new IllegalArgumentException("승인된 학생이 없습니다.");
+        }
+
+        for (Ofregistration registration : approvedRegistrations) {
+            for (LectureTime lectureTime : week1LectureTimes) {
+                // 3. 해당 학생이 1주차 출석 데이터가 있는지 확인
+                boolean exists = attendanceRepository.existsByOfRegistrationAndLectureTime(registration, lectureTime);
+
+                if (!exists) {
+                    // 4. 출석 데이터가 없으면 생성
+                    Attendance attendance = Attendance.builder()
+                            .ofRegistration(registration)
+                            .lectureTime(lectureTime)
+                            .attendanceDate(LocalDateTime.now())
+                            .attendanceStatus(null)  // "-" 상태는 DB에 저장하지 않음
+                            .remarks("1주차 출석데이터 생성")
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build();
+
+                    attendanceRepository.save(attendance);
+                    System.out.println(registration.getMember().getName() + " 학생의 1주차 출석 데이터 생성 완료");
+                }
+            }
+        }
     }
 
     @Transactional

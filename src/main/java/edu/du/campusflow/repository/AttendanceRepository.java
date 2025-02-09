@@ -3,6 +3,8 @@ package edu.du.campusflow.repository;
 import edu.du.campusflow.dto.AttendanceDTO;
 import edu.du.campusflow.dto.ProfessorAttendanceDTO;
 import edu.du.campusflow.entity.Attendance;
+import edu.du.campusflow.entity.LectureTime;
+import edu.du.campusflow.entity.Ofregistration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -122,5 +124,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                           @Param("week") Integer week,
                           @Param("statusCode") Long statusCode);
 
+    // 특정 학생의 특정 강의 시간에 대한 출석 데이터 존재 여부 확인
+    boolean existsByOfRegistrationAndLectureTime(Ofregistration ofRegistration, LectureTime lectureTime);
 
 }
