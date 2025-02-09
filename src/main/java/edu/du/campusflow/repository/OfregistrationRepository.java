@@ -122,7 +122,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             "    SELECT code_id FROM common_code WHERE code_value = 'LECTURE_PENDING'" +
             ") " +
             "GROUP BY l.lecture_id, l.lecture_name, m.member_id, m.name, d.dept_name, " +
-            "st.code_name, g.code_name, s.subject_credits, l.max_students, l.current_students, dn.code_name", 
+            "st.code_name, g.code_name, s.subject_credits, l.max_students, l.current_students, dn.code_name",
             nativeQuery = true)
     List<Map<String, Object>> findAllAvailableLecturesForStudent(@Param("studentId") Long studentId);
 
@@ -164,7 +164,7 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             "WHERE o.member_id = :studentId " +
             "GROUP BY o.id, l.lecture_id, l.lecture_name, m.member_id, m.name, d.dept_name, " +
             "st.code_name, g.code_name, s.subject_credits, l.max_students, l.current_students, " +
-            "dn.code_name, rs.code_name", 
+            "dn.code_name, rs.code_name",
             nativeQuery = true)
     List<Map<String, Object>> findStudentRegistrationsOptimized(@Param("studentId") Long studentId);
 
@@ -208,7 +208,12 @@ public interface OfregistrationRepository extends JpaRepository<Ofregistration, 
             ") " +
             "GROUP BY o.id, l.lecture_id, l.lecture_name, m.member_id, m.name, d.dept_name, " +
             "st.code_name, g.code_name, s.subject_credits, l.max_students, l.current_students, " +
-            "dn.code_name, rs.code_name", 
+            "dn.code_name, rs.code_name",
             nativeQuery = true)
     List<Map<String, Object>> findAllPendingRegistrationsForAdmin();
+
+    // 학생 1주차 출석 생성을 위한 승인상태체크
+    @Query("SELECT o FROM Ofregistration o WHERE o.lectureId.lectureId = :lectureId AND o.regStatus.codeId = :approvedStatus")
+    List<Ofregistration> findApprovedRegistrations(@Param("lectureId") Long lectureId, @Param("approvedStatus") Long approvedStatus);
+
 }

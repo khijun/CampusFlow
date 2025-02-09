@@ -49,6 +49,7 @@
         </div>
         <div class="legend-divider" style="display: flex; flex:1;"></div>
         <div class="btn-container">
+            <button id="create-week1-btn" class="save-button">1주차 출석 등록</button>
             <button id="save-attendance-btn" class="save-button">출석 저장</button>
         </div>
     </div>
@@ -111,6 +112,25 @@
             }).catch(() => alert("출결 데이터를 불러오는 데 실패했습니다."));
         });
 
+        document.getElementById("create-week1-btn").addEventListener("click", async () => {
+            const lectureId = document.getElementById("lecture-select").value;
+            if (!lectureId) return alert("강의를 선택해주세요.");
+
+            try {
+                const response = await fetch(`/attendance/api/professor/create-week1?lectureId=${lectureId}`, {
+                    method: "POST"
+                });
+
+                if (response.ok) {
+                    alert("1주차 출석정보 생성 성공");
+                } else {
+                    alert("출결 데이터 생성 실패");
+                }
+            } catch (error) {
+                alert("출결 데이터 생성 중 오류가 발생했습니다.");
+            }
+        });
+
         document.getElementById("save-attendance-btn").addEventListener("click", async () => {
             if (!grid) return alert("출결 데이터를 먼저 조회해주세요.");
 
@@ -134,14 +154,11 @@
                 });
 
                 if (response.ok) {
-                    console.log("출결 정보가 정상적으로 업데이트됨");
                     alert("출결 정보가 정상적으로 저장되었습니다.");
                 } else {
-                    console.warn("출결 업데이트 실패");
                     alert("출결 저장 실패");
                 }
             } catch (error) {
-                console.error("출결 저장 중 오류 발생:", error);
                 alert("출결 정보 저장 실패");
             }
         });
