@@ -4,6 +4,12 @@ plugins {
     id 'java'
 }
 
+// build.gradle
+bootJar {
+    archiveBaseName = 'app'  // JAR 파일 이름을 'my-application.jar'로 설정
+    archiveVersion = ''            // 버전도 설정 가능
+}
+
 group = 'org.zerock'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
