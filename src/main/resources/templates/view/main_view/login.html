@@ -34,13 +34,13 @@
          <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="username">아이디</label>
             <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   type="text" id="username" name="username" placeholder="아이디 입력">
+                   type="text" id="username" name="username" placeholder="아이디 입력" th:value="${id}">
          </div>
 
          <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="password">비밀번호</label>
             <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   type="password" id="password" name="password" placeholder="비밀번호 입력">
+                   type="password" id="password" name="password" placeholder="비밀번호 입력" th:value="${pw}">
          </div>
 
          <div class="mb-4 flex items-center">
